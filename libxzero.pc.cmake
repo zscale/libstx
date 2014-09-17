@@ -3,7 +3,7 @@
 Name: libxzero
 Description: Xzero HTTP framework
 Version: @LIBXZERO_VERSION@
-Requires: libbase >= 0.10.0
+# Requires:
 # Conflicts: 
 Libs: -lxzero
 # Cflags: 
