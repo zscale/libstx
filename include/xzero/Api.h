@@ -8,13 +8,13 @@
 #ifndef xzero_api_hpp
 #define xzero_api_hpp (1)
 
-#include <base/Defines.h>
+#include <xzero/Defines.h>
 
 // libxzero exports
 #if defined(BUILD_XZERO)
-#define XZERO_API BASE_EXPORT
+#define XZERO_API XZERO_EXPORT
 #else
-#define XZERO_API BASE_IMPORT
+#define XZERO_API XZERO_IMPORT
 #endif
 
 #endif

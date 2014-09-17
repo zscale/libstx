@@ -8,7 +8,7 @@
 #ifndef xzero_sysconfig_h
 #define xzero_sysconfig_h (1)
 
-#include <base/sysconfig.h>
+//#include <base/sysconfig.h>
 
 #cmakedefine LIBXZERO_VERSION "@LIBXZERO_VERSION@"
 
@@ -17,6 +17,18 @@
 
 // Build with inotify support
 #cmakedefine XZERO_ENABLE_INOTIFY
+
+// Make use of accept4() syscall if available
+#cmakedefine ENABLE_ACCEPT4
+
+#cmakedefine ENABLE_MULTI_ACCEPT
+
+#cmakedefine ENABLE_PCRE
+
+#cmakedefine ENABLE_INOTIFY
+
+// Enable support for TCP_DEFER_ACCEPT
+#cmakedefine ENABLE_TCP_DEFER_ACCEPT
 
 // Try to open temporary files with O_TMPFILE flag before falling back
 // to the standard behaviour.
@@ -66,6 +78,8 @@
 #cmakedefine HAVE_SENDFILE
 #cmakedefine HAVE_POSIX_FADVISE
 #cmakedefine HAVE_READAHEAD
+#cmakedefine HAVE_SYSCONF
+#cmakedefine HAVE_PATHCONF
 #cmakedefine HAVE_ACCEPT4
 #cmakedefine HAVE_PTHREAD_SETNAME_NP
 #cmakedefine HAVE_PTHREAD_SETAFFINITY_NP
