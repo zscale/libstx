@@ -21,6 +21,11 @@ class SelectionKey {
   virtual ~SelectionKey() {}
 
   /**
+   * Retrieves the current interest.
+   */
+  virtual int interest() const noexcept = 0;
+
+  /**
    * changes interest.
    */
   virtual void change(int ops) = 0;

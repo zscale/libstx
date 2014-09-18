@@ -9,6 +9,7 @@
 
 namespace xzero {
 
+class HttpChannel;
 class HttpOutput;
 
 /**
@@ -26,7 +27,7 @@ class XZERO_API HttpResponse {
   HttpResponse& operator=(HttpResponse&) = delete;
 
  public:
-  explicit HttpResponse(std::unique_ptr<HttpOutput>&& output);
+  HttpResponse(HttpChannel* channel, std::unique_ptr<HttpOutput>&& output);
 
   void recycle();
 
@@ -58,6 +59,15 @@ class XZERO_API HttpResponse {
   const HeaderFieldList& headers() const noexcept { return headers_; }
 
   /**
+   * Invoke to tell the client that it may continue sending the request body.
+   *
+   * You may only invoke this method if and only if the client actually
+   * requested this behaviour via <code>Expect: 100-continue</code>
+   * request header.
+   */
+  void send100Continue();
+
+  /**
    * Invoke to mark this response as complete.
    *
    * Further access to this object is undefined.
@@ -70,6 +80,7 @@ class XZERO_API HttpResponse {
   void setCommitted(bool value);
 
  private:
+  HttpChannel* channel_;
   std::unique_ptr<HttpOutput> output_;
 
   HttpVersion version_;

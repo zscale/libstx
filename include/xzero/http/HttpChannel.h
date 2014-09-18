@@ -54,7 +54,7 @@ class XZERO_API HttpChannel : public HttpListener {
   void send(const BufferRef& data, CompletionHandler&& onComplete);
 
   /**
-   * Sends a a response body chunk as defined by @p file.
+   * Sends a response body chunk as defined by @p file.
    *
    * @param file the system file handle containing the data to be sent to the
    *             client.
@@ -64,6 +64,11 @@ class XZERO_API HttpChannel : public HttpListener {
    * response headers if not done yet.
    */
   void send(FileRef&& file, CompletionHandler&& onComplete);
+
+  /**
+   * Sends an 100-continue intermediate response message.
+   */
+  void send100Continue();
 
   /**
    * Retrieves the request object for the current request.
