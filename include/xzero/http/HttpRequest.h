@@ -38,9 +38,6 @@ class XZERO_API HttpRequest {
   HttpInput* input() const { return input_.get(); }
   void setInput(std::unique_ptr<HttpInput>&& input) { input_ = std::move(input); }
 
-  bool isHandled() const { return handled_; }
-  void setHandled(bool handled) { handled_ = handled; }
-
   void recycle();
 
  private:

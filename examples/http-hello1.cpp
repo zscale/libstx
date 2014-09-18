@@ -25,7 +25,6 @@ int main() {
 
   http->setHandler([](xzero::HttpRequest* request,
                       xzero::HttpResponse* response) {
-    request->setHandled(true);
     response->setStatus(xzero::HttpStatus::Ok);
     response->setReason("because");
 
