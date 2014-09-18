@@ -170,8 +170,6 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    */
   void release(Connection* inetConnection);
 
-  friend class InetEndPoint;
-
   /**
    * Accepts up to exactly one new client.
    *
