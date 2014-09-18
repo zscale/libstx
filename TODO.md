@@ -16,3 +16,6 @@
 - [ ] UdpConnector
 - [ ] SSL support, `SslConnector` & `SslEndPoint` chaining to real
       connector/endpoint.
+- [ ] high level Servlet API
+  - [ ] auto-responds on `Expect: 100-continue`
+  - [ ] auto-consumes request body into a memory buffer or file buffer
