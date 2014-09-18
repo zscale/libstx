@@ -26,7 +26,6 @@ int main() {
   http->setHandler([](xzero::HttpRequest* request, xzero::HttpResponse* response) {
     const xzero::Buffer body = "Hello, World\n";
 
-    request->setHandled(true);
     response->setStatus(xzero::HttpStatus::Ok);
     response->setContentLength(body.size());
     response->output()->write(body);
