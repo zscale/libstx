@@ -19,9 +19,8 @@ class HttpEcho : public xzero::HttpInputListener {
   HttpEcho(xzero::HttpRequest* req, xzero::HttpResponse* resp)
       : request_(req), response_(resp), bodyChunk_() {
 
-    // TODO: handle "Expect: 100-continue" nicely
-    // if (request_->expects100Continue())
-    //   response_->send100Continue();
+    if (request_->expect100Continue())
+       response_->send100Continue();
 
     request_->input()->setListener(this);
     response_->setStatus(xzero::HttpStatus::Ok);

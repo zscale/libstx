@@ -38,6 +38,9 @@ class XZERO_API HttpRequest {
   HttpInput* input() const { return input_.get(); }
   void setInput(std::unique_ptr<HttpInput>&& input) { input_ = std::move(input); }
 
+  bool expect100Continue() const noexcept { return expect100Continue_; }
+  void setExpect100Continue(bool value) noexcept { expect100Continue_ = value; }
+
   void recycle();
 
  private:
@@ -45,6 +48,7 @@ class XZERO_API HttpRequest {
   std::string path_;
   HttpVersion version_;
   bool secure_;
+  bool expect100Continue_;
   HeaderFieldList headers_;
 
   std::unique_ptr<HttpInput> input_;
