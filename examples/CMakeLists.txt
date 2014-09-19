@@ -9,6 +9,9 @@ if(ENABLE_EXAMPLES)
   add_executable(http-hello1 http-hello1.cpp)
   target_link_libraries(http-hello1 xzero)
 
+  add_executable(http-exceptions http-exceptions.cpp)
+  target_link_libraries(http-exceptions xzero)
+
   add_executable(http-post-body http-post-body.cpp)
   target_link_libraries(http-post-body xzero)
 
