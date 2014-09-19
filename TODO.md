@@ -2,15 +2,18 @@
 
 ### Milestone 1
 
+- [ ] proper protocol error logging / 4xx-reporting
+- [ ] EndPoint timeout management
+  - read timeouts should respond 408
+  - write timeouts should abort() the connection
+  - keepalive timeouts should close() the connection
+- [x] properly handle uncaught exceptions in http connector
 - [x] logging api
-- [ ] proper protocol error logging / reporting
 - [x] implement InetEndPoint::localAddr / remoteAddr
 - [x] fully support GET/HEAD on static files (including client cache awareness, range requests).
 - [x] request body usage example
 - [x] support `Expect: 100-continue`
-- [ ] properly handle uncaught exceptions in http connector
-- [ ] write a demo http server showcasing exceptions
-- [ ] EndPoint timeout management
+- [x] write a demo http server showcasing exceptions
 
 ### Milestone 2
 

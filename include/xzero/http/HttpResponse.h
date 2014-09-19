@@ -57,6 +57,7 @@ class XZERO_API HttpResponse {
   void removeHeader(const std::string& name);
   const std::string& getHeader(const std::string& name) const;
   const HeaderFieldList& headers() const noexcept { return headers_; }
+  HeaderFieldList& headers() noexcept { return headers_; }
 
   /**
    * Invoke to tell the client that it may continue sending the request body.
