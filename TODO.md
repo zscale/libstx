@@ -2,7 +2,7 @@
 
 ### Milestone 1
 
-- [ ] logging api
+- [x] logging api
 - [ ] proper protocol error logging / reporting
 - [x] implement InetEndPoint::localAddr / remoteAddr
 - [x] fully support GET/HEAD on static files (including client cache awareness, range requests).
