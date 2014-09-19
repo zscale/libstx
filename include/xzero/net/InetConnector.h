@@ -87,6 +87,11 @@ class XZERO_API InetConnector : public Connector, public Selectable {
   virtual int handle() const noexcept;
 
   /**
+   * Returns the IP address family, such as @c IPAddress::V4 or @c IPAddress::V6.
+   */
+  int addressFamily() const { return addressFamily_; }
+
+  /**
    * Sets the underlying system socket handle.
    */
   void setSocket(int socket);
@@ -196,6 +201,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
 
   std::list<InetEndPoint*> connectedEndPoints_;
   int socket_;
+  int addressFamily_;
   int typeMask_;
   int flags_;
   size_t backlog_;
