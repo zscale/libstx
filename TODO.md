@@ -4,7 +4,7 @@
 
 - [ ] logging api
 - [ ] proper protocol error logging / reporting
-- [ ] implement InetEndPoint::localAddr / remoteAddr
+- [x] implement InetEndPoint::localAddr / remoteAddr
 - [x] fully support GET/HEAD on static files (including client cache awareness, range requests).
 - [x] request body usage example
 - [x] support `Expect: 100-continue`
