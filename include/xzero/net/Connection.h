@@ -97,6 +97,8 @@ class XZERO_API Connection {
    * Event callback being invoked on any errors while waiting for data.
    *
    * For example read timeout (or possibly connection timeout?).
+   *
+   * The default implementation simply invokes abort().
    */
   virtual void onInterestFailure(const std::exception& error);
 

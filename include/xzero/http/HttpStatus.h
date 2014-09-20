@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <string>
 
 //! \addtogroup http
 //@{
@@ -40,8 +41,8 @@ enum class HttpStatus  // {{{
   // redirection
   MultipleChoices = 300,
   MovedPermanently = 301,
-  MovedTemporarily = 302,
-  Found = MovedTemporarily,
+  Found = 302,
+  MovedTemporarily = Found,
   NotModified = 304,
   TemporaryRedirect = 307,  // since HTTP/1.1
   PermanentRedirect = 308,  // Internet-Draft
@@ -101,11 +102,49 @@ inline bool operator!(HttpStatus st) {
   return st == HttpStatus::Undefined;
 }
 
+/** Retrieves the human readable text of the HTTP status @p code. */
+XZERO_API const std::string& to_string(HttpStatus code);
+
+/** Tests whether given status @p code MUST NOT have a message body. */
 XZERO_API bool isContentForbidden(HttpStatus code);
 
+/** Tests whether given status @p code is informatiional (1xx). */
+XZERO_API bool isInformational(HttpStatus code);
+
+/** Tests whether given status @p code is successful (2xx). */
+XZERO_API bool isSuccess(HttpStatus code);
+
+/** Tests whether given status @p code is a redirect (3xx). */
+XZERO_API bool isRedirect(HttpStatus code);
+
+/** Tests whether given status @p code is a client error (4xx). */
+XZERO_API bool isClientError(HttpStatus code);
+
+/** Tests whether given status @p code is a server error (5xx). */
+XZERO_API bool isServerError(HttpStatus code);
 //@}
 
 // {{{ inlines
+inline bool isInformational(HttpStatus code) {
+  return static_cast<int>(code) / 100 == 1;
+}
+
+inline bool isSuccess(HttpStatus code) {
+  return static_cast<int>(code) / 100 == 2;
+}
+
+inline bool isRedirect(HttpStatus code) {
+  return static_cast<int>(code) / 100 == 3;
+}
+
+inline bool isClientError(HttpStatus code) {
+  return static_cast<int>(code) / 100 == 4;
+}
+
+inline bool isServerError(HttpStatus code) {
+  return static_cast<int>(code) / 100 == 5;
+}
+
 inline bool isContentForbidden(HttpStatus code) {
   switch (code) {
     case /*100*/ HttpStatus::ContinueRequest:
