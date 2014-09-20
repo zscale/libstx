@@ -16,6 +16,6 @@ enum class HttpVersion {
   VERSION_2_0 = 0x20,
 };
 
-XZERO_API std::string tos(HttpVersion value);
+XZERO_API const std::string& to_string(HttpVersion value);
 
 } // namespace xzero
