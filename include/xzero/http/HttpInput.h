@@ -49,6 +49,12 @@ class XZERO_API HttpInput {
    */
   virtual void onContent(const BufferRef& chunk) = 0;
 
+  /**
+   * Internally invoked by HttpRequest::recycle() to recycle the object.
+   * @internal
+   */
+  virtual void recycle() = 0;
+
  private:
   HttpInputListener* listener_;
 };

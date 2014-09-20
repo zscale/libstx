@@ -2,8 +2,10 @@
 
 ### Milestone 1
 
-- [ ] proper protocol error logging / 4xx-reporting
-- [ ] EndPoint timeout management
+- [ ] http1: properly handle Connection header tokens.
+- [ ] http1: proper protocol error logging
+  - bad request should cause a proper 400 / 4xx
+- [ ] net: EndPoint timeout management
   - read timeouts should respond 408
   - write timeouts should abort() the connection
   - keepalive timeouts should close() the connection

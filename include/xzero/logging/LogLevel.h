@@ -11,6 +11,14 @@ enum class LogLevel {
   Warning = 2,
   Info = 3,
   Debug = 4,
+  Trace = 5,
+
+  none = None,
+  error = Error,
+  warn = Warning,
+  info = Info,
+  debug = Debug,
+  trace = Trace,
 };
 
 XZERO_API std::string to_string(LogLevel value);

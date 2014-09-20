@@ -20,6 +20,8 @@ class HttpInput : public xzero::HttpInput {
   size_t readLine(Buffer* result) override;
   void onContent(const BufferRef& chunk) override;
 
+  void recycle() override;
+
  private:
   HttpConnection* connection_;
   Buffer content_;

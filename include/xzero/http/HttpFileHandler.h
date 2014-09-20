@@ -39,6 +39,8 @@ class XZERO_API HttpFile {
   operator const struct stat*() const { return &stat_; }
   const struct stat* operator->() const { return &stat_; }
 
+  bool isRegular() const noexcept { return S_ISREG(stat_.st_mode); }
+
   void update();
 
   /** Creates a file descriptor for this file. */
