@@ -6,6 +6,8 @@
 
 namespace xzero {
 
+class LocalConnector;
+
 /**
  * Buffer-based dual-channel EndPoint.
  *
@@ -14,7 +16,7 @@ namespace xzero {
  */
 class XZERO_API ByteArrayEndPoint : public EndPoint {
  public:
-  ByteArrayEndPoint();
+  explicit ByteArrayEndPoint(LocalConnector* connector);
   ~ByteArrayEndPoint();
 
   /**
@@ -41,6 +43,13 @@ class XZERO_API ByteArrayEndPoint : public EndPoint {
    */
   const Buffer& output() const;
 
+  /**
+   * Tests whether this InetEndPoint is currently handling and I/O notification.
+   * @see wantFill()
+   * @see wantFlush()
+   */
+  bool isBusy() const noexcept { return isBusy_; }
+
   // overrides
   void close() override;
   bool isOpen() const override;
@@ -58,6 +67,8 @@ class XZERO_API ByteArrayEndPoint : public EndPoint {
   void setCorking(bool enable) override;
 
  private:
+  LocalConnector* connector_;
+  bool isBusy_;
   Buffer input_;
   size_t readPos_;
   Buffer output_;
