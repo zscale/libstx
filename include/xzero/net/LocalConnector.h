@@ -49,7 +49,13 @@ class XZERO_API LocalConnector : public Connector {
  private:
   bool acceptOne();
 
+  /**
+   * Invoked internally by LocalEndPoint to actually destroy this object.
+   */
+  void release(Connection* localConnection);
+
   friend class LocalEndPoint;
+  friend class ByteArrayEndPoint;
   void onEndPointClosed(LocalEndPoint* endpoint);
 
  private:

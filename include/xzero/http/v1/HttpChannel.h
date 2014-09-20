@@ -18,6 +18,7 @@ class HttpChannel : public xzero::HttpChannel {
   bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
                       int versionMajor, int versionMinor) override;
   bool onMessageHeader(const BufferRef& name, const BufferRef& value) override;
+  void onProtocolError(const BufferRef& chunk, size_t offset) override;
 
  private:
   bool persistent_;
