@@ -1,6 +1,7 @@
 #include <xzero/http/HttpService.h>
 #include <xzero/http/HttpRequest.h>
 #include <xzero/http/HttpResponse.h>
+#include <xzero/http/HttpInput.h>
 #include <xzero/http/HttpOutput.h>
 #include <xzero/net/IPAddress.h>
 #include <xzero/support/libev/LibevScheduler.h>
@@ -16,6 +17,16 @@ class MyHandler : public xzero::HttpService::Handler {
     if (request->path() == "/") {
       response->setStatus(xzero::HttpStatus::Found);
       response->addHeader("Location", "/welcome");
+      response->completed();
+      return true;
+    }
+
+    if (request->path() == "/echo") {
+      xzero::Buffer body;
+      request->input()->read(&body);
+      response->setStatus(xzero::HttpStatus::Ok);
+      response->setContentLength(body.size());
+      response->output()->write(std::move(body));
       response->completed();
       return true;
     }
