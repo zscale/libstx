@@ -86,8 +86,6 @@ class XZERO_API HttpChannel : public HttpListener {
    */
   void completed();
 
-  void run();
-
  protected:
   virtual std::unique_ptr<HttpOutput> createOutput();
 
