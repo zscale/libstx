@@ -24,6 +24,9 @@ class IPAddress;
  * @note HTTP/1 is always enabled by default.
  */
 class XZERO_API HttpService {
+ private:
+  class InputListener;
+
  public:
   class Handler;
   class BuiltinAssetHandler;
@@ -64,6 +67,9 @@ class XZERO_API HttpService {
  private:
   void enableHttp1(Connector* connector);
   void handleRequest(HttpRequest* request, HttpResponse* response);
+  void onAllDataRead(HttpRequest* request, HttpResponse* response);
+
+  friend class ServiceInputListener;
 
  private:
   Server* server_;
