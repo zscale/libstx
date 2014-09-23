@@ -30,6 +30,14 @@ class XZERO_API HttpOutput {
   virtual void write(const char* cstr, CompletionHandler&& completed = nullptr);
 
   /**
+   * Writes given string @p str to the client.
+   *
+   * @param str the string chunk to write to the client.
+   * @param completed Callback to invoke after completion.
+   */
+  virtual void write(const std::string& str, CompletionHandler&& completed = nullptr);
+
+  /**
    * Writes given buffer.
    *
    * @param data the data chunk to write to the client.
