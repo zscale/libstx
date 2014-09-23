@@ -2,9 +2,9 @@
 
 ### Milestone 1
 
-- [ ] http1: properly handle Connection header tokens.
-- [ ] http1: proper protocol error logging
-  - bad request should cause a proper 400 / 4xx
+- [ ] fix LocalConnector vs InetConnector inconsistencies (see utests wrt keep-alive)
+- [x] http1: properly handle Connection header tokens.
+- [x] http1: proper protocol error logging
 - [ ] net: EndPoint timeout management
   - read timeouts should respond 408
   - write timeouts should abort() the connection

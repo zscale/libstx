@@ -1,9 +1,9 @@
 # libxzero.pc.cmake
 
 Name: libxzero
-Description: Xzero HTTP framework
+Description: Xzero HTTP library
 Version: @LIBXZERO_VERSION@
 # Requires:
-# Conflicts: 
+# Conflicts:
 Libs: -lxzero
-# Cflags: 
+# Cflags:

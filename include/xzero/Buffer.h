@@ -151,7 +151,7 @@ class XZERO_API BufferBase {
   size_t rfind(value_type value, size_t offset) const;
 
   // contains
-  bool contains(const BufferBase<T>& ref) const;
+  bool contains(const BufferRef& ref) const;
 
   // split
   std::pair<BufferRef, BufferRef> split(char delimiter) const;
@@ -503,8 +503,8 @@ inline BufferOffset::operator const char*() const {
 // }}}
 // {{{ BufferBase<T> impl
 template <typename T>
-inline bool BufferBase<T>::contains(const BufferBase<T>& ref) const {
-  return ref.cbegin() >= cbegin() && ref.cend() <= cend();
+inline bool BufferBase<T>::contains(const BufferRef& ref) const {
+  return find(ref) != Buffer::npos;
 }
 
 template <typename T>
