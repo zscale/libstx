@@ -16,6 +16,9 @@
 - [x] request body usage example
 - [x] support `Expect: 100-continue`
 - [x] write a demo http server showcasing exceptions
+- [x] high level Servlet API
+  - [x] auto-responds on `Expect: 100-continue`
+  - [x] auto-consumes request body into a memory buffer or file buffer
 
 ### Milestone 2
 
@@ -23,6 +26,3 @@
 - [ ] UdpConnector
 - [ ] SSL support, `SslConnector` & `SslEndPoint` chaining to real
       connector/endpoint.
-- [ ] high level Servlet API
-  - [ ] auto-responds on `Expect: 100-continue`
-  - [ ] auto-consumes request body into a memory buffer or file buffer
