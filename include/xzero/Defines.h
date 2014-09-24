@@ -103,9 +103,4 @@
 /// the filename only part of __FILE__ (no leading path)
 #define __FILENAME__ ((std::strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)
 
-#if !defined(DEBUG)
-// TODO remove me
-#define DEBUG(msg...) /*!*/
-#endif
-
 #endif
