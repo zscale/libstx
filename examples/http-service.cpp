@@ -21,6 +21,22 @@ class MyHandler : public xzero::HttpService::Handler {
       return true;
     }
 
+    if (request->path() == "/error") {
+      response->sendError(xzero::HttpStatus::BadRequest, "Custom Error");
+      return true;
+    }
+
+    if (request->path() == "/headers") {
+      xzero::Buffer body;
+      for (const auto& field: request->headers()) {
+        body << field.name() << " = " << field.value() << "\n";
+      }
+      response->setStatus(xzero::HttpStatus::Ok);
+      response->output()->write(body);
+      response->completed();
+      return true;
+    }
+
     if (request->path() == "/echo") {
       xzero::Buffer body;
       request->input()->read(&body);
