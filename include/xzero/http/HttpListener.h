@@ -2,6 +2,7 @@
 
 #include <xzero/Api.h>
 #include <xzero/Buffer.h>
+#include <xzero/http/HttpStatus.h>
 #include <memory>
 
 namespace xzero {
@@ -88,7 +89,7 @@ class XZERO_API HttpListener {
   /**
    * HTTP message transport protocol error.
    */
-  virtual void onProtocolError(const BufferRef& chunk, size_t offset);
+  virtual void onProtocolError(HttpStatus code, const std::string& message) = 0;
 };
 
 }  // namespace xzero

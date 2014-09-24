@@ -55,9 +55,17 @@ class XZERO_API HttpResponse {
   void addHeader(const std::string& name, const std::string& value);
   void setHeader(const std::string& name, const std::string& value);
   void removeHeader(const std::string& name);
+  void removeAllHeaders();
   const std::string& getHeader(const std::string& name) const;
   const HeaderFieldList& headers() const noexcept { return headers_; }
   HeaderFieldList& headers() noexcept { return headers_; }
+
+  /**
+   * Invoke to mark this response as complete.
+   *
+   * Further access to this object is undefined.
+   */
+  void completed();
 
   /**
    * Invoke to tell the client that it may continue sending the request body.
@@ -69,11 +77,14 @@ class XZERO_API HttpResponse {
   void send100Continue();
 
   /**
-   * Invoke to mark this response as complete.
+   * Responds with an error response message.
    *
-   * Further access to this object is undefined.
+   * @param code HTTP response status code.
+   * @param message optional custom error message.
+   *
+   * @note This message is considered completed after this call.
    */
-  void completed();
+  void sendError(HttpStatus code, const std::string& message = "");
 
   HttpOutput* output() { return output_.get(); }
 

@@ -40,7 +40,7 @@ class XZERO_API HttpChannel : public HttpListener {
    *
    * After invokation this channel is as it would have been just instanciated.
    */
-  void reset();
+  virtual void reset();
 
   /**
    * Sends a response body chunk @p data.
@@ -96,7 +96,7 @@ class XZERO_API HttpChannel : public HttpListener {
   bool onMessageHeaderEnd() override;
   bool onMessageContent(const BufferRef& chunk) override;
   bool onMessageEnd() override;
-  void onProtocolError(const BufferRef& chunk, size_t offset) override;
+  void onProtocolError(HttpStatus code, const std::string& message) override;
 
  protected:
   HttpChannelState state_;
