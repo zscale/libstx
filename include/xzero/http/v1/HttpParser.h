@@ -2,6 +2,7 @@
 
 #include <xzero/Api.h>
 #include <xzero/Buffer.h>
+#include <xzero/http/HttpStatus.h>
 #include <memory>
 
 namespace xzero {
@@ -160,7 +161,7 @@ class XZERO_API HttpParser {
   bool onMessageHeaderEnd();
   bool onMessageContent(const BufferRef& chunk);
   bool onMessageEnd();
-  void onProtocolError(const BufferRef& chunk, size_t offset);
+  void onProtocolError(HttpStatus code, const std::string& message = "");
 
  private:
   HttpListener* listener_;
