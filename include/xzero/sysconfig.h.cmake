@@ -56,6 +56,8 @@
 #cmakedefine HAVE_SYS_MMAN_H
 #cmakedefine HAVE_SYSLOG_H
 #cmakedefine HAVE_PWD_H
+#cmakedefine HAVE_UNISTD_H
+#cmakedefine HAVE_PTHREAD_H
 
 #cmakedefine HAVE_NETDB_H
 #cmakedefine HAVE_AIO_H
