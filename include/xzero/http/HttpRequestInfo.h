@@ -11,6 +11,7 @@ namespace xzero {
  */
 class XZERO_API HttpRequestInfo : public HttpInfo {
  public:
+  HttpRequestInfo();
   HttpRequestInfo(HttpVersion version, const std::string& method,
                   const std::string& entity, size_t contentLength,
                   const HeaderFieldList& headers);
@@ -22,6 +23,10 @@ class XZERO_API HttpRequestInfo : public HttpInfo {
   std::string method_;
   std::string entity_;
 };
+
+inline HttpRequestInfo::HttpRequestInfo()
+    : HttpRequestInfo(HttpVersion::UNKNOWN, "", "", 0, {}) {
+}
 
 inline HttpRequestInfo::HttpRequestInfo(HttpVersion version,
                                         const std::string& method,
