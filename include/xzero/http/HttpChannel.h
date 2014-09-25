@@ -97,6 +97,7 @@ class XZERO_API HttpChannel : public HttpListener {
 
  protected:
   virtual std::unique_ptr<HttpOutput> createOutput();
+  void handleRequest();
 
  protected:
   HttpChannelState state_;
