@@ -26,3 +26,34 @@
 - [ ] UdpConnector
 - [ ] SSL support, `SslConnector` & `SslEndPoint` chaining to real
       connector/endpoint.
+
+## Unit Tests
+
+### HTTP/1 (rfc7230)
+
+- [ ] Pipelined requests
+- [ ] HTTP/1.1 closed
+- [ ] HTTP/1.1 keep-alive
+- [ ] "Connection" header management (custom values)
+
+### HTTP Semantics & Content (rfc7231)
+
+- [x] request path: null-byte injection protection
+- [ ] request path: URI decoding
+- [ ] request header "Expect: 100-continue" (5.1.1)
+- [ ] unhandled exceptions should cause a 500
+- [ ] HTTP version not supported (6.6.6)
+
+### Conditional Requests (rfc7232) & Ranged Requests (rfc7273)
+
+Tests `HttpFileHandler` for conditional requests, ranged requests,
+and client side cache.
+
+### Caching (rfc7234)
+
+... maybe some `HttpCacheHandler` API
+
+### Authentication (rfc7235)
+
+... maybe some `HttpAuthHandler` API
+
