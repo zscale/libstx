@@ -86,9 +86,6 @@ class XZERO_API HttpChannel : public HttpListener {
    */
   void completed();
 
- protected:
-  virtual std::unique_ptr<HttpOutput> createOutput();
-
   // HttpListener overrides
   bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
                       int versionMajor, int versionMinor) override;
@@ -97,6 +94,9 @@ class XZERO_API HttpChannel : public HttpListener {
   bool onMessageContent(const BufferRef& chunk) override;
   bool onMessageEnd() override;
   void onProtocolError(HttpStatus code, const std::string& message) override;
+
+ protected:
+  virtual std::unique_ptr<HttpOutput> createOutput();
 
  protected:
   HttpChannelState state_;

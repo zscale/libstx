@@ -11,6 +11,8 @@ namespace xzero {
  */
 class XZERO_API HttpResponseInfo : public HttpInfo {
  public:
+  HttpResponseInfo();
+
   HttpResponseInfo(HttpVersion version, HttpStatus status,
                    const std::string& reason, bool isHeadResponse,
                    size_t contentLength, const HeaderFieldList& headers);
@@ -28,6 +30,11 @@ class XZERO_API HttpResponseInfo : public HttpInfo {
   std::string reason_;
   bool isHeadResponse_;
 };
+
+inline HttpResponseInfo::HttpResponseInfo()
+    : HttpResponseInfo(HttpVersion::UNKNOWN, HttpStatus::Undefined, "", false,
+                       0, {}) {
+}
 
 inline HttpResponseInfo::HttpResponseInfo(HttpVersion version,
                                           HttpStatus status,
