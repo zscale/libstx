@@ -2,7 +2,6 @@
 
 #include <xzero/http/HttpTransport.h>
 #include <xzero/http/HttpHandler.h>
-#include <xzero/http/HttpRequestInfo.h>
 #include <xzero/http/HttpResponseInfo.h>
 #include <xzero/http/HttpChannel.h>
 #include <xzero/Buffer.h>
@@ -20,8 +19,9 @@ class XZERO_API MockTransport : public HttpTransport {
   explicit MockTransport(Executor* executor, const HttpHandler& handler);
   ~MockTransport();
 
-  void run(const HttpRequestInfo& requestInfo,
-           const std::string& requestBody = "");
+  void run(HttpVersion version, const std::string& method,
+           const std::string& entity, const HeaderFieldList& headers,
+           const std::string& body);
 
   // HttpTransport overrides
   void abort() override;
@@ -45,7 +45,6 @@ class XZERO_API MockTransport : public HttpTransport {
   Executor* executor_;
   HttpHandler handler_;
 
-  HttpRequestInfo requestInfo_;
   std::unique_ptr<HttpChannel> channel_;
   HttpResponseInfo responseInfo_;
   Buffer responseBody_;
