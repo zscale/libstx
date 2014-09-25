@@ -35,6 +35,9 @@ class XZERO_API HttpRequest {
   const HeaderFieldList& headers() const noexcept { return headers_; }
   HeaderFieldList& headers() { return headers_; }
 
+  const std::string& host() const noexcept { return host_; }
+  void setHost(const std::string& value);
+
   bool isSecure() const noexcept { return secure_; }
   void setSecure(bool secured) { secure_ = secured; }
 
@@ -58,6 +61,7 @@ class XZERO_API HttpRequest {
 
   bool secure_;
   bool expect100Continue_;
+  std::string host_;
 
   HeaderFieldList headers_;
 
