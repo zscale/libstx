@@ -15,6 +15,6 @@
 
 ### Feature Highlights
 
-* Generic core HTTP API with support for: HTTP, HTTPS, FCGI, SPDY, HTTP/2, ...
+* Generic core HTTP API with support for: HTTP (HTTPS, FCGI, HTTP/2, ...)
 * Unit Tests
 
