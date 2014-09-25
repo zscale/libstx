@@ -56,16 +56,16 @@ class XZERO_API MockTransport : public HttpTransport {
            const std::string& body);
 
   /** Retrieves the response message status line and headers. */
-  const HttpResponseInfo& responseInfo() const noexcept { return responseInfo_; }
+  const HttpResponseInfo& responseInfo() const noexcept;
 
   /** Retrieves the response message body. */
-  const Buffer& responseBody() const noexcept { return responseBody_; }
+  const Buffer& responseBody() const noexcept;
 
   /** Tests whether last this transport was aborted in last request handling. */
-  bool isAborted() const noexcept { return isAborted_; }
+  bool isAborted() const noexcept;
 
   /** Tests whether last message. */
-  bool isCompleted() const noexcept { return isCompleted_; }
+  bool isCompleted() const noexcept;
 
  private:
   // HttpTransport overrides
@@ -93,5 +93,23 @@ class XZERO_API MockTransport : public HttpTransport {
   HttpResponseInfo responseInfo_;
   Buffer responseBody_;
 };
+
+// {{{ inlines
+inline const HttpResponseInfo& MockTransport::responseInfo() const noexcept {
+  return responseInfo_;
+}
+
+inline const Buffer& MockTransport::responseBody() const noexcept {
+  return responseBody_;
+}
+
+inline bool MockTransport::isAborted() const noexcept {
+  return isAborted_;
+}
+
+inline bool MockTransport::isCompleted() const noexcept {
+  return isCompleted_;
+}
+// }}}
 
 } // namespace xzero
