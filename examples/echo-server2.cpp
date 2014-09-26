@@ -7,6 +7,7 @@
 #include <xzero/executor/ThreadedExecutor.h>
 #include <xzero/support/libev/LibevScheduler.h>
 #include <xzero/support/libev/LibevSelector.h>
+#include <xzero/support/libev/LibevClock.h>
 #include <xzero/sysconfig.h>
 #include <xzero/Buffer.h>
 #include <algorithm>
@@ -142,17 +143,20 @@ class LibevWorker : public ThreadedSelector::Worker { // {{{
   xzero::Selector* selector() override;
   xzero::Scheduler* scheduler() { return scheduler_.get(); }
   xzero::Executor* executor() { return scheduler(); }
+  xzero::WallClock* clock() { return clock_.get(); }
 
  private:
   ev::dynamic_loop loop_;
   std::unique_ptr<xzero::Selector> selector_;
   std::unique_ptr<xzero::Scheduler> scheduler_;
+  std::unique_ptr<xzero::WallClock> clock_;
 };
 
 LibevWorker::LibevWorker()
     : loop_(0),
       scheduler_(new xzero::support::LibevScheduler(loop_)),
-      selector_(new xzero::support::LibevSelector(loop_)) {
+      selector_(new xzero::support::LibevSelector(loop_)),
+      clock_(new xzero::support::LibevClock(loop_)) {
   static int i = 0;
   printf("Creating worker %d\n", i++);
 }
@@ -243,7 +247,7 @@ int main(int argc, char* argv[]) {
     LibevWorker* ew = static_cast<LibevWorker*>(worker);
 
     auto inet = std::unique_ptr<xzero::InetConnector>(new xzero::InetConnector(
-        "echo", ew->executor(), ew->scheduler(), ew->selector(),
+        "echo", ew->executor(), ew->scheduler(), ew->selector(), ew->clock(),
         xzero::IPAddress("0.0.0.0"), 3000, 128, true, true));
 
     inet->setBlocking(false);

@@ -8,6 +8,7 @@
 #include <xzero/executor/DirectExecutor.h>
 #include <xzero/support/libev/LibevScheduler.h>
 #include <xzero/support/libev/LibevSelector.h>
+#include <xzero/support/libev/LibevClock.h>
 
 using xzero::Buffer;
 using xzero::IPAddress;
@@ -61,10 +62,11 @@ class EchoFactory : public xzero::ConnectionFactory { // {{{
 // }}}
 std::unique_ptr<xzero::InetConnector> createInetConnector( // {{{
     const std::string& name, int port, xzero::Executor* executor,
-    xzero::Scheduler* scheduler, xzero::Selector* selector) {
+    xzero::Scheduler* scheduler, xzero::Selector* selector,
+    xzero::WallClock* clock) {
 
   std::unique_ptr<xzero::InetConnector> inetConnector(
-      new xzero::InetConnector(name, executor, scheduler, selector));
+      new xzero::InetConnector(name, executor, scheduler, selector, clock));
 
   inetConnector->open(IPAddress("0.0.0.0"), port, 128, true, true);
   inetConnector->setBlocking(false);
@@ -82,13 +84,14 @@ int main(int argc, const char* argv[]) {
   xzero::DirectExecutor executor(false);
   xzero::support::LibevScheduler scheduler(loop);
   xzero::support::LibevSelector selector(loop);
+  xzero::support::LibevClock clock(loop);
   xzero::Server server;
 
   auto localConnector = server.addConnector<xzero::LocalConnector>(&executor);
   localConnector->addConnectionFactory<EchoFactory>();
 
   auto inetConnector = createInetConnector("inet", 3000, &executor, &scheduler,
-                                           &selector);
+                                           &selector, &clock);
   inetConnector->addConnectionFactory<EchoFactory>();
   server.addConnector(std::move(inetConnector));
 

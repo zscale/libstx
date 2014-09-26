@@ -2,6 +2,7 @@
 
 #include <xzero/Api.h>
 #include <xzero/io/Selectable.h>
+#include <xzero/IdleTimeout.h>
 #include <xzero/net/EndPoint.h>
 #include <xzero/net/IPAddress.h>
 
@@ -63,6 +64,7 @@ class XZERO_API InetEndPoint : public EndPoint, public Selectable {
 
  private:
   InetConnector* connector_;
+  IdleTimeout idleTimeout_;
   int handle_;
   std::unique_ptr<SelectionKey> selectionKey_;
   bool isCorking_;

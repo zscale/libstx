@@ -10,6 +10,7 @@ namespace xzero {
 
 class Server;
 class Executor;
+class WallClock;
 class EndPoint;
 class ConnectionFactory;
 class ConnectionListener;
@@ -22,7 +23,7 @@ class XZERO_API Connector {
   /**
    * Initializes this connector.
    */
-  Connector(const std::string& name, Executor* executor);
+  Connector(const std::string& name, Executor* executor, WallClock* clock);
 
   virtual ~Connector();
 
@@ -107,6 +108,11 @@ class XZERO_API Connector {
   Executor* executor() const { return executor_; }
 
   /**
+   * Retrieves the wall clock that may be used for timeout management.
+   */
+  WallClock* clock() const { return clock_; }
+
+  /**
    * Adds an Connection listener that will be
    * automatically associated to newly created connections.
    */
@@ -119,6 +125,7 @@ class XZERO_API Connector {
   std::string name_;
   Server* server_;
   Executor* executor_;
+  WallClock* clock_;
 
   std::unordered_map<std::string, std::shared_ptr<ConnectionFactory>>
       connectionFactories_;

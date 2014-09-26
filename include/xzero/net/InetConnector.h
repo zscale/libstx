@@ -27,6 +27,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    * @param executor Executor service to run handlers on
    * @param scheduler Scheduler service to use for timeout management
    * @param selector Selector service to use for I/O multiplexing
+   * @param clock Wall clock used for timeout management.
    * @param ipaddress TCP/IP address to listen on
    * @param port TCP/IP port number to listen on
    * @param backlog TCP backlog for this listener.
@@ -36,7 +37,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    * @throw std::runtime_error on any kind of runtime error.
    */
   InetConnector(const std::string& name, Executor* executor,
-                Scheduler* scheduler, Selector* selector,
+                Scheduler* scheduler, Selector* selector, WallClock* clock,
                 const IPAddress& ipaddress, int port, int backlog,
                 bool reuseAddr, bool reusePort);
 
@@ -47,9 +48,10 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    * @param executor Executor service to run on
    * @param scheduler Scheduler service to use for timeout management
    * @param selector Selector service to use for I/O multiplexing
+   * @param clock Wall clock used for timeout management.
    */
   InetConnector(const std::string& name, Executor* executor,
-                Scheduler* scheduler, Selector* selector);
+                Scheduler* scheduler, Selector* selector, WallClock* clock);
 
   ~InetConnector();
 

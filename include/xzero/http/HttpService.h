@@ -14,6 +14,7 @@ class InetConnector;
 class HttpRequest;
 class HttpResponse;
 class Executor;
+class WallClock;
 class Scheduler;
 class Selector;
 class IPAddress;
@@ -40,13 +41,15 @@ class XZERO_API HttpService {
    * @param executor the executor service to run tasks on.
    * @param scheduler where to schedule timed tasks on.
    * @param selector the I/O selector service to use for non-blocking I/O.
+   * @param clock The wall clock that may be used for timeout management.
    * @param ipaddress the TCP/IP bind address.
    * @param port the TCP/IP port to listen on.
    * @param backlog the number of connections allowed to be queued in kernel.
    *
    */
   InetConnector* configureInet(Executor* executor, Scheduler* scheduler,
-                               Selector* selector, const IPAddress& ipaddress,
+                               Selector* selector, WallClock* clock,
+                               const IPAddress& ipaddress,
                                int port, int backlog = 128);
 
   /** Configures a local connector. */
