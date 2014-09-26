@@ -2,6 +2,7 @@
 
 ### Milestone 1
 
+- [ ] fix threaded http segv
 - [ ] net: EndPoint timeout management
 
 ### Milestone 2
