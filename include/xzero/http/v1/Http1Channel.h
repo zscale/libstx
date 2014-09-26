@@ -7,11 +7,14 @@
 namespace xzero {
 namespace http1 {
 
-class HttpChannel : public xzero::HttpChannel {
+class Http1Channel : public xzero::HttpChannel {
  public:
-  HttpChannel(HttpTransport* transport, const HttpHandler& handler,
-              std::unique_ptr<xzero::HttpInput>&& input);
-  ~HttpChannel();
+  Http1Channel(HttpTransport* transport,
+              const HttpHandler& handler,
+              std::unique_ptr<HttpInput>&& input,
+              size_t maxRequestUriLength,
+              size_t maxRequestBodyLength);
+  ~Http1Channel();
 
   bool isPersistent() const noexcept { return persistent_; }
   void setPersistent(bool value) noexcept { persistent_ = value; }

@@ -31,8 +31,11 @@ enum class HttpChannelState {
  */
 class XZERO_API HttpChannel : public HttpListener {
  public:
-  HttpChannel(HttpTransport* transport, const HttpHandler& handler,
-              std::unique_ptr<HttpInput>&& input);
+  HttpChannel(HttpTransport* transport,
+              const HttpHandler& handler,
+              std::unique_ptr<HttpInput>&& input,
+              size_t maxRequestUriLength,
+              size_t maxRequestBodyLength);
   ~HttpChannel();
 
   /**
@@ -100,6 +103,8 @@ class XZERO_API HttpChannel : public HttpListener {
   void handleRequest();
 
  protected:
+  size_t maxRequestUriLength_;
+  size_t maxRequestBodyLength_;
   HttpChannelState state_;
   HttpTransport* transport_;
   std::unique_ptr<HttpRequest> request_;

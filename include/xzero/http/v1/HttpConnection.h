@@ -16,8 +16,7 @@ class HttpDateGenerator;
 
 namespace http1 {
 
-class HttpInput;
-class HttpChannel;
+class Http1Channel;
 
 /**
  * @brief Implements a HTTP/1.1 transport connection.
@@ -25,7 +24,12 @@ class HttpChannel;
 class XZERO_API HttpConnection : public HttpTransport {
  public:
   HttpConnection(std::shared_ptr<EndPoint> endpoint,
-                 const HttpHandler& handler, HttpDateGenerator* dateGenerator);
+                 const HttpHandler& handler,
+                 HttpDateGenerator* dateGenerator,
+                 size_t maxRequestUriLength,
+                 size_t maxRequestBodyLength,
+                 size_t maxRequestCount,
+                 TimeSpan maxKeepAlive);
   ~HttpConnection();
 
   void onOpen() override;
@@ -57,7 +61,7 @@ class XZERO_API HttpConnection : public HttpTransport {
   EndPointWriter writer_;
   CompletionHandler onComplete_;
 
-  std::unique_ptr<HttpChannel> channel_;
+  std::unique_ptr<Http1Channel> channel_;
   TimeSpan maxKeepAlive_;
   size_t requestCount_;
   size_t requestMax_;
