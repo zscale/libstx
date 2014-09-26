@@ -11,10 +11,10 @@ class HttpConnection;
 /**
  * HTTP/1 message body consumer.
  */
-class HttpInput : public xzero::HttpInput {
+class Http1Input : public xzero::HttpInput {
  public:
-  explicit HttpInput(HttpConnection* connection);
-  ~HttpInput();
+  explicit Http1Input(HttpConnection* connection);
+  ~Http1Input();
 
   int read(Buffer* result) override;
   size_t readLine(Buffer* result) override;

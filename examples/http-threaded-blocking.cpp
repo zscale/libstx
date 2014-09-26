@@ -4,7 +4,7 @@
 #include <xzero/http/HttpRequest.h>
 #include <xzero/http/HttpResponse.h>
 #include <xzero/http/HttpOutput.h>
-#include <xzero/http/v1/HttpConnectionFactory.h>
+#include <xzero/http/v1/Http1ConnectionFactory.h>
 #include <xzero/support/libev/LibevScheduler.h>
 #include <xzero/support/libev/LibevSelector.h>
 #include <xzero/support/libev/LibevClock.h>
@@ -21,7 +21,8 @@ int main() {
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   inet->setBlocking(true);
 
-  auto http = inet->addConnectionFactory<xzero::http1::HttpConnectionFactory>();
+  auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(
+      100, 512, 5, xzero::TimeSpan::fromMinutes(3));
 
   http->setHandler([](xzero::HttpRequest* request, xzero::HttpResponse* response) {
     const xzero::Buffer body = "Hello, World\n";

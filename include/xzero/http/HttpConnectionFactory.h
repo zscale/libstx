@@ -17,7 +17,11 @@ class WallClock;
  */
 class XZERO_API HttpConnectionFactory : public ConnectionFactory {
  public:
-  explicit HttpConnectionFactory(const std::string& protocolName);
+  HttpConnectionFactory(
+      const std::string& protocolName,
+      size_t maxRequestUriLength,
+      size_t maxRequestBodyLength);
+
   ~HttpConnectionFactory();
 
   const HttpHandler& handler() const { return handler_; }
@@ -30,7 +34,12 @@ class XZERO_API HttpConnectionFactory : public ConnectionFactory {
 
   Connection* configure(Connection* connection, Connector* connector) override;
 
+  size_t maxRequestUriLength() const noexcept { return maxRequestUriLength_; }
+  size_t maxRequestBodyLength() const noexcept { return maxRequestBodyLength_; }
+
  private:
+  size_t maxRequestUriLength_;
+  size_t maxRequestBodyLength_;
   HttpHandler handler_;
   WallClock* clock_;
   std::unique_ptr<HttpDateGenerator> dateGenerator_;

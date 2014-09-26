@@ -33,10 +33,23 @@ class XZERO_API MockTransport : public HttpTransport {
   /**
    * Initializes the mock transport object.
    *
-   * @param executor the executor service used for completion handlers.
-   * @param handler the handler to run for incoming HTTP request messages.
+   * @param executor The executor service used for completion handlers.
+   * @param handler The handler to run for incoming HTTP request messages.
    */
-  explicit MockTransport(Executor* executor, const HttpHandler& handler);
+  MockTransport(Executor* executor, const HttpHandler& handler);
+
+  /**
+   * Initializes the mock transport object.
+   *
+   * @param executor The executor service used for completion handlers.
+   * @param handler The handler to run for incoming HTTP request messages.
+   * @param maxRequestUriLength Maximum request URI length.
+   * @param maxRequestBodyLength Maximum request body length.
+   */
+  MockTransport(Executor* executor,
+                const HttpHandler& handler,
+                size_t maxRequestUriLength,
+                size_t maxRequestBodyLength);
   ~MockTransport();
 
   /**
@@ -86,6 +99,8 @@ class XZERO_API MockTransport : public HttpTransport {
  private:
   Executor* executor_;
   HttpHandler handler_;
+  size_t maxRequestUriLength_;
+  size_t maxRequestBodyLength_;
 
   bool isAborted_;
   bool isCompleted_;
