@@ -7,7 +7,10 @@
 namespace xzero {
 namespace http1 {
 
-class XZERO_API Http1ConnectionFactory : public xzero::HttpConnectionFactory {
+/**
+ * Connection factory for HTTP/1 connections.
+ */
+class XZERO_API Http1ConnectionFactory : public HttpConnectionFactory {
  public:
   Http1ConnectionFactory(
       size_t maxRequestUriLength,
@@ -17,14 +20,14 @@ class XZERO_API Http1ConnectionFactory : public xzero::HttpConnectionFactory {
 
   ~Http1ConnectionFactory();
 
-  Connection* create(Connector* connector,
-                     std::shared_ptr<EndPoint> endpoint) override;
-
   size_t maxRequestCount() const noexcept { return maxRequestCount_; }
   void setMaxRequestCount(size_t value) { maxRequestCount_ = value; }
 
   TimeSpan maxKeepAlive() const noexcept { return maxKeepAlive_; }
   void setMaxKeepAlive(TimeSpan value) { maxKeepAlive_ = value; }
+
+  Connection* create(Connector* connector,
+                     std::shared_ptr<EndPoint> endpoint) override;
 
  private:
   size_t maxRequestCount_;

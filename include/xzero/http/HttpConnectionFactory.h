@@ -24,6 +24,12 @@ class XZERO_API HttpConnectionFactory : public ConnectionFactory {
 
   ~HttpConnectionFactory();
 
+  size_t maxRequestUriLength() const noexcept { return maxRequestUriLength_; }
+  void setMaxRequestUriLength(size_t value) { maxRequestUriLength_ = value; }
+
+  size_t maxRequestBodyLength() const noexcept { return maxRequestBodyLength_; }
+  void setMaxRequestBodyLength(size_t value) { maxRequestBodyLength_ = value; }
+
   const HttpHandler& handler() const { return handler_; }
   void setHandler(HttpHandler&& handler);
 
@@ -33,9 +39,6 @@ class XZERO_API HttpConnectionFactory : public ConnectionFactory {
   HttpDateGenerator* dateGenerator() const { return dateGenerator_.get(); }
 
   Connection* configure(Connection* connection, Connector* connector) override;
-
-  size_t maxRequestUriLength() const noexcept { return maxRequestUriLength_; }
-  size_t maxRequestBodyLength() const noexcept { return maxRequestBodyLength_; }
 
  private:
   size_t maxRequestUriLength_;
