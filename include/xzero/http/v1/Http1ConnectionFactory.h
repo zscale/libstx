@@ -13,6 +13,7 @@ namespace http1 {
 class XZERO_API Http1ConnectionFactory : public HttpConnectionFactory {
  public:
   Http1ConnectionFactory(
+      WallClock* clock,
       size_t maxRequestUriLength,
       size_t maxRequestBodyLength,
       size_t maxRequestCount,

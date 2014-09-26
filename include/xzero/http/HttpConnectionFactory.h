@@ -19,6 +19,7 @@ class XZERO_API HttpConnectionFactory : public ConnectionFactory {
  public:
   HttpConnectionFactory(
       const std::string& protocolName,
+      WallClock* clock,
       size_t maxRequestUriLength,
       size_t maxRequestBodyLength);
 
@@ -34,7 +35,6 @@ class XZERO_API HttpConnectionFactory : public ConnectionFactory {
   void setHandler(HttpHandler&& handler);
 
   WallClock* clock() const { return clock_; }
-  void setClock(WallClock* clock);
 
   HttpDateGenerator* dateGenerator() const { return dateGenerator_.get(); }
 

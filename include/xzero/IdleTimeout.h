@@ -19,7 +19,7 @@ class XZERO_API IdleTimeout {
   ~IdleTimeout();
 
   void setTimeout(TimeSpan value);
-  TimeSpan getTimeout() const;
+  TimeSpan timeout() const;
 
   void setCallback(std::function<void()>&& cb);
   void clearCallback();

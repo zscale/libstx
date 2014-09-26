@@ -6,6 +6,7 @@
 #include <xzero/net/IPAddress.h>
 #include <xzero/support/libev/LibevScheduler.h>
 #include <xzero/support/libev/LibevSelector.h>
+#include <xzero/support/libev/LibevClock.h>
 #include <ev++.h>
 
 /**
@@ -67,12 +68,13 @@ int main(int argc, const char* argv[]) {
   ev::loop_ref loop = ev::default_loop(0);
   xzero::support::LibevScheduler scheduler(loop);
   xzero::support::LibevSelector selector(loop);
+  xzero::support::LibevClock clock(loop);
 
   MyHandler myHandler;
   xzero::HttpService::BuiltinAssetHandler builtinAssets;
   xzero::HttpService httpService;
 
-  httpService.configureInet(&scheduler, &scheduler, &selector,
+  httpService.configureInet(&scheduler, &scheduler, &selector, &clock,
                             xzero::IPAddress("0.0.0.0"), 3000);
   httpService.addHandler(&myHandler);
   httpService.addHandler(&builtinAssets);

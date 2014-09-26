@@ -28,11 +28,11 @@ int main(int argc, const char* argv[]) {
 
   std::string docroot = argc == 2 ? argv[1] : ".";
   xzero::Server server;
-  auto inet = server.addConnector<xzero::InetConnector>("http", &scheduler,
-      &scheduler, &selector, xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
+  auto inet = server.addConnector<xzero::InetConnector>(
+      "http", &scheduler, &scheduler, &selector, &clock,
+      xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(
-      100, 512, 5, xzero::TimeSpan::fromMinutes(3));
-  http->setClock(&clock);
+      &clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));
 
   http->setHandler([&](xzero::HttpRequest* request, xzero::HttpResponse* response) {
     xzero::HttpFileHandler fileHandler(true, true, true);

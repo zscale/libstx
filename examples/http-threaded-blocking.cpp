@@ -14,15 +14,16 @@
 int main() {
   xzero::ThreadedExecutor threadedExecutor;
   xzero::Server server;
+  xzero::WallClock* clock = xzero::WallClock::system();
   bool shutdown = false;
 
   auto inet = server.addConnector<xzero::InetConnector>(
-      "http", &threadedExecutor, nullptr, nullptr,
+      "http", &threadedExecutor, nullptr, nullptr, clock,
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   inet->setBlocking(true);
 
   auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(
-      100, 512, 5, xzero::TimeSpan::fromMinutes(3));
+      clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));
 
   http->setHandler([](xzero::HttpRequest* request, xzero::HttpResponse* response) {
     const xzero::Buffer body = "Hello, World\n";
