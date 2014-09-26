@@ -195,7 +195,7 @@ class XZERO_API HttpParser {
   ssize_t contentLength_;  //!< content length of whole content or current chunk
 };
 
-XZERO_API std::string tos(http1::HttpParser::State state);
+XZERO_API std::string to_string(http1::HttpParser::State state);
 
 }  // namespace http1
 
