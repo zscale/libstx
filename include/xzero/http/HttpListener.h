@@ -2,6 +2,7 @@
 
 #include <xzero/Api.h>
 #include <xzero/Buffer.h>
+#include <xzero/http/HttpVersion.h>
 #include <xzero/http/HttpStatus.h>
 #include <memory>
 
@@ -23,20 +24,18 @@ class XZERO_API HttpListener {
    *
    * @param method the request-method (e.g. GET or POST)
    * @param entity the requested URI (e.g. /index.html)
-   * @param versionMajor HTTP major version (e.g. 0 for 0.9)
-   * @param versionMinor HTTP minor version (e.g. 9 for 0.9)
+   * @param version HTTP version (e.g. 0.9 or 2.0)
    */
   virtual bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
-                              int versionMajor, int versionMinor);
+                              HttpVersion version);
 
   /** HTTP/1.1 response Status-Line, that has been fully parsed.
    *
-   * @param versionMajor HTTP major version (e.g. 0 for 0.9)
-   * @param versionMinor HTTP minor version (e.g. 9 for 0.9)
+   * @param version HTTP version (e.g. 0.9 or 2.0)
    * @param code HTTP response status code (e.g. 200 or 404)
    * @param text HTTP response status text (e.g. "Ok" or "Not Found")
    */
-  virtual bool onMessageBegin(int versionMajor, int versionMinor, int code,
+  virtual bool onMessageBegin(HttpVersion version, HttpStatus code,
                               const BufferRef& text);
 
   /**

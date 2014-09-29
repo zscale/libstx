@@ -183,8 +183,8 @@ class XZERO_API HttpParser {
   int versionMinor_;  //!< HTTP request/response version minor
 
   // status-line
-  int code_;           //!< response status code
-  BufferRef message_;  //!< response status message
+  int code_;          //!< response status code
+  BufferRef message_; //!< response status message
 
   // current parsed header
   BufferRef name_;
