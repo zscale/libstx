@@ -251,24 +251,61 @@ bool operator!=(PodType (&b)[N], const BufferBase<T>& a) {
 }
 // }}}
 // {{{ BufferRef
+/**
+ * Represents any arbitrary read-only byte-buffer region.
+ *
+ * The underlying buffer is not managed by this class, that means, the
+ * buffer reference owner has to make sure the underlying buffer exists
+ * during the whole lifetime of this buffer reference.
+ */
 class XZERO_API BufferRef : public BufferBase<char*> {
  public:
+  /** Initializes an empty buffer reference. */
   BufferRef() : BufferBase<char*>() {}
+
+  /**
+   * Initializes buffer reference with given vector.
+   *
+   * @param data buffer start
+   * @param size number of bytes this buffer holds
+   */
   BufferRef(const char* data, size_t size)
       : BufferBase<char*>((data_type)data, size) {}
-  BufferRef(const BufferRef& v) : BufferBase<char*>(v) {}
+
+  /**
+   * Initializes buffer reference with pointer to given std::string.
+   */
   BufferRef(const std::string& v)
       : BufferBase<char*>((data_type)v.data(), v.size()) {}
+
+  /**
+   * Initializes buffer reference with given POD string literal.
+   */
   template <typename PodType, size_t N>
   BufferRef(PodType (&value)[N])
       : BufferBase<char*>((data_type)value, N - 1) {}
 
+  BufferRef(const BufferRef& v) : BufferBase<char*>(v) {}
+
   BufferRef& operator=(const BufferRef& v);
 
-  // random access
+  /**
+   * Random access operator.
+   */
   const reference_type operator[](size_t index) const;
 
+  /**
+   * Shifts the (left) start pointer by given @p offset bytes to the right.
+   *
+   * @p offset number of bytes to shift the left start-pointer to the right.
+   */
   void shl(ssize_t offset = 1);
+
+  /**
+   * Shifts the (right) end pointer by given @p offset bytes to the right.
+   *
+   * @p offset number of bytes to shift the right end-pointer to the right.
+   */
   void shr(ssize_t offset = 1);
 
   using BufferBase<char*>::dump;
@@ -303,6 +340,7 @@ class XZERO_API BufferRef : public BufferBase<char*> {
   reverse_iterator rbegin() const {
     return reverse_iterator((BufferRef*)this, size() - 1);
   }
+
   reverse_iterator rend() const {
     return reverse_iterator((BufferRef*)this, -1);
   }
