@@ -91,7 +91,7 @@ class XZERO_API HttpChannel : public HttpListener {
 
   // HttpListener overrides
   bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
-                      int versionMajor, int versionMinor) override;
+                      HttpVersion version) override;
   bool onMessageHeader(const BufferRef& name, const BufferRef& value) override;
   bool onMessageHeaderEnd() override;
   bool onMessageContent(const BufferRef& chunk) override;
