@@ -34,7 +34,6 @@ class XZERO_API HttpInfo {
     return contentLength_ != static_cast<size_t>(-1);
   }
 
-
  protected:
   HttpVersion version_;
   HeaderFieldList headers_;
