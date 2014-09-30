@@ -12,6 +12,8 @@ namespace xzero {
 class XZERO_API HttpResponseInfo : public HttpInfo {
  public:
   HttpResponseInfo();
+  HttpResponseInfo(HttpResponseInfo&& other);
+  HttpResponseInfo& operator=(HttpResponseInfo&& other);
 
   HttpResponseInfo(HttpVersion version, HttpStatus status,
                    const std::string& reason, bool isHeadResponse,
@@ -34,6 +36,27 @@ class XZERO_API HttpResponseInfo : public HttpInfo {
 inline HttpResponseInfo::HttpResponseInfo()
     : HttpResponseInfo(HttpVersion::UNKNOWN, HttpStatus::Undefined, "", false,
                        0, {}) {
+}
+
+inline HttpResponseInfo::HttpResponseInfo(HttpResponseInfo&& other)
+  : HttpResponseInfo(other.version_, other.status_, "", other.isHeadResponse_,
+                     other.contentLength_, {}) {
+
+  reason_.swap(other.reason_);
+  headers_.swap(other.headers_);
+  other.contentLength_ = 0;
+}
+
+inline HttpResponseInfo& HttpResponseInfo::operator=(HttpResponseInfo&& other) {
+  version_ = other.version_;
+  contentLength_ = other.contentLength_;
+  headers_ = std::move(other.headers_);
+
+  status_ = other.status_;
+  reason_ = std::move(other.reason_);
+  isHeadResponse_ = other.isHeadResponse_;
+
+  return *this;
 }
 
 inline HttpResponseInfo::HttpResponseInfo(HttpVersion version,

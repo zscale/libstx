@@ -38,15 +38,18 @@ class XZERO_API HttpConnection : public HttpTransport {
   void abort() override;
   void completed() override;
 
+  void send(HttpResponseInfo&& responseInfo, Buffer&& chunk,
+            CompletionHandler&& onComplete) override;
   void send(HttpResponseInfo&& responseInfo, const BufferRef& chunk,
             CompletionHandler&& onComplete) override;
-
+  void send(Buffer&& chunk, CompletionHandler&& onComplete) override;
   void send(const BufferRef& chunk, CompletionHandler&& onComplete) override;
   void send(FileRef&& chunk, CompletionHandler&& onComplete) override;
 
   void setInputBufferSize(size_t size) override;
 
  private:
+  void patchResponseInfo(HttpResponseInfo& info);
   void onFillable() override;
   void onFlushable() override;
   void onInterestFailure(const std::exception& error) override;

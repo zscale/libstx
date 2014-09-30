@@ -42,19 +42,18 @@ class XZERO_API HttpOutput {
    *
    * @param data the data chunk to write to the client.
    * @param completed Callback to invoke after completion.
-   *
-   * The buffer ref must stay valid until fully written to the client.
-   * The callee will not create any copy of it.
    */
-  virtual void write(const BufferRef& data, CompletionHandler&& completed = nullptr);
+  virtual void write(Buffer&& data, CompletionHandler&& completed = nullptr);
 
   /**
    * Writes given buffer.
    *
    * @param data the data chunk to write to the client.
    * @param completed Callback to invoke after completion.
+   *
+   * @note You must ensure the data chunk is available until sending completed!
    */
-  virtual void write(Buffer&& data, CompletionHandler&& completed = nullptr);
+  virtual void write(const BufferRef& data, CompletionHandler&& completed = nullptr);
 
   /**
    * Writes the data received from the given file descriptor @p file.
