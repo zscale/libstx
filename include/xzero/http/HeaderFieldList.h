@@ -47,6 +47,8 @@ class XZERO_API HeaderFieldList {
    */
   void reset();
 
+  void swap(HeaderFieldList& other);
+
  private:
   std::list<HeaderField> entries_;
 };
@@ -57,6 +59,10 @@ inline bool HeaderFieldList::empty() const {
 
 inline size_t HeaderFieldList::size() const {
   return entries_.size();
+}
+
+inline void HeaderFieldList::swap(HeaderFieldList& other) {
+  entries_.swap(other.entries_);
 }
 
 }  // namespace xzero
