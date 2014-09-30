@@ -8,6 +8,7 @@
 namespace xzero {
 
 class FileRef;
+class HttpResponseInfo;
 class HttpTransport;
 class HttpRequest;
 class HttpResponse;
@@ -53,6 +54,19 @@ class XZERO_API HttpChannel : public HttpListener {
    *
    * The response will auto-commit the response status line and
    * response headers if not done yet.
+   */
+  void send(Buffer&& data, CompletionHandler&& onComplete);
+
+  /**
+   * Sends a response body chunk @p data.
+   *
+   * @param data body chunk
+   * @param onComplete callback invoked when sending chunk is succeed/failed.
+   *
+   * The response will auto-commit the response status line and
+   * response headers if not done yet.
+   *
+   * @note You must ensure the data chunk is available until sending completed!
    */
   void send(const BufferRef& data, CompletionHandler&& onComplete);
 
@@ -101,6 +115,7 @@ class XZERO_API HttpChannel : public HttpListener {
  protected:
   virtual std::unique_ptr<HttpOutput> createOutput();
   void handleRequest();
+  HttpResponseInfo commit();
 
  protected:
   size_t maxRequestUriLength_;

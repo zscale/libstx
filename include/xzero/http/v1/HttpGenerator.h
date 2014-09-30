@@ -38,6 +38,8 @@ class XZERO_API HttpGenerator {
    * @param last Boolean value, indicating that this @p chunk is the last one.
    * @param output Target to write the generated (partial) HTTP message to.
    */
+  void generateRequest(const HttpRequestInfo& info, Buffer&& chunk,
+                       bool last, EndPointWriter* output);
   void generateRequest(const HttpRequestInfo& info, const BufferRef& chunk,
                        bool last, EndPointWriter* output);
 
@@ -49,6 +51,8 @@ class XZERO_API HttpGenerator {
    * @param last Boolean value, indicating that this @p chunk is the last one.
    * @param output Target to write the generated (partial) HTTP message to.
    */
+  void generateResponse(const HttpResponseInfo& info, Buffer&& chunk,
+                        bool last, EndPointWriter* output);
   void generateResponse(const HttpResponseInfo& info, const BufferRef& chunk,
                         bool last, EndPointWriter* output);
 
@@ -59,6 +63,7 @@ class XZERO_API HttpGenerator {
    * @param last Boolean value, indicating that this @p chunk is the last one.
    * @param output Target to write the generated (partial) HTTP message to.
    */
+  void generateBody(Buffer&& chunk, bool last, EndPointWriter* output);
   void generateBody(const BufferRef& chunk, bool last, EndPointWriter* output);
 
   /**
@@ -74,6 +79,8 @@ class XZERO_API HttpGenerator {
   void generateRequestLine(const HttpRequestInfo& info);
   void generateResponseLine(const HttpResponseInfo& info);
   void generateHeaders(const HttpInfo& info);
+  void generateResponseInfo(const HttpResponseInfo& info,
+                            EndPointWriter* output);
   void flushBuffer(EndPointWriter* output);
 
  private:
