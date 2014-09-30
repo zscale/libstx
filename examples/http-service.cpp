@@ -3,11 +3,23 @@
 #include <xzero/http/HttpResponse.h>
 #include <xzero/http/HttpInput.h>
 #include <xzero/http/HttpOutput.h>
+#include <xzero/http/HttpOutputFilter.h>
 #include <xzero/net/IPAddress.h>
 #include <xzero/support/libev/LibevScheduler.h>
 #include <xzero/support/libev/LibevSelector.h>
 #include <xzero/support/libev/LibevClock.h>
+#include <cctype>
 #include <ev++.h>
+
+class Capslock : public xzero::HttpOutputFilter {
+ public:
+  void filter(const xzero::BufferRef& input, xzero::Buffer* output) override {
+    output->reserve(input.size());
+    for (char ch: input) {
+      output->push_back(static_cast<char>(std::toupper(ch)));
+    }
+  }
+};
 
 /**
  * Some custom HTTP request demo-handler.
@@ -24,6 +36,21 @@ class MyHandler : public xzero::HttpService::Handler {
 
     if (request->path() == "/error") {
       response->sendError(xzero::HttpStatus::BadRequest, "Custom Error");
+      return true;
+    }
+
+    if (request->path() == "/capslock-filter") {
+      response->setStatus(xzero::HttpStatus::Ok);
+
+      xzero::Buffer body;
+      for (const auto& field: request->headers())
+        body << field.name() << " = " << field.value() << "\n";
+
+      static Capslock capslock;
+      response->output()->addFilter(&capslock);
+      response->setContentLength(body.size());
+      response->output()->write(std::move(body));
+      response->completed();
       return true;
     }
 

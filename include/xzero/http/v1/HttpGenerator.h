@@ -75,6 +75,16 @@ class XZERO_API HttpGenerator {
    */
   void generateBody(FileRef&& chunk, bool last, EndPointWriter* output);
 
+  /**
+   * Retrieves the number of bytes pending for the content.
+   */
+  size_t pendingContentLength() const noexcept { return contentLength_; }
+
+  /**
+   * Retrieves boolean indicating whether chunked response is generated.
+   */
+  bool isChunked() const noexcept { return chunked_; }
+
  private:
   void generateRequestLine(const HttpRequestInfo& info);
   void generateResponseLine(const HttpResponseInfo& info);

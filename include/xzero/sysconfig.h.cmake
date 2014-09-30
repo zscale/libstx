@@ -80,6 +80,7 @@
 #cmakedefine HAVE_SENDFILE
 #cmakedefine HAVE_POSIX_FADVISE
 #cmakedefine HAVE_READAHEAD
+#cmakedefine HAVE_PREAD
 #cmakedefine HAVE_SYSCONF
 #cmakedefine HAVE_PATHCONF
 #cmakedefine HAVE_ACCEPT4
