@@ -275,8 +275,10 @@ class XZERO_API BufferRef : public BufferBase<char*> {
   /**
    * Initializes buffer reference with pointer to given std::string.
    */
-  BufferRef(const std::string& v)
+  explicit BufferRef(const std::string& v)
       : BufferBase<char*>((data_type)v.data(), v.size()) {}
+
+  BufferRef(const BufferRef& v) : BufferBase<char*>(v) {}
 
   /**
    * Initializes buffer reference with given POD string literal.
@@ -284,8 +286,6 @@ class XZERO_API BufferRef : public BufferBase<char*> {
   template <typename PodType, size_t N>
   BufferRef(PodType (&value)[N])
       : BufferBase<char*>((data_type)value, N - 1) {}
-
-  BufferRef(const BufferRef& v) : BufferBase<char*>(v) {}
 
   BufferRef& operator=(const BufferRef& v);
 
