@@ -39,7 +39,7 @@ class XZERO_API HttpResponse {
   bool hasStatus() const noexcept { return status_ != HttpStatus::Undefined; }
 
   const std::string& reason() const noexcept { return reason_; }
-  void setReason(const std::string& val) { reason_ = val; }
+  void setReason(const std::string& val);
 
   void setContentType(const std::string& value);
   const std::string& contentType() const;
