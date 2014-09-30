@@ -4,12 +4,13 @@
 #include <xzero/Buffer.h>
 #include <xzero/CompletionHandler.h>
 #include <functional>
-#include <deque>
+#include <list>
 
 namespace xzero {
 
 class FileRef;
 class HttpChannel;
+class HttpOutputFilter;
 
 /**
  * Represents the HTTP response body producer API.
@@ -22,17 +23,36 @@ class XZERO_API HttpOutput {
   virtual void recycle();
 
   /**
+   * Adds a custom output-filter.
+   *
+   * @param filter the output filter to apply to the output body.
+   *
+   * The filter will not take over ownership. Make sure the filter is
+   * available for the whole time the response is generated.
+   */
+  void addFilter(HttpOutputFilter* filter);
+
+  /**
+   * Removes all output-filters.
+   */
+  void removeAllFilters();
+
+  /**
    * Writes given C-string @p cstr to the client.
    *
-   * @param cstr the null-terminated data chunk to write to the client.
+   * @param cstr the null-terminated string that is being copied
+   *             into the response body.
    * @param completed Callback to invoke after completion.
+   *
+   * The C string will be copied into the response body.
    */
   virtual void write(const char* cstr, CompletionHandler&& completed = nullptr);
 
   /**
    * Writes given string @p str to the client.
    *
-   * @param str the string chunk to write to the client.
+   * @param str the string chunk to write to the client. The string will be
+   *            copied.
    * @param completed Callback to invoke after completion.
    */
   virtual void write(const std::string& str, CompletionHandler&& completed = nullptr);
@@ -40,7 +60,7 @@ class XZERO_API HttpOutput {
   /**
    * Writes given buffer.
    *
-   * @param data the data chunk to write to the client.
+   * @param data The data chunk to write to the client.
    * @param completed Callback to invoke after completion.
    */
   virtual void write(Buffer&& data, CompletionHandler&& completed = nullptr);
@@ -48,7 +68,7 @@ class XZERO_API HttpOutput {
   /**
    * Writes given buffer.
    *
-   * @param data the data chunk to write to the client.
+   * @param data The data chunk to write to the client.
    * @param completed Callback to invoke after completion.
    *
    * @note You must ensure the data chunk is available until sending completed!
@@ -70,6 +90,7 @@ class XZERO_API HttpOutput {
 
  private:
   HttpChannel* channel_;
+  std::list<HttpOutputFilter*> filters_;
 };
 
 }  // namespace xzero
