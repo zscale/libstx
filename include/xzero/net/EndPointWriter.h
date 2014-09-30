@@ -51,6 +51,7 @@ class XZERO_API EndPointWriter {
  private:
   class Chunk;
   class BufferChunk;
+  class BufferRefChunk;
   class FileChunk;
 
   std::deque<std::unique_ptr<Chunk>> chunks_;
@@ -79,6 +80,18 @@ class XZERO_API EndPointWriter::BufferChunk : public Chunk {
 
  private:
   Buffer data_;
+  size_t offset_;
+};
+
+class XZERO_API EndPointWriter::BufferRefChunk : public Chunk {
+ public:
+  explicit BufferRefChunk(const BufferRef& buffer)
+      : data_(buffer), offset_(0) {}
+
+  bool transferTo(EndPoint* sink) override;
+
+ private:
+  BufferRef data_;
   size_t offset_;
 };
 
