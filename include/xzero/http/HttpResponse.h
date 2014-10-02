@@ -42,7 +42,10 @@ class XZERO_API HttpResponse {
   void setReason(const std::string& val);
 
   void setContentLength(size_t size);
-  size_t contentLength() const noexcept { return contentLength_; }
+
+  size_t contentLength() const noexcept {
+    return contentLength_;
+  }
 
   bool hasContentLength() const noexcept {
     return contentLength_ != static_cast<size_t>(-1);
@@ -96,7 +99,6 @@ class XZERO_API HttpResponse {
   HttpVersion version_;
   HttpStatus status_;
   std::string reason_;
-  std::string contentType_;
   size_t contentLength_;
   HeaderFieldList headers_;
   bool committed_;
