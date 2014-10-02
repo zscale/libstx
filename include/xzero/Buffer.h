@@ -295,7 +295,9 @@ class XZERO_API BufferRef : public BufferBase<char*> {
   const reference_type operator[](size_t index) const;
 
   /**
-   * Shifts the (left) start pointer by given @p offset bytes to the right.
+   * Shifts the (left) start pointer by given @p offset bytes to the left.
+   *
+   * Thus, increasing the size of the buffer, if @p offset is positive.
    *
    * @p offset number of bytes to shift the left start-pointer to the right.
    */
@@ -1111,7 +1113,9 @@ inline void BufferRef::shl(ssize_t value) {
 /** shifts view's right margin by given bytes to the right, thus, increasing
  * view's size.
  */
-inline void BufferRef::shr(ssize_t value) { size_ += value; }
+inline void BufferRef::shr(ssize_t value) {
+  size_ += value;
+}
 // }}}
 // {{{ MutableBuffer<ensure> impl
 template <bool (*ensure)(void*, size_t)>
