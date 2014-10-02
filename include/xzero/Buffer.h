@@ -1103,10 +1103,10 @@ inline const BufferRef::reference_type BufferRef::operator[](
   return data_[index];
 }
 
-/** shifts view's left margin by given bytes to the left, thus, increasing
- * view's size.
- */
-inline void BufferRef::shl(ssize_t value) { data_ -= value; }
+inline void BufferRef::shl(ssize_t value) {
+  data_ -= value;
+  size_ += value;
+}
 
 /** shifts view's right margin by given bytes to the right, thus, increasing
  * view's size.
