@@ -41,6 +41,7 @@ class XZERO_API HttpResponse {
   const std::string& reason() const noexcept { return reason_; }
   void setReason(const std::string& val);
 
+  void resetContentLength();
   void setContentLength(size_t size);
 
   size_t contentLength() const noexcept {
