@@ -21,7 +21,8 @@ class XZERO_API HeaderFieldList {
 
   void push_back(const std::string& name, const std::string& value);
   void overwrite(const std::string& name, const std::string& value);
-  void append(const std::string& name, const std::string& value);
+  void append(const std::string& name, const std::string& value,
+              const std::string& delim = "");
   void remove(const std::string& name);
 
   bool empty() const;
