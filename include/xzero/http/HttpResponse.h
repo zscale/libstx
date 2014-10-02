@@ -53,6 +53,8 @@ class XZERO_API HttpResponse {
   }
 
   void addHeader(const std::string& name, const std::string& value);
+  void appendHeader(const std::string& name, const std::string& value,
+                    const std::string& delim = "");
   void setHeader(const std::string& name, const std::string& value);
   void removeHeader(const std::string& name);
   void removeAllHeaders();

@@ -23,6 +23,15 @@ class XZERO_API HeaderField {
   const std::string& value() const { return value_; }
   void setValue(const std::string& value) { value_ = value; }
 
+  void appendValue(const std::string& value, const std::string& delim = "") {
+    if (value_.empty()) {
+      value_ = value;
+    } else {
+      value_ += delim;
+      value_ += value;
+    }
+  }
+
   /** Performs an case-insensitive compare on name and value for equality. */
   bool operator==(const HeaderField& other) const;
 
