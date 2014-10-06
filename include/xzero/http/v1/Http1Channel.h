@@ -13,7 +13,8 @@ class Http1Channel : public xzero::HttpChannel {
               const HttpHandler& handler,
               std::unique_ptr<HttpInput>&& input,
               size_t maxRequestUriLength,
-              size_t maxRequestBodyLength);
+              size_t maxRequestBodyLength,
+              HttpOutputCompressor* outputCompressor);
   ~Http1Channel();
 
   bool isPersistent() const noexcept { return persistent_; }

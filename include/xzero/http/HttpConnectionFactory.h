@@ -4,6 +4,7 @@
 #include <xzero/net/ConnectionFactory.h>
 #include <xzero/http/HttpHandler.h>
 #include <xzero/http/HttpDateGenerator.h>
+#include <xzero/http/HttpOutputCompressor.h>
 #include <memory>
 
 namespace xzero {
@@ -31,12 +32,14 @@ class XZERO_API HttpConnectionFactory : public ConnectionFactory {
   size_t maxRequestBodyLength() const noexcept { return maxRequestBodyLength_; }
   void setMaxRequestBodyLength(size_t value) { maxRequestBodyLength_ = value; }
 
-  const HttpHandler& handler() const { return handler_; }
+  const HttpHandler& handler() const noexcept { return handler_; }
   void setHandler(HttpHandler&& handler);
 
-  WallClock* clock() const { return clock_; }
+  WallClock* clock() const noexcept;
 
-  HttpDateGenerator* dateGenerator() const { return dateGenerator_.get(); }
+  HttpOutputCompressor* outputCompressor() const noexcept;
+
+  HttpDateGenerator* dateGenerator() const noexcept;
 
   Connection* configure(Connection* connection, Connector* connector) override;
 
@@ -45,7 +48,22 @@ class XZERO_API HttpConnectionFactory : public ConnectionFactory {
   size_t maxRequestBodyLength_;
   HttpHandler handler_;
   WallClock* clock_;
+  std::unique_ptr<HttpOutputCompressor> outputCompressor_;
   std::unique_ptr<HttpDateGenerator> dateGenerator_;
 };
+
+// {{{ inlines
+inline WallClock* HttpConnectionFactory::clock() const noexcept {
+  return clock_;
+}
+
+inline HttpOutputCompressor* HttpConnectionFactory::outputCompressor() const noexcept {
+  return outputCompressor_.get();
+}
+
+inline HttpDateGenerator* HttpConnectionFactory::dateGenerator() const noexcept {
+  return dateGenerator_.get();
+}
+// }}}
 
 }  // namespace xzero

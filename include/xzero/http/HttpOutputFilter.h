@@ -2,6 +2,7 @@
 
 #include <xzero/Api.h>
 #include <list>
+#include <memory>
 
 namespace xzero {
 
@@ -18,8 +19,9 @@ class XZERO_API HttpOutputFilter {
  public:
   virtual void filter(const BufferRef& input, Buffer* output) = 0;
 
-  static void applyFilters(const std::list<HttpOutputFilter*>& filters,
-                           const BufferRef& input, Buffer* output);
+  static void applyFilters(
+    const std::list<std::shared_ptr<HttpOutputFilter>>& filters,
+    const BufferRef& input, Buffer* output);
 };
 
 } // namespace xzero

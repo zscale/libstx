@@ -13,6 +13,7 @@
 namespace xzero {
 
 class HttpDateGenerator;
+class HttpOutputCompressor;
 
 namespace http1 {
 
@@ -26,6 +27,7 @@ class XZERO_API HttpConnection : public HttpTransport {
   HttpConnection(std::shared_ptr<EndPoint> endpoint,
                  const HttpHandler& handler,
                  HttpDateGenerator* dateGenerator,
+                 HttpOutputCompressor* outputCompressor,
                  size_t maxRequestUriLength,
                  size_t maxRequestBodyLength,
                  size_t maxRequestCount,

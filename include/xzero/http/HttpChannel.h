@@ -14,6 +14,7 @@ class HttpRequest;
 class HttpResponse;
 class HttpInput;
 class HttpOutput;
+class HttpOutputCompressor;
 
 enum class HttpChannelState {
   IDLE,     //!< not doing a shit, bro.
@@ -36,7 +37,8 @@ class XZERO_API HttpChannel : public HttpListener {
               const HttpHandler& handler,
               std::unique_ptr<HttpInput>&& input,
               size_t maxRequestUriLength,
-              size_t maxRequestBodyLength);
+              size_t maxRequestBodyLength,
+              HttpOutputCompressor* outputCompressor);
   ~HttpChannel();
 
   /**
@@ -112,10 +114,11 @@ class XZERO_API HttpChannel : public HttpListener {
   bool onMessageEnd() override;
   void onProtocolError(HttpStatus code, const std::string& message) override;
 
+  void commit();
  protected:
   virtual std::unique_ptr<HttpOutput> createOutput();
   void handleRequest();
-  HttpResponseInfo commit();
+  HttpResponseInfo commitInline();
 
  protected:
   size_t maxRequestUriLength_;
@@ -124,6 +127,7 @@ class XZERO_API HttpChannel : public HttpListener {
   HttpTransport* transport_;
   std::unique_ptr<HttpRequest> request_;
   std::unique_ptr<HttpResponse> response_;
+  HttpOutputCompressor* outputCompressor_;
   HttpHandler handler_;
 };
 
