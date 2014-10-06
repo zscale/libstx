@@ -16,7 +16,11 @@ class ConnectionFactory;
 class ConnectionListener;
 
 /**
- * Base API for accepting new clients.
+ * Base API for accepting new clients and binding them to a Connection.
+ *
+ * @see EndPoint
+ * @see Connection
+ * @see ConnectionFactory
  */
 class XZERO_API Connector {
  public:

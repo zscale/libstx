@@ -18,6 +18,14 @@ class WallClock;
  */
 class XZERO_API HttpConnectionFactory : public ConnectionFactory {
  public:
+  /**
+   * Base initiailization for the HTTP connection factory.
+   *
+   * @param protocolName HTTP protocol name, e.g. http1, http2, ssl+http1, ...
+   * @param clock the wallclock used for generating @c Date response header
+   * @param maxRequestUriLength maximum number of bytes for the request URI
+   * @param maxRequestBodyLength maximum number of bytes for the request body
+   */
   HttpConnectionFactory(
       const std::string& protocolName,
       WallClock* clock,
@@ -35,10 +43,10 @@ class XZERO_API HttpConnectionFactory : public ConnectionFactory {
   const HttpHandler& handler() const noexcept { return handler_; }
   void setHandler(HttpHandler&& handler);
 
-  WallClock* clock() const noexcept;
-
+  /** Access to the output compression service. */
   HttpOutputCompressor* outputCompressor() const noexcept;
 
+  /** Access to the @c Date response header generator. */
   HttpDateGenerator* dateGenerator() const noexcept;
 
   Connection* configure(Connection* connection, Connector* connector) override;
@@ -47,16 +55,11 @@ class XZERO_API HttpConnectionFactory : public ConnectionFactory {
   size_t maxRequestUriLength_;
   size_t maxRequestBodyLength_;
   HttpHandler handler_;
-  WallClock* clock_;
   std::unique_ptr<HttpOutputCompressor> outputCompressor_;
   std::unique_ptr<HttpDateGenerator> dateGenerator_;
 };
 
 // {{{ inlines
-inline WallClock* HttpConnectionFactory::clock() const noexcept {
-  return clock_;
-}
-
 inline HttpOutputCompressor* HttpConnectionFactory::outputCompressor() const noexcept {
   return outputCompressor_.get();
 }
