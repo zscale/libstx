@@ -4,6 +4,7 @@
 #include <xzero/http/HttpRequest.h>
 #include <xzero/http/HttpResponse.h>
 #include <xzero/http/HttpOutput.h>
+#include <xzero/http/HttpOutputCompressor.h>
 #include <xzero/http/HttpFileHandler.h>
 #include <xzero/http/v1/Http1ConnectionFactory.h>
 #include <xzero/support/libev/LibevScheduler.h>
@@ -18,8 +19,8 @@
 #include <fcntl.h>
 
 int main(int argc, const char* argv[]) {
-  xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
-  xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
+  // xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
+  // xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
 
   ev::loop_ref loop = ev::default_loop(0);
   xzero::support::LibevScheduler scheduler(loop);
@@ -34,8 +35,13 @@ int main(int argc, const char* argv[]) {
   auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(
       &clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));
 
+  xzero::HttpOutputCompressor* compressor = http->outputCompressor();
+  compressor->setMinSize(5);
+
+  xzero::HttpFileHandler fileHandler(true, true, true, "/etc/mime.types",
+                                     "application/octet-stream");
+
   http->setHandler([&](xzero::HttpRequest* request, xzero::HttpResponse* response) {
-    xzero::HttpFileHandler fileHandler(true, true, true);
     if (!fileHandler.handle(request, response, docroot)) {
       response->setStatus(xzero::HttpStatus::NotFound);
       response->completed();

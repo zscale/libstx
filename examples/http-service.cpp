@@ -46,8 +46,7 @@ class MyHandler : public xzero::HttpService::Handler {
       for (const auto& field: request->headers())
         body << field.name() << " = " << field.value() << "\n";
 
-      static Capslock capslock;
-      response->output()->addFilter(&capslock);
+      response->output()->addFilter(std::make_shared<Capslock>());
       response->setContentLength(body.size());
       response->output()->write(std::move(body));
       response->completed();
@@ -60,6 +59,7 @@ class MyHandler : public xzero::HttpService::Handler {
         body << field.name() << " = " << field.value() << "\n";
       }
       response->setStatus(xzero::HttpStatus::Ok);
+      response->addHeader("Content-Type", "text/plain");
       response->output()->write(body);
       response->completed();
       return true;

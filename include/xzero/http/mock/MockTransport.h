@@ -45,11 +45,13 @@ class XZERO_API MockTransport : public HttpTransport {
    * @param handler The handler to run for incoming HTTP request messages.
    * @param maxRequestUriLength Maximum request URI length.
    * @param maxRequestBodyLength Maximum request body length.
+   * @param outputCompressor HTTP response body compression service.
    */
   MockTransport(Executor* executor,
                 const HttpHandler& handler,
                 size_t maxRequestUriLength,
-                size_t maxRequestBodyLength);
+                size_t maxRequestBodyLength,
+                HttpOutputCompressor* outputCompressor);
   ~MockTransport();
 
   /**
@@ -104,6 +106,7 @@ class XZERO_API MockTransport : public HttpTransport {
   HttpHandler handler_;
   size_t maxRequestUriLength_;
   size_t maxRequestBodyLength_;
+  HttpOutputCompressor* outputCompressor_;
 
   bool isAborted_;
   bool isCompleted_;

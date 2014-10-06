@@ -3,6 +3,7 @@
 #include <xzero/Api.h>
 #include <xzero/http/HttpStatus.h>
 #include <string>
+#include <unordered_map>
 #include <sys/stat.h>
 
 namespace xzero {
@@ -65,11 +66,61 @@ class XZERO_API HttpFile {
  */
 class XZERO_API HttpFileHandler {
  public:
+  /**
+   * Initializes static file handler.
+   *
+   * @param mtime whether or not to include Last-Modified timestamp
+   * @param size whether or not to include file size
+   * @param inode whether or not to include file's system inode
+   */
   HttpFileHandler(bool mtime, bool size, bool inode);
+
+  /**
+   * Initializes static file handler.
+   *
+   * @param mtime whether or not to include Last-Modified timestamp
+   * @param size whether or not to include file size
+   * @param inode whether or not to include file's system inode
+   * @param mimetypes if non-empty, given file will be loaded as mimetypes file.
+   * @param defaultMimeType default mimetype to use if no mapping exists.
+   */
+  HttpFileHandler(bool mtime, bool size, bool inode,
+                  const std::string& mimetypes,
+                  const std::string& defaultMimeType);
+
   ~HttpFileHandler();
 
+  /**
+   * Configures ETag generation.
+   *
+   * @param mtime whether or not to include Last-Modified timestamp
+   * @param size whether or not to include file size
+   * @param inode whether or not to include file's system inode
+   */
   void configureETag(bool mtime, bool size, bool inode);
 
+  /** Loads the mimetype map from given local file at @p path. */
+  void loadMimeTypesFromLocal(const std::string& path);
+
+  /** Retrieves a mimetype based on given file @p path name. */
+  std::string getMimeType(const std::string& path);
+
+  /** Retrieves the mimetype mappings (from file extension to mimetype). */
+  const std::unordered_map<std::string, std::string>& mimetypes() const noexcept;
+
+  /** Retrieves the default mimetype. */
+  const std::string& defaultMimeType() const noexcept;
+
+  /** Sets the default mimetype to given @p value. */
+  void setDefaultMimeType(const std::string& value);
+
+  /**
+   * Handles given @p request if a local file (based on @p docroot) exists.
+   *
+   * @param request the request to handle.
+   * @param response the response to generate.
+   * @param docroot request's document root into the local file system.
+   */
   bool handle(HttpRequest* request, HttpResponse* response,
               const std::string& docroot);
 
@@ -88,6 +139,7 @@ class XZERO_API HttpFileHandler {
    */
   bool handleClientCache(const HttpFile& transferFile, HttpRequest* request,
                          HttpResponse* response);
+
   /**
    * Fully processes the ranged requests, if one, or does nothing.
    *
@@ -109,10 +161,26 @@ class XZERO_API HttpFileHandler {
   bool etagConsiderMTime_;
   bool etagConsiderSize_;
   bool etagConsiderINode_;
+  std::unordered_map<std::string, std::string> mimetypes_;
+  std::string defaultMimeType_;
 
   // TODO stat cache
   // TODO fd cache
 };
 
+// {{{ inlines
+inline const std::unordered_map<std::string, std::string>&
+    HttpFileHandler::mimetypes() const noexcept {
+  return mimetypes_;
+}
+
+inline const std::string& HttpFileHandler::defaultMimeType() const noexcept {
+  return defaultMimeType_;
+}
+
+inline void HttpFileHandler::setDefaultMimeType(const std::string& value) {
+  defaultMimeType_ = value;
+}
+// }}}
 
 } // namespace xzero

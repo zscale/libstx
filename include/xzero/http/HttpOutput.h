@@ -4,6 +4,7 @@
 #include <xzero/Buffer.h>
 #include <xzero/CompletionHandler.h>
 #include <functional>
+#include <memory>
 #include <list>
 
 namespace xzero {
@@ -30,7 +31,11 @@ class XZERO_API HttpOutput {
    * The filter will not take over ownership. Make sure the filter is
    * available for the whole time the response is generated.
    */
-  void addFilter(HttpOutputFilter* filter);
+  void addFilter(std::shared_ptr<HttpOutputFilter> filter);
+
+  const std::list<std::shared_ptr<HttpOutputFilter>>& filters() const noexcept {
+    return filters_;
+  }
 
   /**
    * Removes all output-filters.
@@ -90,7 +95,7 @@ class XZERO_API HttpOutput {
 
  private:
   HttpChannel* channel_;
-  std::list<HttpOutputFilter*> filters_;
+  std::list<std::shared_ptr<HttpOutputFilter>> filters_;
 };
 
 }  // namespace xzero
