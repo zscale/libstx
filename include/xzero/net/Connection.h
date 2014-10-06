@@ -1,7 +1,6 @@
 #pragma once
 
 #include <xzero/Api.h>
-#include <xzero/DateTime.h>
 #include <memory>
 #include <list>
 
@@ -56,9 +55,6 @@ class XZERO_API Connection {
   virtual size_t getMessagesOut() const;
   virtual size_t getBytesIn() const;
   virtual size_t getBytesOut() const;
-
-  DateTime creationTime() const noexcept { return creationTime_; }
-  void setCreationTime(DateTime dt) noexcept { creationTime_ = dt; }
 
   /**
    * Configures the input buffer size for this Connection.
@@ -115,7 +111,6 @@ class XZERO_API Connection {
 
  private:
   std::shared_ptr<EndPoint> endpoint_;
-  DateTime creationTime_;
   std::list<ConnectionListener*> listeners_;
 };
 
