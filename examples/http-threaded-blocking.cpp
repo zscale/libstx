@@ -31,7 +31,7 @@ int main() {
       clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));
 
   http->setHandler([](xzero::HttpRequest* request, xzero::HttpResponse* response) {
-    const xzero::Buffer body = "Hello, World\n";
+    xzero::BufferRef body("Hello, World\n");
 
     response->setStatus(xzero::HttpStatus::Ok);
     response->setContentLength(body.size());
