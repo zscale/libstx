@@ -8,10 +8,15 @@
 #include <xzero/support/libev/LibevScheduler.h>
 #include <xzero/support/libev/LibevSelector.h>
 #include <xzero/support/libev/LibevClock.h>
+#include <xzero/logging/LogAggregator.h>
+#include <xzero/logging/LogTarget.h>
 #include <unistd.h>
 #include <ev++.h>
 
 int main() {
+  xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
+  xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
+
   xzero::ThreadedExecutor threadedExecutor;
   xzero::Server server;
   xzero::WallClock* clock = xzero::WallClock::system();
