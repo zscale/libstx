@@ -49,6 +49,25 @@ class MyHandler : public xzero::HttpService::Handler {
       return true;
     }
 
+    if (request->path() == "/trailer") {
+      response->setStatus(xzero::HttpStatus::Ok);
+
+      response->addHeader("Content-Type", "text/plain");
+
+      response->registerTrailer("Word-Count");
+      response->registerTrailer("Mood");
+
+      xzero::Buffer body = "Hello, World!\n";
+      response->setContentLength(body.size());
+      response->output()->write(std::move(body));
+
+      response->setTrailer("Word-Count", "2");
+      response->setTrailer("Mood", "Happy");
+
+      response->completed();
+      return true;
+    }
+
     if (request->path() == "/capslock-filter") {
       response->setStatus(xzero::HttpStatus::Ok);
 
