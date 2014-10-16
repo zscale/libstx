@@ -41,48 +41,39 @@ class XZERO_API HttpGenerator {
    *
    * @param info HTTP request message info.
    * @param chunk HTTP message body chunk.
-   * @param last Boolean value, indicating that this @p chunk is the last one.
    */
-  void generateRequest(const HttpRequestInfo& info, Buffer&& chunk,
-                       bool last);
-  void generateRequest(const HttpRequestInfo& info, const BufferRef& chunk,
-                       bool last);
+  void generateRequest(const HttpRequestInfo& info, Buffer&& chunk);
+  void generateRequest(const HttpRequestInfo& info, const BufferRef& chunk);
 
   /**
    * Generates an HTTP response message.
    *
    * @param info HTTP response message info.
    * @param chunk HTTP message body chunk.
-   * @param last Boolean value, indicating that this @p chunk is the last one.
    */
-  void generateResponse(const HttpResponseInfo& info, const BufferRef& chunk,
-                        bool last);
-  void generateResponse(const HttpResponseInfo& info, Buffer&& chunk,
-                        bool last);
-  void generateResponse(const HttpResponseInfo& info, FileRef&& chunk,
-                        bool last);
+  void generateResponse(const HttpResponseInfo& info, const BufferRef& chunk);
+  void generateResponse(const HttpResponseInfo& info, Buffer&& chunk);
+  void generateResponse(const HttpResponseInfo& info, FileRef&& chunk);
 
   /**
    * Generates an HTTP message body chunk.
    *
    * @param chunk HTTP message body chunk.
-   * @param last Boolean value, indicating that this @p chunk is the last one.
    */
-  void generateBody(Buffer&& chunk, bool last);
-  void generateBody(const BufferRef& chunk, bool last);
+  void generateBody(Buffer&& chunk);
+  void generateBody(const BufferRef& chunk);
 
   /**
    * Generates an HTTP message body chunk.
    *
    * @param chunk HTTP message body chunk, represented as a file.
-   * @param last Boolean value, indicating that this @p chunk is the last one.
    */
-  void generateBody(FileRef&& chunk, bool last);
+  void generateBody(FileRef&& chunk);
 
   /**
-   * Generates possibly pending bytes to complete the HTTP message.
+   * Generates possibly pending bytes & trailers to complete the HTTP message.
    */
-  void generateEnd();
+  void generateTrailer(const HeaderFieldList& trailers);
 
   /**
    * Retrieves the number of bytes pending for the content.
