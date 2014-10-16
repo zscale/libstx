@@ -19,8 +19,9 @@ class XZERO_API ThreadedExecutor : public Executor {
   ThreadedExecutor();
   ~ThreadedExecutor();
 
-  void execute(Task&& task) override;
   void execute(const std::string& name, Task&& task);
+
+  void execute(Task&& task) override;
   size_t maxConcurrency() const noexcept override;
   std::string toString() const override;
   void joinAll();
