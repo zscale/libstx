@@ -57,9 +57,9 @@ class MyHandler : public xzero::HttpService::Handler {
       response->registerTrailer("Word-Count");
       response->registerTrailer("Mood");
 
-      xzero::Buffer body = "Hello, World!\n";
+      xzero::BufferRef body = "Hello, World!\n";
       response->setContentLength(body.size());
-      response->output()->write(std::move(body));
+      response->output()->write(body);
 
       response->setTrailer("Word-Count", "2");
       response->setTrailer("Mood", "Happy");
