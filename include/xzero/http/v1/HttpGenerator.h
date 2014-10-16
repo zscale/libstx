@@ -24,8 +24,14 @@ namespace http1 {
  * @todo how to support sendfile() alike optimizations
  */
 class XZERO_API HttpGenerator {
+  enum class State {
+    None,
+    WritingBody,
+    Closed
+  };
+
  public:
-  explicit HttpGenerator(HttpDateGenerator* dateGenerator);
+  HttpGenerator(HttpDateGenerator* dateGenerator, EndPointWriter* output);
 
   /** resets any runtime state. */
   void recycle();
@@ -36,12 +42,11 @@ class XZERO_API HttpGenerator {
    * @param info HTTP request message info.
    * @param chunk HTTP message body chunk.
    * @param last Boolean value, indicating that this @p chunk is the last one.
-   * @param output Target to write the generated (partial) HTTP message to.
    */
   void generateRequest(const HttpRequestInfo& info, Buffer&& chunk,
-                       bool last, EndPointWriter* output);
+                       bool last);
   void generateRequest(const HttpRequestInfo& info, const BufferRef& chunk,
-                       bool last, EndPointWriter* output);
+                       bool last);
 
   /**
    * Generates an HTTP response message.
@@ -49,31 +54,35 @@ class XZERO_API HttpGenerator {
    * @param info HTTP response message info.
    * @param chunk HTTP message body chunk.
    * @param last Boolean value, indicating that this @p chunk is the last one.
-   * @param output Target to write the generated (partial) HTTP message to.
    */
-  void generateResponse(const HttpResponseInfo& info, Buffer&& chunk,
-                        bool last, EndPointWriter* output);
   void generateResponse(const HttpResponseInfo& info, const BufferRef& chunk,
-                        bool last, EndPointWriter* output);
+                        bool last);
+  void generateResponse(const HttpResponseInfo& info, Buffer&& chunk,
+                        bool last);
+  void generateResponse(const HttpResponseInfo& info, FileRef&& chunk,
+                        bool last);
 
   /**
    * Generates an HTTP message body chunk.
    *
    * @param chunk HTTP message body chunk.
    * @param last Boolean value, indicating that this @p chunk is the last one.
-   * @param output Target to write the generated (partial) HTTP message to.
    */
-  void generateBody(Buffer&& chunk, bool last, EndPointWriter* output);
-  void generateBody(const BufferRef& chunk, bool last, EndPointWriter* output);
+  void generateBody(Buffer&& chunk, bool last);
+  void generateBody(const BufferRef& chunk, bool last);
 
   /**
    * Generates an HTTP message body chunk.
    *
    * @param chunk HTTP message body chunk, represented as a file.
    * @param last Boolean value, indicating that this @p chunk is the last one.
-   * @param output Target to write the generated (partial) HTTP message to.
    */
-  void generateBody(FileRef&& chunk, bool last, EndPointWriter* output);
+  void generateBody(FileRef&& chunk, bool last);
+
+  /**
+   * Generates possibly pending bytes to complete the HTTP message.
+   */
+  void generateEnd();
 
   /**
    * Retrieves the number of bytes pending for the content.
@@ -89,15 +98,15 @@ class XZERO_API HttpGenerator {
   void generateRequestLine(const HttpRequestInfo& info);
   void generateResponseLine(const HttpResponseInfo& info);
   void generateHeaders(const HttpInfo& info);
-  void generateResponseInfo(const HttpResponseInfo& info,
-                            EndPointWriter* output);
-  void flushBuffer(EndPointWriter* output);
+  void generateResponseInfo(const HttpResponseInfo& info);
+  void flushBuffer();
 
  private:
   HttpDateGenerator* dateGenerator_;
   size_t contentLength_;
   bool chunked_;
   Buffer buffer_;
+  EndPointWriter* writer_;
 };
 
 }  // namespace http1

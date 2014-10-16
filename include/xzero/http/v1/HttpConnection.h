@@ -44,6 +44,9 @@ class XZERO_API HttpConnection : public HttpTransport {
             CompletionHandler&& onComplete) override;
   void send(HttpResponseInfo&& responseInfo, const BufferRef& chunk,
             CompletionHandler&& onComplete) override;
+  void send(HttpResponseInfo&& responseInfo, FileRef&& chunk,
+            CompletionHandler&& onComplete) override;
+
   void send(Buffer&& chunk, CompletionHandler&& onComplete) override;
   void send(const BufferRef& chunk, CompletionHandler&& onComplete) override;
   void send(FileRef&& chunk, CompletionHandler&& onComplete) override;
@@ -58,13 +61,13 @@ class XZERO_API HttpConnection : public HttpTransport {
 
  private:
   HttpParser parser_;
-  HttpGenerator generator_;
 
   Buffer inputBuffer_;
   size_t inputOffset_;
 
   EndPointWriter writer_;
   CompletionHandler onComplete_;
+  HttpGenerator generator_;
 
   std::unique_ptr<Http1Channel> channel_;
   TimeSpan maxKeepAlive_;
