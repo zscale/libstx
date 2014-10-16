@@ -554,6 +554,9 @@ inline size_t BufferBase<T>::find(const value_type* value,
   const char* e = cend();
   const int value_length = strlen(value);
 
+  if (offset + value_length > size())
+    return npos;
+
   while (i != e) {
     if (*i == *value) {
       const char* p = i + 1;
@@ -591,6 +594,9 @@ inline size_t BufferBase<T>::find(const BufferRef& buf, size_t offset) const {
   const char* value = buf.data();
   const int value_length = buf.size();
 
+  if (offset + value_length > size())
+    return npos;
+
   while (i != e) {
     if (*i == *value) {
       const char* p = i + 1;
@@ -617,12 +623,16 @@ template <typename PodType, size_t N>
 inline size_t BufferBase<T>::find(PodType (&value)[N], size_t offset) const {
   const char* i = data() + offset;
   const char* e = i + size() - offset;
+  const size_t value_length = N - 1;
+
+  if (offset + value_length > size())
+    return npos;
 
   while (i != e) {
     if (*i == *value) {
       const char* p = i + 1;
       const char* q = value + 1;
-      const char* qe = i + N - 1;
+      const char* qe = i + value_length;
 
       while (*p == *q && p != qe) {
         ++p;
