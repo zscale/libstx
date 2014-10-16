@@ -1,5 +1,7 @@
 #pragma once
 
+#include <xzero/Api.h>
+#include <xzero/Buffer.h>
 #include <cstdint>
 #include <unistd.h>
 
@@ -14,7 +16,7 @@ namespace xzero {
  * If the FileRef was initialized with auto-close set to on, its
  * underlying resource file descriptor will be automatically closed.
  */
-struct FileRef {
+struct XZERO_API FileRef {
  private:
   FileRef(const FileRef&) = delete;
   FileRef& operator=(const FileRef&) = delete;
@@ -71,6 +73,8 @@ struct FileRef {
 
   size_t size() const noexcept { return size_; }
   void setSize(size_t n) { size_ = n; }
+
+  void fill(Buffer* output) const;
 
  private:
   int fd_;
