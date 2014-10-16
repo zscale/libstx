@@ -33,7 +33,7 @@ inline HttpRequestInfo::HttpRequestInfo(HttpVersion version,
                                         const std::string& entity,
                                         size_t contentLength,
                                         const HeaderFieldList& headers)
-    : HttpInfo(version, contentLength, headers),
+    : HttpInfo(version, contentLength, headers, {}),
       method_(method),
       entity_(entity) {
 }

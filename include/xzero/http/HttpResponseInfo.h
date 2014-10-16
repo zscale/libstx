@@ -17,7 +17,9 @@ class XZERO_API HttpResponseInfo : public HttpInfo {
 
   HttpResponseInfo(HttpVersion version, HttpStatus status,
                    const std::string& reason, bool isHeadResponse,
-                   size_t contentLength, const HeaderFieldList& headers);
+                   size_t contentLength,
+                   const HeaderFieldList& headers,
+                   const HeaderFieldList& trailers);
 
   /** Retrieves the HTTP response status code. */
   HttpStatus status() const noexcept { return status_; }
@@ -35,15 +37,16 @@ class XZERO_API HttpResponseInfo : public HttpInfo {
 
 inline HttpResponseInfo::HttpResponseInfo()
     : HttpResponseInfo(HttpVersion::UNKNOWN, HttpStatus::Undefined, "", false,
-                       0, {}) {
+                       0, {}, {}) {
 }
 
 inline HttpResponseInfo::HttpResponseInfo(HttpResponseInfo&& other)
   : HttpResponseInfo(other.version_, other.status_, "", other.isHeadResponse_,
-                     other.contentLength_, {}) {
+                     other.contentLength_, {}, {}) {
 
   reason_.swap(other.reason_);
   headers_.swap(other.headers_);
+  trailers_.swap(other.trailers_);
   other.contentLength_ = 0;
 }
 
@@ -51,6 +54,7 @@ inline HttpResponseInfo& HttpResponseInfo::operator=(HttpResponseInfo&& other) {
   version_ = other.version_;
   contentLength_ = other.contentLength_;
   headers_ = std::move(other.headers_);
+  trailers_ = std::move(other.trailers_);
 
   status_ = other.status_;
   reason_ = std::move(other.reason_);
@@ -64,8 +68,9 @@ inline HttpResponseInfo::HttpResponseInfo(HttpVersion version,
                                           const std::string& reason,
                                           bool isHeadResponse,
                                           size_t contentLength,
-                                          const HeaderFieldList& headers)
-    : HttpInfo(version, contentLength, headers),
+                                          const HeaderFieldList& headers,
+                                          const HeaderFieldList& trailers)
+    : HttpInfo(version, contentLength, headers, trailers),
       status_(status),
       reason_(reason),
       isHeadResponse_(isHeadResponse) {

@@ -66,14 +66,11 @@ class XZERO_API HttpResponse {
 
   // trailers
   //bool isTrailerSupported() const;
-  void addTrailer(const std::string& name, const std::string& value);
+  void registerTrailer(const std::string& name);
   void appendTrailer(const std::string& name, const std::string& value,
                     const std::string& delim = "");
   void setTrailer(const std::string& name, const std::string& value);
-  void removeTrailer(const std::string& name);
-  void removeAllTrailers();
-  const HeaderFieldList& trailers() const noexcept { return headers_; }
-  HeaderFieldList& trailers() noexcept { return headers_; }
+  const HeaderFieldList& trailers() const noexcept { return trailers_; }
 
   /**
    * Invoke to mark this response as complete.
