@@ -4,6 +4,9 @@
 #include <xzero/CompletionHandler.h>
 #include <xzero/http/HttpListener.h>
 #include <xzero/http/HttpHandler.h>
+#include <xzero/http/HttpOutputFilter.h>
+#include <list>
+#include <memory>
 
 namespace xzero {
 
@@ -114,10 +117,32 @@ class XZERO_API HttpChannel : public HttpListener {
   bool onMessageEnd() override;
   void onProtocolError(HttpStatus code, const std::string& message) override;
 
-  void commit();
+  /**
+   * Commits response headers.
+   *
+   * @param onComplete callback invoked when sending chunk is succeed/failed.
+   */
+  void commit(CompletionHandler&& onComplete);
+
+  /**
+   * Adds a custom output-filter.
+   *
+   * @param filter the output filter to apply to the output body.
+   *
+   * The filter will not take over ownership. Make sure the filter is
+   * available for the whole time the response is generated.
+   */
+  void addOutputFilter(std::shared_ptr<HttpOutputFilter> filter);
+
+  /**
+   * Removes all output-filters.
+   */
+  void removeAllOutputFilters();
+
  protected:
   virtual std::unique_ptr<HttpOutput> createOutput();
   void handleRequest();
+  void onBeforeSend();
   HttpResponseInfo commitInline();
 
  protected:
@@ -127,6 +152,7 @@ class XZERO_API HttpChannel : public HttpListener {
   HttpTransport* transport_;
   std::unique_ptr<HttpRequest> request_;
   std::unique_ptr<HttpResponse> response_;
+  std::list<std::shared_ptr<HttpOutputFilter>> outputFilters_;
   HttpOutputCompressor* outputCompressor_;
   HttpHandler handler_;
 };

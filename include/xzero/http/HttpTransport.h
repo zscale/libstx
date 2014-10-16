@@ -57,6 +57,16 @@ class XZERO_API HttpTransport : public Connection {
                     CompletionHandler&& onComplete) = 0;
 
   /**
+   * Initiates sending a response to the client.
+   *
+   * @param responseInfo HTTP response meta informations.
+   * @param chunk response body chunk represented as a file.
+   * @param onComplete callback invoked when sending chunk is succeed/failed.
+   */
+  virtual void send(HttpResponseInfo&& responseInfo, FileRef&& chunk,
+                    CompletionHandler&& onComplete) = 0;
+
+  /**
    * Transfers this data chunk to the output stream.
    *
    * @param chunk response body chunk

@@ -41,6 +41,7 @@ class XZERO_API HttpResponse {
   const std::string& reason() const noexcept { return reason_; }
   void setReason(const std::string& val);
 
+  // high level header support
   void resetContentLength();
   void setContentLength(size_t size);
 
@@ -52,6 +53,7 @@ class XZERO_API HttpResponse {
     return contentLength_ != static_cast<size_t>(-1);
   }
 
+  // headers
   void addHeader(const std::string& name, const std::string& value);
   void appendHeader(const std::string& name, const std::string& value,
                     const std::string& delim = "");
@@ -61,6 +63,17 @@ class XZERO_API HttpResponse {
   const std::string& getHeader(const std::string& name) const;
   const HeaderFieldList& headers() const noexcept { return headers_; }
   HeaderFieldList& headers() noexcept { return headers_; }
+
+  // trailers
+  //bool isTrailerSupported() const;
+  void addTrailer(const std::string& name, const std::string& value);
+  void appendTrailer(const std::string& name, const std::string& value,
+                    const std::string& delim = "");
+  void setTrailer(const std::string& name, const std::string& value);
+  void removeTrailer(const std::string& name);
+  void removeAllTrailers();
+  const HeaderFieldList& trailers() const noexcept { return headers_; }
+  HeaderFieldList& trailers() noexcept { return headers_; }
 
   /**
    * Invoke to mark this response as complete.
@@ -102,6 +115,7 @@ class XZERO_API HttpResponse {
   std::string reason_;
   size_t contentLength_;
   HeaderFieldList headers_;
+  HeaderFieldList trailers_;
   bool committed_;
 };
 

@@ -76,22 +76,26 @@ class XZERO_API MockTransport : public HttpTransport {
   /** Retrieves the response message body. */
   const Buffer& responseBody() const noexcept;
 
-  /** Tests whether last this transport was aborted in last request handling. */
+  /** Tests whether this transport was aborted in last request handling. */
   bool isAborted() const noexcept;
 
-  /** Tests whether last message. */
+  /** Tests whether last message was completed. */
   bool isCompleted() const noexcept;
 
  private:
   // HttpTransport overrides
   void abort() override;
   void completed() override;
-  void send(HttpResponseInfo&& responseInfo, Buffer&& chunk,
-            CompletionHandler&& onComplete) override;
+
   void send(HttpResponseInfo&& responseInfo, const BufferRef& chunk,
             CompletionHandler&& onComplete) override;
-  void send(Buffer&& chunk, CompletionHandler&& onComplete) override;
+  void send(HttpResponseInfo&& responseInfo, Buffer&& chunk,
+            CompletionHandler&& onComplete) override;
+  void send(HttpResponseInfo&& responseInfo, FileRef&& chunk,
+            CompletionHandler&& onComplete) override;
+
   void send(const BufferRef& chunk, CompletionHandler&& onComplete) override;
+  void send(Buffer&& chunk, CompletionHandler&& onComplete) override;
   void send(FileRef&& chunk, CompletionHandler&& onComplete) override;
 
   // Connection overrides

@@ -6,8 +6,9 @@
 
 namespace xzero {
 
-class BufferRef;
 class Buffer;
+class BufferRef;
+class FileRef;
 
 /**
  * Adds an interface to HTTP response output filters.
@@ -22,6 +23,10 @@ class XZERO_API HttpOutputFilter {
   static void applyFilters(
     const std::list<std::shared_ptr<HttpOutputFilter>>& filters,
     const BufferRef& input, Buffer* output);
+
+  static void applyFilters(
+    const std::list<std::shared_ptr<HttpOutputFilter>>& filters,
+    const FileRef& input, Buffer* output);
 };
 
 } // namespace xzero
