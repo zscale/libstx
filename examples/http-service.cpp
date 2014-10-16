@@ -39,6 +39,16 @@ class MyHandler : public xzero::HttpService::Handler {
       return true;
     }
 
+    if (request->path() == "/chunked") {
+      // not invoking setContentLength() causes the response to be chunked.
+      response->setStatus(xzero::HttpStatus::Ok);
+      response->addHeader("Content-Type", "text/plain");
+      response->output()->write("Hello!\n");
+      response->output()->write("World!\n");
+      response->completed();
+      return true;
+    }
+
     if (request->path() == "/capslock-filter") {
       response->setStatus(xzero::HttpStatus::Ok);
 
