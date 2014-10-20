@@ -2,6 +2,7 @@
 
 #include <xzero/Api.h>
 #include <xzero/http/HttpInfo.h>
+#include <xzero/http/HttpStatus.h>
 #include <string>
 
 namespace xzero {
