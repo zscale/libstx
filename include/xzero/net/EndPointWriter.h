@@ -43,6 +43,7 @@ class XZERO_API EndPointWriter {
 
   /**
    * Transfers as much data as possible into the given EndPoint @p sink.
+   *
    * @retval true all data has been transferred.
    * @retval false data transfer incomplete and data is pending.
    */
