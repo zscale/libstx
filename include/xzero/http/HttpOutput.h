@@ -88,8 +88,11 @@ class XZERO_API HttpOutput {
    */
   virtual void completed();
 
+  size_t size() const noexcept { return size_; }
+
  private:
   HttpChannel* channel_;
+  size_t size_;
 };
 
 }  // namespace xzero
