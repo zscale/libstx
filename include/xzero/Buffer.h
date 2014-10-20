@@ -292,7 +292,7 @@ class XZERO_API BufferRef : public BufferBase<char*> {
   /**
    * Random access operator.
    */
-  const reference_type operator[](size_t index) const;
+  const_reference_type operator[](size_t index) const;
 
   /**
    * Shifts the (left) start pointer by given @p offset bytes to the left.
@@ -498,7 +498,7 @@ class XZERO_API BufferSlice : public BufferBase<Buffer> {
 
   // random access
   reference_type operator[](size_t offset) { return data()[offset]; }
-  const reference_type operator[](size_t offset) const {
+  const_reference_type operator[](size_t offset) const {
     return data()[offset];
   }
 
@@ -1108,7 +1108,7 @@ inline BufferRef& BufferRef::operator=(const BufferRef& v) {
   return *this;
 }
 
-inline const BufferRef::reference_type BufferRef::operator[](
+inline BufferRef::const_reference_type BufferRef::operator[](
     size_t index) const {
   assert(index < size_);
 
