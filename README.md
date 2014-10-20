@@ -12,15 +12,14 @@ written in modern C++.
 ### Feature Highlights
 
 * Composable API
+- HTTP/1.1, including chunked trailer and pipelining support
 * Generic core HTTP API with support for: HTTP (HTTPS, FCGI, HTTP/2, ...)
+- Client-cache aware and partial static file serving
 - zero-copy networking optimizations
-- client-cache aware and partial static file transmission support
-- HTTP/1.1, including pipelining
-* Unit Tests
+- Unit Tests
 
 ## Installation Requirements
 
-- libbase from https://github.com/xzero/libbase.git
 - gcc >= 4.8.0 (for building only, CLANG >= 3.4 with libc++ is also supported)
 - cmake (for building only)
 - gtest (optional, for unit testing)
