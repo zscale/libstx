@@ -61,6 +61,12 @@ class XZERO_API HttpGenerator {
    * @param chunk HTTP message body chunk.
    */
   void generateBody(Buffer&& chunk);
+
+  /**
+   * Generates an HTTP message body chunk.
+   *
+   * @param chunk HTTP message body chunk.
+   */
   void generateBody(const BufferRef& chunk);
 
   /**
