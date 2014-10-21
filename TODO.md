@@ -2,22 +2,24 @@
 
 ### Milestone 1
 
-- [ ] test: call completed() before contentLength is satisfied in non-chunked mode (shall be transport generic)
-- [ ] test: attempt to write more data than contentLength in non-chunked mode (shall be transport generic)
-- [ ] fix threaded http segv
 - [ ] net: EndPoint timeout management
-- [ ] `HttpTransport::onInterestFailure()` => `(factory || connector)->report(this, error);`
-- [ ] evaluate the need of request lifecycle hooks
-  - onConnectionOpen (diag)
-  - onRequestPreHandle (diag)
-  - onResponsePreCommit (dynamic output compression)
-  - onResponsePostCommit (diag)
-  - onResponseComplete (accesslog)
-  - onConnectionClose (diag)
 
 ### Milestone 2
 
+- [ ] evaluate the need of a connection/request lifecycle hook API
+  - onConnectionOpen (diag)
+  - onRequestPreHandle (diag)
+  - onResponsePreCommit (dynamic output transformation)
+  - onResponsePostCommit (diag)
+  - onResponseComplete (accesslog)
+  - onConnectionClose (diag)
+- [ ] `HttpTransport::onInterestFailure()` => `(factory || connector)->report(this, error);`
 - [ ] `InetEndPoint::wantFill()` to honor `TCP_DEFER_ACCEPT`
 - [ ] SSL support, `SslConnector` & `SslEndPoint` chaining to real
       connector/endpoint.
 - [ ] UdpConnector
+- [ ] chunked request trailer support & unit test
+- [ ] doxygen: how to document a group of functions all at once (or, how to copydoc)
+- [ ] test: call completed() before contentLength is satisfied in non-chunked mode (shall be transport generic)
+- [ ] test: attempt to write more data than contentLength in non-chunked mode (shall be transport generic)
+
