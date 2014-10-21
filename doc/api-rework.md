@@ -79,3 +79,64 @@ The following other components need to be accessable ...
 ### HttpServer
 
 
+
+### Thread-Aware I/O Synchronization Points
+
+```
+
+HttpConnection.onOpen:
+  HttpConnection.wantFill:
+    EndPoint.wantFill()
+      HttpConnection.onFillable()
+        HttpParser.parseFragment()
+          HttpChannel.onMessageHeaderEnd()
+            HttpChannel.handleRequest()...
+              HttpConnection.wantFlush()
+
+HttpConnection.wantFlush:
+  EndPoint.wantFlush()
+    HttpConnection.onFlushable()
+      EndPointWriter.flush(endpoint)
+      HttpConnection.wantFill
+
+LifeCycle ::= idle (reading (handling writing)* completed)*
+
+| accept()
+|
+\_
+  | HttpConnection.onOpen
+  | - wantFill
+  |   - onFillable
+  |     - parseFragment
+  |       - HttpChannel.onMessageBegin
+  |       - HttpChannel.onMessageHeader
+  |       - HttpChannel.onMessageHeaderEnd
+  |         - HttpChannel.handleRequest
+  |           - HttpChannel.send
+  |             - HttpConnection.wantFlush
+  |               - HttpConnection.onFlushable
+  |                 - EndPointWriter.flush
+  |                 - HttpConnection.onFlushComplete
+  |                 - HttpConnection.wantFlush(false)
+  |                 - HttpConnection.onCompleteCallback
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

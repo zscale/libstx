@@ -38,6 +38,7 @@
 - ConnectionFactory
 - Connection
 - EndPoint
+- EndPointWriter
 
 ### Server Support API
 
