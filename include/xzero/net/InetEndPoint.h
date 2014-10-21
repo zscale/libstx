@@ -53,7 +53,7 @@ class XZERO_API InetEndPoint : public EndPoint, public Selectable {
   size_t flush(const BufferRef& source) override;
   size_t flush(int fd, off_t offset, size_t size) override;
   void wantFill() override;
-  void wantFlush() override;
+  void wantFlush(bool enable) override;
   TimeSpan idleTimeout() override;
   void setIdleTimeout(TimeSpan timeout) override;
 
@@ -68,7 +68,7 @@ class XZERO_API InetEndPoint : public EndPoint, public Selectable {
   int handle_;
   std::unique_ptr<SelectionKey> selectionKey_;
   bool isCorking_;
-  bool isBusy_;
+  int isBusy_;
 };
 
 } // namespace xzero

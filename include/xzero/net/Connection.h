@@ -77,7 +77,7 @@ class XZERO_API Connection {
    *
    * In any case of an error, onInterestFailure(const std::exception&) is invoked.
    */
-  void wantFlush();
+  void wantFlush(bool enable = true);
 
   /**
    * Event callback being invoked when data is available for read.

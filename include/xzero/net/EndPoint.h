@@ -107,7 +107,7 @@ class EndPoint {
    *
    * @see Connection::onSelectable() noexcept
    */
-  virtual void wantFlush() = 0;
+  virtual void wantFlush(bool enable) = 0;
 
   /**
    * Retrieves the timeout before a TimeoutError is thrown when I/O
