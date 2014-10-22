@@ -5,6 +5,8 @@
 #include <xzero/http/HttpOutput.h>
 #include <xzero/http/HttpOutputFilter.h>
 #include <xzero/net/IPAddress.h>
+#include <xzero/logging/LogAggregator.h>
+#include <xzero/logging/LogTarget.h>
 #include <xzero/support/libev/LibevScheduler.h>
 #include <xzero/support/libev/LibevSelector.h>
 #include <xzero/support/libev/LibevClock.h>
@@ -121,6 +123,9 @@ class MyHandler : public xzero::HttpService::Handler {
 };
 
 int main(int argc, const char* argv[]) {
+  xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
+  xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
+
   ev::loop_ref loop = ev::default_loop(0);
   xzero::support::LibevScheduler scheduler(loop);
   xzero::support::LibevSelector selector(loop);
@@ -131,6 +136,7 @@ int main(int argc, const char* argv[]) {
   xzero::HttpService httpService;
 
   httpService.configureInet(&scheduler, &scheduler, &selector, &clock,
+                            xzero::TimeSpan::fromSeconds(10),
                             xzero::IPAddress("0.0.0.0"), 3000);
   httpService.addHandler(&myHandler);
   httpService.addHandler(&builtinAssets);

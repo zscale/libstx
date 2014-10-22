@@ -1,6 +1,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/TimeSpan.h>
 #include <xzero/DateTime.h> // BuiltinAssetHandler
 #include <vector>
 #include <unordered_map>
@@ -42,6 +43,7 @@ class XZERO_API HttpService {
    * @param scheduler where to schedule timed tasks on.
    * @param selector the I/O selector service to use for non-blocking I/O.
    * @param clock The wall clock that may be used for timeout management.
+   * @param idleTimeout timespan indicating how long a connection may be idle.
    * @param ipaddress the TCP/IP bind address.
    * @param port the TCP/IP port to listen on.
    * @param backlog the number of connections allowed to be queued in kernel.
@@ -49,6 +51,7 @@ class XZERO_API HttpService {
    */
   InetConnector* configureInet(Executor* executor, Scheduler* scheduler,
                                Selector* selector, WallClock* clock,
+                               TimeSpan idleTimeout,
                                const IPAddress& ipaddress,
                                int port, int backlog = 128);
 

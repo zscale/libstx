@@ -19,6 +19,7 @@ int main() {
   xzero::Server server;
   auto inet = server.addConnector<xzero::InetConnector>(
       "http", &scheduler, &scheduler, &selector, &clock,
+      xzero::TimeSpan::fromSeconds(30),
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(
       &clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));
