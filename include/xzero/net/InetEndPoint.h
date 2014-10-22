@@ -63,6 +63,9 @@ class XZERO_API InetEndPoint : public EndPoint, public Selectable {
   void onSelectable() noexcept override;
 
  private:
+  void onTimeout();
+
+ private:
   InetConnector* connector_;
   IdleTimeout idleTimeout_;
   int handle_;

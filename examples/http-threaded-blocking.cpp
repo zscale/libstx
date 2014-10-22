@@ -24,6 +24,7 @@ int main() {
 
   auto inet = server.addConnector<xzero::InetConnector>(
       "http", &threadedExecutor, nullptr, nullptr, clock,
+      xzero::TimeSpan::fromSeconds(30),
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   inet->setBlocking(true);
 

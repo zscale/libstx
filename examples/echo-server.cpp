@@ -66,7 +66,8 @@ std::unique_ptr<xzero::InetConnector> createInetConnector( // {{{
     xzero::WallClock* clock) {
 
   std::unique_ptr<xzero::InetConnector> inetConnector(
-      new xzero::InetConnector(name, executor, scheduler, selector, clock));
+      new xzero::InetConnector(name, executor, scheduler, selector, clock,
+        xzero::TimeSpan::fromSeconds(30)));
 
   inetConnector->open(IPAddress("0.0.0.0"), port, 128, true, true);
   inetConnector->setBlocking(false);

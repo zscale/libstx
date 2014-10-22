@@ -4,6 +4,7 @@
 #include <xzero/io/Selectable.h>
 #include <xzero/net/Connector.h>
 #include <xzero/net/IPAddress.h>
+#include <xzero/TimeSpan.h>
 #include <list>
 #include <deque>
 
@@ -28,6 +29,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    * @param scheduler Scheduler service to use for timeout management
    * @param selector Selector service to use for I/O multiplexing
    * @param clock Wall clock used for timeout management.
+   * @param idleTimeout timespan indicating how long a connection may be idle.
    * @param ipaddress TCP/IP address to listen on
    * @param port TCP/IP port number to listen on
    * @param backlog TCP backlog for this listener.
@@ -38,6 +40,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    */
   InetConnector(const std::string& name, Executor* executor,
                 Scheduler* scheduler, Selector* selector, WallClock* clock,
+                TimeSpan idleTimeout,
                 const IPAddress& ipaddress, int port, int backlog,
                 bool reuseAddr, bool reusePort);
 
@@ -49,9 +52,11 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    * @param scheduler Scheduler service to use for timeout management
    * @param selector Selector service to use for I/O multiplexing
    * @param clock Wall clock used for timeout management.
+   * @param idleTimeout timespan indicating how long a connection may be idle.
    */
   InetConnector(const std::string& name, Executor* executor,
-                Scheduler* scheduler, Selector* selector, WallClock* clock);
+                Scheduler* scheduler, Selector* selector, WallClock* clock,
+                TimeSpan idleTimeout);
 
   ~InetConnector();
 
@@ -166,6 +171,16 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    */
   void setMultiAcceptCount(size_t value) noexcept;
 
+  /**
+   * Retrieves the timespan a connection may be idle within an I/O operation.
+   */
+  TimeSpan idleTimeout() const noexcept;
+
+  /**
+   * Sets the timespan a connection may be idle within an I/O operation.
+   */
+  void setIdleTimeout(TimeSpan value);
+
   void start() override;
   bool isStarted() const noexcept override;
   void stop() override;
@@ -208,11 +223,16 @@ class XZERO_API InetConnector : public Connector, public Selectable {
   int flags_;
   size_t backlog_;
   size_t multiAcceptCount_;
+  TimeSpan idleTimeout_;
   bool isStarted_;
 };
 
 inline Scheduler* InetConnector::scheduler() const noexcept {
   return scheduler_;
+}
+
+inline TimeSpan InetConnector::idleTimeout() const noexcept {
+  return idleTimeout_;
 }
 
 }  // namespace xzero
