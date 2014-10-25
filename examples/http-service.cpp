@@ -15,7 +15,11 @@
 
 class Capslock : public xzero::HttpOutputFilter {
  public:
-  void filter(const xzero::BufferRef& input, xzero::Buffer* output) override {
+  void filter(const xzero::BufferRef& input,
+              xzero::Buffer* output,
+              bool last) override {
+    printf("Capslock.filter(size=%zu, last=%s)\n",
+        input.size(), last ? "true" : "false");
     output->reserve(input.size());
     for (char ch: input) {
       output->push_back(static_cast<char>(std::toupper(ch)));

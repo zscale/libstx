@@ -2,7 +2,10 @@
 
 ### Milestone 1
 
-- [ ] test: output compression via chrome causes probs (see chartsql)
+- [x] execution model rework
+- [x] output compression via chrome causes probs (see chartsql)
+- [ ] timeout management (ideally testable)
+- [ ] fcgi transport
 
 ### Milestone 2
 
