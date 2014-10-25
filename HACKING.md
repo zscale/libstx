@@ -2,9 +2,6 @@
 HACKING
 =======
 
-## Dead Code?
-- Response.setCommitted()
-
 ## Exceptions
 
 - provide stacktrace of exception root (as multiline string or string array)
