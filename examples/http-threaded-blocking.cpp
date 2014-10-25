@@ -36,8 +36,9 @@ int main() {
 
     response->setStatus(xzero::HttpStatus::Ok);
     response->setContentLength(body.size());
-    response->output()->write(body);
-    response->completed();
+
+    response->output()->write(body, std::bind(&xzero::HttpResponse::completed,
+                                              response));
   });
 
   server.start();

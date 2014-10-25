@@ -63,6 +63,8 @@ class XZERO_API InetEndPoint : public EndPoint, public Selectable {
   void onSelectable() noexcept override;
 
  private:
+  void fillable();
+  void flushable();
   void onTimeout();
 
  private:

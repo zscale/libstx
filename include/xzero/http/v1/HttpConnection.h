@@ -25,6 +25,7 @@ class Http1Channel;
 class XZERO_API HttpConnection : public HttpTransport {
  public:
   HttpConnection(std::shared_ptr<EndPoint> endpoint,
+                 Executor* executor,
                  const HttpHandler& handler,
                  HttpDateGenerator* dateGenerator,
                  HttpOutputCompressor* outputCompressor,
@@ -56,8 +57,10 @@ class XZERO_API HttpConnection : public HttpTransport {
  private:
   void patchResponseInfo(HttpResponseInfo& info);
   void onFillable() override;
+  void parseFragment();
   void onFlushable() override;
   void onInterestFailure(const std::exception& error) override;
+  void onResponseComplete();
 
  private:
   HttpParser parser_;

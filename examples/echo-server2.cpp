@@ -184,7 +184,7 @@ class EchoConnection : public xzero::Connection { // {{{
  public:
   EchoConnection(std::shared_ptr<xzero::EndPoint> endpoint,
                  xzero::Executor* executor)
-      : xzero::Connection(endpoint), executor_(executor) {
+      : xzero::Connection(endpoint, executor) {
   }
 
   ~EchoConnection() {
@@ -219,9 +219,6 @@ class EchoConnection : public xzero::Connection { // {{{
   void onFlushable() override {
     //.
   }
-
- private:
-  xzero::Executor* executor_;
 };
 // }}}
 class EchoFactory : public xzero::ConnectionFactory { // {{{

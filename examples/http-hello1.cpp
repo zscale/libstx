@@ -8,19 +8,27 @@
 #include <xzero/support/libev/LibevScheduler.h>
 #include <xzero/support/libev/LibevSelector.h>
 #include <xzero/support/libev/LibevClock.h>
+#include <xzero/logging/LogAggregator.h>
+#include <xzero/logging/LogTarget.h>
 #include <ev++.h>
 
 int main() {
+  xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
+  xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
+
   ev::loop_ref loop = ev::default_loop(0);
   xzero::support::LibevScheduler scheduler(loop);
   xzero::support::LibevSelector selector(loop);
   xzero::support::LibevClock clock(loop);
 
   xzero::Server server;
+
   auto inet = server.addConnector<xzero::InetConnector>(
       "http", &scheduler, &scheduler, &selector, &clock,
-      xzero::TimeSpan::fromSeconds(30),
+      xzero::TimeSpan::fromSeconds(60),
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
+  inet->setBlocking(false);
+
   auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(
       &clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));
 
@@ -29,8 +37,10 @@ int main() {
     response->setStatus(xzero::HttpStatus::Ok);
     response->setReason("because");
 
-    response->output()->write("Hello");
-    response->output()->write(" World!\n");
+    xzero::Buffer body;
+    body << "Hello " << request->path() << "\n";
+    response->setContentLength(body.size());
+    response->output()->write(std::move(body));
     response->completed();
   });
 
