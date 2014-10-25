@@ -2,10 +2,12 @@
 
 ### Milestone 1
 
-- [ ] net: EndPoint timeout management
+- [ ] test: output compression via chrome causes probs (see chartsql)
 
 ### Milestone 2
 
+- [ ] net: improved EndPoint timeout handling
+      (distinguish between read/write/keepalive timeouts)
 - [ ] evaluate the need of a connection/request lifecycle hook API
   - onConnectionOpen (diag)
   - onRequestPreHandle (diag)
@@ -23,3 +25,9 @@
 - [ ] test: call completed() before contentLength is satisfied in non-chunked mode (shall be transport generic)
 - [ ] test: attempt to write more data than contentLength in non-chunked mode (shall be transport generic)
 
+### Usage Ideas
+
+- FnordMetric/2
+- port x0d to use this library instead
+- write a dedicated haproxy-like load balancer
+- http2-to-http1 proxy
