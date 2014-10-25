@@ -57,11 +57,6 @@ class XZERO_API Connection {
    */
   virtual void close();
 
-  virtual size_t getMessagesIn() const;
-  virtual size_t getMessagesOut() const;
-  virtual size_t getBytesIn() const;
-  virtual size_t getBytesOut() const;
-
   /**
    * Configures the input buffer size for this Connection.
    *
