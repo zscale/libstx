@@ -106,7 +106,6 @@ class XZERO_API MockTransport : public HttpTransport {
   bool onReadTimeout() override;
 
  private:
-  Executor* executor_;
   HttpHandler handler_;
   size_t maxRequestUriLength_;
   size_t maxRequestBodyLength_;

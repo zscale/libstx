@@ -221,6 +221,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
   int addressFamily_;
   int typeMask_;
   int flags_;
+  bool blocking_;
   size_t backlog_;
   size_t multiAcceptCount_;
   TimeSpan idleTimeout_;

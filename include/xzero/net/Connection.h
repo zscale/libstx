@@ -6,6 +6,7 @@
 
 namespace xzero {
 
+class Executor;
 class Connector;
 class EndPoint;
 class ConnectionListener;
@@ -19,7 +20,7 @@ class ConnectionListener;
  */
 class XZERO_API Connection {
  public:
-  explicit Connection(std::shared_ptr<EndPoint> endpoint);
+  Connection(std::shared_ptr<EndPoint> endpoint, Executor* executor);
   virtual ~Connection();
 
   /**
@@ -35,7 +36,12 @@ class XZERO_API Connection {
   /**
    * Retrieves the corresponding endpoint for this connection.
    */
-  EndPoint* endpoint() const;
+  EndPoint* endpoint() const noexcept;
+
+  /**
+   * Retrieves the Executor that may be used for handling this connection.
+   */
+  Executor* executor() const noexcept;
 
   /**
    * Registers given @p listener to this connection.
@@ -111,11 +117,16 @@ class XZERO_API Connection {
 
  private:
   std::shared_ptr<EndPoint> endpoint_;
+  Executor* executor_;
   std::list<ConnectionListener*> listeners_;
 };
 
-inline EndPoint* Connection::endpoint() const {
+inline EndPoint* Connection::endpoint() const noexcept {
   return endpoint_.get();
+}
+
+inline Executor* Connection::executor() const noexcept {
+  return executor_;
 }
 
 /**
