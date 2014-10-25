@@ -18,15 +18,15 @@ class FileRef;
  */
 class XZERO_API HttpOutputFilter {
  public:
-  virtual void filter(const BufferRef& input, Buffer* output) = 0;
+  virtual void filter(const BufferRef& input, Buffer* output, bool last) = 0;
 
   static void applyFilters(
     const std::list<std::shared_ptr<HttpOutputFilter>>& filters,
-    const BufferRef& input, Buffer* output);
+    const BufferRef& input, Buffer* output, bool last);
 
   static void applyFilters(
     const std::list<std::shared_ptr<HttpOutputFilter>>& filters,
-    const FileRef& input, Buffer* output);
+    const FileRef& input, Buffer* output, bool last);
 };
 
 } // namespace xzero
