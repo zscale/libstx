@@ -10,7 +10,7 @@ namespace xzero {
 
 class FileRef;
 class HttpChannel;
-class HttpOutputFilter;
+class Filter;
 
 /**
  * Represents the HTTP response body producer API.
@@ -30,7 +30,7 @@ class XZERO_API HttpOutput {
    * The filter will not take over ownership. Make sure the filter is
    * available for the whole time the response is generated.
    */
-  void addFilter(std::shared_ptr<HttpOutputFilter> filter);
+  void addFilter(std::shared_ptr<Filter> filter);
 
   /**
    * Removes all output-filters.

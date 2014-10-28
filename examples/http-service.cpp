@@ -3,8 +3,8 @@
 #include <xzero/http/HttpResponse.h>
 #include <xzero/http/HttpInput.h>
 #include <xzero/http/HttpOutput.h>
-#include <xzero/http/HttpOutputFilter.h>
 #include <xzero/net/IPAddress.h>
+#include <xzero/io/Filter.h>
 #include <xzero/logging/LogAggregator.h>
 #include <xzero/logging/LogTarget.h>
 #include <xzero/support/libev/LibevScheduler.h>
@@ -13,7 +13,7 @@
 #include <cctype>
 #include <ev++.h>
 
-class Capslock : public xzero::HttpOutputFilter {
+class Capslock : public xzero::Filter {
  public:
   void filter(const xzero::BufferRef& input,
               xzero::Buffer* output,
