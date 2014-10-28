@@ -40,11 +40,6 @@ class XZERO_API HttpOutputCompressor {
   void postProcess(HttpRequest* request, HttpResponse* response);
 
  private:
-  class ZlibFilter;
-  class DeflateFilter;
-  class GzipFilter;
-  class Bzip2Filter;
-
   size_t minSize_;
   size_t maxSize_;
   int level_;
