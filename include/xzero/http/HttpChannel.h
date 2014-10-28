@@ -4,7 +4,7 @@
 #include <xzero/CompletionHandler.h>
 #include <xzero/http/HttpListener.h>
 #include <xzero/http/HttpHandler.h>
-#include <xzero/http/HttpOutputFilter.h>
+#include <xzero/io/Filter.h>
 #include <list>
 #include <memory>
 
@@ -132,7 +132,7 @@ class XZERO_API HttpChannel : public HttpListener {
    * The filter will not take over ownership. Make sure the filter is
    * available for the whole time the response is generated.
    */
-  void addOutputFilter(std::shared_ptr<HttpOutputFilter> filter);
+  void addOutputFilter(std::shared_ptr<Filter> filter);
 
   /**
    * Removes all output-filters.
@@ -152,7 +152,7 @@ class XZERO_API HttpChannel : public HttpListener {
   HttpTransport* transport_;
   std::unique_ptr<HttpRequest> request_;
   std::unique_ptr<HttpResponse> response_;
-  std::list<std::shared_ptr<HttpOutputFilter>> outputFilters_;
+  std::list<std::shared_ptr<Filter>> outputFilters_;
   HttpOutputCompressor* outputCompressor_;
   HttpHandler handler_;
 };
