@@ -21,6 +21,8 @@
 // Make use of accept4() syscall if available
 #cmakedefine ENABLE_ACCEPT4
 
+#cmakedefine ENABLE_PIPE2
+
 #cmakedefine ENABLE_MULTI_ACCEPT
 
 #cmakedefine ENABLE_PCRE
