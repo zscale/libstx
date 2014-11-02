@@ -4,6 +4,7 @@
 #include <xzero/Buffer.h>
 #include <xzero/http/HeaderFieldList.h>
 #include <xzero/http/HttpVersion.h>
+#include <xzero/http/HttpMethod.h>
 #include <xzero/http/HttpInput.h>
 #include <memory>
 
@@ -20,8 +21,10 @@ class XZERO_API HttpRequest {
               HttpVersion version, bool secure, const HeaderFieldList& headers,
               std::unique_ptr<HttpInput>&& input);
 
-  const std::string& method() const { return method_; }
-  void setMethod(const std::string& value) { method_ = value; }
+
+  HttpMethod method() const noexcept { return method_; }
+  const std::string& unparsedMethod() const noexcept { return unparsedMethod_; }
+  void setMethod(const std::string& value);
 
   bool setUri(const std::string& uri);
   const std::string& unparsedUri() const noexcept { return path_; }
@@ -50,7 +53,8 @@ class XZERO_API HttpRequest {
   void recycle();
 
  private:
-  std::string method_;
+  HttpMethod method_;
+  std::string unparsedMethod_;
 
   std::string unparsedUri_;
   std::string path_;
