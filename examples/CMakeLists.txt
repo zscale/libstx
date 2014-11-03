@@ -1,5 +1,8 @@
 if(ENABLE_EXAMPLES)
 
+  add_executable(compress compress.cpp)
+  target_link_libraries(compress xzero)
+
   add_executable(echo-server echo-server.cpp)
   target_link_libraries(echo-server xzero)
 
