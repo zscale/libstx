@@ -34,7 +34,7 @@ class XZERO_API HttpRequest {
   void setMethod(const std::string& value);
 
   bool setUri(const std::string& uri);
-  const std::string& unparsedUri() const noexcept { return path_; }
+  const std::string& unparsedUri() const noexcept { return unparsedUri_; }
   const std::string& path() const noexcept { return path_; }
   const std::string& query() const noexcept { return query_; }
   int directoryDepth() const noexcept { return directoryDepth_; }
