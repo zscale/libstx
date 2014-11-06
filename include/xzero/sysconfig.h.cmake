@@ -36,17 +36,8 @@
 // to the standard behaviour.
 #cmakedefine XZERO_ENABLE_O_TMPFILE
 
-// Optimize code path for post()'ing code blocks into current worker threads
-#cmakedefine XZERO_ENABLE_POST_FN_OPTIMIZATION 1
-
 // Builds with support for opportunistic write() calls to client sockets
 #cmakedefine XZERO_OPPORTUNISTIC_WRITE 1
-
-// HttpWorker to use libev's ev_async (over locking queue) for its post API
-#cmakedefine XZERO_WORKER_POST_LIBEV 1
-
-// use RR for worker-select instead of lowest-load
-#cmakedefine XZERO_WORKER_RR 1
 
 // --------------------------------------------------------------------------
 // header tests
