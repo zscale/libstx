@@ -557,18 +557,22 @@ inline bool BufferBase<T>::contains(const BufferRef& ref) const {
 template <typename T>
 inline size_t BufferBase<T>::find(const value_type* value,
                                   size_t offset) const {
+  const int value_length = strlen(value);
+
+  if (value_length == 1)
+    return find(*value, offset);
+
   const char* i = cbegin() + offset;
   const char* e = cend();
-  const int value_length = strlen(value);
 
   if (offset + value_length > size())
     return npos;
 
   while (i != e) {
     if (*i == *value) {
-      const char* p = i + 1;
-      const char* q = value + 1;
-      const char* qe = i + value_length;
+      const char* p = i + 1; // points to the second search-byte (data)
+      const char* q = value + 1; // points to the second search-byte (pattern)
+      const char* qe = i + value_length; // EOS (pattern)
 
       while (*p == *q && p != qe) {
         ++p;
@@ -596,10 +600,14 @@ inline size_t BufferBase<T>::find(value_type value, size_t offset) const {
 
 template <typename T>
 inline size_t BufferBase<T>::find(const BufferRef& buf, size_t offset) const {
+  const int value_length = buf.size();
+
+  if (value_length == 1)
+    return find(buf[0], offset);
+
+  const char* value = buf.data();
   const char* i = cbegin() + offset;
   const char* e = cend();
-  const char* value = buf.data();
-  const int value_length = buf.size();
 
   if (offset + value_length > size())
     return npos;
