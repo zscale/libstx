@@ -10,6 +10,7 @@
 #include <xzero/Api.h>
 #include <xzero/Buffer.h>
 #include <xzero/DateTime.h>
+#include <mutex>
 
 namespace xzero {
 
@@ -32,6 +33,7 @@ class XZERO_API HttpDateGenerator {
   WallClock* clock_;
   DateTime current_;
   Buffer buffer_;
+  std::mutex mutex_;
 };
 
 } // namespace xzero
