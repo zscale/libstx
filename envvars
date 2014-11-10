@@ -1,0 +1,6 @@
+# vim:syntax=sh
+
+export PKG_CONFIG_PATH="$HOME/local/lib/pkgconfig"
+export CXX="/usr/bin/clang++-3.4"
+export CC="/usr/bin/clang-3.4"
+ulimit -c unlimited
