@@ -14,6 +14,7 @@
 #include <xzero/TimeSpan.h>
 #include <list>
 #include <deque>
+#include <mutex>
 
 namespace xzero {
 
@@ -224,6 +225,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
   std::unique_ptr<SelectionKey> selectionKey_;
 
   std::list<InetEndPoint*> connectedEndPoints_;
+  std::mutex mutex_;
   int socket_;
   int addressFamily_;
   int typeMask_;
