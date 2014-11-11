@@ -21,8 +21,8 @@
 #include <ev++.h>
 
 int main() {
-  xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
-  xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
+  // xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
+  // xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
 
   xzero::ThreadedExecutor threadedExecutor;
   xzero::Server server;
