@@ -134,8 +134,8 @@ class MyHandler : public xzero::HttpService::Handler {
 };
 
 int main(int argc, const char* argv[]) {
-  xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
-  xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
+  // xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
+  // xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
 
   ev::loop_ref loop = ev::default_loop(0);
   xzero::support::LibevScheduler scheduler(loop);
