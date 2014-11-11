@@ -23,7 +23,10 @@ release:
 	cd build/release && cmake ../.. \
 		-DCMAKE_BUILD_TYPE="release" \
 		-DCMAKE_CXX_FLAGS_RELEASE="-O3 -g -march=native" \
-		-DCMAKE_INSTALL_PREFIX="/usr" \
+		-DENABLE_EXAMPLES=yes \
+		-DENABLE_TESTS=yes \
+		-DCMAKE_INSTALL_PREFIX="/usr"
+	@cd build/release && make
 
 clean:
 	rm -rf build/debug
