@@ -9,6 +9,8 @@
 
 ### Milestone 2
 
+- [ ] SSL support, `SslConnector` & `SslEndPoint` chaining to real
+      connector/endpoint.
 - [ ] net: improved EndPoint timeout handling
       (distinguish between read/write/keepalive timeouts)
 - [ ] evaluate the need of a connection/request lifecycle hook API
@@ -20,8 +22,6 @@
   - onConnectionClose (diag)
 - [ ] `HttpTransport::onInterestFailure()` => `(factory || connector)->report(this, error);`
 - [ ] `InetEndPoint::wantFill()` to honor `TCP_DEFER_ACCEPT`
-- [ ] SSL support, `SslConnector` & `SslEndPoint` chaining to real
-      connector/endpoint.
 - [ ] UdpConnector
 - [ ] chunked request trailer support & unit test
 - [ ] doxygen: how to document a group of functions all at once (or, how to copydoc)
