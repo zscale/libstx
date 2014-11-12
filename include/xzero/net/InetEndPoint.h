@@ -37,11 +37,6 @@ class XZERO_API InetEndPoint : public EndPoint, public Selectable {
   std::pair<IPAddress, int> localAddress() const;
 
   /**
-   * Sets the underlying OS file handle.
-   */
-  void setHandle(int fd) noexcept;
-
-  /**
    * Tests whether this InetEndPoint is currently handling and I/O notification.
    * @see wantFill()
    * @see wantFlush()
