@@ -15,9 +15,14 @@
 #include <xzero/support/libev/LibevScheduler.h>
 #include <xzero/support/libev/LibevSelector.h>
 #include <xzero/support/libev/LibevClock.h>
+#include <xzero/logging/LogAggregator.h>
+#include <xzero/logging/LogTarget.h>
 #include <ev++.h>
 
 int main() {
+  // xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
+  // xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
+
   ev::loop_ref loop = ev::default_loop(0);
   xzero::support::LibevScheduler scheduler(loop);
   xzero::support::LibevSelector selector(loop);
