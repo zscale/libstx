@@ -9,6 +9,7 @@
 
 #include <xzero/Api.h>
 
+#include <exception>
 #include <functional>
 #include <string>
 
@@ -26,7 +27,8 @@ namespace xzero {
  */
 class XZERO_API Executor {
  public:
-  virtual ~Executor() {}
+  Executor();
+  virtual ~Executor();
 
   typedef std::function<void()> Task;
 
@@ -34,6 +36,11 @@ class XZERO_API Executor {
    * Executes given task.
    */
   virtual void execute(Task&& task) = 0;
+
+  /**
+   * Configures exception handler.
+   */
+  void setExceptionHandler(std::function<void(const std::exception&)>&& eh);
 
   /**
    * Retrieves the maximum number of possible concurrently running tasks.
@@ -44,6 +51,27 @@ class XZERO_API Executor {
    * Retrieves a human readable name of this executor (for introspection only).
    */
   virtual std::string toString() const = 0;
+
+  /**
+   * Standard exception console logger.
+   */
+  static void standardConsoleLogger(const std::exception& e);
+
+ protected:
+  /**
+   * Handles uncaught exception.
+   */
+  void handleException(const std::exception& e) noexcept;
+
+  /**
+   * Savely invokes given task within the callers context.
+   *
+   * @see setExceptionHandler(std::function<void(const std::exception&)>&&)
+   */
+  void safeCall(const Task& task) noexcept;
+
+ private:
+  std::function<void(const std::exception&)> exceptionHandler_;
 };
 
 } // namespace xzero
