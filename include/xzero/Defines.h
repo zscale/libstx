@@ -5,16 +5,10 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-// This file is part of the "x0" project, http://xzero.io/
-//   (c) 2009-2014 Christian Parpart <trapni@gmail.com>
-//
-// Licensed under the MIT License (the "License"); you may not use this
-// file except in compliance with the License. You may obtain a copy of
-// the License at: http://opensource.org/licenses/MIT
-
 #ifndef sw_x0_defines_hpp
 #define sw_x0_defines_hpp (1)
 
+#include <xzero/sysconfig.h>
 #include <stddef.h>
 #include <string.h>
 #include <stdio.h>
@@ -109,5 +103,9 @@
 
 /// the filename only part of __FILE__ (no leading path)
 #define __FILENAME__ ((std::strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)
+
+#if defined(XZERO_ENABLE_NOEXCEPT)
+#define XZERO_NOEXCEPT /*noexcept*/
+#endif
 
 #endif
