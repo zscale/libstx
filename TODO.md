@@ -5,10 +5,12 @@
 - [x] execution model rework
 - [x] output compression via chrome causes probs (see chartsql)
 - [ ] timeout management (ideally testable)
-- [ ] fcgi transport
+- [ ] rework exception management
+- [ ] how to handle accept() errors (i.e. in InetConnector)?
 
 ### Milestone 2
 
+- [ ] fcgi transport
 - [ ] SSL support, `SslConnector` & `SslEndPoint` chaining to real
       connector/endpoint.
 - [ ] net: improved EndPoint timeout handling
