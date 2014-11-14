@@ -76,6 +76,19 @@ class XZERO_API InetEndPoint : public EndPoint, public Selectable {
   std::unique_ptr<SelectionKey> selectionKey_;
   bool isCorking_;
   int isBusy_;
+
+  /**
+   * Helper class to aid easy scoped business refcounting to ease exception
+   * handling.
+   */
+  class BusyGuard {
+   public:
+    BusyGuard(InetEndPoint* ep) noexcept : ep_(ep) { ep->isBusy_++; }
+    ~BusyGuard() noexcept { ep_->isBusy_--; }
+
+   private:
+    InetEndPoint* ep_;
+  };
 };
 
 } // namespace xzero
