@@ -36,6 +36,8 @@
 // to the standard behaviour.
 #cmakedefine XZERO_ENABLE_O_TMPFILE
 
+#cmakedefine XZERO_ENABLE_NOEXCEPT
+
 // Builds with support for opportunistic write() calls to client sockets
 #cmakedefine XZERO_OPPORTUNISTIC_WRITE 1
 
