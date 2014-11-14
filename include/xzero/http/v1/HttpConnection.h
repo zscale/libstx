@@ -67,7 +67,7 @@ class XZERO_API HttpConnection : public HttpTransport {
   void parseFragment();
   void onFlushable() override;
   void onInterestFailure(const std::exception& error) override;
-  void onResponseComplete();
+  void onResponseComplete(bool succeed);
 
  private:
   HttpParser parser_;

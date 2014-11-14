@@ -34,6 +34,8 @@ class RuntimeError : public std::runtime_error {
 
 } // namespace xzero
 
+#define RUNTIME_ERROR(msg) (::xzero::RuntimeError((msg), __FILE__, __LINE__))
+
 #if !defined(BUG_ON)
   #define BUG_ON(cond) {                                                    \
     if (unlikely(cond)) {                                                   \

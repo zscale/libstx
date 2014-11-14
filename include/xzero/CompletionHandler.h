@@ -12,6 +12,12 @@
 
 namespace xzero {
 
-typedef std::function<void(bool /*succeeded*/)> CompletionHandler;
+/**
+ * Completion handler function type.
+ *
+ * The passed boolean parameter indicates whether the prior operation
+ * did succeed or not.
+ */
+typedef std::function<void(bool /*succeed*/)> CompletionHandler;
 
 } // namespace xzero

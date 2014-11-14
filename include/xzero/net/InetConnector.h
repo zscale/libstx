@@ -216,8 +216,17 @@ class XZERO_API InetConnector : public Connector, public Selectable {
   void bind(const IPAddress& ipaddr, int port);
   void listen(int backlog);
 
-  friend class InetEndPoint;
+  /**
+   * Invoked by InetEndPoint to inform its creator that it got close()'d.
+   *
+   * This will unlink the endpoint with this connector, and also notify the
+   * endpoint's connection about the event via Connection::onClose().
+   *
+   * @see Connection::onClose()
+   * @see ConnectionListener::onClosed(Connection*)
+   */
   void onEndPointClosed(InetEndPoint* endpoint);
+  friend class InetEndPoint;
 
  private:
   Scheduler* scheduler_;
