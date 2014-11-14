@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <unordered_map>
 #include <memory>
 #include <string>
@@ -68,7 +69,7 @@ class XZERO_API Connector {
   /**
    * Tests whether this connector has been started.
    */
-  virtual bool isStarted() const noexcept = 0;
+  virtual bool isStarted() const XZERO_NOEXCEPT = 0;
 
   /**
    * Stops given connector.

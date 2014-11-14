@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/Buffer.h>
 #include <xzero/CompletionHandler.h>
 #include <functional>
@@ -95,7 +96,7 @@ class XZERO_API HttpOutput {
    */
   virtual void completed();
 
-  size_t size() const noexcept { return size_; }
+  size_t size() const XZERO_NOEXCEPT { return size_; }
 
  private:
   HttpChannel* channel_;

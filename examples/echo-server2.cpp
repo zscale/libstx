@@ -84,7 +84,7 @@ class ThreadedSelector { // {{{
   /** Stops the server as well as the I/O worker threads. */
   void stop();
 
-  xzero::Server* server() noexcept { return &server_; }
+  xzero::Server* server() XZERO_NOEXCEPT { return &server_; }
 
  private:
   xzero::ThreadedExecutor threadedExecutor_;

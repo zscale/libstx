@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/http/HttpStatus.h>
 #include <string>
 #include <unordered_map>
@@ -33,8 +34,8 @@ class XZERO_API HttpFile {
 
   ~HttpFile();
 
-  bool isError() const noexcept { return errno_ != 0; }
-  int errorCode() const noexcept { return errno_; }
+  bool isError() const XZERO_NOEXCEPT { return errno_ != 0; }
+  int errorCode() const XZERO_NOEXCEPT { return errno_; }
 
   const std::string& path() const { return path_; }
   std::string filename() const;
@@ -42,12 +43,12 @@ class XZERO_API HttpFile {
   const std::string& etag() const;
   const std::string& lastModified() const;
 
-  size_t size() const noexcept { return stat_.st_size; }
-  time_t mtime() const noexcept { return stat_.st_mtime; }
+  size_t size() const XZERO_NOEXCEPT { return stat_.st_size; }
+  time_t mtime() const XZERO_NOEXCEPT { return stat_.st_mtime; }
   operator const struct stat*() const { return &stat_; }
   const struct stat* operator->() const { return &stat_; }
 
-  bool isRegular() const noexcept { return S_ISREG(stat_.st_mode); }
+  bool isRegular() const XZERO_NOEXCEPT { return S_ISREG(stat_.st_mode); }
 
   void update();
 
@@ -113,10 +114,10 @@ class XZERO_API HttpFileHandler {
   std::string getMimeType(const std::string& path);
 
   /** Retrieves the mimetype mappings (from file extension to mimetype). */
-  const std::unordered_map<std::string, std::string>& mimetypes() const noexcept;
+  const std::unordered_map<std::string, std::string>& mimetypes() const XZERO_NOEXCEPT;
 
   /** Retrieves the default mimetype. */
-  const std::string& defaultMimeType() const noexcept;
+  const std::string& defaultMimeType() const XZERO_NOEXCEPT;
 
   /** Sets the default mimetype to given @p value. */
   void setDefaultMimeType(const std::string& value);
@@ -177,11 +178,11 @@ class XZERO_API HttpFileHandler {
 
 // {{{ inlines
 inline const std::unordered_map<std::string, std::string>&
-    HttpFileHandler::mimetypes() const noexcept {
+    HttpFileHandler::mimetypes() const XZERO_NOEXCEPT {
   return mimetypes_;
 }
 
-inline const std::string& HttpFileHandler::defaultMimeType() const noexcept {
+inline const std::string& HttpFileHandler::defaultMimeType() const XZERO_NOEXCEPT {
   return defaultMimeType_;
 }
 

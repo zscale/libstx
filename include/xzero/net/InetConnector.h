@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/io/Selectable.h>
 #include <xzero/net/Connector.h>
 #include <xzero/net/IPAddress.h>
@@ -68,9 +69,9 @@ class XZERO_API InetConnector : public Connector, public Selectable {
 
   ~InetConnector();
 
-  Scheduler* scheduler() const noexcept;
+  Scheduler* scheduler() const XZERO_NOEXCEPT;
 
-  Selector* selector() const noexcept override;
+  Selector* selector() const XZERO_NOEXCEPT override;
 
   /**
    * Opens this connector by binding to the given @p ipaddress and @p port.
@@ -89,7 +90,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
   /**
    * Tests whether this connector is open.
    */
-  bool isOpen() const noexcept;
+  bool isOpen() const XZERO_NOEXCEPT;
 
   /**
    * Implicitely stops and finally closes this connnector.
@@ -99,7 +100,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
   /**
    * Retrieves the underlying system socket handle.
    */
-  virtual int handle() const noexcept;
+  virtual int handle() const XZERO_NOEXCEPT;
 
   /**
    * Returns the IP address family, such as @c IPAddress::V4 or @c IPAddress::V6.
@@ -111,7 +112,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    */
   void setSocket(int socket);
 
-  size_t backlog() const noexcept;
+  size_t backlog() const XZERO_NOEXCEPT;
   void setBacklog(size_t enable);
 
   /** Tests wether this connector is blocking on accepting new clients. */
@@ -172,17 +173,17 @@ class XZERO_API InetConnector : public Connector, public Selectable {
   /**
    * Retrieves the number of maximum attempts to accept a new clients in a row.
    */
-  size_t multiAcceptCount() const noexcept;
+  size_t multiAcceptCount() const XZERO_NOEXCEPT;
 
   /**
    * Sets the number of attempts to accept a new client in a row.
    */
-  void setMultiAcceptCount(size_t value) noexcept;
+  void setMultiAcceptCount(size_t value) XZERO_NOEXCEPT;
 
   /**
    * Retrieves the timespan a connection may be idle within an I/O operation.
    */
-  TimeSpan idleTimeout() const noexcept;
+  TimeSpan idleTimeout() const XZERO_NOEXCEPT;
 
   /**
    * Sets the timespan a connection may be idle within an I/O operation.
@@ -190,7 +191,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
   void setIdleTimeout(TimeSpan value);
 
   void start() override;
-  bool isStarted() const noexcept override;
+  bool isStarted() const XZERO_NOEXCEPT override;
   void stop() override;
   std::list<EndPoint*> connectedEndPoints() override;
 
@@ -211,7 +212,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    */
   bool acceptOne();
 
-  void onSelectable() noexcept override;
+  void onSelectable() XZERO_NOEXCEPT override;
 
   void bind(const IPAddress& ipaddr, int port);
   void listen(int backlog);
@@ -246,11 +247,11 @@ class XZERO_API InetConnector : public Connector, public Selectable {
   bool isStarted_;
 };
 
-inline Scheduler* InetConnector::scheduler() const noexcept {
+inline Scheduler* InetConnector::scheduler() const XZERO_NOEXCEPT {
   return scheduler_;
 }
 
-inline TimeSpan InetConnector::idleTimeout() const noexcept {
+inline TimeSpan InetConnector::idleTimeout() const XZERO_NOEXCEPT {
   return idleTimeout_;
 }
 

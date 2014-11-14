@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/executor/Scheduler.h>
 #include <list>
 #include <ev++.h>
@@ -22,7 +23,7 @@ class XZERO_API LibevScheduler : public Scheduler {
 
   void execute(Task&& task) override;
   void schedule(TimeSpan delay, Task&& task) override;
-  size_t maxConcurrency() const noexcept override;
+  size_t maxConcurrency() const XZERO_NOEXCEPT override;
   std::string toString() const override;
 
  private:

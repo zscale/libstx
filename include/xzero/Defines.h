@@ -105,7 +105,7 @@
 #define __FILENAME__ ((std::strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)
 
 #if defined(XZERO_ENABLE_NOEXCEPT)
-#define XZERO_NOEXCEPT /*noexcept*/
+#define XZERO_NOEXCEPT /*XZERO_NOEXCEPT*/
 #endif
 
 #endif

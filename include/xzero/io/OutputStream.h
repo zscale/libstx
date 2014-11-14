@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <cstdint>
 
 namespace xzero {
@@ -26,7 +27,7 @@ class XZERO_API FileOutputStream : public OutputStream {
   FileOutputStream(int fd);
   ~FileOutputStream();
 
-  int handle() const noexcept { return fd_; }
+  int handle() const XZERO_NOEXCEPT { return fd_; }
 
  private:
   int fd_;

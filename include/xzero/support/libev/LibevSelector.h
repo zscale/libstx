@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/io/Selector.h>
 #include <ev++.h>
 
@@ -29,7 +30,7 @@ class XZERO_API LibevSelector : public Selector {
   void select() override;
   void wakeup() override;
 
-  ev::loop_ref loop() const noexcept { return loop_; }
+  ev::loop_ref loop() const XZERO_NOEXCEPT { return loop_; }
 
  private:
   void onWakeup(ev::async&, int);

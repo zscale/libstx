@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/http/HttpInfo.h>
 #include <xzero/http/HttpStatus.h>
 #include <string>
@@ -30,12 +31,12 @@ class XZERO_API HttpResponseInfo : public HttpInfo {
                    const HeaderFieldList& trailers);
 
   /** Retrieves the HTTP response status code. */
-  HttpStatus status() const noexcept { return status_; }
+  HttpStatus status() const XZERO_NOEXCEPT { return status_; }
 
-  const std::string& reason() const noexcept { return reason_; }
+  const std::string& reason() const XZERO_NOEXCEPT { return reason_; }
 
   /** Retrieves whether this is an HTTP response to a HEAD request. */
-  bool isHeadResponse() const noexcept { return isHeadResponse_; }
+  bool isHeadResponse() const XZERO_NOEXCEPT { return isHeadResponse_; }
 
  private:
   HttpStatus status_;
