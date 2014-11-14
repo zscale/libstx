@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/Buffer.h>
 #include <xzero/http/HttpStatus.h>
 #include <memory>
@@ -145,7 +146,7 @@ class XZERO_API HttpParser {
   bool isProcessingHeader() const;
   bool isProcessingBody() const;
 
-  bool isContentExpected() const noexcept {
+  bool isContentExpected() const XZERO_NOEXCEPT {
     return contentLength_ > 0 || chunked_ ||
            (contentLength_ < 0 && mode_ != REQUEST);
   }

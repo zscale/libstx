@@ -6,13 +6,16 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #pragma once
+
+#include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <stdexcept>
 #include <string.h>
 #include <errno.h>
 
 namespace xzero {
 
-class RuntimeError : public std::runtime_error {
+class XZERO_API RuntimeError : public std::runtime_error {
  public:
   RuntimeError(const char* what, const char* sourceFile, int sourceLine)
       : std::runtime_error(what),
@@ -25,7 +28,7 @@ class RuntimeError : public std::runtime_error {
         sourceLine_(sourceLine) {}
 
   const char* sourceFile() const { return sourceFile_; }
-  int sourceLine() const noexcept { return sourceLine_; }
+  int sourceLine() const XZERO_NOEXCEPT { return sourceLine_; }
 
  private:
   const char* sourceFile_;

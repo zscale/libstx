@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/Buffer.h>
 #include <xzero/TimeSpan.h>
 #include <string>
@@ -38,7 +39,7 @@ class EndPoint {
   EndPoint& operator=(EndPoint&) = delete;
 
  public:
-  EndPoint() noexcept;
+  EndPoint() XZERO_NOEXCEPT;
   virtual ~EndPoint() {}
 
   /**
@@ -102,7 +103,7 @@ class EndPoint {
    * When a fill-interest can be satisfied you will be notified via your
    * associated Connection object to process the event.
    *
-   * @see Connection::onSelectable() noexcept
+   * @see Connection::onSelectable() XZERO_NOEXCEPT
    */
   virtual void wantFill() = 0;
 
@@ -112,7 +113,7 @@ class EndPoint {
    * When a flush-interest can be satisfied you will be notified via your
    * associated Connection object to process the event.
    *
-   * @see Connection::onSelectable() noexcept
+   * @see Connection::onSelectable() XZERO_NOEXCEPT
    */
   virtual void wantFlush(bool enable) = 0;
 

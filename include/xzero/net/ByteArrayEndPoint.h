@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/Buffer.h>
 #include <xzero/net/EndPoint.h>
 
@@ -55,7 +56,7 @@ class XZERO_API ByteArrayEndPoint : public EndPoint {
    * @see wantFill()
    * @see wantFlush()
    */
-  bool isBusy() const noexcept { return isBusy_; }
+  bool isBusy() const XZERO_NOEXCEPT { return isBusy_; }
 
   // overrides
   void close() override;

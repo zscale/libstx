@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/http/HttpVersion.h>
 #include <xzero/http/HttpStatus.h>
 #include <xzero/http/HttpOutput.h>
@@ -38,25 +39,25 @@ class XZERO_API HttpResponse {
 
   void recycle();
 
-  HttpVersion version() const noexcept;
+  HttpVersion version() const XZERO_NOEXCEPT;
   void setVersion(HttpVersion version);
 
   void setStatus(HttpStatus status);
-  HttpStatus status() const noexcept { return status_; }
-  bool hasStatus() const noexcept { return status_ != HttpStatus::Undefined; }
+  HttpStatus status() const XZERO_NOEXCEPT { return status_; }
+  bool hasStatus() const XZERO_NOEXCEPT { return status_ != HttpStatus::Undefined; }
 
-  const std::string& reason() const noexcept { return reason_; }
+  const std::string& reason() const XZERO_NOEXCEPT { return reason_; }
   void setReason(const std::string& val);
 
   // high level header support
   void resetContentLength();
   void setContentLength(size_t size);
 
-  size_t contentLength() const noexcept {
+  size_t contentLength() const XZERO_NOEXCEPT {
     return contentLength_;
   }
 
-  bool hasContentLength() const noexcept {
+  bool hasContentLength() const XZERO_NOEXCEPT {
     return contentLength_ != static_cast<size_t>(-1);
   }
 
@@ -68,8 +69,8 @@ class XZERO_API HttpResponse {
   void removeHeader(const std::string& name);
   void removeAllHeaders();
   const std::string& getHeader(const std::string& name) const;
-  const HeaderFieldList& headers() const noexcept { return headers_; }
-  HeaderFieldList& headers() noexcept { return headers_; }
+  const HeaderFieldList& headers() const XZERO_NOEXCEPT { return headers_; }
+  HeaderFieldList& headers() XZERO_NOEXCEPT { return headers_; }
 
   // trailers
   //bool isTrailerSupported() const;
@@ -77,7 +78,7 @@ class XZERO_API HttpResponse {
   void appendTrailer(const std::string& name, const std::string& value,
                     const std::string& delim = "");
   void setTrailer(const std::string& name, const std::string& value);
-  const HeaderFieldList& trailers() const noexcept { return trailers_; }
+  const HeaderFieldList& trailers() const XZERO_NOEXCEPT { return trailers_; }
 
   /**
    * Invoke to mark this response as complete.
@@ -107,7 +108,7 @@ class XZERO_API HttpResponse {
 
   HttpOutput* output() { return output_.get(); }
 
-  bool isCommitted() const noexcept { return committed_; }
+  bool isCommitted() const XZERO_NOEXCEPT { return committed_; }
   void setCommitted(bool value);
 
  private:

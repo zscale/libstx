@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/TimeSpan.h>
 #include <xzero/http/HttpConnectionFactory.h>
 
@@ -28,10 +29,10 @@ class XZERO_API Http1ConnectionFactory : public HttpConnectionFactory {
 
   ~Http1ConnectionFactory();
 
-  size_t maxRequestCount() const noexcept { return maxRequestCount_; }
+  size_t maxRequestCount() const XZERO_NOEXCEPT { return maxRequestCount_; }
   void setMaxRequestCount(size_t value) { maxRequestCount_ = value; }
 
-  TimeSpan maxKeepAlive() const noexcept { return maxKeepAlive_; }
+  TimeSpan maxKeepAlive() const XZERO_NOEXCEPT { return maxKeepAlive_; }
   void setMaxKeepAlive(TimeSpan value) { maxKeepAlive_ = value; }
 
   Connection* create(Connector* connector,

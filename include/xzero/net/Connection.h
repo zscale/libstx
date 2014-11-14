@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <memory>
 #include <list>
 
@@ -43,12 +44,12 @@ class XZERO_API Connection {
   /**
    * Retrieves the corresponding endpoint for this connection.
    */
-  EndPoint* endpoint() const noexcept;
+  EndPoint* endpoint() const XZERO_NOEXCEPT;
 
   /**
    * Retrieves the Executor that may be used for handling this connection.
    */
-  Executor* executor() const noexcept;
+  Executor* executor() const XZERO_NOEXCEPT;
 
   /**
    * Registers given @p listener to this connection.
@@ -123,11 +124,11 @@ class XZERO_API Connection {
   std::list<ConnectionListener*> listeners_;
 };
 
-inline EndPoint* Connection::endpoint() const noexcept {
+inline EndPoint* Connection::endpoint() const XZERO_NOEXCEPT {
   return endpoint_.get();
 }
 
-inline Executor* Connection::executor() const noexcept {
+inline Executor* Connection::executor() const XZERO_NOEXCEPT {
   return executor_;
 }
 

@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/Buffer.h>
 #include <cstdint>
 #include <unistd.h>
@@ -73,12 +74,12 @@ struct XZERO_API FileRef {
     }
   }
 
-  int handle() const noexcept { return fd_; }
+  int handle() const XZERO_NOEXCEPT { return fd_; }
 
-  off_t offset() const noexcept { return offset_; }
+  off_t offset() const XZERO_NOEXCEPT { return offset_; }
   void setOffset(off_t n) { offset_ = n; }
 
-  size_t size() const noexcept { return size_; }
+  size_t size() const XZERO_NOEXCEPT { return size_; }
   void setSize(size_t n) { size_ = n; }
 
   void fill(Buffer* output) const;

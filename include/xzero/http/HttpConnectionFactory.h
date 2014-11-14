@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/net/ConnectionFactory.h>
 #include <xzero/http/HttpHandler.h>
 #include <xzero/http/HttpDateGenerator.h>
@@ -41,20 +42,20 @@ class XZERO_API HttpConnectionFactory : public ConnectionFactory {
 
   ~HttpConnectionFactory();
 
-  size_t maxRequestUriLength() const noexcept { return maxRequestUriLength_; }
+  size_t maxRequestUriLength() const XZERO_NOEXCEPT { return maxRequestUriLength_; }
   void setMaxRequestUriLength(size_t value) { maxRequestUriLength_ = value; }
 
-  size_t maxRequestBodyLength() const noexcept { return maxRequestBodyLength_; }
+  size_t maxRequestBodyLength() const XZERO_NOEXCEPT { return maxRequestBodyLength_; }
   void setMaxRequestBodyLength(size_t value) { maxRequestBodyLength_ = value; }
 
-  const HttpHandler& handler() const noexcept { return handler_; }
+  const HttpHandler& handler() const XZERO_NOEXCEPT { return handler_; }
   void setHandler(HttpHandler&& handler);
 
   /** Access to the output compression service. */
-  HttpOutputCompressor* outputCompressor() const noexcept;
+  HttpOutputCompressor* outputCompressor() const XZERO_NOEXCEPT;
 
   /** Access to the @c Date response header generator. */
-  HttpDateGenerator* dateGenerator() const noexcept;
+  HttpDateGenerator* dateGenerator() const XZERO_NOEXCEPT;
 
   Connection* configure(Connection* connection, Connector* connector) override;
 
@@ -67,11 +68,11 @@ class XZERO_API HttpConnectionFactory : public ConnectionFactory {
 };
 
 // {{{ inlines
-inline HttpOutputCompressor* HttpConnectionFactory::outputCompressor() const noexcept {
+inline HttpOutputCompressor* HttpConnectionFactory::outputCompressor() const XZERO_NOEXCEPT {
   return outputCompressor_.get();
 }
 
-inline HttpDateGenerator* HttpConnectionFactory::dateGenerator() const noexcept {
+inline HttpDateGenerator* HttpConnectionFactory::dateGenerator() const XZERO_NOEXCEPT {
   return dateGenerator_.get();
 }
 // }}}

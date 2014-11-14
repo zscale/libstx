@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/io/Selectable.h>
 #include <xzero/IdleTimeout.h>
 #include <xzero/net/EndPoint.h>
@@ -41,10 +42,10 @@ class XZERO_API InetEndPoint : public EndPoint, public Selectable {
    * @see wantFill()
    * @see wantFlush()
    */
-  bool isBusy() const noexcept { return isBusy_; }
+  bool isBusy() const XZERO_NOEXCEPT { return isBusy_; }
 
   // EndPoint overrides
-  bool isOpen() const noexcept override;
+  bool isOpen() const XZERO_NOEXCEPT override;
   void close() override;
   bool isBlocking() const override;
   void setBlocking(bool enable) override;
@@ -60,9 +61,9 @@ class XZERO_API InetEndPoint : public EndPoint, public Selectable {
   void setIdleTimeout(TimeSpan timeout) override;
 
   // Selectable overrides
-  int handle() const noexcept override;
-  Selector* selector() const noexcept override;
-  void onSelectable() noexcept override;
+  int handle() const XZERO_NOEXCEPT override;
+  Selector* selector() const XZERO_NOEXCEPT override;
+  void onSelectable() XZERO_NOEXCEPT override;
 
  private:
   void fillable();
@@ -83,8 +84,8 @@ class XZERO_API InetEndPoint : public EndPoint, public Selectable {
    */
   class BusyGuard {
    public:
-    BusyGuard(InetEndPoint* ep) noexcept : ep_(ep) { ep->isBusy_++; }
-    ~BusyGuard() noexcept { ep_->isBusy_--; }
+    BusyGuard(InetEndPoint* ep) XZERO_NOEXCEPT : ep_(ep) { ep->isBusy_++; }
+    ~BusyGuard() XZERO_NOEXCEPT { ep_->isBusy_--; }
 
    private:
     InetEndPoint* ep_;

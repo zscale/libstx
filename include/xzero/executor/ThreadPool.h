@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/executor/Executor.h>
 #include <condition_variable>
 #include <mutex>
@@ -60,7 +61,7 @@ class XZERO_API ThreadPool : public Executor {
 
   // overrides
   void execute(Task&& task) override;
-  size_t maxConcurrency() const noexcept override;
+  size_t maxConcurrency() const XZERO_NOEXCEPT override;
   std::string toString() const override;
 
  private:

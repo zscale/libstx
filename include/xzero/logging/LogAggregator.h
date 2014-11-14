@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/logging/LogLevel.h>
 #include <string>
 #include <unordered_map>
@@ -25,10 +26,10 @@ class XZERO_API LogAggregator {
   LogAggregator() : LogAggregator(LogLevel::Warning, nullptr) {}
   LogAggregator(LogLevel logLevel, LogTarget* logTarget);
 
-  LogLevel logLevel() const noexcept { return logLevel_; }
+  LogLevel logLevel() const XZERO_NOEXCEPT { return logLevel_; }
   void setLogLevel(LogLevel level) { logLevel_ = level; }
 
-  LogTarget* logTarget() const noexcept { return target_; }
+  LogTarget* logTarget() const XZERO_NOEXCEPT { return target_; }
   void setLogTarget(LogTarget* target);
 
   void registerSource(LogSource* source);

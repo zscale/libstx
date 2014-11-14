@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/http/HttpVersion.h>
 #include <xzero/http/HttpStatus.h>
 #include <xzero/http/HttpOutput.h>
@@ -91,12 +92,12 @@ class XZERO_API HttpGenerator {
   /**
    * Retrieves the number of bytes pending for the content.
    */
-  size_t pendingContentLength() const noexcept { return contentLength_; }
+  size_t pendingContentLength() const XZERO_NOEXCEPT { return contentLength_; }
 
   /**
    * Retrieves boolean indicating whether chunked response is generated.
    */
-  bool isChunked() const noexcept { return chunked_; }
+  bool isChunked() const XZERO_NOEXCEPT { return chunked_; }
 
  private:
   void generateRequestLine(const HttpRequestInfo& info);

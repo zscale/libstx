@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <string>
 
 namespace xzero {
@@ -32,10 +33,10 @@ class XZERO_API LogSource {
   void error(const char* fmt, ...);
 
   void enable();
-  bool isEnabled() const noexcept;
+  bool isEnabled() const XZERO_NOEXCEPT;
   void disable();
 
-  const std::string& className() const noexcept { return className_; }
+  const std::string& className() const XZERO_NOEXCEPT { return className_; }
 
  private:
   std::string className_;

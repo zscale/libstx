@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 
 namespace xzero {
 
@@ -45,7 +46,7 @@ class XZERO_API HttpInput {
   /**
    * Retrieves the HttpInputListener that is being associated with this input.
    */
-  HttpInputListener* listener() const noexcept { return listener_; }
+  HttpInputListener* listener() const XZERO_NOEXCEPT { return listener_; }
 
   /**
    * Internally invoked to pass some input chunk to this layer.

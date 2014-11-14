@@ -13,6 +13,7 @@
 #include <xzero/http/HttpChannel.h>
 #include <xzero/Buffer.h>
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 
 namespace xzero {
 
@@ -78,16 +79,16 @@ class XZERO_API MockTransport : public HttpTransport {
            const std::string& body);
 
   /** Retrieves the response message status line and headers. */
-  const HttpResponseInfo& responseInfo() const noexcept;
+  const HttpResponseInfo& responseInfo() const XZERO_NOEXCEPT;
 
   /** Retrieves the response message body. */
-  const Buffer& responseBody() const noexcept;
+  const Buffer& responseBody() const XZERO_NOEXCEPT;
 
   /** Tests whether this transport was aborted in last request handling. */
-  bool isAborted() const noexcept;
+  bool isAborted() const XZERO_NOEXCEPT;
 
   /** Tests whether last message was completed. */
-  bool isCompleted() const noexcept;
+  bool isCompleted() const XZERO_NOEXCEPT;
 
  private:
   // HttpTransport overrides
@@ -126,19 +127,19 @@ class XZERO_API MockTransport : public HttpTransport {
 };
 
 // {{{ inlines
-inline const HttpResponseInfo& MockTransport::responseInfo() const noexcept {
+inline const HttpResponseInfo& MockTransport::responseInfo() const XZERO_NOEXCEPT {
   return responseInfo_;
 }
 
-inline const Buffer& MockTransport::responseBody() const noexcept {
+inline const Buffer& MockTransport::responseBody() const XZERO_NOEXCEPT {
   return responseBody_;
 }
 
-inline bool MockTransport::isAborted() const noexcept {
+inline bool MockTransport::isAborted() const XZERO_NOEXCEPT {
   return isAborted_;
 }
 
-inline bool MockTransport::isCompleted() const noexcept {
+inline bool MockTransport::isCompleted() const XZERO_NOEXCEPT {
   return isCompleted_;
 }
 // }}}

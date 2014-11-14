@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 
 #include <exception>
 #include <functional>
@@ -45,7 +46,7 @@ class XZERO_API Executor {
   /**
    * Retrieves the maximum number of possible concurrently running tasks.
    */
-  virtual size_t maxConcurrency() const noexcept = 0;
+  virtual size_t maxConcurrency() const XZERO_NOEXCEPT = 0;
 
   /**
    * Retrieves a human readable name of this executor (for introspection only).
@@ -61,14 +62,14 @@ class XZERO_API Executor {
   /**
    * Handles uncaught exception.
    */
-  void handleException(const std::exception& e) noexcept;
+  void handleException(const std::exception& e) XZERO_NOEXCEPT;
 
   /**
    * Savely invokes given task within the callers context.
    *
    * @see setExceptionHandler(std::function<void(const std::exception&)>&&)
    */
-  void safeCall(const Task& task) noexcept;
+  void safeCall(const Task& task) XZERO_NOEXCEPT;
 
  private:
   std::function<void(const std::exception&)> exceptionHandler_;

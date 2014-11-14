@@ -15,6 +15,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <cstddef>
 #include <climits>
 #include <cstring>
@@ -1667,7 +1668,7 @@ inline Buffer operator+(const BufferRef& a, const BufferRef& b) {
 namespace xzero {
 // Fowler / Noll / Vo (FNV) Hash-Implementation
 template <typename T>
-uint32_t hash(const T& array) noexcept {
+uint32_t hash(const T& array) XZERO_NOEXCEPT {
   uint32_t result = 2166136261u;
 
   for (auto value : array) {
@@ -1685,7 +1686,7 @@ struct hash<xzero::BufferSlice> {
   typedef xzero::BufferSlice argument_type;
   typedef uint32_t result_type;
 
-  result_type operator()(const argument_type& value) const noexcept {
+  result_type operator()(const argument_type& value) const XZERO_NOEXCEPT {
     return xzero::hash(value);
   }
 };
@@ -1695,7 +1696,7 @@ struct hash<xzero::BufferRef> {
   typedef xzero::BufferRef argument_type;
   typedef uint32_t result_type;
 
-  result_type operator()(const argument_type& value) const noexcept {
+  result_type operator()(const argument_type& value) const XZERO_NOEXCEPT {
     return xzero::hash(value);
   }
 };
@@ -1705,7 +1706,7 @@ struct hash<xzero::Buffer> {
   typedef xzero::Buffer argument_type;
   typedef uint32_t result_type;
 
-  result_type operator()(const argument_type& value) const noexcept {
+  result_type operator()(const argument_type& value) const XZERO_NOEXCEPT {
     return xzero::hash(value);
   }
 };

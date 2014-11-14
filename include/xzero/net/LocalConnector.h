@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/net/Connector.h>
 #include <xzero/net/ByteArrayEndPoint.h>
 #include <list>
@@ -47,7 +48,7 @@ class XZERO_API LocalConnector : public Connector {
   ~LocalConnector();
 
   void start() override;
-  bool isStarted() const noexcept override;
+  bool isStarted() const XZERO_NOEXCEPT override;
   void stop() override;
   std::list<EndPoint*> connectedEndPoints() override;
 
@@ -71,7 +72,7 @@ class XZERO_API LocalConnector : public Connector {
   std::list<std::shared_ptr<LocalEndPoint>> connectedEndPoints_;
 };
 
-inline bool LocalConnector::isStarted() const noexcept {
+inline bool LocalConnector::isStarted() const XZERO_NOEXCEPT {
   return isStarted_;
 }
 

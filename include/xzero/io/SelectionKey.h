@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/io/Selectable.h>
 #include <memory>
 
@@ -30,7 +31,7 @@ class SelectionKey {
   /**
    * Retrieves the current interest.
    */
-  virtual int interest() const noexcept = 0;
+  virtual int interest() const XZERO_NOEXCEPT = 0;
 
   /**
    * changes interest.
@@ -38,13 +39,13 @@ class SelectionKey {
   virtual void change(int ops) = 0;
 
   /** Tests whether the associated Selectable is currently ready for reading. */
-  bool isReadable() const noexcept { return active_ & Selectable::READ; }
+  bool isReadable() const XZERO_NOEXCEPT { return active_ & Selectable::READ; }
 
   /** Tests whether the associated Selectable is currently ready for writing. */
-  bool isWriteable() const noexcept { return active_ & Selectable::WRITE; }
+  bool isWriteable() const XZERO_NOEXCEPT { return active_ & Selectable::WRITE; }
 
   /** Retrieves the Selector that created this interest key. */
-  Selector* selector() const noexcept { return selector_; }
+  Selector* selector() const XZERO_NOEXCEPT { return selector_; }
 
  protected:
   /**

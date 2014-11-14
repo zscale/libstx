@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <unordered_map>
 #include <string>
 
@@ -28,13 +29,13 @@ class XZERO_API HttpOutputCompressor {
   bool containsMimeType(const std::string& value) const;
 
   void setMinSize(size_t value);
-  size_t minSize() const noexcept { return minSize_; }
+  size_t minSize() const XZERO_NOEXCEPT { return minSize_; }
 
   void setMaxSize(size_t value);
-  size_t maxSize() const noexcept { return maxSize_; }
+  size_t maxSize() const XZERO_NOEXCEPT { return maxSize_; }
 
   void setCompressionLevel(int value) { level_ = value; }
-  int compressionLevel() const noexcept { return level_; }
+  int compressionLevel() const XZERO_NOEXCEPT { return level_; }
 
   /**
    * Injects a preCommit handler to automatically add output compression.

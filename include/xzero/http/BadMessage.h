@@ -6,6 +6,7 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <stdexcept>
 
 namespace xzero {
@@ -22,7 +23,7 @@ class XZERO_API BadMessage : public std::runtime_error {
       : std::runtime_error(reason),
         code_(code) {}
 
-  HttpStatus code() const noexcept { return code_; }
+  HttpStatus code() const XZERO_NOEXCEPT { return code_; }
 
  private:
   HttpStatus code_;

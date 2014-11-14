@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/executor/LoopExecutor.h>
 #include <deque>
 
@@ -25,7 +26,7 @@ class XZERO_API DirectLoopExecutor : public LoopExecutor {
   void run() override;
   void cancel() override;
   void execute(Task&& task) override;
-  size_t maxConcurrency() const noexcept override;
+  size_t maxConcurrency() const XZERO_NOEXCEPT override;
   std::string toString() const override;
 
   bool tryRunOne();

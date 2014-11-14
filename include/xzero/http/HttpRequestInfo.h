@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/http/HttpInfo.h>
 #include <string>
 
@@ -23,8 +24,8 @@ class XZERO_API HttpRequestInfo : public HttpInfo {
                   const std::string& entity, size_t contentLength,
                   const HeaderFieldList& headers);
 
-  const std::string& method() const noexcept { return method_; }
-  const std::string& entity() const noexcept { return entity_; }
+  const std::string& method() const XZERO_NOEXCEPT { return method_; }
+  const std::string& entity() const XZERO_NOEXCEPT { return entity_; }
 
  private:
   std::string method_;

@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/sysconfig.h>
 #include <xzero/io/Selector.h>
 #include <memory>
 
@@ -28,17 +29,17 @@ class XZERO_API Selectable {
    * Retrieves the underlying system handle that is used for the actual
    * multiplexing.
    */
-  virtual int handle() const noexcept = 0;
+  virtual int handle() const XZERO_NOEXCEPT = 0;
 
   /**
    * Retrieves the Selector this selectable was registered for.
    */
-  virtual Selector* selector() const noexcept = 0;
+  virtual Selector* selector() const XZERO_NOEXCEPT = 0;
 
   /**
    * Callback invoked when any of the interested I/O occurred.
    */
-  virtual void onSelectable() noexcept = 0;
+  virtual void onSelectable() XZERO_NOEXCEPT = 0;
 
   /**
    * Convenience helper to register this Selectable on the associated selector.

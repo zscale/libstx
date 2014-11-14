@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/http/HttpChannel.h>
+#include <xzero/sysconfig.h>
 #include <list>
 #include <string>
 
@@ -24,8 +25,8 @@ class Http1Channel : public xzero::HttpChannel {
               HttpOutputCompressor* outputCompressor);
   ~Http1Channel();
 
-  bool isPersistent() const noexcept { return persistent_; }
-  void setPersistent(bool value) noexcept { persistent_ = value; }
+  bool isPersistent() const XZERO_NOEXCEPT { return persistent_; }
+  void setPersistent(bool value) XZERO_NOEXCEPT { persistent_ = value; }
 
   virtual void reset();
 
