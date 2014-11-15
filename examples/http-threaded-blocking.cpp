@@ -12,11 +12,9 @@
 #include <xzero/http/HttpResponse.h>
 #include <xzero/http/HttpOutput.h>
 #include <xzero/http/v1/Http1ConnectionFactory.h>
-#include <xzero/support/libev/LibevScheduler.h>
-#include <xzero/support/libev/LibevSelector.h>
-#include <xzero/support/libev/LibevClock.h>
 #include <xzero/logging/LogAggregator.h>
 #include <xzero/logging/LogTarget.h>
+#include <xzero/WallClock.h>
 #include <unistd.h>
 #include <ev++.h>
 
