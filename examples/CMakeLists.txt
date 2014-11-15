@@ -24,6 +24,9 @@ if(ENABLE_EXAMPLES)
   add_executable(http-threaded-blocking http-threaded-blocking.cpp)
   target_link_libraries(http-threaded-blocking xzero)
 
+  add_executable(http-threaded-handler-nbnio http-threaded-handler-nbnio.cpp)
+  target_link_libraries(http-threaded-handler-nbnio xzero)
+
   add_executable(http-service http-service.cpp)
   target_link_libraries(http-service xzero)
 
