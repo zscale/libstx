@@ -5,7 +5,7 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <xzero/executor/ThreadedExecutor.h>
+#include <xzero/executor/ThreadPool.h>
 #include <xzero/net/Server.h>
 #include <xzero/net/InetConnector.h>
 #include <xzero/http/HttpRequest.h>
@@ -46,7 +46,7 @@ int main() {
   xzero::support::LibevSelector selector(loop);
   xzero::support::LibevClock clock(loop);
 
-  xzero::ThreadedExecutor threaded;
+  xzero::ThreadPool threaded(16);
   xzero::Server server;
   bool shutdown = false;
 
