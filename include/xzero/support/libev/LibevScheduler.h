@@ -26,10 +26,15 @@ class XZERO_API LibevScheduler : public Scheduler {
   size_t maxConcurrency() const XZERO_NOEXCEPT override;
   std::string toString() const override;
 
+  void wakeup();
+
  private:
+  void onWakeup(ev::async&, int);
+
   struct TaskInfo;
 
   ev::loop_ref loop_;
+  ev::async evWakeup_;
   std::list<TaskInfo*> pending_;
 };
 
