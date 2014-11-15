@@ -25,6 +25,7 @@ class HttpBufferedInput : public xzero::HttpInput {
   int read(Buffer* result) override;
   size_t readLine(Buffer* result) override;
   void onContent(const BufferRef& chunk) override;
+  bool empty() const noexcept override;
 
   void recycle() override;
 

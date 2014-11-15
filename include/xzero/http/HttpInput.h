@@ -35,6 +35,11 @@ class XZERO_API HttpInput {
   virtual size_t readLine(Buffer* result) = 0;
 
   /**
+   * Tests whether read or readLine will succeed, and thus, data is readable.
+   */
+  virtual bool empty() const noexcept = 0;
+
+  /**
    * Registers a callback interface to get notified when input data is
    * available.
    *
