@@ -45,6 +45,8 @@ class XZERO_API TimeSpan {
   int minutes() const { return ((int)value_ / 60) - 60 * ((int)value_ / 3600); }
   int seconds() const { return static_cast<int>(value_) % 60; }
   int milliseconds() const { return static_cast<int>(value_ * 1000) % 1000; }
+  int microseconds() const { return static_cast<int>(value_ * 1000000) % 1000000; }
+  long nanoseconds() const { return static_cast<long>(value_ * 1000000000) % 1000000000; }
 
   static inline int ticksPerDay() { return 86400; }
   static inline int ticksPerHour() { return 3600; }
@@ -66,9 +68,19 @@ class XZERO_API TimeSpan {
   static TimeSpan fromMilliseconds(std::size_t v) {
     return TimeSpan(ev_tstamp(v / 1000 + (unsigned(v) % 1000) / 1000.0));
   }
+  static TimeSpan fromMicroseconds(long v) {
+    return TimeSpan(ev_tstamp(
+        v / 1000000 + (uint64_t(v) % 1000000) / 1000000.0));
+  }
+  static TimeSpan fromNanoseconds(long v) {
+    return TimeSpan(ev_tstamp(
+        v / 1000000000 + (uint64_t(v) % 1000000000) / 1000000000.0));
+  }
 
   std::size_t totalSeconds() const { return value_; }
   std::size_t totalMilliseconds() const { return value_ * 1000; }
+  std::size_t totalMicroseconds() const { return value_ * 1000000; }
+  unsigned long long totalNanoseconds() const { return value_ * 1000000000; }
 
   bool operator!() const { return value_ == 0; }
   operator bool() const { return value_ != 0; }
