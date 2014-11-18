@@ -5,6 +5,10 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
+/*
+ * XXX demo: MTB request handler with STNB I/O.
+ */
+
 #include <xzero/executor/ThreadPool.h>
 #include <xzero/net/Server.h>
 #include <xzero/net/InetConnector.h>
@@ -18,17 +22,26 @@
 #include <xzero/logging/LogAggregator.h>
 #include <xzero/logging/LogTarget.h>
 #include <xzero/WallClock.h>
+#include <xzero/TimeSpan.h>
 #include <unistd.h>
 #include <ev++.h>
 
 void runJob(xzero::HttpRequest* request, xzero::HttpResponse* response, xzero::Executor* context) {
-  printf("request. job\n");
+  timespec ts;
+  ts.tv_sec = 0;
+  ts.tv_nsec = xzero::TimeSpan(0.1).nanoseconds();
+  for (;;) {
+    printf("request. job: nanosleep()ing %li\n", ts.tv_nsec);
+    if (nanosleep(&ts, &ts) == 0 || errno != EINTR)
+      break;
+  }
+
   // run the complex stuff here
   xzero::BufferRef body = "Hello, World\n";
 
   // now respond to the client
   context->execute([=]() {
-  printf("request. response\n");
+    printf("request. response\n");
     response->setStatus(xzero::HttpStatus::Ok);
     response->setContentLength(body.size());
 
@@ -38,15 +51,15 @@ void runJob(xzero::HttpRequest* request, xzero::HttpResponse* response, xzero::E
 }
 
 int main() {
-  // xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
-  // xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
+  xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
+  xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
 
   ev::loop_ref loop = ev::default_loop(0);
   xzero::support::LibevScheduler scheduler(loop);
   xzero::support::LibevSelector selector(loop);
   xzero::support::LibevClock clock(loop);
 
-  xzero::ThreadPool threaded(16);
+  //xzero::ThreadPool threaded(16);
   xzero::Server server;
   bool shutdown = false;
 
@@ -60,7 +73,8 @@ int main() {
 
   http->setHandler([&](xzero::HttpRequest* request, xzero::HttpResponse* response) {
     printf("request\n");
-    threaded.execute(std::bind(&runJob, request, response, &scheduler));
+    scheduler.execute(std::bind(&runJob, request, response, &scheduler));
+    //threaded.execute(std::bind(&runJob, request, response, &scheduler));
     return true;
   });
 
