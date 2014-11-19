@@ -47,8 +47,9 @@ int main() {
     xzero::Buffer body;
     body << "Hello " << request->path() << "\n";
     response->setContentLength(body.size());
-    response->output()->write(std::move(body));
-    response->completed();
+    response->output()->write(
+        std::move(body),
+        std::bind(&xzero::HttpResponse::completed, response));
   });
 
   server.start();
