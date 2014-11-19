@@ -27,12 +27,13 @@ class HttpOutput;
 class HttpOutputCompressor;
 
 enum class HttpChannelState {
-  IDLE,     //!< not doing a shit, bro.
-  READING,  //!< reading request info
-  READY,    //!< ready for handling the request
+  READING,  //!< currently reading request info
   HANDLING, //!< currently handling the request
+  SENDING,  //!< currently sending data
   DONE,     //!< handling request done
 };
+
+XZERO_API std::string to_string(HttpChannelState state);
 
 /**
  * Semantic HTTP message exchange layer.
@@ -146,7 +147,11 @@ class XZERO_API HttpChannel : public HttpListener {
    */
   void removeAllOutputFilters();
 
+  HttpChannelState state() const noexcept { return state_; }
+
  protected:
+  void setState(HttpChannelState newState);
+  CompletionHandler makeCompleter(CompletionHandler&& next);
   virtual std::unique_ptr<HttpOutput> createOutput();
   void handleRequest();
   void onBeforeSend();
