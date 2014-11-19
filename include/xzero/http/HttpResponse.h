@@ -112,6 +112,10 @@ class XZERO_API HttpResponse {
   void setCommitted(bool value);
 
  private:
+  void checkState();
+  void checkChannelState();
+
+ private:
   HttpChannel* channel_;
   std::unique_ptr<HttpOutput> output_;
 
