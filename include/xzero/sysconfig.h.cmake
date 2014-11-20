@@ -18,9 +18,7 @@
 // Build with inotify support
 #cmakedefine XZERO_ENABLE_INOTIFY
 
-// Make use of accept4() syscall if available
 #cmakedefine ENABLE_ACCEPT4
-
 #cmakedefine ENABLE_PIPE2
 
 #cmakedefine ENABLE_MULTI_ACCEPT
@@ -50,6 +48,8 @@
 #cmakedefine HAVE_SYS_LIMITS_H
 #cmakedefine HAVE_SYS_MMAN_H
 #cmakedefine HAVE_SYSLOG_H
+#cmakedefine HAVE_DLFCN_H
+#cmakedefine HAVE_EXECINFO_H
 #cmakedefine HAVE_PWD_H
 #cmakedefine HAVE_UNISTD_H
 #cmakedefine HAVE_PTHREAD_H
@@ -69,7 +69,6 @@
 // functional tests
 
 #cmakedefine HAVE_INOTIFY_INIT1
-#cmakedefine HAVE_FORK
 #cmakedefine HAVE_CHROOT
 #cmakedefine HAVE_PATHCONF
 #cmakedefine HAVE_SENDFILE
@@ -79,6 +78,10 @@
 #cmakedefine HAVE_SYSCONF
 #cmakedefine HAVE_PATHCONF
 #cmakedefine HAVE_ACCEPT4
+#cmakedefine HAVE_PIPE2
+#cmakedefine HAVE_DUP2
+#cmakedefine HAVE_FORK
+#cmakedefine HAVE_BACKTRACE
 #cmakedefine HAVE_PTHREAD_SETNAME_NP
 #cmakedefine HAVE_PTHREAD_SETAFFINITY_NP
 
