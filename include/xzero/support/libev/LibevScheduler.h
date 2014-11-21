@@ -18,7 +18,8 @@ namespace support {
 
 class XZERO_API LibevScheduler : public Scheduler {
  public:
-  explicit LibevScheduler(ev::loop_ref loop);
+  LibevScheduler(ev::loop_ref loop,
+                 std::function<void(const std::exception&)>&& eh = nullptr);
   ~LibevScheduler();
 
   void execute(Task&& task) override;
