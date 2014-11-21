@@ -19,7 +19,8 @@ namespace xzero {
  */
 class XZERO_API DirectLoopExecutor : public LoopExecutor {
  public:
-  DirectLoopExecutor();
+  DirectLoopExecutor() : DirectLoopExecutor(nullptr) {}
+  DirectLoopExecutor(std::function<void(const std::exception&)>&& eh);
   ~DirectLoopExecutor();
 
   // overrides

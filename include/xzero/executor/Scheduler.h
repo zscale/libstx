@@ -19,6 +19,9 @@ namespace xzero {
  */
 class XZERO_API Scheduler : public Executor {
  public:
+  Scheduler(std::function<void(const std::exception&)>&& eh)
+      : Executor(std::move(eh)) {}
+
   /**
    * Schedules given task to be run after given delay.
    *
