@@ -17,8 +17,11 @@ namespace xzero {
  */
 class XZERO_API LoopExecutor : public Executor {
  public:
+  LoopExecutor(std::function<void(const std::exception&)>&& eh)
+      : Executor(std::move(eh)) {}
+
   /**
-   * Blocks the current thread until cancel() is invoked and runs all tasks 
+   * Blocks the current thread until cancel() is invoked and runs all tasks
    * that get scheduled.
    */
   virtual void run() = 0;

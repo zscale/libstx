@@ -28,7 +28,7 @@ namespace xzero {
  */
 class XZERO_API Executor {
  public:
-  Executor();
+  explicit Executor(std::function<void(const std::exception&)>&& eh);
   virtual ~Executor();
 
   typedef std::function<void()> Task;
