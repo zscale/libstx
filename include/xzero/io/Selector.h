@@ -23,6 +23,8 @@ class SelectionKey;
  */
 class XZERO_API Selector {
  public:
+  explicit Selector(std::function<void(const std::exception&)>&& errorLogger);
+
   virtual ~Selector() {}
 
   /**
@@ -46,6 +48,12 @@ class XZERO_API Selector {
    * Breaks the event-loop inside @c select(), if currently running.
    */
   virtual void wakeup() = 0;
+
+ protected:
+  void logError(const std::exception& e) const;
+
+ private:
+  std::function<void(const std::exception&)> errorLogger_;
 };
 
 } // namespace xzero
