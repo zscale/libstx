@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <stdexcept>
+#include <system_error>
 #include <string.h>
 #include <errno.h>
 
@@ -39,6 +40,9 @@ XZERO_API void consoleLogger(const std::exception& e);
 } // namespace xzero
 
 #define RUNTIME_ERROR(msg) (::xzero::RuntimeError((msg), __FILE__, __LINE__))
+
+#define SYSTEM_ERROR(errc) \
+  (RUNTIME_ERROR(std::system_error(errc, std::system_category()).what()))
 
 #if !defined(BUG_ON)
   #define BUG_ON(cond) {                                                    \
