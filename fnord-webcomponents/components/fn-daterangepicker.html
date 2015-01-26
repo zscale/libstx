@@ -20,14 +20,22 @@
   <style type='text/css'>
     .wrapper {
       font-family: 'Helvetica Neue',Arial,Helvetica,sans-serif;
-      font-size: 14px;
+      font-size: 1rem;
       height: 100%;
+    }
+
+    .wrapper.tiny {
+      font-size: 0.8125rem;
+    }
+
+    .wrapper.small {
+      font-size: 0.875rem;
     }
 
     .fa {
       color: rgb(84, 87, 88);
-      font: normal normal normal 14px/1 FontAwesome;
-      font-size: inherit;
+      font-family: FontAwesome;
+      font-size: 0.9em;
       text-rendering: auto;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -35,15 +43,26 @@
 
     .fa-chevron-left {
       border-right: 1px solid #ececec;
-      margin-right: 5px;
-      padding-right: 15px;
+      padding-right: 12px;
     }
 
     .fa-chevron-right {
       border-left: 1px solid #ececec;
-      margin-left: 5px;
-      padding-left: 15px;
+      padding-left: 12px;
     }
+
+    .wrapper.small .fa-chevron-right {
+      padding-left: 6px;
+    }
+
+    .wrapper.small .fa-chevron-left {
+      padding-right: 6px;
+    }
+
+    .wrapper.small span {
+      padding: 0 3px;
+    }
+
 
     .fa:hover {
       color: #009fe9;
@@ -51,9 +70,9 @@
     }
 
     span {
-      font-size: inherit;
+      font-size: 1em;
       color: rgba(0,0,0,.8);
-      padding: 0 10px;
+      padding: 0 7px;
       font-weight: 500;
       line-height: 24px;
       display: inline-block;
@@ -79,6 +98,11 @@
       var base = this;
 
       this.init();
+
+      if (this.hasAttribute('data-size')) {
+        this.shadowRoot.querySelector(".wrapper").className += 
+          " " + this.getAttribute('data-size');
+      }
 
       this.shadowRoot.querySelector(".fa-chevron-left").addEventListener(
         'click',
