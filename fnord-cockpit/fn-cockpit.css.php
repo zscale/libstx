@@ -175,6 +175,18 @@ fn-time-navigation /deep/ .group b {
   display: none;
 }
 
+.navigation {
+  height: 40px;
+}
+
+.navigation .left {
+  float:left;
+}
+
+.navigation .right {
+  float: right;
+}
+
 h1 {
   margin:0; padding:0; line-height: 40px; margin-left: 16px; font-size: 140%;
 }

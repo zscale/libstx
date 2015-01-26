@@ -12,17 +12,14 @@
 <template id="fn-metric-explorer-preview-base-tpl">
   <style type='text/css'>
 
-    h1.page_header {
-      margin-left: 5px;
+
+
+
+
+    .navigation fn-button {
+      margin: 5px 8px 0 0;
     }
 
-    h1.page_header a {
-      color: #999;
-    }
-
-    h1.page_header a:hover {
-      color: #666 !important;
-    }
 
     .group.group_by {
       display: none;
@@ -84,15 +81,28 @@
       display: block;
     }
 
-    #table.result_pane {
-      padding-top: 4%;
+    .result_pane {
+      padding: 10px 0 20px;
+      background: #fff;
+      display: none;
     }
 
-    fn-table /deep/ table > thead > tr > td,
-    fn-table /deep/ table > thead > tr > th,
-    fn-table /deep/ table > tbody > tr > td,
-    fn-table /deep/ table > tbody > tr > th {
-      font-size: 92%;
+    .result_pane.active {
+      display: block;
+    }
+
+    #raw.result_pane {
+      padding: 10px 10px 20px;
+    }
+
+
+
+    fn-controls /deep/ .controls_inner {
+      border-top: 1px solid #bbb;
+    }
+
+    fn-controls[type='secondary'] /deep/ .controls_inner {
+      border-bottom: none !important;
     }
 
 
@@ -103,12 +113,16 @@
 
   </style>
   <fn-loader>
-    <h1 class="page_header">
-      <a href="#">Metric</a>
-      &rsaquo;
-      <span></span>
-    </h1>
-    <fn-controls type='primary'>
+    <div class="navigation">
+      <h1 class="small left">
+        <a href="#">Metric</a>
+        &rsaquo;
+        <span></span>
+      </h1>
+      <fn-button id="raw" style="margin-right:15px;" class="right" data-size="tiny">Raw</fn-button>
+      <fn-button id="chart" class="right" data-size="tiny">Chart</fn-button>
+    </div>
+    <fn-controls type='primary-small'>
       <fn-controls-section data-position='left'>
         <div class='group aggregation_type'>
           <b>Rollup</b>
@@ -193,11 +207,11 @@
     </fn-controls>
     <fn-controls type='secondary'>
       <fn-controls-section data-position='left'>
-        <fn-button id="embed_btn" data-size='small'>
+        <fn-button id="embed_btn" data-size='tiny'>
           <i class='fa fa-share'></i>
           Embed
         </fn-button>
-        <fn-button id="auto_refresh" data-toggle data-size='small'>
+        <fn-button id="auto_refresh" data-toggle data-size='tiny'>
           <i class='fa fa-refresh'></i>
           Auto Refresh
         </fn-button>
@@ -209,13 +223,10 @@
     </fn-controls>
     <fn-loader id="result_pane" data-transparent>
       <fn-message data-state='error'></fn-message>
-      <div class="result_pane" id="chart">
-        <iframe width="100%" frameborder="0" height="360" scrolling="no"></iframe>
+      <div class="result_pane active" id="chart">
+        <iframe width="100%" frameborder="0" height="400" scrolling="no"></iframe>
       </div>
-      <div class="result_pane" id="table">
-        <fn-pager data-for data-first-item="1" data-per-page="25" data-circling></fn-pager>
-        <fn-table data-per-page='25' style="width:100%;">
-        </fn-table>
+      <div class="result_pane" id="raw">
       </div>
     </fn-loader>
     <fn-modal id="embed">
@@ -253,16 +264,53 @@
       }
     }
 
+    this.renderRawView = function() {
+      var pane = this.querySelector("#raw.result_pane");
+      this.querySelector("#chart.result_pane").className = "result_pane";
+      pane.className += " active";
+
+      this.updateCSVData();
+    };
+
+    this.updateCSVData = function() {
+      var pane = this.querySelector("#raw.result_pane");
+      pane.innerHTML = "";
+
+      var url = this.buildQueryUrl("csv");
+      Fnord.httpGet(url, function(r) {
+        if (r.status == 200) {
+          pane.innerHTML = r.response;
+        }
+      });
+    };
+
+    this.renderChartView = function() {
+      this.querySelector("#raw.result_pane").className = "result_pane";
+      this.querySelector("#chart.result_pane").className += " active";
+      this.updateChart();
+    }
+
+    this.getActiveView = function() {
+      if (this.querySelector("#raw.result_pane.active")) {
+        return "raw";
+      }
+
+      return "chart";
+    }
+
+
     this.onUrlChange = function(init) {
       this.params = parseUrlQueryString(this.getAttribute("data-url"));
-      //var queryUrl = generateQueryUrl(this.params.query_params);
 
       if (init) {
         this.init();
       }
 
-      this.updateChart();
-      this.updateTable();
+      if (this.getActiveView() == "chart") {
+        this.updateChart();
+      } else {
+        this.updateCSVData();
+      }
     };
 
     this.init = function() {
@@ -297,38 +345,6 @@
       iframe.src = url;
     }
 
-    this.updateTable = function() {
-     // var url = this.buildQueryUrl("json");
-      var url = baseUrl + "list";
-      var table = this.querySelector("#table.result_pane fn-table");
-      var base = this;
-      table.innerHTML = "";
-      Fnord.httpGet(url, function(r) {
-        if (r.status == 200) {
-          JSON.parse(r.response).metrics.forEach(function(m) {
-
-            var tr_elem = document.createElement("tr");
-            tr_elem.setAttribute('metric-key', m.key);
-            var cells = [
-              m.key,
-              m.labels.join(", "),
-              m.last_insert,
-              m.total_bytes];
-
-            cells.map(function(cell) {
-              var td_elem = document.createElement("td");
-              td_elem.innerHTML = cell;
-              tr_elem.appendChild(td_elem);
-            });
-
-            table.appendChild(tr_elem);
-          });
-          table.renderTable();
-          base.querySelector("fn-pager").forElement(table);
-        }
-      });
-
-    }
 
     this.buildQueryUrl = function(format) {
       var url =
@@ -350,7 +366,7 @@
       url +=
         "&format=" + format +
         "&min=0" +
-        "&height=360" +
+        "&height=400" +
         "&width=" + (document.body.offsetWidth - 20) +
         "&grid=both" +
         "&scale=0.8" +
@@ -361,7 +377,7 @@
     }
 
     this.setHeader = function() {
-      this.querySelector("h1 span").innerHTML =
+      this.querySelector("h1.small span").innerHTML =
         this.params.query_params.innerViewValue;
     }
 
@@ -597,10 +613,18 @@
       }
 
       /* handle Events */
-      this.querySelector("h1.page_header").onclick = function(e) {
+      this.querySelector("h1.small").onclick = function(e) {
         e.preventDefault();
         openUrl("metrics", true);
       };
+
+      this.querySelector("fn-button#raw").addEventListener('fn-button-click', function() {
+        base.renderRawView();
+      }, false);
+
+      this.querySelector("fn-button#chart").addEventListener('fn-button-click', function() {
+        base.renderChartView();
+      }, false);
 
       rollup.addEventListener("fn-dropdown-item-click", function(e) {
         var view = e.srcElement.getAttribute('data-value');

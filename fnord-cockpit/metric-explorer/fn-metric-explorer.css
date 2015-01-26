@@ -19,13 +19,9 @@ fn-metric-explorer-search fn-table /deep/ table {
   width: 100%;
 }
 
-fn-metric-explorer-list .navigation {
-  height: 40px;
-}
 
-fn-metric-explorer-list .navigation h1 {
-  float:left;
-}
+
+
 
 fn-metric-explorer-list .navigation fn-search,
 fn-metric-explorer-search .navigation fn-search {
