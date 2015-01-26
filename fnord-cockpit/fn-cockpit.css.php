@@ -167,7 +167,6 @@ ul.fn-cockpit-navigation li {
 
 fn-time-navigation {
   border-bottom: none;
-  padding: 6px 0 0 0;
   height: 39px;
 }
 
