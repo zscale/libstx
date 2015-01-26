@@ -20,7 +20,7 @@
 
     input {
       float: left;
-      width: 50px;
+      width: 20px;
       font-size: 1rem;
       outline: none;
       -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
@@ -62,6 +62,10 @@
       background: #fafafa;
       color: rgba(0, 0, 0, 0.8);
       box-shadow: none;
+    }
+
+    input[data-size='small'] {
+      font-size: 0.875rem;
     }
 
     input.error {
@@ -106,6 +110,9 @@
       if (this.hasAttribute('data-state')) {
         this.setState();
       }
+      if (this.hasAttribute('data-size')) {
+        this.setsize();
+      }
 
       hours_input.addEventListener('focus', function() {
         base.validateHoursInput();
@@ -116,11 +123,30 @@
     };
 
     this.attributeChangedCallback = function(attr, old_val, new_val) {
-      if (attr == "data-minutes-value") {
+      switch (attr) {
+        case "data-minutes-value":
         this.setMinutesValue(new_val);
-      } else if (attr == "data-hours-value") {
+        break;
+
+        case "data-hours-value":
         this.setHoursValue(new_val);
+        break;
+
+        case "data-size":
+        this.setSize();
+        break;
+
+        default:
+        break;
       }
+    }
+
+    this.setSize = function() {
+      console.log("st size");
+      this.shadowRoot.querySelector("#hours")
+        .setAttribute('data-size', this.getAttribute('data-size'));
+      this.shadowRoot.querySelector("#minutes")
+        .setAttribute('data-size', this.getAttribute('data-size'));
     }
 
     this.validateHoursInput = function() {
