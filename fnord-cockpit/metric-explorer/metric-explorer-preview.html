@@ -215,6 +215,13 @@
       <div class="result_pane active" data-format="svg">
       </div>
       <div class="result_pane" data-format="csv">
+        <fn-table data-per-page="25" data-page="0">
+          <fn-table-column>Metric</fn-table-column>
+          <fn-table-column>Time</fn-table-column>
+          <fn-table-column>Value</fn-table-column>
+          <table>
+          </table>
+        </fn-table>
       </div>
     </fn-loader>
     <fn-modal id="embed">
@@ -318,7 +325,7 @@
 
       url +=
         "&format=" + format +
-        "&min=0" +
+        "&min=" + this.getQueryParamOrDefaultValue("min") +
         "&height=" + (document.body.offsetHeight - 255) +
         "&width=" + (document.body.offsetWidth - 20) +
         "&grid=both" +
@@ -340,28 +347,50 @@
     };
 
     this.updateData = function(format) {
+      var base = this;
       format = format ? format : "svg";
-      var pane = this.querySelector(".result_pane[data-format='"+ format +"']");
-      pane.innerHTML = "";
-
-      var loader = this.querySelector("#result_pane_loader");
-
       var url = this.buildQueryUrl(format);
 
       Fnord.httpGet(url, function(r) {
         if (r.status == 200) {
+          if (format == "csv") {
+            base.renderCsvAsTable(r.response);
+            return;
+          }
+
+          var pane = base.querySelector(".result_pane[data-format='"+ format +"']");
+          pane.innerHTML = "";
           pane.innerHTML = r.response;
-          loader.removeAttribute("data-loading");
+          base.querySelector("#result_pane_loader").removeAttribute("data-loading");
         }
       });
     };
 
+    this.renderCsvAsTable = function(csv) {
+      var fn_table = this.querySelector(".result_pane[data-format='csv'] fn-table");
+      var table = fn_table.querySelector("table");
+      var data_points = csv.split(/\n/);
+
+      data_points.forEach(function(point) {
+        var tr_elem = document.createElement("tr");
+
+        point.split(";").forEach(function(entry) {
+          var td_elem = document.createElement("td");
+          td_elem.innerHTML = entry;
+          tr_elem.appendChild(td_elem);
+        });
+
+        table.appendChild(tr_elem);
+      });
+
+      fn_table.renderTable();
+      this.querySelector("#result_pane_loader").removeAttribute("data-loading");
+    }
 
     this.setHeader = function() {
       this.querySelector("h1.small span").innerHTML =
         this.params.query_params.innerViewValue;
-    }
-
+    };
 
     this.handleAggregationDisplay = function() {
       var view = this.getQueryParamOrDefaultValue("view");
@@ -438,7 +467,8 @@
         aggr_window : 5,
         logarithmic : false,
         inverted: false,
-        by: this.columns
+        by: this.columns,
+        min: 0
       }
 
       if (key == "time_range") {
