@@ -8,18 +8,11 @@
   copy of the GNU General Public License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 -->
-
 <template id="fn-metric-explorer-preview-base-tpl">
   <style type='text/css'>
-
-
-
-
-
     .navigation fn-button {
       margin: 5px 8px 0 0;
     }
-
 
     .group.group_by {
       display: none;
@@ -70,14 +63,12 @@
       padding: 14px 20px 0 20px;
     }
 
-
-
-    #result_pane fn-message {
+    #result_pane_loader fn-message {
       display:none;
       margin: 2em 4em;
     }
 
-    #result_pane fn-message.active {
+    #result_pane_loader fn-message.active {
       display: block;
     }
 
@@ -94,8 +85,6 @@
     #raw.result_pane {
       padding: 10px 10px 20px;
     }
-
-
 
     fn-controls /deep/ .controls_inner {
       border-top: 1px solid #bbb;
@@ -119,8 +108,8 @@
         &rsaquo;
         <span></span>
       </h1>
-      <fn-button id="raw" style="margin-right:15px;" class="right" data-size="tiny">Raw</fn-button>
-      <fn-button id="chart" class="right" data-size="tiny">Chart</fn-button>
+      <fn-button data-format="csv" style="margin-right:15px;" class="right" data-size="tiny">Raw</fn-button>
+      <fn-button data-format="svg" class="right" data-state="active" data-size="tiny">Chart</fn-button>
     </div>
     <fn-controls type='primary-small'>
       <fn-controls-section data-position='left'>
@@ -221,12 +210,11 @@
         </fn-daterangepicker>
       </fn-controls-section>
     </fn-controls>
-    <fn-loader id="result_pane" data-transparent>
+    <fn-loader id="result_pane_loader" data-loading data-resolved="data-resolved" data-transparent>
       <fn-message data-state='error'></fn-message>
-      <div class="result_pane active" id="chart">
-        <iframe width="100%" frameborder="0" height="400" scrolling="no"></iframe>
+      <div class="result_pane active" data-format="svg">
       </div>
-      <div class="result_pane" id="raw">
+      <div class="result_pane" data-format="csv">
       </div>
     </fn-loader>
     <fn-modal id="embed">
@@ -261,49 +249,20 @@
         this.onUrlChange(true);
       }
 
-    }
+    };
 
     this.attributeChangedCallback = function(attr, old_val, new_val) {
-      if (attr == 'data-url') {
-        var init = (old_val == null);
-        this.onUrlChange(init);
+      switch (attr) {
+        case 'data-url' :
+          this.onUrlChange(old_val == null);
+          break;
+        case 'data-format' :
+          this.toggleView(new_val);
+          break;
+        default:
+          break;
       }
-    }
-
-    this.renderRawView = function() {
-      var pane = this.querySelector("#raw.result_pane");
-      this.querySelector("#chart.result_pane").className = "result_pane";
-      pane.className += " active";
-
-      this.updateCSVData();
     };
-
-    this.updateCSVData = function() {
-      var pane = this.querySelector("#raw.result_pane");
-      pane.innerHTML = "";
-
-      var url = this.buildQueryUrl("csv");
-      Fnord.httpGet(url, function(r) {
-        if (r.status == 200) {
-          pane.innerHTML = r.response;
-        }
-      });
-    };
-
-    this.renderChartView = function() {
-      this.querySelector("#raw.result_pane").className = "result_pane";
-      this.querySelector("#chart.result_pane").className += " active";
-      this.updateChart();
-    }
-
-    this.getActiveView = function() {
-      if (this.querySelector("#raw.result_pane.active")) {
-        return "raw";
-      }
-
-      return "chart";
-    }
-
 
     this.onUrlChange = function(init) {
       this.params = parseUrlQueryString(this.getAttribute("data-url"));
@@ -312,11 +271,7 @@
         this.init();
       }
 
-      if (this.getActiveView() == "chart") {
-        this.updateChart();
-      } else {
-        this.updateCSVData();
-      }
+      this.updateData(this.getAttribute("data-format"));
     };
 
     this.init = function() {
@@ -344,14 +299,6 @@
       });
     };
 
-
-    this.updateChart = function() {
-      var url = this.buildQueryUrl("svg");
-      var iframe = this.querySelector("#chart.result_pane iframe");
-      iframe.src = url;
-    }
-
-
     this.buildQueryUrl = function(format) {
       var url =
         baseUrl + "timeseries" +
@@ -372,7 +319,7 @@
       url +=
         "&format=" + format +
         "&min=0" +
-        "&height=400" +
+        "&height=" + (document.body.offsetHeight - 255) +
         "&width=" + (document.body.offsetWidth - 20) +
         "&grid=both" +
         "&scale=0.8" +
@@ -380,7 +327,35 @@
         "&legend=toprightinside";
 
       return url;
-    }
+    };
+
+    this.toggleView = function(format) {
+      this.querySelector(".result_pane.active").classList.remove("active");
+      this.querySelector(".result_pane[data-format='"+ format +"']").classList.add("active");
+
+      this.querySelector("fn-button[data-format][data-state='active']").removeAttribute("data-state");
+      this.querySelector("fn-button[data-format='"+ format +"']").setAttribute("data-state", "active");
+
+      this.updateData(format);
+    };
+
+    this.updateData = function(format) {
+      format = format ? format : "svg";
+      var pane = this.querySelector(".result_pane[data-format='"+ format +"']");
+      pane.innerHTML = "";
+
+      var loader = this.querySelector("#result_pane_loader");
+
+      var url = this.buildQueryUrl(format);
+
+      Fnord.httpGet(url, function(r) {
+        if (r.status == 200) {
+          pane.innerHTML = r.response;
+          loader.removeAttribute("data-loading");
+        }
+      });
+    };
+
 
     this.setHeader = function() {
       this.querySelector("h1.small span").innerHTML =
@@ -641,12 +616,12 @@
         openUrl("metrics", true);
       };
 
-      this.querySelector("fn-button#raw").addEventListener('fn-button-click', function() {
-        base.renderRawView();
+      this.querySelector("fn-button[data-format='csv']").addEventListener('fn-button-click', function() {
+        base.setAttribute("data-format", "csv");
       }, false);
 
-      this.querySelector("fn-button#chart").addEventListener('fn-button-click', function() {
-        base.renderChartView();
+      this.querySelector("fn-button[data-format='svg']").addEventListener('fn-button-click', function() {
+        base.setAttribute("data-format", "svg");
       }, false);
 
       rollup.addEventListener("fn-dropdown-item-click", function(e) {
