@@ -42,6 +42,7 @@
     fn-table /deep/ table {
       border-radius: 0;
       border-top: none;
+      margin-top: 2px;
       margin-bottom: 0;
     }
 
@@ -75,19 +76,17 @@
     </fn-message>
     <div class="list ui">
       <div class="navigation">
-        <h1 class="small left">Metrics &rsaquo; </h1>
-        <fn-search data-size="small" data-placeholder="Search...">
+        <h1 class="small">Metrics &rsaquo; </h1>
+        <fn-search data-placeholder="Search...">
           <fn-search-icon><i class="fa fa-search"></i></fn-search-icon>
         </fn-search>
       </div>
       <div style="border-top: 1px solid #bbb; background: #fff;">
         <fn-table data-per-page="25" data-page-"0" data-clickable>
-          <fn-table-column data-sortable data-presort="asc">Metric</fn-table-column>
+          <fn-table-column data-sortable>Metric</fn-table-column>
           <fn-table-column>Labels</fn-table-column>
           <fn-table-column data-sortable>Last Insert</fn-table-column>
           <fn-table-column data-sortable>Total Stored Bytes</fn-table-column>
-          <table>
-          </table>
         </fn-table>
       </div>
       <fn-pager data-for data-first-item="1" data-per-page="25" data-circling></fn-pager>
@@ -174,7 +173,7 @@
     this.loadMetricList = function(url_query, openPreview) {
       var base = this;
       var loader = this.querySelector("fn-loader");
-      var table = this.querySelector("fn-table table");
+      var table = this.querySelector("fn-table");
       var url = baseUrl + "list" + url_query;
 
       Fnord.httpGet(url, function(r) {
@@ -201,10 +200,9 @@
               tr_elem.appendChild(td_elem);
             });
 
-            table.appendChild(tr_elem);
+            table.appendRow(tr_elem);
 
           });
-          base.querySelector("fn-table").renderTable();
           base.querySelector("fn-message").className = "";
           base.initTablePager(metrics.length);
         } else {
@@ -235,8 +233,8 @@
       var end = Math.round(Date.now() / 1000);
       var start = end - 3600;
       var raw_url = 
-        "#metric?metric="+ encodeURIComponent(metric_key) +
-        "&view=sum&start_time=" + start +
+        "#metric?key="+ encodeURIComponent(metric_key) +
+        "&view=value&start_time=" + start +
         "&end_time=" + end;
       openUrl(raw_url, true)
 

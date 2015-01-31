@@ -8,23 +8,21 @@
   copy of the GNU General Public License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 -->
+
 <template id="fn-metric-explorer-preview-base-tpl">
   <style type='text/css'>
-    .navigation fn-button {
-      margin: 5px 8px 0 0;
+
+    h1.page_header {
+      margin-left: 5px;
     }
 
-    fn-controls h3 {
-      margin: 24px 20px 0 0;
-      font-size: 1rem;
+    h1.page_header a {
+      color: #999;
     }
 
-    .group {
-      height: 100%;
-      float: left;
-      padding: 14px 20px 0 20px;
+    h1.page_header a:hover {
+      color: #666 !important;
     }
-
 
     .group.group_by {
       display: none;
@@ -69,47 +67,32 @@
       opacity: 0.7;
     }
 
-    .group.timenav {
-      padding: 0;
+    .group {
+      height: 100%;
+      float: left;
+      padding: 14px 20px 0 20px;
     }
 
-    .group.timenav * {
-      float:left;
-    }
 
-    .group.timenav fn-datepicker {
-      margin: 3px 10px 0 10px;
-    }
 
-    #result_pane_loader fn-message {
+    #result_pane fn-message {
       display:none;
       margin: 2em 4em;
     }
 
-    #result_pane_loader fn-message.active {
+    #result_pane fn-message.active {
       display: block;
     }
 
-    .result_pane {
-      padding: 10px 0 20px;
-      background: #fff;
-      display: none;
+    #table.result_pane {
+      padding-top: 4%;
     }
 
-    .result_pane.active {
-      display: block;
-    }
-
-    #raw.result_pane {
-      padding: 10px 10px 20px;
-    }
-
-    fn-controls /deep/ .controls_inner {
-      border-top: 1px solid #bbb;
-    }
-
-    fn-controls[type='secondary'] /deep/ .controls_inner {
-      border-bottom: none !important;
+    fn-table /deep/ table > thead > tr > td,
+    fn-table /deep/ table > thead > tr > th,
+    fn-table /deep/ table > tbody > tr > td,
+    fn-table /deep/ table > tbody > tr > th {
+      font-size: 92%;
     }
 
 
@@ -120,24 +103,13 @@
 
   </style>
   <fn-loader>
-    <div class="navigation">
-      <fn-button id="embed_btn" data-size='tiny'>
-        <i class='fa fa-share'></i>
-        Embed
-      </fn-button>
-      <fn-button id="auto_refresh" data-toggle data-size='tiny'>
-        <i class='fa fa-refresh'></i>
-        Auto Refresh
-      </fn-button>
-      <fn-button data-format="csv" style="margin-right:15px;" class="right" data-size="tiny">Raw</fn-button>
-      <fn-button data-format="svg" class="right" data-state="active" data-size="tiny">Chart</fn-button>
-    </div>
-    <fn-controls type='primary-small'>
+    <h1 class="page_header">
+      <a href="#">Metric</a>
+      &rsaquo;
+      <span></span>
+    </h1>
+    <fn-controls type='primary'>
       <fn-controls-section data-position='left'>
-        <h3 class="small left">
-          <span></span>
-        </h3>
-
         <div class='group aggregation_type'>
           <b>Rollup</b>
           <fn-dropdown id='rollup' data-style="input small">
@@ -187,21 +159,20 @@
         </div>
         <div class="group scale">
           <b>Scale</b>
-                  </div>
+          <fn-checkbox data-style="small" id="inv_scale">
+            <fn-checkbox-label>Inverted</fn-checkbox-label>
+          </fn-checkbox>
+          <fn-checkbox data-style="small" id="log_scale">
+            <fn-checkbox-label>Logarithmic</fn-checkbox-label>
+          </fn-checkbox>
+        </div>
         <div class="group group_by">
           <b>Group by</b>
         </div>
       </fn-controls-section>
       <fn-controls-section data-position='right'>
-        <fn-button id="add_metric" data-size="tiny">
-          <i class="fa fa-plus"></i>
-        </fn-button>
-      </fn-controls-section>
-    </fn-controls>
-
-    <fn-controls type='secondary'>
-      <fn-controls-section data-position='left'>
-        <div class="group timenav">
+        <div class='group timerange'>
+          <b>Show The Last...</b>
           <fn-dropdown id='timerange' data-style="input small">
             <fn-dropdown-header>1 hour</fn-dropdown-header>
             <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
@@ -212,33 +183,38 @@
             <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
             <fn-dropdown-item data-value=86400>1 day</fn-dropdown-item>
           </fn-dropdown>
+        </div>
+        <div class='group date'>
+          <b>End Time</b>
           <fn-datepicker data-time-select data-selectable="past">
           </fn-datepicker>
-
-          <fn-daterangepicker data-size="small" data-selectable='past'>
-          </fn-daterangepicker>
         </div>
       </fn-controls-section>
+    </fn-controls>
+    <fn-controls type='secondary'>
+      <fn-controls-section data-position='left'>
+        <fn-button id="embed_btn" data-size='small'>
+          <i class='fa fa-share'></i>
+          Embed
+        </fn-button>
+        <fn-button id="auto_refresh" data-toggle data-size='small'>
+          <i class='fa fa-refresh'></i>
+          Auto Refresh
+        </fn-button>
+      </fn-controls-section>
       <fn-controls-section data-position='right'>
-        <fn-checkbox data-style="small" id="inv_scale" style="margin-right: 10px;">
-          <fn-checkbox-label>Inverted</fn-checkbox-label>
-        </fn-checkbox>
-        <fn-checkbox data-style="small" id="log_scale">
-          <fn-checkbox-label>Logarithmic</fn-checkbox-label>
-        </fn-checkbox>
+        <fn-daterangepicker data-selectable='past'>
+        </fn-daterangepicker>
       </fn-controls-section>
     </fn-controls>
-    <fn-loader id="result_pane_loader" data-loading data-resolved="data-resolved" data-transparent>
+    <fn-loader id="result_pane" data-transparent>
       <fn-message data-state='error'></fn-message>
-      <div class="result_pane active" data-format="svg">
+      <div class="result_pane" id="chart">
+        <iframe width="100%" frameborder="0" height="360" scrolling="no"></iframe>
       </div>
-      <div class="result_pane" data-format="csv">
-        <fn-table data-per-page="25" data-page="0">
-          <fn-table-column>Metric</fn-table-column>
-          <fn-table-column>Time</fn-table-column>
-          <fn-table-column>Value</fn-table-column>
-          <table>
-          </table>
+      <div class="result_pane" id="table">
+        <fn-pager data-for data-first-item="1" data-per-page="25" data-circling></fn-pager>
+        <fn-table data-per-page='25' style="width:100%;">
         </fn-table>
       </div>
     </fn-loader>
@@ -256,12 +232,6 @@
       </fn-modal-content>
     </fn-modal>
   </fn-loader>
-  <fn-tooltip id='aggr'>
-    There's no time-window aggregation for the current rollup
-  </fn-tooltip>
-  <fn-tooltip data-pointer="right" id='ttp_endtime'>
-    Please select a date in the past
-  </fn-tooltip>
 </template>
 
 <script type='text/javascript'>
@@ -274,29 +244,25 @@
         this.onUrlChange(true);
       }
 
-    };
+    }
 
     this.attributeChangedCallback = function(attr, old_val, new_val) {
-      switch (attr) {
-        case 'data-url' :
-          this.onUrlChange(old_val == null);
-          break;
-        case 'data-format' :
-          this.toggleView(new_val);
-          break;
-        default:
-          break;
+      if (attr == 'data-url') {
+        var init = (old_val == null);
+        this.onUrlChange(init);
       }
-    };
+    }
 
     this.onUrlChange = function(init) {
       this.params = parseUrlQueryString(this.getAttribute("data-url"));
+      //var queryUrl = generateQueryUrl(this.params.query_params);
 
       if (init) {
         this.init();
       }
 
-      this.updateData(this.getAttribute("data-format"));
+      this.updateChart();
+      this.updateTable();
     };
 
     this.init = function() {
@@ -324,6 +290,46 @@
       });
     };
 
+
+    this.updateChart = function() {
+      var url = this.buildQueryUrl("svg");
+      var iframe = this.querySelector("#chart.result_pane iframe");
+      iframe.src = url;
+    }
+
+    this.updateTable = function() {
+     // var url = this.buildQueryUrl("json");
+      var url = baseUrl + "list";
+      var table = this.querySelector("#table.result_pane fn-table");
+      var base = this;
+      table.innerHTML = "";
+      Fnord.httpGet(url, function(r) {
+        if (r.status == 200) {
+          JSON.parse(r.response).metrics.forEach(function(m) {
+
+            var tr_elem = document.createElement("tr");
+            tr_elem.setAttribute('metric-key', m.key);
+            var cells = [
+              m.key,
+              m.labels.join(", "),
+              m.last_insert,
+              m.total_bytes];
+
+            cells.map(function(cell) {
+              var td_elem = document.createElement("td");
+              td_elem.innerHTML = cell;
+              tr_elem.appendChild(td_elem);
+            });
+
+            table.appendChild(tr_elem);
+          });
+          table.renderTable();
+          base.querySelector("fn-pager").forElement(table);
+        }
+      });
+
+    }
+
     this.buildQueryUrl = function(format) {
       var url =
         baseUrl + "timeseries" +
@@ -337,14 +343,14 @@
       if (view != 'value') {
         url +=
           "&aggr_fn=" + view +
-          "&aggr_window=" + this.getQueryParamOrDefaultValue("aggr_window") +
-          "&aggr_step=" + this.getQueryParamOrDefaultValue("aggr_step");
+          "&aggr_window=" + this.getQueryParamOrDefaultValue("t_window") +
+          "&aggr_step=" + this.getQueryParamOrDefaultValue("t_step");
       }
 
       url +=
         "&format=" + format +
-        "&min=" + this.getQueryParamOrDefaultValue("min") +
-        "&height=" + (document.body.offsetHeight - 255) +
+        "&min=0" +
+        "&height=360" +
         "&width=" + (document.body.offsetWidth - 20) +
         "&grid=both" +
         "&scale=0.8" +
@@ -352,63 +358,13 @@
         "&legend=toprightinside";
 
       return url;
-    };
-
-    this.toggleView = function(format) {
-      this.querySelector(".result_pane.active").classList.remove("active");
-      this.querySelector(".result_pane[data-format='"+ format +"']").classList.add("active");
-
-      this.querySelector("fn-button[data-format][data-state='active']").removeAttribute("data-state");
-      this.querySelector("fn-button[data-format='"+ format +"']").setAttribute("data-state", "active");
-
-      this.updateData(format);
-    };
-
-    this.updateData = function(format) {
-      var base = this;
-      format = format ? format : "svg";
-      var url = this.buildQueryUrl(format);
-
-      Fnord.httpGet(url, function(r) {
-        if (r.status == 200) {
-          if (format == "csv") {
-            base.renderCsvAsTable(r.response);
-            return;
-          }
-
-          var pane = base.querySelector(".result_pane[data-format='"+ format +"']");
-          pane.innerHTML = "";
-          pane.innerHTML = r.response;
-          base.querySelector("#result_pane_loader").removeAttribute("data-loading");
-        }
-      });
-    };
-
-    this.renderCsvAsTable = function(csv) {
-      var fn_table = this.querySelector(".result_pane[data-format='csv'] fn-table");
-      var table = fn_table.querySelector("table");
-      var data_points = csv.split(/\n/);
-
-      data_points.forEach(function(point) {
-        var tr_elem = document.createElement("tr");
-
-        point.split(";").forEach(function(entry) {
-          var td_elem = document.createElement("td");
-          td_elem.innerHTML = entry;
-          tr_elem.appendChild(td_elem);
-        });
-
-        table.appendChild(tr_elem);
-      });
-
-      fn_table.renderTable();
-      this.querySelector("#result_pane_loader").removeAttribute("data-loading");
     }
 
     this.setHeader = function() {
-      this.querySelector("h3.small span").innerHTML =
+      this.querySelector("h1 span").innerHTML =
         this.params.query_params.innerViewValue;
-    };
+    }
+
 
     this.handleAggregationDisplay = function() {
       var view = this.getQueryParamOrDefaultValue("view");
@@ -433,14 +389,14 @@
           view == "min"   ||
           view == "max" ) {
 
-        var time_window = this.params.query_params.aggr_window;
+        var time_window = this.params.query_params.t_window;
         if (time_window == undefined) {
-          new_params.aggr_window = this.getQueryParamOrDefaultValue("aggr_window");
+          new_params.t_window = this.getQueryParamOrDefaultValue("t_window");
           update = true;
         }
-        var aggr_step = this.params.query_params.aggr_step;
-        if (aggr_step == undefined) {
-          new_params.aggr_step = this.getQueryParamOrDefaultValue("aggr_step");
+        var t_step = this.params.query_params.t_step;
+        if (t_step == undefined) {
+          new_params.t_step = this.getQueryParamOrDefaultValue("t_step");
           update = true;
         }
       }
@@ -475,18 +431,17 @@
 
     this.getQueryParamOrDefaultValue = function(key) {
       var defaults = {
-        view : "sum",
+        view : "value",
         columns : this.columns,
         end_time : Math.round(Date.now() / 1000),
         /* 5 minutes  */
         time_range : 3600,
         /* 10, 5 seconds */
-        aggr_step : 10,
-        aggr_window : 5,
+        t_step : 10,
+        t_window : 5,
         logarithmic : false,
         inverted: false,
-        by: this.columns,
-        min: 0
+        by: this.columns
       }
 
       if (key == "time_range") {
@@ -585,13 +540,6 @@
       daterangepicker.setAttribute('data-daterange', (time_range_val * 1000));
       daterangepicker.setAttribute('data-endtime', (end_time * 1000));
 
-      var chevron_right = daterangepicker.shadowRoot.querySelector(".fa-chevron-right");
-
-      var tooltip = this.querySelector("#ttp_endtime");
-      tooltip.initShowIf(chevron_right, function() {
-        return !(daterangepicker.nextIsSelectable());
-      });
-
       /* handle events */
       time_range.addEventListener("fn-dropdown-item-click", function(e) {
         var endtime = base.getQueryParamOrDefaultValue("end_time");
@@ -621,7 +569,6 @@
           endtime = Math.round(endtime / 1000);
           base.updateDateTimeElems(endtime);
       }, false);
-
     }
 
     this.handleBasicControls = function() {
@@ -633,21 +580,12 @@
       rollup.setAttribute('data-preselected', view);
 
       var time_window = this.querySelector("#time_window");
-      var aggr_window_val = this.getQueryParamOrDefaultValue("aggr_window");
-      time_window.setAttribute('data-preselected', aggr_window_val);
+      var t_window_val = this.getQueryParamOrDefaultValue("t_window");
+      time_window.setAttribute('data-preselected', t_window_val);
 
       var time_step = this.querySelector("#time_step");
-      var aggr_step_val = this.getQueryParamOrDefaultValue("aggr_step");
-      time_step.setAttribute('data-preselected', aggr_step_val);
-
-      var tooltip_aggr = this.querySelector("#aggr");
-      tooltip_aggr.initShowIf(time_window, function() {
-        return (time_window.getAttribute('data-state') == 'disabled');
-      });
-
-      tooltip_aggr.initShowIf(time_step, function() {
-        return (time_step.getAttribute('data-state') == 'disabled');
-      });
+      var t_step_val = this.getQueryParamOrDefaultValue("t_step");
+      time_step.setAttribute('data-preselected', t_step_val);
 
       var log_scale = this.querySelector("#log_scale");
       var inv_scale = this.querySelector("#inv_scale");
@@ -659,18 +597,10 @@
       }
 
       /* handle Events */
-      this.querySelector("h3.small").onclick = function(e) {
+      this.querySelector("h1.page_header").onclick = function(e) {
         e.preventDefault();
         openUrl("metrics", true);
       };
-
-      this.querySelector("fn-button[data-format='csv']").addEventListener('fn-button-click', function() {
-        base.setAttribute("data-format", "csv");
-      }, false);
-
-      this.querySelector("fn-button[data-format='svg']").addEventListener('fn-button-click', function() {
-        base.setAttribute("data-format", "svg");
-      }, false);
 
       rollup.addEventListener("fn-dropdown-item-click", function(e) {
         var view = e.srcElement.getAttribute('data-value');
@@ -680,16 +610,14 @@
         base.handleAggregationDisplay();
       }, false);
 
-
-
       time_window.addEventListener("fn-dropdown-item-click", function(e) {
         var value = e.srcElement.getAttribute('data-value');
-        base.updateUrlParams({"aggr_window": value});
+        base.updateUrlParams({"t_window": value});
       }, false);
 
       time_step.addEventListener("fn-dropdown-item-click", function(e) {
         var value = e.srcElement.getAttribute('data-value');
-        base.updateUrlParams({"aggr_step": value});
+        base.updateUrlParams({"t_step": value});
       }, false);
 
       log_scale.addEventListener("fn-checkbox-select", function(e) {

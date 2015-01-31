@@ -9,7 +9,6 @@
   include($base_path . "/../fnord-webcomponents/components/fn-pager.css");
   include($base_path . "/../fnord-webcomponents/components/fn-message.css");
   include($base_path . "/../fnord-webcomponents/components/fn-modal.css");
-  include($base_path . "/../fnord-webcomponents/components/fn-tooltip.css");
 ?>
 
 html {
@@ -33,8 +32,7 @@ body {
   clear: both;
 }
 
-.left {
-  float:left;
+.viewport {
 }
 
 a {
@@ -164,31 +162,17 @@ ul.fn-cockpit-navigation li {
   -webkit-text-shadow: 1px 0px 2px rgba(255,255,255,1);
   overflow:hidden;
   color:#333;
-}
 
-.fn-cockpit-pane fn-cockpit-chart:hover {
-  cursor:pointer;
 }
 
 fn-time-navigation {
   border-bottom: none;
+  padding: 6px 0 0 0;
   height: 39px;
 }
 
 fn-time-navigation /deep/ .group b {
   display: none;
-}
-
-.navigation {
-  height: 40px;
-}
-
-.navigation .left {
-  float:left;
-}
-
-.navigation .right {
-  float: right;
 }
 
 h1 {

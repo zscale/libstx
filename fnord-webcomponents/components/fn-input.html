@@ -41,16 +41,12 @@
     }
 
     label {
-      display: none;
+      display: block;
       margin: 0em 0em 0.2857rem 0em;
       color: rgba(0, 0, 0, 0.8);
       font-size: 0.9285em;
       font-weight: 700;
       text-transform: none;
-    }
-
-    label.active {
-      display: block;
     }
 
     .field > input {
@@ -264,10 +260,6 @@
       if (this.hasAttribute('data-disabled')) {this.disable();}
       if (this.hasAttribute('data-style')) {this.setStyle();}
 
-      if (this.querySelector("fn-input-label")) {
-        this.shadowRoot.querySelector("label").className = "active";
-      }
-
       this.attributeChangedCallback();
 
       this.shadowRoot.querySelector('input').addEventListener('keyup', 
@@ -301,7 +293,7 @@
           break;
         case 'data-disabled':
           this.disable();
-        break;
+          break;
         case 'data-style':
           this.setStyle();
           break;

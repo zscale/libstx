@@ -11,7 +11,7 @@
   same holds true for past-selectable
 -->
 <template id='fn-cockpit-chart-base-tpl'>
-  <div class="chart"></div>
+  <iframe width="100%" height="140" frameborder="0" scrolling="no"></iframe>
 </template>
 <script type='text/javascript'>
   var CockpitChartComponent = function() {
@@ -20,12 +20,8 @@
       var shadow = this.createShadowRoot();
       shadow.appendChild(tpl);
 
-      if (this.hasAttribute('data-width')) {
-        this.setWidth();
-      }
-
       if (this.hasAttribute('data-url')) {
-        this.render();
+        this.initUrl();
       }
     };
 
@@ -35,9 +31,8 @@
       }
     };
 
-    this.setWidth = function() {
+    this.initUrl = function() {
       var url = this.getAttribute('data-url');
-      var base = this;
 
       if (this.hasAttribute('data-width')) {
         var size = this.getAttribute('data-width');
@@ -46,29 +41,30 @@
 
           url = url.replace(
             "%%width%%",  Math.round(this.parentNode.offsetWidth * (val / 100)));
-          this.setAttribute('data-url', url);
         }
       }
+
+      Fnord.httpGet(url, function(r) {
+        console.log(r);
+        //http://localhost:9999/logjoin_stats.php
+      });
+      this.shadowRoot.querySelector("iframe").setAttribute("src", url);
     };
 
     this.render = function() {
-      var chart = this.shadowRoot.querySelector(".chart");
       var url = this.getAttribute('data-url');
 
       if (url) {
-        Fnord.httpGet(url, function(r) {
-          if (r.status == 200) {
-            chart.innerHTML = r.response;
-          }
-        });
+        this.shadowRoot.querySelector("iframe").setAttribute('scr', url);
       }
     };
 
     this.updateUrl = function(key, value) {
-      this.getAttribute("url");
+      var iframe = this.shadowRoot.querySelector("iframe");
+      var url = iframe.getAttribute("src");
       var regex = new RegExp(key + '=.+&');
       var param = key + "=" + value + "&";
-      this.setAttribute('url', url.replace(regex, param));
+      iframe.setAttribute('src', url.replace(regex, param));
     };
   };
 
