@@ -243,6 +243,12 @@
       </fn-modal-content>
     </fn-modal>
   </fn-loader>
+  <fn-tooltip id='aggr'>
+    There's no time-window aggregation for the current rollup
+  </fn-tooltip>
+  <fn-tooltip data-pointer="right" id='ttp_endtime'>
+    Please select a date in the past
+  </fn-tooltip>
 </template>
 
 <script type='text/javascript'>
@@ -359,8 +365,8 @@
       if (view != 'value') {
         url +=
           "&aggr_fn=" + view +
-          "&aggr_window=" + this.getQueryParamOrDefaultValue("t_window") +
-          "&aggr_step=" + this.getQueryParamOrDefaultValue("t_step");
+          "&aggr_window=" + this.getQueryParamOrDefaultValue("aggr_window") +
+          "&aggr_step=" + this.getQueryParamOrDefaultValue("aggr_step");
       }
 
       url +=
@@ -405,14 +411,14 @@
           view == "min"   ||
           view == "max" ) {
 
-        var time_window = this.params.query_params.t_window;
+        var time_window = this.params.query_params.aggr_window;
         if (time_window == undefined) {
-          new_params.t_window = this.getQueryParamOrDefaultValue("t_window");
+          new_params.aggr_window = this.getQueryParamOrDefaultValue("aggr_window");
           update = true;
         }
-        var t_step = this.params.query_params.t_step;
-        if (t_step == undefined) {
-          new_params.t_step = this.getQueryParamOrDefaultValue("t_step");
+        var aggr_step = this.params.query_params.aggr_step;
+        if (aggr_step == undefined) {
+          new_params.aggr_step = this.getQueryParamOrDefaultValue("aggr_step");
           update = true;
         }
       }
@@ -447,14 +453,14 @@
 
     this.getQueryParamOrDefaultValue = function(key) {
       var defaults = {
-        view : "value",
+        view : "sum",
         columns : this.columns,
         end_time : Math.round(Date.now() / 1000),
         /* 5 minutes  */
         time_range : 3600,
         /* 10, 5 seconds */
-        t_step : 10,
-        t_window : 5,
+        aggr_step : 10,
+        aggr_window : 5,
         logarithmic : false,
         inverted: false,
         by: this.columns
@@ -556,6 +562,13 @@
       daterangepicker.setAttribute('data-daterange', (time_range_val * 1000));
       daterangepicker.setAttribute('data-endtime', (end_time * 1000));
 
+      var chevron_right = daterangepicker.shadowRoot.querySelector(".fa-chevron-right");
+
+      var tooltip = this.querySelector("#ttp_endtime");
+      tooltip.initShowIf(chevron_right, function() {
+        return !(daterangepicker.nextIsSelectable());
+      });
+
       /* handle events */
       time_range.addEventListener("fn-dropdown-item-click", function(e) {
         var endtime = base.getQueryParamOrDefaultValue("end_time");
@@ -585,6 +598,7 @@
           endtime = Math.round(endtime / 1000);
           base.updateDateTimeElems(endtime);
       }, false);
+
     }
 
     this.handleBasicControls = function() {
@@ -596,12 +610,21 @@
       rollup.setAttribute('data-preselected', view);
 
       var time_window = this.querySelector("#time_window");
-      var t_window_val = this.getQueryParamOrDefaultValue("t_window");
-      time_window.setAttribute('data-preselected', t_window_val);
+      var aggr_window_val = this.getQueryParamOrDefaultValue("aggr_window");
+      time_window.setAttribute('data-preselected', aggr_window_val);
 
       var time_step = this.querySelector("#time_step");
-      var t_step_val = this.getQueryParamOrDefaultValue("t_step");
-      time_step.setAttribute('data-preselected', t_step_val);
+      var aggr_step_val = this.getQueryParamOrDefaultValue("aggr_step");
+      time_step.setAttribute('data-preselected', aggr_step_val);
+
+      var tooltip_aggr = this.querySelector("#aggr");
+      tooltip_aggr.initShowIf(time_window, function() {
+        return (time_window.getAttribute('data-state') == 'disabled');
+      });
+
+      tooltip_aggr.initShowIf(time_step, function() {
+        return (time_step.getAttribute('data-state') == 'disabled');
+      });
 
       var log_scale = this.querySelector("#log_scale");
       var inv_scale = this.querySelector("#inv_scale");
@@ -634,14 +657,16 @@
         base.handleAggregationDisplay();
       }, false);
 
+
+
       time_window.addEventListener("fn-dropdown-item-click", function(e) {
         var value = e.srcElement.getAttribute('data-value');
-        base.updateUrlParams({"t_window": value});
+        base.updateUrlParams({"aggr_window": value});
       }, false);
 
       time_step.addEventListener("fn-dropdown-item-click", function(e) {
         var value = e.srcElement.getAttribute('data-value');
-        base.updateUrlParams({"t_step": value});
+        base.updateUrlParams({"aggr_step": value});
       }, false);
 
       log_scale.addEventListener("fn-checkbox-select", function(e) {

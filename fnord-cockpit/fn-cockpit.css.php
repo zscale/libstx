@@ -9,6 +9,7 @@
   include($base_path . "/../fnord-webcomponents/components/fn-pager.css");
   include($base_path . "/../fnord-webcomponents/components/fn-message.css");
   include($base_path . "/../fnord-webcomponents/components/fn-modal.css");
+  include($base_path . "/../fnord-webcomponents/components/fn-tooltip.css");
 ?>
 
 html {
@@ -162,7 +163,10 @@ ul.fn-cockpit-navigation li {
   -webkit-text-shadow: 1px 0px 2px rgba(255,255,255,1);
   overflow:hidden;
   color:#333;
+}
 
+.fn-cockpit-pane fn-cockpit-chart:hover {
+  cursor:pointer;
 }
 
 fn-time-navigation {

@@ -20,8 +20,12 @@
       var shadow = this.createShadowRoot();
       shadow.appendChild(tpl);
 
+      if (this.hasAttribute('data-width')) {
+        this.setWidth();
+      }
+
       if (this.hasAttribute('data-url')) {
-        this.initUrl();
+        this.render();
       }
     };
 
@@ -31,7 +35,7 @@
       }
     };
 
-    this.initUrl = function() {
+    this.setWidth = function() {
       var url = this.getAttribute('data-url');
       var base = this;
 
