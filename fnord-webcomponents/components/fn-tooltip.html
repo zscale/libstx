@@ -26,6 +26,19 @@
       }, false);
     }
 
+    this.initShowIf = function(elem, condition) {
+      var base = this;
+      elem.addEventListener('mouseover', function() {
+        if (condition()) {
+          base.show(this);
+        }
+      }, false);
+
+      elem.addEventListener('mouseout', function() {
+        base.hide();
+      }, false);
+    }
+
     this.show = function(elem) {
       var position = this.getAttribute('data-position');
       var pos = elem.getBoundingClientRect();
