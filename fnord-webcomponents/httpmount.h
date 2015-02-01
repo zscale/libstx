@@ -9,22 +9,22 @@
  */
 #ifndef _FNORD_WEBUI_HTTPMOUNT_H
 #define _FNORD_WEBUI_HTTPMOUNT_H
-#include <fnord/net/http/httphandler.h>
-#include <fnord/net/http/httprequest.h>
-#include <fnord/net/http/httpresponse.h>
+#include <fnord-http/httpservice.h>
+#include <fnord-http/httprequest.h>
+#include <fnord-http/httpresponse.h>
 
 namespace fnord {
 namespace webui {
 class Bundle;
 
-class HTTPMount : public http::HTTPHandler {
+class HTTPMount : public http::HTTPService {
 public:
 
   HTTPMount(
       Bundle* bundle,
       const std::string base_url = "/");
 
-  bool handleHTTPRequest(
+  void handleHTTPRequest(
       http::HTTPRequest* request,
       http::HTTPResponse* response) override;
 
