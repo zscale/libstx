@@ -1,3 +1,6 @@
+-> multi-http server
+-> faster rpc net transport
+-> feedservice batch insert
 -> timeouts
 -> rpcchannel (rcpclient + servergroup_)
 -> rpc numRetries/retryStrategie, onRetry(Duration delay) (instead of ready()/onError!)
