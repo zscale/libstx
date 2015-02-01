@@ -7,11 +7,11 @@
  * copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "fnord/base/assets.h"
-#include "fnord/base/exception.h"
-#include "fnord/base/stringutil.h"
-#include "fnord/base/io/fileutil.h"
-#include "fnord/webui/bundle.h"
+#include <fnord-base/assets.h>
+#include <fnord-base/exception.h>
+#include <fnord-base/stringutil.h>
+#include <fnord-base/io/fileutil.h>
+#include "bundle.h"
 
 namespace fnord {
 namespace webui {
