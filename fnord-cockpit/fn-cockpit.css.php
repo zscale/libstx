@@ -33,7 +33,8 @@ body {
   clear: both;
 }
 
-.viewport {
+.left {
+  float:left;
 }
 
 a {
