@@ -14,10 +14,7 @@
       margin: 5px 8px 0 0;
     }
 
-    fn-controls h3 {
-      margin: 24px 20px 0 0;
-      font-size: 1rem;
-    }
+
 
     .group {
       height: 100%;
@@ -25,39 +22,6 @@
       padding: 14px 20px 0 20px;
     }
 
-
-    .group.group_by {
-      display: none;
-    }
-
-    .group.group_by.active {
-      display: block;
-    }
-
-    .group.group_by fn-button[data-active='active'] {
-      background: rgb(226, 232, 237);
-    }
-
-    .group.group_by fn-button {
-      float: left;
-    }
-
-    .group.aggregation_time_window {
-      border-right: 1px solid rgb(226, 232, 237);
-    }
-
-    .group.aggregation_time_window fn-dropdown {
-      float:left;
-      margin-right: 20px;
-    }
-
-    .group.aggregation_time_window fn-dropdown:last-child {
-      margin-right: 0;
-    }
-
-    .group.aggregation_type {
-      border-right: 1px solid rgb(226, 232, 237);
-    }
 
     .group b {
       font-weight: normal;
@@ -132,73 +96,7 @@
       <fn-button data-format="csv" style="margin-right:15px;" class="right" data-size="tiny">Raw</fn-button>
       <fn-button data-format="svg" class="right" data-state="active" data-size="tiny">Chart</fn-button>
     </div>
-    <fn-controls type='primary-small'>
-      <fn-controls-section data-position='left'>
-        <h3 class="small left">
-          <span></span>
-        </h3>
-
-        <div class='group aggregation_type'>
-          <b>Rollup</b>
-          <fn-dropdown id='rollup' data-style="input small">
-            <fn-dropdown-header>Value</fn-dropdown-header>
-            <fn-dropdown-item data-value='value'>Value</fn-dropdown-item>
-            <fn-dropdown-item data-value='sum'>Sum</fn-dropdown-item>
-            <fn-dropdown-item data-value='min'>Min</fn-dropdown-item>
-            <fn-dropdown-item data-value='max'>Max</fn-dropdown-item>
-          </fn-dropdown>
-        </div>
-        <div class='group aggregation_time_window'>
-          <b>Time Window / Step</b>
-          <fn-dropdown id='time_window' data-style="input small">
-            <fn-dropdown-header>5 seconds</fn-dropdown-header>
-            <fn-dropdown-item data-value=1>1 second</fn-dropdown-item>
-            <fn-dropdown-item data-value=5>5 seconds</fn-dropdown-item>
-            <fn-dropdown-item data-value=10>10 seconds</fn-dropdown-item>
-            <fn-dropdown-item data-value=20>20 seconds</fn-dropdown-item>
-            <fn-dropdown-item data-value=30>30 seconds</fn-dropdown-item>
-            <fn-dropdown-item data-value=60>1 minute</fn-dropdown-item>
-            <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
-            <fn-dropdown-item data-value=900>15 minutes</fn-dropdown-item>
-            <fn-dropdown-item data-value=1800>30 minutes</fn-dropdown-item>
-            <fn-dropdown-item data-value=3600>1 hour</fn-dropdown-item>
-            <fn-dropdown-item data-value=7200>2 hours</fn-dropdown-item>
-            <fn-dropdown-item data-value=21600>6 hours</fn-dropdown-item>
-            <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
-            <fn-dropdown-item data-value=86400>24 hours</fn-dropdown-item>
-          </fn-dropdown>
-          <fn-dropdown id='time_step' data-style="input small">
-            <fn-dropdown-header>5 seconds</fn-dropdown-header>
-            <fn-dropdown-item data-value=1>1 second</fn-dropdown-item>
-            <fn-dropdown-item data-value=5>5 seconds</fn-dropdown-item>
-            <fn-dropdown-item data-value=10>10 seconds</fn-dropdown-item>
-            <fn-dropdown-item data-value=20>20 seconds</fn-dropdown-item>
-            <fn-dropdown-item data-value=30>30 seconds</fn-dropdown-item>
-            <fn-dropdown-item data-value=60>1 minute</fn-dropdown-item>
-            <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
-            <fn-dropdown-item data-value=900>15 minutes</fn-dropdown-item>
-            <fn-dropdown-item data-value=1800>30 minutes</fn-dropdown-item>
-            <fn-dropdown-item data-value=3600>1 hour</fn-dropdown-item>
-            <fn-dropdown-item data-value=7200>2 hours</fn-dropdown-item>
-            <fn-dropdown-item data-value=21600>6 hours</fn-dropdown-item>
-            <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
-            <fn-dropdown-item data-value=86400>24 hours</fn-dropdown-item>
-          </fn-dropdown>
-        </div>
-        <div class="group scale">
-          <b>Scale</b>
-                  </div>
-        <div class="group group_by">
-          <b>Group by</b>
-        </div>
-      </fn-controls-section>
-      <fn-controls-section data-position='right'>
-        <fn-button id="add_metric" data-size="tiny">
-          <i class="fa fa-plus"></i>
-        </fn-button>
-      </fn-controls-section>
-    </fn-controls>
-
+    <fn-cockpit-metric-control></fn-cockpit-metric-control>
     <fn-controls type='secondary'>
       <fn-controls-section data-position='left'>
         <div class="group timenav">
@@ -256,9 +154,6 @@
       </fn-modal-content>
     </fn-modal>
   </fn-loader>
-  <fn-tooltip id='aggr'>
-    There's no time-window aggregation for the current rollup
-  </fn-tooltip>
   <fn-tooltip data-pointer="right" id='ttp_endtime'>
     Please select a date in the past
   </fn-tooltip>
@@ -301,15 +196,23 @@
 
     this.init = function() {
       var base = this;
-      var url =
-        baseUrl + "list?filter=" +
-        encodeURIComponent(this.params.query_params.innerViewValue);
+      var metric = this.params.query_params.innerViewValue;
+      var url = baseUrl + "list?filter=" + encodeURIComponent(metric);
+      var control = this.querySelector("fn-cockpit-metric-control");
+      control.setAttribute('data-metric', metric);
+
+      control.setAttribute('data-rollup', this.getQueryParamOrDefaultValue("view"));
+      control.setAttribute('data-aggr_window', this.getQueryParamOrDefaultValue("aggr_window"));
+      control.setAttribute('data-aggr_step', this.getQueryParamOrDefaultValue("aggr_step"));
+      control.setAttribute('data-scale', this.getQueryParamOrDefaultValue("scale"));
+
 
       Fnord.httpGet(url, function(r) {
         if (r.status == 200) {
           var json = JSON.parse(r.response);
           json.metrics.map(function(m) {
             base.columns = m.labels.join(",");
+            control.handleGroupByControls(m.labels.join(","));
           });
         }
         base.columns = [];
@@ -317,10 +220,7 @@
           base.addRequiredURLParamsForView(
             base.getQueryParamOrDefaultValue("view")));
         base.handleBasicControls();
-        base.handleGroupByControls();
         base.handleDateTimeControls();
-        base.setHeader();
-        base.handleAggregationDisplay();
       });
     };
 
@@ -347,7 +247,7 @@
         "&height=" + (document.body.offsetHeight - 255) +
         "&width=" + (document.body.offsetWidth - 20) +
         "&grid=both" +
-        "&scale=0.8" +
+        "&scale=" + this.getQueryParamOrDefaultValue("aggr_step") +
         "&axis_right=true" +
         "&legend=toprightinside";
 
@@ -405,23 +305,6 @@
       this.querySelector("#result_pane_loader").removeAttribute("data-loading");
     }
 
-    this.setHeader = function() {
-      this.querySelector("h3.small span").innerHTML =
-        this.params.query_params.innerViewValue;
-    };
-
-    this.handleAggregationDisplay = function() {
-      var view = this.getQueryParamOrDefaultValue("view");
-      var time_window = this.querySelector("#time_window");
-      var time_step = this.querySelector("#time_step");
-      if (view == "value" || view.substr(0,6) == "rollup") {
-        time_window.setAttribute("data-state", "disabled");
-        time_step.setAttribute("data-state", "disabled");
-      } else {
-        time_window.removeAttribute("data-state");
-        time_step.removeAttribute("data-state");
-      }
-    };
 
     /* returns all missing params */
     this.addRequiredURLParamsForView = function(view) {
@@ -486,7 +369,8 @@
         logarithmic : false,
         inverted: false,
         by: this.columns,
-        min: 0
+        min: 0,
+        scale: 0.8
       }
 
       if (key == "time_range") {
@@ -521,40 +405,6 @@
 
       return columns.split(",");
     }
-
-    this.handleGroupByControls = function() {
-      var base = this;
-
-      var group_by_field = this.querySelector(".group.group_by");
-
-      var columns = this.splitColumns(this.getQueryParamOrDefaultValue("columns"));
-      var by = this.splitColumns(this.getQueryParamOrDefaultValue("by"));
-
-      if (columns.length > 0 ) {
-        group_by_field.className += " active";
-      }
-
-      columns.map(function(c) {
-        var button = document.createElement("fn-button");
-        button.innerHTML = c;
-        if (by.indexOf(c) > -1) {
-          button.setAttribute("data-active", "active");
-        }
-        group_by_field.appendChild(button);
-        button.addEventListener("fn-button-click", function() {
-          var isActive = this.hasAttribute("data-active");
-          var columns = base.getQueryParamOrDefaultValue("by");
-          if (isActive) {
-            this.removeAttribute("data-active");
-            columns = FnordMetric.util.removeFromCSV(columns, this.innerText);
-          } else {
-            this.setAttribute("data-active", "active");
-            columns = FnordMetric.util.addToCSV(columns, this.innerText);
-          }
-          base.updateUrlParams({"by": columns});
-        });
-      });
-    };
 
     this.updateDateTimeElems = function(end_time) {
       var params = parseUrlQueryString(this.getAttribute("data-url"));
@@ -593,6 +443,12 @@
       });
 
       /* handle events */
+      this.querySelector("fn-cockpit-metric-control").addEventListener(
+        "fn-cockpit-metric-control-attr-changed", function(e) {
+          base.updateUrlParams(e.detail);
+        },
+      false);
+
       time_range.addEventListener("fn-dropdown-item-click", function(e) {
         var endtime = base.getQueryParamOrDefaultValue("end_time");
         var date_range = parseInt(e.srcElement.getAttribute('data-value'));
@@ -626,29 +482,7 @@
 
     this.handleBasicControls = function() {
       var base = this;
-
       /* init */
-      var rollup = this.querySelector("#rollup");
-      var view = this.getQueryParamOrDefaultValue("view");
-      rollup.setAttribute('data-preselected', view);
-
-      var time_window = this.querySelector("#time_window");
-      var aggr_window_val = this.getQueryParamOrDefaultValue("aggr_window");
-      time_window.setAttribute('data-preselected', aggr_window_val);
-
-      var time_step = this.querySelector("#time_step");
-      var aggr_step_val = this.getQueryParamOrDefaultValue("aggr_step");
-      time_step.setAttribute('data-preselected', aggr_step_val);
-
-      var tooltip_aggr = this.querySelector("#aggr");
-      tooltip_aggr.initShowIf(time_window, function() {
-        return (time_window.getAttribute('data-state') == 'disabled');
-      });
-
-      tooltip_aggr.initShowIf(time_step, function() {
-        return (time_step.getAttribute('data-state') == 'disabled');
-      });
-
       var log_scale = this.querySelector("#log_scale");
       var inv_scale = this.querySelector("#inv_scale");
       if (this.getQueryParamOrDefaultValue("logarithmic")) {
@@ -659,37 +493,12 @@
       }
 
       /* handle Events */
-      this.querySelector("h3.small").onclick = function(e) {
-        e.preventDefault();
-        openUrl("metrics", true);
-      };
-
       this.querySelector("fn-button[data-format='csv']").addEventListener('fn-button-click', function() {
         base.setAttribute("data-format", "csv");
       }, false);
 
       this.querySelector("fn-button[data-format='svg']").addEventListener('fn-button-click', function() {
         base.setAttribute("data-format", "svg");
-      }, false);
-
-      rollup.addEventListener("fn-dropdown-item-click", function(e) {
-        var view = e.srcElement.getAttribute('data-value');
-        var new_params = base.addRequiredURLParamsForView(view);
-        new_params.view = view;
-        base.updateUrlParams(new_params);
-        base.handleAggregationDisplay();
-      }, false);
-
-
-
-      time_window.addEventListener("fn-dropdown-item-click", function(e) {
-        var value = e.srcElement.getAttribute('data-value');
-        base.updateUrlParams({"aggr_window": value});
-      }, false);
-
-      time_step.addEventListener("fn-dropdown-item-click", function(e) {
-        var value = e.srcElement.getAttribute('data-value');
-        base.updateUrlParams({"aggr_step": value});
       }, false);
 
       log_scale.addEventListener("fn-checkbox-select", function(e) {
