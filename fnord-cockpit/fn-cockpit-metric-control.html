@@ -183,7 +183,7 @@
       var view = this.getAttribute('data-rollup');
       var time_window = this.shadowRoot.getElementById("time_window");
       var time_step = this.shadowRoot.getElementById("time_step");
-      if (view == "value" || view.substr(0,6) == "rollup") {
+      if (view == "value" ) {
         time_window.setAttribute("data-state", "disabled");
         time_step.setAttribute("data-state", "disabled");
       } else {
