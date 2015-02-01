@@ -9,14 +9,14 @@
   <http://www.gnu.org/licenses/>.
 -->
 <style type='text/css'>
-  fn-cockpit-metric-control {
+  fn-metric-control {
     display:block;
     width: 100%;
     height: 70px;
     background: #fff;
   }
 </style>
-<template id="fn-cockpit-metric-control-base-tpl">
+<template id="fn-metric-control-base-tpl">
   <style type='text/css'>
     .left {
       float: left;
@@ -84,15 +84,76 @@
       opacity: 0.7;
     }
 
+    .group.scale fn-input /deep/ input {
+      width: 40px;
+      padding: 0.67861em 0.8em !important;
+    }
+
     fn-tooltip {
       display: none;
+      position: absolute;
+      z-index: 900;
+      border: 1px solid #cccccc;
+      max-width: 250px;
+      background-color: #ffffff;
+      padding: 0.833em 1em;
+      font-weight: normal;
+      font-style: normal;
+      color: rgba(0, 0, 0, 0.8);
+      border-radius: 0.2857rem;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      line-height: 1.1em;
+      margin:0;
     }
+
+    fn-tooltip:before {
+      position: absolute;
+      content: '';
+      width: 0.75em;
+      height: 0.75em;
+      background: #ffffff;
+      -webkit-transform: rotate(45deg);
+          -ms-transform: rotate(45deg);
+              transform: rotate(45deg);
+      z-index: 2;
+      box-shadow: 1px 1px 0px 0px #b3b3b3;
+    }
+
+    fn-tooltip[data-active] {
+      display: block;
+    }
+
+    fn-tooltip:before {
+      bottom: -0.325em;
+      left: 1em;
+      top: auto;
+      right: auto;
+      margin-left: 0em;
+    }
+
+    .metric {
+      float:left;
+    }
+
+    fn-search {
+      width: 180px;
+    }
+
+
+
+
 
 
   </style>
   <div class="left">
-    <h3 class="small left"></h3>
-
+    <div class="metric">
+      <h3 class="small"></h3>
+      <fn-search data-placeholder="Search Metric...">
+        <fn-search-icon><i class="fa fa-search"></i></fn-search-icon>
+      </fn-search>
+    </div>
     <div class='group aggregation_type'>
       <b>Rollup</b>
       <fn-dropdown id='rollup' data-style="input small">
@@ -142,7 +203,8 @@
     </div>
     <div class="group scale">
       <b>Scale</b>
-              </div>
+      <fn-input id="scale_input" class="left" data-style="small"></fn-input>
+    </div>
     <div class="group group_by">
       <b>Group by</b>
     </div>
@@ -159,9 +221,9 @@
 </template>
 
 <script type='text/javascript'>
-  var CockpitMetricControlComponent = function() {
+  var MetricControlComponent = function() {
     this.createdCallback = function() {
-      var tpl = Fnord.getTemplate("fn-cockpit-metric-control", "base");
+      var tpl = Fnord.getTemplate("fn-metric-control", "base");
       var shadow = this.createShadowRoot();
       shadow.appendChild(tpl);
 
@@ -193,6 +255,11 @@
     };
 
     this.init = function() {
+      this.handleControls();
+      this.handleAggregationDisplay();
+    }
+
+    this.handleControls = function() {
       var base = this;
       this.shadowRoot.querySelector("h3").innerHTML = this.getAttribute('data-metric');
       var rollup = this.shadowRoot.getElementById("rollup");
@@ -203,6 +270,10 @@
 
       var time_step = this.shadowRoot.getElementById("time_step");
       time_step.setAttribute('data-preselected', this.getAttribute('data-aggr_step'));
+
+      var scale_input = this.shadowRoot.getElementById("scale_input");
+      scale_input.setAttribute('data-value', this.getAttribute('data-scale'));
+      scale_input.setAttribute('data-placeholder', this.getAttribute('data-scale'));
 
       var tooltip_aggr = this.shadowRoot.getElementById("tooltip_aggr");
       tooltip_aggr.initShowIf(time_window, function() {
@@ -215,20 +286,26 @@
 
       rollup.addEventListener("fn-dropdown-item-click", function(e) {
         var view = e.srcElement.getAttribute('data-value');
-        /*var new_params = base.addRequiredURLParamsForView(view);
-        new_params.view = view;*/
-        base.attributeChangedEvent({"view" : view});
+        base.setAttribute("data-rollup", view);
         base.handleAggregationDisplay();
+        base.attributeChangedEvent({"view" : view});
       }, false);
 
       time_window.addEventListener("fn-dropdown-item-click", function(e) {
         var value = e.srcElement.getAttribute('data-value');
+        base.setAttribute('data-aggr_window', value);
         base.attributeChangedEvent({"aggr_window": value});
       }, false);
 
       time_step.addEventListener("fn-dropdown-item-click", function(e) {
         var value = e.srcElement.getAttribute('data-value');
+        base.setAttribute('data-aggr_step', value);
         base.attributeChangedEvent({"aggr_step": value});
+      }, false);
+
+      scale_input.addEventListener('fn-input-submit', function(e) {
+        base.setAttribute('data-scale', e.detail);
+        base.attributeChangedEvent({"scale" : e.detail});
       }, false);
     }
 
@@ -266,7 +343,7 @@
 
     this.attributeChangedEvent = function(attr) {
       var attrEvent = new CustomEvent(
-        'fn-cockpit-metric-control-attr-changed', {
+        'fn-metric-control-attr-changed', {
         "detail" : attr,
         bubbels: true,
         cancelable: true
@@ -278,6 +355,6 @@
 
   };
   window.addEventListener("fn-ready", function() {
-    Fnord.registerComponent("fn-cockpit-metric-control", CockpitMetricControlComponent);
+    Fnord.registerComponent("fn-metric-control", MetricControlComponent);
   }, false);
 </script>
