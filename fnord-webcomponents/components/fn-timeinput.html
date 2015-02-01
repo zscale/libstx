@@ -26,7 +26,11 @@
     input {
       float: left;
 <<<<<<< HEAD
+      width: 20px;
+=======
+<<<<<<< HEAD
       width: 50px;
+>>>>>>> 195134c29877ca5317c596d1f4d24a5f1fb82d88
       font-size: 1rem;
       outline: none;
       -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
@@ -68,6 +72,10 @@
       background: #fafafa;
       color: rgba(0, 0, 0, 0.8);
       box-shadow: none;
+    }
+
+    input[data-size='small'] {
+      font-size: 0.875rem;
     }
 
     input.error {
@@ -134,6 +142,9 @@
       if (this.hasAttribute('data-state')) {
         this.setState();
       }
+      if (this.hasAttribute('data-size')) {
+        this.setsize();
+      }
 
 =======
 >>>>>>> 401a974820d725476578f94e11b1b84a1a15caaf
@@ -147,11 +158,30 @@
 
 <<<<<<< HEAD
     this.attributeChangedCallback = function(attr, old_val, new_val) {
-      if (attr == "data-minutes-value") {
+      switch (attr) {
+        case "data-minutes-value":
         this.setMinutesValue(new_val);
-      } else if (attr == "data-hours-value") {
+        break;
+
+        case "data-hours-value":
         this.setHoursValue(new_val);
+        break;
+
+        case "data-size":
+        this.setSize();
+        break;
+
+        default:
+        break;
       }
+    }
+
+    this.setSize = function() {
+      console.log("st size");
+      this.shadowRoot.querySelector("#hours")
+        .setAttribute('data-size', this.getAttribute('data-size'));
+      this.shadowRoot.querySelector("#minutes")
+        .setAttribute('data-size', this.getAttribute('data-size'));
     }
 
     this.validateHoursInput = function() {
