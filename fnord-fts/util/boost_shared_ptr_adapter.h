@@ -1,5 +1,6 @@
 #ifndef __BOOST_SHAREDPTR_ADAPTER_H_
 #define __BOOST_SHAREDPTR_ADAPTER_H_
+#include <memory>
 
 /* Use, modification and distribution is subject to the
  * Boost Software License, Version 1.0. (See accompanying
