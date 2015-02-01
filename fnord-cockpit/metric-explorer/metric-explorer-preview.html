@@ -14,6 +14,18 @@
       margin: 5px 8px 0 0;
     }
 
+    fn-controls h3 {
+      margin: 24px 20px 0 0;
+      font-size: 1rem;
+    }
+
+    .group {
+      height: 100%;
+      float: left;
+      padding: 14px 20px 0 20px;
+    }
+
+
     .group.group_by {
       display: none;
     }
@@ -57,10 +69,16 @@
       opacity: 0.7;
     }
 
-    .group {
-      height: 100%;
-      float: left;
-      padding: 14px 20px 0 20px;
+    .group.timenav {
+      padding: 0;
+    }
+
+    .group.timenav * {
+      float:left;
+    }
+
+    .group.timenav fn-datepicker {
+      margin: 3px 10px 0 10px;
     }
 
     #result_pane_loader fn-message {
@@ -103,16 +121,23 @@
   </style>
   <fn-loader>
     <div class="navigation">
-      <h1 class="small left">
-        <a href="#">Metric</a>
-        &rsaquo;
-        <span></span>
-      </h1>
+      <fn-button id="embed_btn" data-size='tiny'>
+        <i class='fa fa-share'></i>
+        Embed
+      </fn-button>
+      <fn-button id="auto_refresh" data-toggle data-size='tiny'>
+        <i class='fa fa-refresh'></i>
+        Auto Refresh
+      </fn-button>
       <fn-button data-format="csv" style="margin-right:15px;" class="right" data-size="tiny">Raw</fn-button>
       <fn-button data-format="svg" class="right" data-state="active" data-size="tiny">Chart</fn-button>
     </div>
     <fn-controls type='primary-small'>
       <fn-controls-section data-position='left'>
+        <h3 class="small left">
+          <span></span>
+        </h3>
+
         <div class='group aggregation_type'>
           <b>Rollup</b>
           <fn-dropdown id='rollup' data-style="input small">
@@ -162,20 +187,21 @@
         </div>
         <div class="group scale">
           <b>Scale</b>
-          <fn-checkbox data-style="small" id="inv_scale">
-            <fn-checkbox-label>Inverted</fn-checkbox-label>
-          </fn-checkbox>
-          <fn-checkbox data-style="small" id="log_scale">
-            <fn-checkbox-label>Logarithmic</fn-checkbox-label>
-          </fn-checkbox>
-        </div>
+                  </div>
         <div class="group group_by">
           <b>Group by</b>
         </div>
       </fn-controls-section>
       <fn-controls-section data-position='right'>
-        <div class='group timerange'>
-          <b>Show The Last...</b>
+        <fn-button id="add_metric" data-size="tiny">
+          <i class="fa fa-plus"></i>
+        </fn-button>
+      </fn-controls-section>
+    </fn-controls>
+
+    <fn-controls type='secondary'>
+      <fn-controls-section data-position='left'>
+        <div class="group timenav">
           <fn-dropdown id='timerange' data-style="input small">
             <fn-dropdown-header>1 hour</fn-dropdown-header>
             <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
@@ -186,28 +212,20 @@
             <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
             <fn-dropdown-item data-value=86400>1 day</fn-dropdown-item>
           </fn-dropdown>
-        </div>
-        <div class='group date'>
-          <b>End Time</b>
           <fn-datepicker data-time-select data-selectable="past">
           </fn-datepicker>
+
+          <fn-daterangepicker data-size="small" data-selectable='past'>
+          </fn-daterangepicker>
         </div>
       </fn-controls-section>
-    </fn-controls>
-    <fn-controls type='secondary'>
-      <fn-controls-section data-position='left'>
-        <fn-button id="embed_btn" data-size='tiny'>
-          <i class='fa fa-share'></i>
-          Embed
-        </fn-button>
-        <fn-button id="auto_refresh" data-toggle data-size='tiny'>
-          <i class='fa fa-refresh'></i>
-          Auto Refresh
-        </fn-button>
-      </fn-controls-section>
       <fn-controls-section data-position='right'>
-        <fn-daterangepicker data-selectable='past'>
-        </fn-daterangepicker>
+        <fn-checkbox data-style="small" id="inv_scale" style="margin-right: 10px;">
+          <fn-checkbox-label>Inverted</fn-checkbox-label>
+        </fn-checkbox>
+        <fn-checkbox data-style="small" id="log_scale">
+          <fn-checkbox-label>Logarithmic</fn-checkbox-label>
+        </fn-checkbox>
       </fn-controls-section>
     </fn-controls>
     <fn-loader id="result_pane_loader" data-loading data-resolved="data-resolved" data-transparent>
@@ -388,7 +406,7 @@
     }
 
     this.setHeader = function() {
-      this.querySelector("h1.small span").innerHTML =
+      this.querySelector("h3.small span").innerHTML =
         this.params.query_params.innerViewValue;
     };
 
@@ -641,7 +659,7 @@
       }
 
       /* handle Events */
-      this.querySelector("h1.small").onclick = function(e) {
+      this.querySelector("h3.small").onclick = function(e) {
         e.preventDefault();
         openUrl("metrics", true);
       };
