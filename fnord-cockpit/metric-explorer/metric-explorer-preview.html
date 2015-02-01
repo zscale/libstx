@@ -96,7 +96,7 @@
       <fn-button data-format="csv" style="margin-right:15px;" class="right" data-size="tiny">Raw</fn-button>
       <fn-button data-format="svg" class="right" data-state="active" data-size="tiny">Chart</fn-button>
     </div>
-    <fn-cockpit-metric-control></fn-cockpit-metric-control>
+    <fn-metric-control></fn-metric-control>
     <fn-controls type='secondary'>
       <fn-controls-section data-position='left'>
         <div class="group timenav">
@@ -198,13 +198,14 @@
       var base = this;
       var metric = this.params.query_params.innerViewValue;
       var url = baseUrl + "list?filter=" + encodeURIComponent(metric);
-      var control = this.querySelector("fn-cockpit-metric-control");
+      var control = this.querySelector("fn-metric-control");
       control.setAttribute('data-metric', metric);
 
       control.setAttribute('data-rollup', this.getQueryParamOrDefaultValue("view"));
       control.setAttribute('data-aggr_window', this.getQueryParamOrDefaultValue("aggr_window"));
       control.setAttribute('data-aggr_step', this.getQueryParamOrDefaultValue("aggr_step"));
       control.setAttribute('data-scale', this.getQueryParamOrDefaultValue("scale"));
+
 
 
       Fnord.httpGet(url, function(r) {
@@ -247,7 +248,7 @@
         "&height=" + (document.body.offsetHeight - 255) +
         "&width=" + (document.body.offsetWidth - 20) +
         "&grid=both" +
-        "&scale=" + this.getQueryParamOrDefaultValue("aggr_step") +
+        "&scale=" + this.getQueryParamOrDefaultValue("scale") +
         "&axis_right=true" +
         "&legend=toprightinside";
 
@@ -443,8 +444,8 @@
       });
 
       /* handle events */
-      this.querySelector("fn-cockpit-metric-control").addEventListener(
-        "fn-cockpit-metric-control-attr-changed", function(e) {
+      this.querySelector("fn-metric-control").addEventListener(
+        "fn-metric-control-attr-changed", function(e) {
           base.updateUrlParams(e.detail);
         },
       false);
