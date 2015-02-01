@@ -63,7 +63,6 @@
       font-size: 1em;
     }
 
-
     table th {
       width: 25px;
       height: 28px;
@@ -148,6 +147,8 @@
           var selected_month = selected_date.getMonth();
 
           base.renderCalendar(selected_year, selected_month);
+        } else {
+          base.resetDatepicker();
         }
 
       }, false);
