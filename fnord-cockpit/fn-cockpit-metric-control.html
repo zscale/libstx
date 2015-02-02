@@ -35,7 +35,7 @@
     }
 
     .right fn-button {
-      margin:20px 20px 0 0;
+      margin: 25px 20px 0 0;
     }
 
     .group.group_by {
@@ -138,8 +138,8 @@
 
     .metric > .view {
       display: none;
-      width: 250px;
-      
+      width: 280px;
+      padding-left: 20px;
     }
 
     .metric > .view.active {
@@ -149,23 +149,114 @@
     .metric > .view > h3 {
       font-size: 1rem;
       padding: 0;
-      margin: 0;
+      margin: 18px 0 0;
       white-space: nowrap;
       overflow: hidden;
       width: inherit;
     }
 
     .metric .view fn-search {
-      width: 180px;
+      width: 280px;
+      margin-top: 7px;
+      display: block;
     }
 
     .metric fn-search /deep/ .icon {
       margin-top: 0.65em;
     }
 
+    .metric fn-search /deep/ ul {
+      margin-top: 34px;
+    }
+
+    .metric .view .fa {
+      opacity: 0.7;
+    }
     .metric .view .fa:hover {
       cursor: pointer;
     }
+
+    fn-button {
+      cursor: pointer;
+      display: inline-block;
+      min-height: 1em;
+      outline: none;
+      border: none;
+      vertical-align: baseline;
+      color: rgba(0, 0, 0, 0.6);
+      font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      background: transparent !important;
+      background-image: none;
+      font-weight: normal;
+      box-shadow: 0px 0px 0px 1px rgba(39, 41, 43, 0.15) inset;
+      margin: 0em 0.25em 0em 0em;
+      padding: 0.78571em 1.5em 0.78571em;
+      text-transform: none;
+      text-shadow: none;
+      font-weight: bold;
+      line-height: 1;
+      font-style: normal;
+      text-align: center;
+      font-size: 1rem;
+      text-decoration: none;
+      background-image: none;
+      border-radius: 0.2857rem;
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+      -webkit-transition: opacity 0.1s ease, background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+              transition: opacity 0.1s ease, background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    fn-button:hover {
+      background: #fafafa !important;
+      color: rgba(0, 0, 0, 0.8) !important;
+      box-shadow: 0px 0px 0px 1px rgba(39, 41, 43, 0.15) inset, 0px 0px 0px 0px rgba(39, 41, 43, 0.15) inset;
+    }
+
+    fn-button:focus {
+      background-color: '';
+      background-image: '';
+      box-shadow: 0px 0px 0px 1px transparent inset, 0px 0px 1px rgba(81, 167, 232, 0.8) inset, 0px 0px 3px 2px rgba(81, 167, 232, 0.8);
+      color: rgba(0, 0, 0, 0.8);
+    }
+
+
+    fn-button i {
+      display: inline-block;
+      opacity: 1;
+      margin: 0 .25rem 0 0;
+      width: 1.23em;
+      height: .9em;
+      font-family: Icons;
+      font-style: normal;
+      line-height: 1;
+      font-weight: 400;
+      text-decoration: inherit;
+      text-align: center;
+      speak: none;
+      font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+
+    fn-button[data-size='tiny'] {
+      font-size: 0.85714286rem;
+    }
+
+    fn-tooltip[data-pointer='right']:before {
+      bottom: -0.325em;
+      right: 1em;
+      top: auto;
+      left: auto;
+      margin-left: 0em;
+    }
+
+
+
 
 
 
@@ -242,14 +333,15 @@
     </div>
   </div>
   <div class='right'>
-    <fn-button id="add_metric" data-size="tiny">
-      <i class="fa fa-plus"></i>
+    <fn-button id="control_btn" data-size="tiny">
+      <i class="fa"></i>
     </fn-button>
   </div>
   <fn-tooltip id='tooltip_aggr'>
     There's no time-window aggregation for the current rollup
   </fn-tooltip>
-
+  <fn-tooltip data-pointer='right' id="control_tooltip">
+  </fn-tooltip>
 </template>
 
 <script type='text/javascript'>
@@ -260,11 +352,19 @@
       shadow.appendChild(tpl);
 
       if (this.hasAttribute('data-metric')) {this.init() }
+      if (this.hasAttribute('data-index')) {this.handleControlBtn();}
     }
 
     this.attributeChangedCallback = function(attr, old_val, new_val) {
-      if(attr == "data-metric") {
-        this.init();
+      switch (attr) {
+        case "data-metric":
+          this.init();
+          break;
+        case 'data-index':
+          this.handleControlBtn();
+          break;
+        default:
+          break;
       }
     }
 
@@ -287,6 +387,31 @@
       this.handleSelectMetricControls();
       this.handleAggregationDisplay();
     };
+
+    this.handleControlBtn = function() {
+      var base = this;
+      var eventFunction;
+      var btn = this.shadowRoot.getElementById("control_btn");
+      var tooltip = this.shadowRoot.getElementById("control_tooltip");
+      tooltip.init(btn);
+
+      if (this.getAttribute('data-index') == 0) {
+        btn.querySelector("i").classList.add("fa-plus");
+        tooltip.innerHTML = "Add Metric";
+        eventFunction = function() {return base.fireAddMetricEvent();}
+      } else {
+        btn.querySelector("i").classList.add("fa-times");
+        tooltip.innerHTML = "Remove Metric";
+        eventFunction = function() {return this.fireRemoveMetricEvent();}
+      }
+
+      var base = this;
+
+      btn.addEventListener('fn-button-click', function() {
+        eventFunction();
+      }, false);
+
+    }
 
     this.handleSelectMetricControls = function() {
       var base = this;
@@ -319,7 +444,9 @@
       }, false);
 
       search.addEventListener('fn-search-submit', function() {
-        base.attributeChangedEvent({"innerViewValue": encodeURIComponent(this.getValue())});
+        base.attributeChangedEvent({"innerViewValue": this.getValue()});
+        base.toggleMetricView();
+        base.setAttribute('data-metric', this.getValue());
       }, false);
     }
 
@@ -379,6 +506,7 @@
         base.setAttribute('data-scale', e.detail);
         base.attributeChangedEvent({"scale" : e.detail});
       }, false);
+
     }
 
     this.handleGroupByControls = function(columns) {
@@ -411,6 +539,16 @@
           base.updateUrlParams({"by": columns});
         });
       });*/
+    };
+
+    this.fireAddMetricEvent = function() {
+      console.log("fire event");
+      this.dispatchEvent(new Event('fn-metric-control-add-metric'));
+    };
+
+    this.fireRemoveMetricEvent = function() {
+      //add detail index
+      this.dispatchEvent(new Event('fn-metric-control-remove-metric'));
     };
 
     this.attributeChangedEvent = function(attr) {
