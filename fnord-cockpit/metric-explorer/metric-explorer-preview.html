@@ -186,7 +186,6 @@
 
     this.onUrlChange = function(init) {
       this.params = parseUrlQueryString(this.getAttribute("data-url"));
-
       if (init) {
         this.init();
       }
@@ -199,13 +198,11 @@
       var metric = this.params.query_params.innerViewValue;
       var url = baseUrl + "list?filter=" + encodeURIComponent(metric);
       var control = this.querySelector("fn-metric-control");
-      control.setAttribute('data-metric', metric);
-
       control.setAttribute('data-rollup', this.getQueryParamOrDefaultValue("view"));
       control.setAttribute('data-aggr_window', this.getQueryParamOrDefaultValue("aggr_window"));
       control.setAttribute('data-aggr_step', this.getQueryParamOrDefaultValue("aggr_step"));
       control.setAttribute('data-scale', this.getQueryParamOrDefaultValue("scale"));
-
+      control.setAttribute('data-metric', metric);
 
 
       Fnord.httpGet(url, function(r) {
@@ -384,8 +381,8 @@
         }
       }
 
-      var value = (this.params.query_params[key] == undefined)?
-        defaults[key] : this.params.query_params[key];
+      var value = (this.params.query_params[key])?
+        this.params.query_params[key] : defaults[key];
 
       return value;
     };
