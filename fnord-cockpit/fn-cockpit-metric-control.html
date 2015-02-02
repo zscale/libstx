@@ -290,21 +290,37 @@
 
     this.handleSelectMetricControls = function() {
       var base = this;
+      var search = this.shadowRoot.querySelector(".metric .view fn-search");
+
       this.shadowRoot.querySelector(
         ".metric .view i[name='edit_btn']").onclick = function() {
-          console.log("clicked");
           base.toggleMetricView();
         }
 
       this.shadowRoot.querySelector(
         ".metric .view i[name='close_btn']").onclick = function() {
-          console.log("clicked");
           base.toggleMetricView();
         }
 
+      search.addEventListener('fn-search-autocomplete', function() {
+        var term = this.getValue();
+        var that = this;
+        var res = [];
+        var url = baseUrl + "/list?filter=" + term;
+        Fnord.httpGet(url, function(r) {
+          if (r.status == 200) {
+            var json = JSON.parse(r.response);
+            json.metrics.map(function(metric) {
+              res.push({query : metric.key});
+            });
+            that.autocomplete(term, res);
+          }
+        });
+      }, false);
 
-
-      
+      search.addEventListener('fn-search-submit', function() {
+        base.attributeChangedEvent({"innerViewValue": encodeURIComponent(this.getValue())});
+      }, false);
     }
 
     this.toggleMetricView = function() {
