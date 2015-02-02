@@ -10,6 +10,7 @@
 #include <xzero/Api.h>
 #include <xzero/TimeSpan.h>
 #include <xzero/DateTime.h>
+#include <xzero/executor/Scheduler.h>
 #include <functional>
 
 namespace xzero {
@@ -61,6 +62,7 @@ class XZERO_API IdleTimeout {
   DateTime fired_;
   bool active_;
   std::function<void()> onTimeout_;
+  Scheduler::HandleRef handle_;
 };
 
 } // namespace xzero
