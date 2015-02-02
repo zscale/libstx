@@ -33,7 +33,6 @@ class XZERO_API NativeScheduler : public Scheduler {
   ~NativeScheduler();
 
   void execute(Task&& task) override;
-  size_t maxConcurrency() const XZERO_NOEXCEPT override;
   std::string toString() const override;
   HandleRef executeAfter(TimeSpan delay, Task task) override;
   HandleRef executeAt(DateTime dt, Task task) override;

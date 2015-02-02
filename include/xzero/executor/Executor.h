@@ -45,11 +45,6 @@ class XZERO_API Executor {
   void setExceptionHandler(std::function<void(const std::exception&)>&& eh);
 
   /**
-   * Retrieves the maximum number of possible concurrently running tasks.
-   */
-  virtual size_t maxConcurrency() const XZERO_NOEXCEPT = 0;
-
-  /**
    * Retrieves a human readable name of this executor (for introspection only).
    */
   virtual std::string toString() const = 0;

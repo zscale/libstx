@@ -27,7 +27,6 @@ class XZERO_API DirectExecutor : public Executor {
 
   void execute(Task&& task) override;
   std::string toString() const override;
-  size_t maxConcurrency() const XZERO_NOEXCEPT override;
 
   /** Tests whether this executor is currently running some task. */
   bool isRunning() const { return running_ > 0; }
