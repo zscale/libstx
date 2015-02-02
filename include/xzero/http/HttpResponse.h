@@ -94,7 +94,7 @@ class XZERO_API HttpResponse {
    * requested this behaviour via <code>Expect: 100-continue</code>
    * request header.
    */
-  void send100Continue();
+  void send100Continue(CompletionHandler&& onComplete);
 
   /**
    * Responds with an error response message.
@@ -109,11 +109,14 @@ class XZERO_API HttpResponse {
   HttpOutput* output() { return output_.get(); }
 
   bool isCommitted() const XZERO_NOEXCEPT { return committed_; }
-  void setCommitted(bool value);
 
  private:
-  void checkState();
-  void checkChannelState();
+  friend class HttpChannel;
+  void setCommitted(bool value);
+  /** ensures response wasn't committed yet and thus has mutabale meta info. */
+  void requireMutableInfo();
+  /** ensures that channel is not in sending state. */
+  void requireNotSendingAlready();
 
  private:
   HttpChannel* channel_;

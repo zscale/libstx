@@ -14,6 +14,7 @@
 #include <ev++.h>
 
 namespace xzero {
+
 namespace support {
 
 class XZERO_API LibevScheduler : public Scheduler {

@@ -98,7 +98,7 @@ class XZERO_API HttpChannel : public HttpListener {
   /**
    * Sends an 100-continue intermediate response message.
    */
-  void send100Continue();
+  void send100Continue(CompletionHandler&& onComplete);
 
   /**
    * Retrieves the request object for the current request.

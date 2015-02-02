@@ -11,6 +11,7 @@
 #include <xzero/sysconfig.h>
 
 #include <exception>
+#include <deque>
 #include <functional>
 #include <string>
 
