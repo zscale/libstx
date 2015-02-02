@@ -72,7 +72,6 @@ class XZERO_API ThreadPool : public Executor {
 
   // overrides
   void execute(Task&& task) override;
-  size_t maxConcurrency() const XZERO_NOEXCEPT override;
   std::string toString() const override;
 
  private:
