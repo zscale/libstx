@@ -96,7 +96,7 @@
       <fn-button data-format="csv" style="margin-right:15px;" class="right" data-size="tiny">Raw</fn-button>
       <fn-button data-format="svg" class="right" data-state="active" data-size="tiny">Chart</fn-button>
     </div>
-    <fn-metric-control></fn-metric-control>
+    <fn-metric-control data-index="0"></fn-metric-control>
     <fn-controls type='secondary'>
       <fn-controls-section data-position='left'>
         <div class="group timenav">
@@ -347,7 +347,6 @@
           this.params.query_params[key] = new_params[key].toString();
         }
       }
-
       var path = setUrlFromQueryString("metric", this.params.query_params, true);
       if (this.getAttribute('data-url') != path) {
         this.setAttribute("data-url", path);
@@ -396,6 +395,15 @@
         'start_time' : start_time});
     }
 
+    this.addMetric = function() {
+      var last_control = this.querySelectorAll("fn-metric-control");
+      console.log(last_control);
+      var new_control = document.createElement("fn-metric-control");
+      var ref_elem = this.querySelector("fn-controls[type='secondary']");
+      console.log(ref_elem.parentNode);
+      ref_elem.parentNode.insertBefore(new_control, ref_elem);
+    }
+
 /************************* controls handle functions **************************/
 
     this.splitColumns = function(columns) {
@@ -441,11 +449,19 @@
       });
 
       /* handle events */
-      this.querySelector("fn-metric-control").addEventListener(
+      var metric_control = this.querySelector("fn-metric-control");
+      console.log(metric_control);
+      metric_control.addEventListener(
         "fn-metric-control-attr-changed", function(e) {
+          console.log("chanhged");
           base.updateUrlParams(e.detail);
         },
       false);
+
+      metric_control.addEventListener('fn-metric-control-add-metric', function() {
+        console.log("add metric");
+        base.addMetric();
+      }, false);
 
       time_range.addEventListener("fn-dropdown-item-click", function(e) {
         var endtime = base.getQueryParamOrDefaultValue("end_time");
