@@ -26,10 +26,7 @@
       float:right;
     }
 
-    h3 {
-      margin: 24px 20px 0 20px;
-      font-size: 1rem;
-    }
+    
 
     .group {
       height: 100%;
@@ -135,10 +132,29 @@
 
     .metric {
       float:left;
+      width: 190px;
+      height: 70px;
+      padding: 24px 0 0 20px;
     }
 
-    fn-search {
+    .metric > * {
+      display: none;
+    }
+
+    .metric > .active {
+      display: block;
+    }
+
+    .metric > h3 {
+      font-size: 1rem;
+    }
+
+    .metric > fn-search {
       width: 180px;
+    }
+
+    .metric > fn-search /deep/ .icon {
+      margin-top: 0.65em;
     }
 
 
@@ -150,7 +166,7 @@
   <div class="left">
     <div class="metric">
       <h3 class="small"></h3>
-      <fn-search data-placeholder="Search Metric...">
+      <fn-search data-size="small" class="active" data-placeholder="Search Metric...">
         <fn-search-icon><i class="fa fa-search"></i></fn-search-icon>
       </fn-search>
     </div>
@@ -236,10 +252,6 @@
       }
     }
 
-
-    this.updateUrlParams = function() {
-
-    }
 
     this.handleAggregationDisplay = function() {
       var view = this.getAttribute('data-rollup');
