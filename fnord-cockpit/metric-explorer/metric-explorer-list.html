@@ -81,7 +81,7 @@
         </fn-search>
       </div>
       <div style="border-top: 1px solid #bbb; background: #fff;">
-        <fn-table data-per-page="25" data-page-"0" data-clickable>
+        <fn-table data-per-page="25" data-page="0" data-clickable>
           <fn-table-column data-sortable data-presort="asc">Metric</fn-table-column>
           <fn-table-column>Labels</fn-table-column>
           <fn-table-column data-sortable>Last Insert</fn-table-column>
@@ -223,7 +223,6 @@
 
 
     this.initTablePager = function(list_size) {
-      console.log("init", list_size);
       var pager = this.querySelector("fn-pager");
       var table = this.querySelector("fn-table");
       pager.setAttribute('data-last-item', list_size);
