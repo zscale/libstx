@@ -132,29 +132,39 @@
 
     .metric {
       float:left;
-      width: 190px;
+      width: inherit;
       height: 70px;
-      padding: 24px 0 0 20px;
     }
 
-    .metric > * {
+    .metric > .view {
       display: none;
+      width: 250px;
+      
     }
 
-    .metric > .active {
+    .metric > .view.active {
       display: block;
     }
 
-    .metric > h3 {
+    .metric > .view > h3 {
       font-size: 1rem;
+      padding: 0;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      width: inherit;
     }
 
-    .metric > fn-search {
+    .metric .view fn-search {
       width: 180px;
     }
 
-    .metric > fn-search /deep/ .icon {
+    .metric fn-search /deep/ .icon {
       margin-top: 0.65em;
+    }
+
+    .metric .view .fa:hover {
+      cursor: pointer;
     }
 
 
@@ -165,10 +175,16 @@
   </style>
   <div class="left">
     <div class="metric">
-      <h3 class="small"></h3>
-      <fn-search data-size="small" class="active" data-placeholder="Search Metric...">
-        <fn-search-icon><i class="fa fa-search"></i></fn-search-icon>
-      </fn-search>
+      <div class="view active" name="header">
+        <i class="fa fa-pencil-square-o" name="edit_btn"></i>
+        <h3 class="small"></h3>
+      </div>
+      <div class="view" name="search">
+        <i class="fa fa-times" name="close_btn"></i>
+        <fn-search data-size="small" class="" data-placeholder="Search Metric...">
+          <fn-search-icon><i class="fa fa-search"></i></fn-search-icon>
+        </fn-search>
+      </div>
     </div>
     <div class='group aggregation_type'>
       <b>Rollup</b>
@@ -268,7 +284,35 @@
 
     this.init = function() {
       this.handleControls();
+      this.handleSelectMetricControls();
       this.handleAggregationDisplay();
+    };
+
+    this.handleSelectMetricControls = function() {
+      var base = this;
+      this.shadowRoot.querySelector(
+        ".metric .view i[name='edit_btn']").onclick = function() {
+          console.log("clicked");
+          base.toggleMetricView();
+        }
+
+      this.shadowRoot.querySelector(
+        ".metric .view i[name='close_btn']").onclick = function() {
+          console.log("clicked");
+          base.toggleMetricView();
+        }
+
+
+
+      
+    }
+
+    this.toggleMetricView = function() {
+      this.shadowRoot.querySelector(
+        ".metric .view[name='header']").classList.toggle("active");
+
+      this.shadowRoot.querySelector(
+        ".metric .view[name='search']").classList.toggle("active");
     }
 
     this.handleControls = function() {
