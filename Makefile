@@ -1,4 +1,7 @@
 
+GENERATOR = "Unix Makefiles"
+#GENERATOR = Ninja
+
 help:
 	@echo "make help     Prints this help"
 	@echo "make debug    Generates debug build"
@@ -7,7 +10,7 @@ help:
 
 debug:
 	@mkdir -p build/debug
-	@cd build/debug && cmake ../.. \
+	@cd build/debug && cmake -G${GENERATOR} ../.. \
 		-DCMAKE_BUILD_TYPE="debug" \
 		-DCMAKE_CXX_FLAGS_DEBUG="-O0 -g3 -fsanitize=address" \
 		-DENABLE_EXAMPLES=yes \
@@ -20,7 +23,7 @@ test:
 
 release:
 	mkdir -p build/release
-	cd build/release && cmake ../.. \
+	cd build/release && cmake -G${GENERATOR} ../.. \
 		-DCMAKE_BUILD_TYPE="release" \
 		-DCMAKE_CXX_FLAGS_RELEASE="-O3 -g -march=native" \
 		-DENABLE_EXAMPLES=yes \

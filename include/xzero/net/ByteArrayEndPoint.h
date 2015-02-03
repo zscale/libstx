@@ -66,7 +66,7 @@ class XZERO_API ByteArrayEndPoint : public EndPoint {
   size_t flush(const BufferRef&) override;
   size_t flush(int fd, off_t offset, size_t size) override;
   void wantFill() override;
-  void wantFlush(bool enable) override;
+  void wantFlush() override;
   TimeSpan idleTimeout() override;
   void setIdleTimeout(TimeSpan timeout) override;
   bool isBlocking() const override;

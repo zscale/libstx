@@ -1,9 +1,14 @@
+## FiXME
+
+- enum SelectionTrigger { Edge, Level }
+- NativeSelector (ET, using epoll, poll, select)
+- NativeScheduler
+
 ## Incomplete TODO items
 
 ### Milestone 1
 
-- [x] execution model rework
-- [x] output compression via chrome causes probs (see chartsql)
+- [ ] ensure 100-continue is sent async, too (maybe not needed)
 - [ ] timeout management (ideally testable)
 - [ ] rework exception management
 - [ ] how to handle accept() errors (i.e. in InetConnector)?

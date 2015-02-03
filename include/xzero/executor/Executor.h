@@ -11,6 +11,7 @@
 #include <xzero/sysconfig.h>
 
 #include <exception>
+#include <deque>
 #include <functional>
 #include <string>
 
@@ -28,7 +29,7 @@ namespace xzero {
  */
 class XZERO_API Executor {
  public:
-  Executor();
+  explicit Executor(std::function<void(const std::exception&)>&& eh);
   virtual ~Executor();
 
   typedef std::function<void()> Task;
@@ -42,11 +43,6 @@ class XZERO_API Executor {
    * Configures exception handler.
    */
   void setExceptionHandler(std::function<void(const std::exception&)>&& eh);
-
-  /**
-   * Retrieves the maximum number of possible concurrently running tasks.
-   */
-  virtual size_t maxConcurrency() const XZERO_NOEXCEPT = 0;
 
   /**
    * Retrieves a human readable name of this executor (for introspection only).

@@ -27,7 +27,7 @@ class HttpEcho : public xzero::HttpInputListener {
       : request_(req), response_(resp), bodyChunk_() {
 
     if (request_->expect100Continue())
-       response_->send100Continue();
+       response_->send100Continue(nullptr);
 
     request_->input()->setListener(this);
     response_->setStatus(xzero::HttpStatus::Ok);
