@@ -191,11 +191,13 @@
       this.handleDateTimeControls();
 
       //init mainMetric
-      this.initMetricControl(this.querySelector("fn-metric-control"), 0);
+      this.initMetricControl(
+        this.querySelector("fn-metric-control"), 0, this.params.metric0.name);
 
       //init subMetrics
       for (var i = 1; i < parseInt(this.params.metrics, 10); i++) {
-        this.initMetricControl(this.addMetricControl(i), i);
+        this.initMetricControl(
+          this.addMetricControl(i, false), i, this.params["metric" + i]["name"]);
       }
     };
 
@@ -215,17 +217,22 @@
           if (key == "name") {
             url += (i == 0)? "" : "&";
             url += "metric=" + encodeURIComponent(metric_params[key]);
+          } else if (key == "aggr_fn") {
+            //value is automatically returned if aggr_fn isn't set
+            if (metric_params[key] != "value") {
+              url += "&" + key + "=" + metric_params[key];
+            }
           } else if (isMetricParam(key)) {
-            url += "&" + key + "=" + metric_params[key]; 
+            url += "&" + key + "=" + metric_params[key];
           }
         }
       }
 
       url +=
-        "&from=" + this.getGenericParamOrDefault("start_time") +
-        "&until=" + this.getGenericParamOrDefault("end_time") +
+        "&from=" + this.getGenericParamOrDefault("from") +
+        "&until=" + this.getGenericParamOrDefault("until") +
         "&logarithmic=" + this.getGenericParamOrDefault("logarithmic") +
-        "&inverted=" + this.getGenericParamOrDefault("inverted");
+        "&inverted=" + this.getGenericParamOrDefault("inverted") +
         "&format=" + format +
         "&min=" + this.getGenericParamOrDefault("min") +
         "&height=" + (document.body.offsetHeight - 255) +
@@ -272,8 +279,8 @@
       var time_range = this.getGenericParamOrDefault('time_range');
       var start_time = end_time - time_range;
       this.updateGenericParams({
-        'end_time' : end_time,
-        'start_time' : start_time});
+        'until' : until,
+        'from' : from});
     };
 
     this.toggleView = function(format) {
@@ -322,12 +329,11 @@
         "scale" : "0.8"
       }
 
-      var value = this.params["metric" + index][key];
-      if (value == undefined) {
-        value = defaults[key];
+      if (this.params["metric" + index] && this.params["metric" + index][key]) {
+        return this.params["metric" + index][key];
       }
 
-      return value;
+      return defaults[key] ;
     };
 
     this.getMetricColumns = function(metric) {
@@ -346,12 +352,12 @@
       });
     };
 
-    this.initMetricControl = function(metric, index) {
+    this.initMetricControl = function(metric, index, name) {
       var base = this;
       var aggr_fn = this.getMetricUrlParamOrDefault("aggr_fn", index);
 
       var metric_params = {
-        "name": this.getMetricUrlParamOrDefault("name", index),
+        "name": name,
         "aggr_fn": aggr_fn,
         "scale": this.getMetricUrlParamOrDefault("scale", index),
         "index" : index
@@ -368,6 +374,10 @@
         metric_params.columns = this.getMetricColumns(name);
       }
 
+      if (this.params["metric" + index] == undefined) {
+        this.params["metric" + index] = metric_params;
+        this.params.metrics += 1;
+      }
       metric.params = metric_params;
       metric.setAttribute('data-index', index);
       metric.setAttribute('data-resolved', 'resolved');
@@ -385,12 +395,13 @@
         }, false);
       } else {
         metric.addEventListener('fn-metric-control-add-metric', function() {
-          base.addMetricControl();
+          base.addMetricControl(null, true);
         }, false);
       }
     };
 
-    this.addMetricControl = function(index) {
+    this.addMetricControl = function(index, setEventListener) {
+      var base = this;
       var controls = this.querySelectorAll("fn-metric-control");
       var new_control = document.createElement("fn-metric-control");
       var ref_elem = this.querySelector("fn-controls[type='secondary']");
@@ -403,6 +414,13 @@
 
       new_control.setAttribute('data-index', index);
       ref_elem.parentNode.insertBefore(new_control, ref_elem);
+
+      if (setEventListener) {
+        new_control.addEventListener('fn-metric-control-new-metric', function(e) {
+          base.initMetricControl(this, index, e.detail.name);
+          base.update();
+        }, false);
+      }
 
       return new_control;
     };
@@ -419,7 +437,7 @@
 /************************* Generic Controls **************************/
     this.getGenericParamOrDefault = function(key) {
       var defaults = {
-        end_time : Math.round(Date.now() / 1000),
+        until : Math.round(Date.now() / 1000),
         /* 5 minutes  */
         time_range : 3600,
         /* 10, 5 seconds */
@@ -431,8 +449,8 @@
       }
 
       if (key == "time_range") {
-        var end_time = parseInt(this.getGenericParamOrDefault("end_time"), 10);
-        var start_time = parseInt(this.params['start_time'], 10);
+        var end_time = parseInt(this.getGenericParamOrDefault("until"), 10);
+        var start_time = parseInt(this.params['from'], 10);
         if (!isNaN(start_time)) {
           return end_time - start_time;
         } else {
@@ -456,7 +474,7 @@
       var params = parseUrlQueryString(this.getAttribute("data-url"));
       var date_range = this.getGenericParamOrDefault("time_range");
       var start_time = parseInt(end_time, 10) - parseInt(date_range, 10);
-      this.updateGenericParams({"end_time" : end_time, "start_time" : start_time});
+      this.updateGenericParams({"until" : end_time, "from" : start_time});
       var datepicker = this.querySelector("fn-datepicker");
       datepicker.setAttribute("data-timestamp", end_time * 1000);
       var daterangepicker = this.querySelector("fn-daterangepicker");
@@ -469,7 +487,7 @@
       /* init */
       var time_range_val = parseInt(
         this.getGenericParamOrDefault("time_range"), 10);
-      var end_time = parseInt(this.getGenericParamOrDefault("end_time"), 10);
+      var end_time = parseInt(this.getGenericParamOrDefault("until"), 10);
 
       var time_range = this.querySelector("#timerange");
       time_range.setAttribute('data-preselected', time_range_val);
@@ -488,10 +506,10 @@
       });*/
 
       time_range.addEventListener("fn-dropdown-item-click", function(e) {
-        var endtime = base.getGenericParamOrDefault("end_time");
+        var endtime = base.getGenericParamOrDefault("until");
         var date_range = parseInt(e.srcElement.getAttribute('data-value'));
         var starttime = parseInt(endtime, 10) - date_range;
-        base.updateGenericParams({"start_time": starttime});
+        base.updateGenericParams({"from": starttime});
         //check
         daterangepicker.setAttribute("data-daterange", (date_range * 1000));
       }, false);
@@ -523,10 +541,10 @@
       /* init */
       var log_scale = this.querySelector("#log_scale");
       var inv_scale = this.querySelector("#inv_scale");
-      if (this.getGenericParamOrDefault("logarithmic")) {
+      if (this.getGenericParamOrDefault("logarithmic") === "true") {
         log_scale.setAttribute("data-preselected", true);
       }
-      if (this.getGenericParamOrDefault("inverted")) {
+      if (this.getGenericParamOrDefault("inverted") === "true") {
         inv_scale.setAttribute("data-preselected", true);
       }
 

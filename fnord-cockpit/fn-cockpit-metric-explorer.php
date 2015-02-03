@@ -104,6 +104,12 @@ function fn_render_metric_explorer($rpc_url) {
     return (metricParamKeys.indexOf(key) > -1);
   }
 
+  function isGenericParam(key) {
+    //params that can be changed
+    var genericParamKeys = ["from", "until", "logarithmic", "inverted", "metrics"];
+    return (genericParamKeys.indexOf(key) > -1);
+  }
+
   function parseMetricQueryUrl(qstr) {
     if (qstr == null) {return;}
     var path;
@@ -140,7 +146,7 @@ function fn_render_metric_explorer($rpc_url) {
           mainMetric = false;
           metricCollector = {};
           metricCollector.name = value;
-        } else {
+        } else if (isGenericParam(key)) {
           params[key] = value;
         }
       }

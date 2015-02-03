@@ -266,11 +266,11 @@
   </style>
   <div class="left">
     <div class="metric">
-      <div class="view active" name="header">
+      <div class="view" name="header">
         <i class="fa fa-pencil-square-o" name="edit_btn"></i>
         <h3 class="small"></h3>
       </div>
-      <div class="view" name="search">
+      <div class="view active" name="search">
         <i class="fa fa-times" name="close_btn"></i>
         <fn-search data-size="small" class="" data-placeholder="Search Metric...">
           <fn-search-icon><i class="fa fa-search"></i></fn-search-icon>
@@ -356,7 +356,8 @@
             this.init();
       }
 
-    }
+      this.handleSelectMetricControls();
+    };
 
     this.attributeChangedCallback = function(attr, old_val, new_val) {
       if (attr == "data-resolved" &&
@@ -364,13 +365,12 @@
           typeof this.params == 'object') {
             this.init();
       }
-    }
+    };
 
     this.handleAggregationDisplay = function() {
-      var view = this.getAttribute('data-rollup');
       var time_window = this.shadowRoot.getElementById("time_window");
       var time_step = this.shadowRoot.getElementById("time_step");
-      if (view == "value" ) {
+      if (this.params.aggr_fn == "value" ) {
         time_window.setAttribute("data-state", "disabled");
         time_step.setAttribute("data-state", "disabled");
       } else {
@@ -447,9 +447,16 @@
       }, false);
 
       search.addEventListener('fn-search-submit', function() {
-        base.attributeChangedEvent({"innerViewValue": this.getValue()});
-        base.toggleMetricView();
-        base.setAttribute('data-metric', this.getValue());
+        console.log(base.hasAttribute('data-resolved'));
+        if (base.getAttribute('data-resolved') == 'resolved') {
+          //change metric
+          base.params.name = this.getValue();
+          base.attributeChangedEvent("name");
+          base.toggleMetricView();
+        } else {
+          //select new metric
+          base.fireNewMetricEvent(this.getValue());
+        }
       }, false);
     }
 
@@ -463,6 +470,10 @@
 
     this.handleControls = function() {
       var base = this;
+      this.shadowRoot.querySelector(
+        ".metric .view[name='header']").classList.add("active");
+      this.shadowRoot.querySelector(
+        ".metric .view[name='search']").classList.remove("active");
       this.shadowRoot.querySelector("h3").innerHTML = this.params.name;
       var rollup = this.shadowRoot.getElementById("rollup");
       rollup.setAttribute('data-preselected', this.params.aggr_fn);
@@ -540,6 +551,18 @@
         });
       });*/
     };
+
+    this.fireNewMetricEvent = function(name) {
+      var metricEvent = new CustomEvent(
+        'fn-metric-control-new-metric', {
+          'detail': {'name': name},
+          bubbles: true,
+          cancelable: true
+        }
+      );
+
+      this.dispatchEvent(metricEvent);
+    }
 
     this.fireAddMetricEvent = function() {
       this.dispatchEvent(new Event('fn-metric-control-add-metric'));
