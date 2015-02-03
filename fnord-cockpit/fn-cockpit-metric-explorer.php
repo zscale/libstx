@@ -92,10 +92,66 @@ function fn_render_metric_explorer($rpc_url) {
     } else {
       path = qstr != "undefined" ? qstr : "";
     }
+
     return {
       "path": path,
       "query_params": query_params
     }
+  };
+
+  function isMetricParam(key) {
+    var metricParamKeys = ["aggr_fn", "aggr_window", "aggr_step", "scale"];
+    return (metricParamKeys.indexOf(key) > -1);
+  }
+
+  function parseMetricQueryUrl(qstr) {
+    if (qstr == null) {return;}
+    var path;
+    var params = {};
+    var metricCollector = {};
+    var metricIndex = 0;
+
+    if (qstr.indexOf("?") >= 0) {
+      path = qstr.substr(0, qstr.indexOf("?"));
+      path = path.replace("#", "");
+
+      var params_str = qstr.substr(qstr.indexOf("?") + 1);
+      var raw_params = params_str.split('&');
+
+      /*set main metric */
+      var metric = raw_params[0].split('=');
+      if (metric[0] != "metric") {return;}
+
+      metricCollector.name = decodeURIComponent(metric[1]);
+
+      for (var i = 1; i < raw_params.length; i++) {
+        var param = raw_params[i].split("=");
+        if (!param[0]) {continue;}
+
+        var key = decodeURIComponent(param[0]);
+        var value = decodeURIComponent(param[1]);
+
+        if (isMetricParam(key)) {
+          metricCollector[key] = value;
+        } else if (key == "metric") {
+          //new submetric
+          params["metric" + metricIndex] = metricCollector;
+          metricIndex++;
+          mainMetric = false;
+          metricCollector = {};
+          metricCollector.name = value;
+        } else {
+          params[key] = value;
+        }
+      }
+
+      if (metricIndex > 0) {
+        params["metric" + metricIndex] = metricCollector;
+      }
+      params.metrics = metricIndex + 1;
+    }
+
+    return params;
   };
 
   function setUrlFromQueryString(hash, query_params, push_state) {
