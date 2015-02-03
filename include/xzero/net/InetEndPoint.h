@@ -22,10 +22,12 @@ class SelectionKey;
 /**
  * TCP/IP endpoint, as created by the InetConnector.
  */
-class XZERO_API InetEndPoint : public EndPoint, public Selectable {
+class XZERO_API InetEndPoint : public EndPoint {
  public:
-  InetEndPoint(int socket, InetConnector* connector);
+  InetEndPoint(int socket, InetConnector* connector, Scheduler* scheduler);
   ~InetEndPoint();
+
+  int handle() const noexcept { return handle_; }
 
   /**
    * Retrieves remote address + port.
@@ -56,25 +58,23 @@ class XZERO_API InetEndPoint : public EndPoint, public Selectable {
   size_t flush(const BufferRef& source) override;
   size_t flush(int fd, off_t offset, size_t size) override;
   void wantFill() override;
-  void wantFlush(bool enable) override;
+  void wantFlush() override;
   TimeSpan idleTimeout() override;
   void setIdleTimeout(TimeSpan timeout) override;
 
-  // Selectable overrides
-  int handle() const XZERO_NOEXCEPT override;
-  Selector* selector() const XZERO_NOEXCEPT override;
-  void onSelectable() XZERO_NOEXCEPT override;
-
  private:
+  void onReadable();
+  void onWritable();
+
   void fillable();
   void flushable();
   void onTimeout();
 
  private:
   InetConnector* connector_;
+  Scheduler* scheduler_;
   IdleTimeout idleTimeout_;
   int handle_;
-  std::unique_ptr<SelectionKey> selectionKey_;
   bool isCorking_;
   int isBusy_;
 

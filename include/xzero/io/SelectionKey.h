@@ -30,11 +30,15 @@ class SelectionKey {
 
   /**
    * Retrieves the current interest.
+   *
+   * @return a bitmask of Selectable::READ and Selectable::WRITE.
    */
   virtual int interest() const XZERO_NOEXCEPT = 0;
 
   /**
    * changes interest.
+   *
+   * @param ops a bitmask of Selectable::READ and Selectable::WRITE.
    */
   virtual void change(int ops) = 0;
 

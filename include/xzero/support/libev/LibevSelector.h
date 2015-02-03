@@ -15,13 +15,18 @@
 namespace xzero {
 namespace support {
 
+class LibevIO;
+
 /**
  * libev implementation for the Selector API.
  *
  */
 class XZERO_API LibevSelector : public Selector {
  public:
-  LibevSelector(ev::loop_ref loop);
+  friend class LibevIO;
+
+  LibevSelector(ev::loop_ref loop,
+                std::function<void(const std::exception&)>&& logger = nullptr);
   ~LibevSelector();
 
   std::unique_ptr<SelectionKey> createSelectable(Selectable* handle,

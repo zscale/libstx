@@ -12,9 +12,8 @@
 #include <xzero/net/InetConnector.h>
 #include <xzero/net/IPAddress.h>
 #include <xzero/executor/ThreadedExecutor.h>
-#include <xzero/support/libev/LibevScheduler.h>
-#include <xzero/support/libev/LibevSelector.h>
-#include <xzero/support/libev/LibevClock.h>
+#include <xzero/executor/NativeScheduler.h>
+#include <xzero/WallClock.h>
 #include <xzero/sysconfig.h>
 #include <xzero/Buffer.h>
 #include <algorithm>
@@ -52,7 +51,7 @@ static int processor_count() {
  *
  * @todo Make this class 100% libev independant.
  */
-class ThreadedSelector { // {{{
+class ThreadedScheduler { // {{{
  public:
   /**
    * Thread Worker API.
@@ -61,7 +60,7 @@ class ThreadedSelector { // {{{
    public:
     virtual ~Worker() {}
 
-    virtual xzero::Selector* selector() = 0;
+    virtual xzero::Scheduler* scheduler() = 0;
   };
 
   /**
@@ -72,10 +71,10 @@ class ThreadedSelector { // {{{
     virtual std::unique_ptr<Worker> createWorker() = 0;
   };
 
-  explicit ThreadedSelector(int thread_count, WorkerFactory* workerFactory);
-  ~ThreadedSelector();
+  explicit ThreadedScheduler(int thread_count, WorkerFactory* workerFactory);
+  ~ThreadedScheduler();
 
-  /** iterates through each I/O worker's I/O selector and scheduler. */
+  /** iterates through each I/O worker's I/O scheduler. */
   void each(std::function<void(Worker*)>&& itr);
 
   /** Starts the server as well as the I/O worker threads. */
@@ -93,7 +92,7 @@ class ThreadedSelector { // {{{
   WorkerFactory* workerFactory_;
 };
 
-ThreadedSelector::ThreadedSelector(int thread_count,
+ThreadedScheduler::ThreadedScheduler(int thread_count,
                                    WorkerFactory* workerFactory)
     : threadedExecutor_(),
       server_(),
@@ -105,83 +104,81 @@ ThreadedSelector::ThreadedSelector(int thread_count,
   }
 }
 
-ThreadedSelector::~ThreadedSelector() {
+ThreadedScheduler::~ThreadedScheduler() {
   for (Worker* worker: workers_)
     delete worker;
 }
 
-void ThreadedSelector::each(std::function<void(Worker*)>&& itr) {
+void ThreadedScheduler::each(std::function<void(Worker*)>&& itr) {
   std::for_each(workers_.begin(), workers_.end(), itr);
   // for (Worker* worker: workers_) {
   //   itr(worker);
   // }
 }
 
-void ThreadedSelector::start() {
+void ThreadedScheduler::start() {
   server_.start();
 
   for (size_t i = 0; i < workers_.size(); ++i) {
-    xzero::Selector* selector = workers_[i]->selector();
+    xzero::Scheduler* scheduler = workers_[i]->scheduler();
     char name[16];
     snprintf(name, sizeof(name), "xzero-io/%zu", i);
 
-    threadedExecutor_.execute(name, [i, name, selector]() {
+    threadedExecutor_.execute(name, [i, name, scheduler]() {
       printf("executing: %s\n", name);
       setCpuAffinity(i);
-      selector->select();
+      while (true/*TODO*/) {
+        printf("executing: %s (enter loop)\n", name);
+        scheduler->runLoopOnce();
+        printf("executing: %s (leave loop)\n", name);
+      }
     });
   }
 }
 
-void ThreadedSelector::stop() {
+void ThreadedScheduler::stop() {
   for (Worker* worker: workers_)
-    worker->selector()->wakeup();
+    worker->scheduler()->breakLoop();
 
   server_.stop();
 
   threadedExecutor_.joinAll();
 }
 // }}}
-class LibevWorker : public ThreadedSelector::Worker { // {{{
+class MyWorker : public ThreadedScheduler::Worker { // {{{
  public:
-  LibevWorker();
-  ~LibevWorker();
+  MyWorker();
+  ~MyWorker();
 
-  xzero::Selector* selector() override;
-  xzero::Scheduler* scheduler() { return scheduler_.get(); }
+  xzero::Scheduler* scheduler() override { return scheduler_.get(); }
   xzero::Executor* executor() { return scheduler(); }
-  xzero::WallClock* clock() { return clock_.get(); }
+  xzero::WallClock* clock() { return clock_; }
 
  private:
-  ev::dynamic_loop loop_;
-  std::unique_ptr<xzero::Selector> selector_;
   std::unique_ptr<xzero::Scheduler> scheduler_;
-  std::unique_ptr<xzero::WallClock> clock_;
+  xzero::WallClock* clock_;
+  int i_;
 };
 
-LibevWorker::LibevWorker()
-    : loop_(0),
-      scheduler_(new xzero::support::LibevScheduler(loop_)),
-      selector_(new xzero::support::LibevSelector(loop_)),
-      clock_(new xzero::support::LibevClock(loop_)) {
-  static int i = 0;
-  printf("Creating worker %d\n", i++);
+static int wi = 0;
+MyWorker::MyWorker()
+    : scheduler_(new xzero::NativeScheduler()),
+      clock_(xzero::WallClock::system()),
+      i_(wi++) {
+  printf("Creating worker %d\n", i_);
 }
 
-LibevWorker::~LibevWorker() {
-}
-
-xzero::Selector* LibevWorker::selector() {
-  return selector_.get();
+MyWorker::~MyWorker() {
+  printf("Terminating worker %d\n", i_);
 }
 // }}}
-class LibevWorkerFactory : public ThreadedSelector::WorkerFactory { // {{{
+class MyWorkerFactory : public ThreadedScheduler::WorkerFactory { // {{{
  public:
-  std::unique_ptr<ThreadedSelector::Worker> createWorker() override;
+  std::unique_ptr<ThreadedScheduler::Worker> createWorker() override;
 };
 
-std::unique_ptr<ThreadedSelector::Worker> LibevWorkerFactory::createWorker() {
-  return std::unique_ptr<ThreadedSelector::Worker>(new LibevWorker());
+std::unique_ptr<ThreadedScheduler::Worker> MyWorkerFactory::createWorker() {
+  return std::unique_ptr<ThreadedScheduler::Worker>(new MyWorker());
 }
 // }}}
 
@@ -192,9 +189,11 @@ class EchoConnection : public xzero::Connection { // {{{
   EchoConnection(std::shared_ptr<xzero::EndPoint> endpoint,
                  xzero::Executor* executor)
       : xzero::Connection(endpoint, executor) {
+    printf("EchoConnection()\n");
   }
 
   ~EchoConnection() {
+    printf("~EchoConnection()\n");
   }
 
   void onOpen() override {
@@ -243,15 +242,15 @@ class EchoFactory : public xzero::ConnectionFactory { // {{{
 // }}}
 
 int main(int argc, char* argv[]) {
-  LibevWorkerFactory workerFactory;
-  ThreadedSelector srv(processor_count(), &workerFactory);
+  MyWorkerFactory workerFactory;
+  ThreadedScheduler srv(processor_count(), &workerFactory);
 
   // create a SO_REUSEPORT-enabled connector for each worker
-  srv.each([&srv](ThreadedSelector::Worker* worker) {
-    LibevWorker* ew = static_cast<LibevWorker*>(worker);
+  srv.each([&srv](ThreadedScheduler::Worker* worker) {
+    MyWorker* ew = static_cast<MyWorker*>(worker);
 
     auto inet = std::unique_ptr<xzero::InetConnector>(new xzero::InetConnector(
-        "echo", ew->executor(), ew->scheduler(), ew->selector(), ew->clock(),
+        "echo", ew->executor(), ew->scheduler(), ew->clock(),
         xzero::TimeSpan::fromSeconds(30),
         xzero::IPAddress("0.0.0.0"), 3000, 128, true, true));
 

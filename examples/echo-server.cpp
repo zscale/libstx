@@ -13,8 +13,7 @@
 #include <xzero/net/InetConnector.h>
 #include <xzero/net/IPAddress.h>
 #include <xzero/executor/DirectExecutor.h>
-#include <xzero/support/libev/LibevScheduler.h>
-#include <xzero/support/libev/LibevSelector.h>
+#include <xzero/executor/NativeScheduler.h>
 #include <xzero/support/libev/LibevClock.h>
 
 using xzero::Buffer;
@@ -66,11 +65,10 @@ class EchoFactory : public xzero::ConnectionFactory { // {{{
 // }}}
 std::unique_ptr<xzero::InetConnector> createInetConnector( // {{{
     const std::string& name, int port, xzero::Executor* executor,
-    xzero::Scheduler* scheduler, xzero::Selector* selector,
-    xzero::WallClock* clock) {
+    xzero::Scheduler* scheduler, xzero::WallClock* clock) {
 
   std::unique_ptr<xzero::InetConnector> inetConnector(
-      new xzero::InetConnector(name, executor, scheduler, selector, clock,
+      new xzero::InetConnector(name, executor, scheduler, clock,
         xzero::TimeSpan::fromSeconds(30)));
 
   inetConnector->open(IPAddress("0.0.0.0"), port, 128, true, true);
@@ -85,27 +83,28 @@ std::unique_ptr<xzero::InetConnector> createInetConnector( // {{{
 // }}}
 
 int main(int argc, const char* argv[]) {
-  ev::dynamic_loop loop(0);
   xzero::DirectExecutor executor(false);
-  xzero::support::LibevScheduler scheduler(loop);
-  xzero::support::LibevSelector selector(loop);
-  xzero::support::LibevClock clock(loop);
+  xzero::NativeScheduler scheduler;
+  xzero::WallClock* clock = xzero::WallClock::system();
   xzero::Server server;
+  bool running = true;
 
   auto localConnector = server.addConnector<xzero::LocalConnector>(&executor);
   localConnector->addConnectionFactory<EchoFactory>();
 
   auto inetConnector = createInetConnector("inet", 3000, &executor, &scheduler,
-                                           &selector, &clock);
+                                           clock);
   inetConnector->addConnectionFactory<EchoFactory>();
   server.addConnector(std::move(inetConnector));
 
   server.start();
 
   auto ep = localConnector->createClient("Hello, World!\n");
-  printf("result: %s", ep->output().c_str());
+  printf("local result: %s", ep->output().c_str());
 
-  loop.run();
+  while (running) {
+    scheduler.runLoopOnce();
+  }
 
   server.stop();
 

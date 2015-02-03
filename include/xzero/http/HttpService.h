@@ -24,7 +24,6 @@ class HttpResponse;
 class Executor;
 class WallClock;
 class Scheduler;
-class Selector;
 class IPAddress;
 
 /**
@@ -48,7 +47,6 @@ class XZERO_API HttpService {
    *
    * @param executor the executor service to run tasks on.
    * @param scheduler where to schedule timed tasks on.
-   * @param selector the I/O selector service to use for non-blocking I/O.
    * @param clock The wall clock that may be used for timeout management.
    * @param idleTimeout timespan indicating how long a connection may be idle.
    * @param ipaddress the TCP/IP bind address.
@@ -57,8 +55,7 @@ class XZERO_API HttpService {
    *
    */
   InetConnector* configureInet(Executor* executor, Scheduler* scheduler,
-                               Selector* selector, WallClock* clock,
-                               TimeSpan idleTimeout,
+                               WallClock* clock, TimeSpan idleTimeout,
                                const IPAddress& ipaddress,
                                int port, int backlog = 128);
 

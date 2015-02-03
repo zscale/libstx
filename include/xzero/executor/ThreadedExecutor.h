@@ -24,13 +24,13 @@ namespace xzero {
  */
 class XZERO_API ThreadedExecutor : public Executor {
  public:
-  ThreadedExecutor();
+  ThreadedExecutor() : ThreadedExecutor(nullptr) {}
+  ThreadedExecutor(std::function<void(const std::exception&)>&& eh);
   ~ThreadedExecutor();
 
   void execute(const std::string& name, Task&& task);
 
   void execute(Task&& task) override;
-  size_t maxConcurrency() const XZERO_NOEXCEPT override;
   std::string toString() const override;
   void joinAll();
 

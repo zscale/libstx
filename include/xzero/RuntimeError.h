@@ -9,7 +9,10 @@
 
 #include <xzero/Api.h>
 #include <xzero/sysconfig.h>
+#include <vector>
+#include <string>
 #include <stdexcept>
+#include <system_error>
 #include <string.h>
 #include <errno.h>
 
@@ -17,27 +20,29 @@ namespace xzero {
 
 class XZERO_API RuntimeError : public std::runtime_error {
  public:
-  RuntimeError(const char* what, const char* sourceFile, int sourceLine)
-      : std::runtime_error(what),
-        sourceFile_(sourceFile),
-        sourceLine_(sourceLine) {}
-
-  RuntimeError(const std::string& what, const char* sourceFile, int sourceLine)
-      : std::runtime_error(what),
-        sourceFile_(sourceFile),
-        sourceLine_(sourceLine) {}
+  RuntimeError(const std::string& what, const char* sourceFile, int sourceLine);
+  ~RuntimeError();
 
   const char* sourceFile() const { return sourceFile_; }
   int sourceLine() const XZERO_NOEXCEPT { return sourceLine_; }
 
+  std::vector<std::string> backtrace() const;
+
  private:
   const char* sourceFile_;
   int sourceLine_;
+  void** frames_;
+  int frameCount_;
 };
+
+XZERO_API void consoleLogger(const std::exception& e);
 
 } // namespace xzero
 
 #define RUNTIME_ERROR(msg) (::xzero::RuntimeError((msg), __FILE__, __LINE__))
+
+#define SYSTEM_ERROR(errc) \
+  (RUNTIME_ERROR(std::system_error(errc, std::system_category()).what()))
 
 #if !defined(BUG_ON)
   #define BUG_ON(cond) {                                                    \

@@ -21,11 +21,12 @@ namespace xzero {
  */
 class XZERO_API DirectExecutor : public Executor {
  public:
-  explicit DirectExecutor(bool recursive = false);
+  DirectExecutor(
+    bool recursive = false,
+    std::function<void(const std::exception&)>&& eh = nullptr);
 
   void execute(Task&& task) override;
   std::string toString() const override;
-  size_t maxConcurrency() const XZERO_NOEXCEPT override;
 
   /** Tests whether this executor is currently running some task. */
   bool isRunning() const { return running_ > 0; }

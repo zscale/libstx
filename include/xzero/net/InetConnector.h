@@ -9,7 +9,6 @@
 
 #include <xzero/Api.h>
 #include <xzero/sysconfig.h>
-#include <xzero/io/Selectable.h>
 #include <xzero/net/Connector.h>
 #include <xzero/net/IPAddress.h>
 #include <xzero/TimeSpan.h>
@@ -22,21 +21,19 @@ namespace xzero {
 class Connection;
 class Executor;
 class Scheduler;
-class Selector;
 class InetEndPoint;
 
 /**
  * TCP/IP Internet Connector API
  */
-class XZERO_API InetConnector : public Connector, public Selectable {
+class XZERO_API InetConnector : public Connector {
  public:
   /**
    * Initializes this connector.
    *
    * @param name Describing name for this connector.
    * @param executor Executor service to run handlers on
-   * @param scheduler Scheduler service to use for timeout management
-   * @param selector Selector service to use for I/O multiplexing
+   * @param scheduler Scheduler service to use for scheduling tasks
    * @param clock Wall clock used for timeout management.
    * @param idleTimeout timespan indicating how long a connection may be idle.
    * @param ipaddress TCP/IP address to listen on
@@ -48,8 +45,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    * @throw std::runtime_error on any kind of runtime error.
    */
   InetConnector(const std::string& name, Executor* executor,
-                Scheduler* scheduler, Selector* selector, WallClock* clock,
-                TimeSpan idleTimeout,
+                Scheduler* scheduler, WallClock* clock, TimeSpan idleTimeout,
                 const IPAddress& ipaddress, int port, int backlog,
                 bool reuseAddr, bool reusePort);
 
@@ -59,19 +55,15 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    * @param name Describing name for this connector.
    * @param executor Executor service to run on
    * @param scheduler Scheduler service to use for timeout management
-   * @param selector Selector service to use for I/O multiplexing
    * @param clock Wall clock used for timeout management.
    * @param idleTimeout timespan indicating how long a connection may be idle.
    */
   InetConnector(const std::string& name, Executor* executor,
-                Scheduler* scheduler, Selector* selector, WallClock* clock,
-                TimeSpan idleTimeout);
+                Scheduler* scheduler, WallClock* clock, TimeSpan idleTimeout);
 
   ~InetConnector();
 
   Scheduler* scheduler() const XZERO_NOEXCEPT;
-
-  Selector* selector() const XZERO_NOEXCEPT override;
 
   /**
    * Opens this connector by binding to the given @p ipaddress and @p port.
@@ -100,7 +92,7 @@ class XZERO_API InetConnector : public Connector, public Selectable {
   /**
    * Retrieves the underlying system socket handle.
    */
-  virtual int handle() const XZERO_NOEXCEPT;
+  int handle() const XZERO_NOEXCEPT;
 
   /**
    * Returns the IP address family, such as @c IPAddress::V4 or @c IPAddress::V6.
@@ -202,6 +194,11 @@ class XZERO_API InetConnector : public Connector, public Selectable {
   void release(Connection* inetConnection);
 
   /**
+   * Registers to the Scheduler API for new incoming connections.
+   */
+  void notifyOnEvent();
+
+  /**
    * Accepts up to exactly one new client.
    *
    * This call is blocking by default and can be changed to non-blocking
@@ -212,7 +209,10 @@ class XZERO_API InetConnector : public Connector, public Selectable {
    */
   bool acceptOne();
 
-  void onSelectable() XZERO_NOEXCEPT override;
+  /**
+   * Accepts as many pending connections as possible.
+   */
+  void onConnect();
 
   void bind(const IPAddress& ipaddr, int port);
   void listen(int backlog);
@@ -231,8 +231,6 @@ class XZERO_API InetConnector : public Connector, public Selectable {
 
  private:
   Scheduler* scheduler_;
-  Selector* selector_;
-  std::unique_ptr<SelectionKey> selectionKey_;
 
   std::list<InetEndPoint*> connectedEndPoints_;
   std::mutex mutex_;
