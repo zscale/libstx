@@ -195,33 +195,8 @@
 
 
     this.init = function() {
-      /*console.log(this.params);
-      var base = this;
-      var metric = this.params.query_params.innerViewValue;
-      var url = baseUrl + "list?filter=" + encodeURIComponent(metric);
-      control.setAttribute('data-rollup', this.getQueryParamOrDefaultValue("view"));
-      control.setAttribute('data-aggr_window', this.getQueryParamOrDefaultValue("aggr_window"));
-      control.setAttribute('data-aggr_step', this.getQueryParamOrDefaultValue("aggr_step"));
-      control.setAttribute('data-scale', this.getQueryParamOrDefaultValue("scale"));
-      control.setAttribute('data-metric', metric);
-
-
-      Fnord.httpGet(url, function(r) {
-        if (r.status == 200) {
-          var json = JSON.parse(r.response);
-          json.metrics.map(function(m) {
-            base.columns = m.labels.join(",");
-            //control.handleGroupByControls(m.labels.join(","));
-          });
-        }
-        base.columns = [];
-        base.updateUrlParams(
-          base.addRequiredURLParamsForView(
-            base.getQueryParamOrDefaultValue("view")));
-        base.handleBasicControls();
-        base.handleDateTimeControls();
-        base.initNewMetric(base.querySelector("fn-metric-control"))
-      });*/
+      this.handleGenericControls();
+      this.handleDateTimeControls();
 
       //init mainMetric
       this.initMetricControl(this.querySelector("fn-metric-control"), 0);
@@ -230,7 +205,6 @@
       for (var i = 1; i < parseInt(this.params.metrics, 10); i++) {
         this.initMetricControl(this.addMetricControl(i), i);
       }
-
     };
 
     this.initMetricControl = function(metric, index) {
@@ -242,6 +216,16 @@
         "aggr_step": this.getMetricUrlParamOrDefault("aggr_step", index),
         "scale": this.getMetricUrlParamOrDefault("scale", index)
       }
+
+      if (metric_params.name) {
+        metric_params.columns = this.getMetricColumns(name);
+      }
+
+      /*
+        base.updateUrlParams(
+          base.addRequiredURLParamsForView(
+            base.getGenericParamOrDefault("view")));
+      });*/
 
       metric.params = metric_params;
       metric.setAttribute('data-resolved', 'resolved');
@@ -264,6 +248,22 @@
       }
     };
 
+    this.getMetricColumns = function(metric) {
+      var url = baseUrl + "list?filter=" + encodeURIComponent(metric);
+      var columns = {}
+      Fnord.httpGet(url, function(r) {
+        if (r.status == 200) {
+          var json = JSON.parse(r.response);
+          json.metrics.map(function(m) {
+            columns = m.labels.join(",");
+            //control.handleGroupByControls(m.labels.join(","));
+          });
+        }
+
+        return columns;
+      });
+    }
+
 
 
     this.getMetricUrlParamOrDefault = function(key, index) {
@@ -282,7 +282,7 @@
       return value;
     };
 
-    this.getGenericParamsOrDefault = function(key) {
+    this.getGenericParamOrDefault = function(key) {
       var defaults = {
         end_time : Math.round(Date.now() / 1000),
         /* 5 minutes  */
@@ -296,7 +296,7 @@
       }
 
       if (key == "time_range") {
-        var end_time = parseInt(this.getQueryParamOrDefaultValue("end_time"), 10);
+        var end_time = parseInt(this.getGenericParamOrDefault("end_time"), 10);
         var start_time = parseInt(this.params['start_time'], 10);
         if (!isNaN(start_time)) {
           return end_time - start_time;
@@ -305,63 +305,38 @@
         }
       }
 
-      var value = (this.params.query_params[key])?
-        this.params.query_params[key] : defaults[key];
+      var value = (this.params[key])?
+        this.params[key] : defaults[key];
 
       return value;
     }
 
-    this.getQueryParamOrDefaultValue = function(key) {
-      var defaults = {
-        view : "sum",
-        columns : this.columns,
-                
-        by: this.columns,
-        min: 0,
-        scale: 0.8
-      }
+    this.buildQueryUrl = function(format) {
+      var url = baseUrl + "timeseries?";
 
-      if (key == "time_range") {
-        var end_time = parseInt(this.getQueryParamOrDefaultValue("end_time"), 10);
-        var start_time = parseInt(this.params['start_time'], 10);
-        if (!isNaN(start_time)) {
-          return end_time - start_time;
-        } else {
-          return defaults['time_range'];
+      for (var i = 0; i < parseInt(this.params.metrics, 10); i++) {
+        var metric_params = this.params["metric" + i];
+
+        for (var key in metric_params) {
+          if (key == "name") {
+            url += (i == 0)? "" : "&";
+            url += "metric=" + encodeURIComponent(metric_params[key]);
+          } else if (isMetricParam(key)) {
+            url += "&" + key + "=" + metric_params[key]; 
+          }
         }
       }
 
-      var value = (this.params.query_params[key])?
-        this.params.query_params[key] : defaults[key];
-
-      return value;
-    };
-
-
-    this.buildQueryUrl = function(format) {
-      var url =
-        baseUrl + "timeseries" +
-        "?metric=" + this.params.query_params.innerViewValue +
-        "&from=" + this.getQueryParamOrDefaultValue("start_time") +
-        "&until=" + this.getQueryParamOrDefaultValue("end_time") +
-        "&logarithmic=" + this.getQueryParamOrDefaultValue("logarithmic") +
-        "&inverted=" + this.getQueryParamOrDefaultValue("inverted");
-
-      var view = this.getQueryParamOrDefaultValue("view");
-      if (view != 'value') {
-        url +=
-          "&aggr_fn=" + view +
-          "&aggr_window=" + this.getQueryParamOrDefaultValue("aggr_window") +
-          "&aggr_step=" + this.getQueryParamOrDefaultValue("aggr_step");
-      }
-
       url +=
+        "&from=" + this.getGenericParamOrDefault("start_time") +
+        "&until=" + this.getGenericParamOrDefault("end_time") +
+        "&logarithmic=" + this.getGenericParamOrDefault("logarithmic") +
+        "&inverted=" + this.getGenericParamOrDefault("inverted");
         "&format=" + format +
-        "&min=" + this.getQueryParamOrDefaultValue("min") +
+        "&min=" + this.getGenericParamOrDefault("min") +
         "&height=" + (document.body.offsetHeight - 255) +
         "&width=" + (document.body.offsetWidth - 20) +
         "&grid=both" +
-        "&scale=" + this.getQueryParamOrDefaultValue("scale") +
         "&axis_right=true" +
         "&legend=toprightinside";
 
@@ -432,12 +407,12 @@
 
         var time_window = this.params.query_params.aggr_window;
         if (time_window == undefined) {
-          new_params.aggr_window = this.getQueryParamOrDefaultValue("aggr_window");
+          new_params.aggr_window = this.getGenericParamOrDefault("aggr_window");
           update = true;
         }
         var aggr_step = this.params.query_params.aggr_step;
         if (aggr_step == undefined) {
-          new_params.aggr_step = this.getQueryParamOrDefaultValue("aggr_step");
+          new_params.aggr_step = this.getGenericParamOrDefault("aggr_step");
           update = true;
         }
       }
@@ -472,7 +447,7 @@
     
     this.onRefresh = function() {
       var end_time = Date.now();
-      var time_range = this.getQueryParamOrDefaultValue('time_range');
+      var time_range = this.getGenericParamOrDefault('time_range');
       var start_time = end_time - time_range;
       this.updateUrlParams({
         'end_time' : end_time,
@@ -510,7 +485,7 @@
 
     this.updateDateTimeElems = function(end_time) {
       var params = parseUrlQueryString(this.getAttribute("data-url"));
-      var date_range = this.getQueryParamOrDefaultValue("time_range");
+      var date_range = this.getGenericParamOrDefault("time_range");
       var start_time = parseInt(end_time, 10) - parseInt(date_range, 10);
       this.updateUrlParams({"end_time" : end_time, "start_time" : start_time});
       var datepicker = this.querySelector("fn-datepicker");
@@ -524,8 +499,8 @@
       var base = this;
       /* init */
       var time_range_val = parseInt(
-        this.getQueryParamOrDefaultValue("time_range"), 10);
-      var end_time = parseInt(this.getQueryParamOrDefaultValue("end_time"), 10);
+        this.getGenericParamOrDefault("time_range"), 10);
+      var end_time = parseInt(this.getGenericParamOrDefault("end_time"), 10);
 
       var time_range = this.querySelector("#timerange");
       time_range.setAttribute('data-preselected', time_range_val);
@@ -536,16 +511,15 @@
       var daterangepicker = this.querySelector("fn-daterangepicker");
       daterangepicker.setAttribute('data-daterange', (time_range_val * 1000));
       daterangepicker.setAttribute('data-endtime', (end_time * 1000));
-
-      var chevron_right = daterangepicker.shadowRoot.querySelector(".fa-chevron-right");
+      /*var chevron_right = daterangepicker.shadowRoot.querySelector(".fa-chevron-right");
 
       var tooltip = this.querySelector("#ttp_endtime");
       tooltip.initShowIf(chevron_right, function() {
         return !(daterangepicker.nextIsSelectable());
-      });
+      });*/
 
       time_range.addEventListener("fn-dropdown-item-click", function(e) {
-        var endtime = base.getQueryParamOrDefaultValue("end_time");
+        var endtime = base.getGenericParamOrDefault("end_time");
         var date_range = parseInt(e.srcElement.getAttribute('data-value'));
         var starttime = parseInt(endtime, 10) - date_range;
         base.updateUrlParams({"start_time": starttime});
@@ -575,15 +549,15 @@
 
     }
 
-    this.handleBasicControls = function() {
+    this.handleGenericControls = function() {
       var base = this;
       /* init */
       var log_scale = this.querySelector("#log_scale");
       var inv_scale = this.querySelector("#inv_scale");
-      if (this.getQueryParamOrDefaultValue("logarithmic")) {
+      if (this.getGenericParamOrDefault("logarithmic")) {
         log_scale.setAttribute("data-preselected", true);
       }
-      if (this.getQueryParamOrDefaultValue("inverted")) {
+      if (this.getGenericParamOrDefault("inverted")) {
         inv_scale.setAttribute("data-preselected", true);
       }
 
