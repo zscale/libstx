@@ -17,16 +17,19 @@
 namespace xzero {
 
 class NativeKey;
+class WallClock;
 
 class XZERO_API NativeScheduler : public Scheduler {
  public:
   NativeScheduler(
       std::function<void(const std::exception&)> errorLogger,
+      WallClock* clock,
       std::function<void()> preInvoke,
       std::function<void()> postInvoke);
 
   explicit NativeScheduler(
-      std::function<void(const std::exception&)> errorLogger);
+      std::function<void(const std::exception&)> errorLogger,
+      WallClock* clock);
 
   NativeScheduler();
 
@@ -43,19 +46,29 @@ class XZERO_API NativeScheduler : public Scheduler {
   void breakLoop() override;
 
  protected:
+  HandleRef insertIntoTimersList(DateTime dt, HandleRef handle);
+  void removeFromTimersList(Handle* handle);
+  void collectTimeouts();
   void runTaskQueue();
 
  private:
+  WallClock* clock_;
   std::list<NativeKey*> keys_;
   std::mutex lock_;
   int wakeupPipe_[2];
 
-  std::function<void()> onPreInvokePending_;
-  std::function<void()> onPostInvokePending_;
+  Task onPreInvokePending_;
+  Task onPostInvokePending_;
 
   std::deque<Task> tasks_;
   std::list<std::pair<int, HandleRef>> readers_;
   std::list<std::pair<int, HandleRef>> writers_;
+
+  struct Timer {
+    DateTime when;
+    HandleRef handle;
+  };
+  std::list<Timer> timers_;
 };
 
 } // namespace xzero
