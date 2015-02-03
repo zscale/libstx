@@ -46,10 +46,10 @@ class XZERO_API NativeScheduler : public Scheduler {
   void breakLoop() override;
 
  protected:
-  HandleRef insertIntoTimersList(DateTime dt, HandleRef handle);
   void removeFromTimersList(Handle* handle);
+  HandleRef insertIntoTimersList(DateTime dt, HandleRef handle);
+  TimeSpan computeNextTimeout();
   void collectTimeouts();
-  void runTaskQueue();
 
  private:
   WallClock* clock_;
