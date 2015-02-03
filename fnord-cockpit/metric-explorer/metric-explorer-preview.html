@@ -166,7 +166,7 @@
       this.appendChild(tpl);
 
       if (this.getAttribute('data-url') != null) {
-        this.onUrlChange(true);
+        this.init()
       }
 
     };
@@ -174,7 +174,7 @@
     this.attributeChangedCallback = function(attr, old_val, new_val) {
       switch (attr) {
         case 'data-url' :
-          this.onUrlChange(old_val == null);
+          this.init();
           break;
         case 'data-format' :
           this.toggleView(new_val);
@@ -184,16 +184,9 @@
       }
     };
 
-    this.onUrlChange = function(init) {
-      this.params = parseMetricQueryUrl(this.getAttribute("data-url"));
-      if (init) {
-        this.init();
-      }
-
-      this.updateData(this.getAttribute("data-format"));
-    };
-
     this.init = function() {
+      this.params = parseMetricQueryUrl(this.getAttribute("data-url"));
+      this.updateData(this.getAttribute('data-format'));
       this.handleGenericControls();
       this.handleDateTimeControls();
 
@@ -206,8 +199,14 @@
       }
     };
 
+    this.update = function() {
+      var url_hash = "#metric?" + this.buildQueryUrl();
+      setUrlHash(url_hash);
+      this.updateData(this.getAttribute('data-format'));
+    };
+
     this.buildQueryUrl = function(format) {
-      var url = baseUrl + "timeseries?";
+      var url = "";
 
       for (var i = 0; i < parseInt(this.params.metrics, 10); i++) {
         var metric_params = this.params["metric" + i];
@@ -238,20 +237,10 @@
       return url;
     };
 
-    this.toggleView = function(format) {
-      this.querySelector(".result_pane.active").classList.remove("active");
-      this.querySelector(".result_pane[data-format='"+ format +"']").classList.add("active");
-
-      this.querySelector("fn-button[data-format][data-state='active']").removeAttribute("data-state");
-      this.querySelector("fn-button[data-format='"+ format +"']").setAttribute("data-state", "active");
-
-      this.updateData(format);
-    };
-
     this.updateData = function(format) {
       var base = this;
       format = format ? format : "svg";
-      var url = this.buildQueryUrl(format);
+      var url = baseUrl + "timeseries?" + this.buildQueryUrl(format);
 
       Fnord.httpGet(url, function(r) {
         if (r.status == 200) {
@@ -310,7 +299,23 @@
         'start_time' : start_time});
     };
 
+    this.toggleView = function(format) {
+      this.querySelector(".result_pane.active").classList.remove("active");
+      this.querySelector(".result_pane[data-format='"+ format +"']").classList.add("active");
+
+      this.querySelector("fn-button[data-format][data-state='active']").removeAttribute("data-state");
+      this.querySelector("fn-button[data-format='"+ format +"']").setAttribute("data-state", "active");
+
+      this.updateData(format);
+    };
+
+
 /*********************** Metric Controls *****************************/
+    this.metricParamChanged = function(params, key) {
+      this.params["metric" + params.index] = params;
+      this.update();
+    }
+
     this.getMetricUrlParamOrDefault = function(key, index) {
       var defaults = {
         "aggr_fn": "sum",
@@ -319,7 +324,6 @@
         "scale" : "0.8"
       }
 
-      console.log(this.params);
       var value = this.params["metric" + index][key];
       if (value == undefined) {
         value = defaults[key];
@@ -345,12 +349,14 @@
     };
 
     this.initMetricControl = function(metric, index) {
-      metric.setAttribute('data-index', index);
+      var base = this;
       var aggr_fn = this.getMetricUrlParamOrDefault("aggr_fn", index);
+
       var metric_params = {
         "name": this.getMetricUrlParamOrDefault("name", index),
         "aggr_fn": aggr_fn,
-        "scale": this.getMetricUrlParamOrDefault("scale", index)
+        "scale": this.getMetricUrlParamOrDefault("scale", index),
+        "index" : index
       }
 
       if (aggr_fn != "value") {
@@ -365,12 +371,13 @@
       }
 
       metric.params = metric_params;
+      metric.setAttribute('data-index', index);
       metric.setAttribute('data-resolved', 'resolved');
 
       /* handle events */
       metric.addEventListener(
         "fn-metric-control-attr-changed", function(e) {
-          base.updateUrlParams(e.detail);
+          base.metricParamChanged(this.params, e.detail.key);
         },
       false);
 
