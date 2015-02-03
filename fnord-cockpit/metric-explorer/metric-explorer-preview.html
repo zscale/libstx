@@ -184,6 +184,82 @@
       }
     };
 
+    
+    this.init = function() {
+      var base = this;
+      var metric = this.params.query_params.innerViewValue;
+      var url = baseUrl + "list?filter=" + encodeURIComponent(metric);
+      /*control.setAttribute('data-rollup', this.getQueryParamOrDefaultValue("view"));
+      control.setAttribute('data-aggr_window', this.getQueryParamOrDefaultValue("aggr_window"));
+      control.setAttribute('data-aggr_step', this.getQueryParamOrDefaultValue("aggr_step"));
+      control.setAttribute('data-scale', this.getQueryParamOrDefaultValue("scale"));
+      control.setAttribute('data-metric', metric);*/
+
+
+      Fnord.httpGet(url, function(r) {
+        if (r.status == 200) {
+          var json = JSON.parse(r.response);
+          json.metrics.map(function(m) {
+            base.columns = m.labels.join(",");
+            //control.handleGroupByControls(m.labels.join(","));
+          });
+        }
+        base.columns = [];
+        base.updateUrlParams(
+          base.addRequiredURLParamsForView(
+            base.getQueryParamOrDefaultValue("view")));
+        base.handleBasicControls();
+        base.handleDateTimeControls();
+        base.initNewMetric(base.querySelector("fn-metric-control"))
+      });
+    };
+
+    this.initNewMetric = function(metric) {
+      var index = metric.getAttribute('data-index');
+      var metric_params = {
+        "name": this.getMetricUrlParamOrDefault("name", index),
+        "rollup": this.getMetricUrlParamOrDefault("rollup", index),
+        "aggr_window": this.getMetricUrlParamOrDefault("aggr_window", index),
+        "aggr_step": this.getMetricUrlParamOrDefault("aggr_step", index),
+        "scale": this.getMetricUrlParamOrDefault("scale", index)
+      }
+
+      metric.params = metric_params;
+      metric.init();
+
+      /* handle events */
+      metric.addEventListener(
+        "fn-metric-control-attr-changed", function(e) {
+          base.updateUrlParams(e.detail);
+        },
+      false);
+
+      if (index > 0) {
+        metric.addEventListener('fn-metric-control-remove-metric', function(e) {
+          console.log(e.detail);
+          base.removeMetric();
+        }, false);
+      } else {
+        metric.addEventListener('fn-metric-control-add-metric', function() {
+          base.addMetric();
+        }, false);
+      }
+    };
+
+    this.getMetricUrlParamOrDefault = function(key, index) {
+      var defaults = {
+        "rollup": "sum",
+        "aggr_window": "5",
+        "aggr_step": "10",
+        "scale" : "0.8"
+      }
+
+      console.log(this.getAttribute('data-url'));
+      return defaults[key];
+
+
+    }
+
     this.onUrlChange = function(init) {
       this.params = parseUrlQueryString(this.getAttribute("data-url"));
       if (init) {
@@ -193,34 +269,6 @@
       this.updateData(this.getAttribute("data-format"));
     };
 
-    this.init = function() {
-      var base = this;
-      var metric = this.params.query_params.innerViewValue;
-      var url = baseUrl + "list?filter=" + encodeURIComponent(metric);
-      var control = this.querySelector("fn-metric-control");
-      control.setAttribute('data-rollup', this.getQueryParamOrDefaultValue("view"));
-      control.setAttribute('data-aggr_window', this.getQueryParamOrDefaultValue("aggr_window"));
-      control.setAttribute('data-aggr_step', this.getQueryParamOrDefaultValue("aggr_step"));
-      control.setAttribute('data-scale', this.getQueryParamOrDefaultValue("scale"));
-      control.setAttribute('data-metric', metric);
-
-
-      Fnord.httpGet(url, function(r) {
-        if (r.status == 200) {
-          var json = JSON.parse(r.response);
-          json.metrics.map(function(m) {
-            base.columns = m.labels.join(",");
-            control.handleGroupByControls(m.labels.join(","));
-          });
-        }
-        base.columns = [];
-        base.updateUrlParams(
-          base.addRequiredURLParamsForView(
-            base.getQueryParamOrDefaultValue("view")));
-        base.handleBasicControls();
-        base.handleDateTimeControls();
-      });
-    };
 
     this.buildQueryUrl = function(format) {
       var url =
@@ -396,12 +444,22 @@
     }
 
     this.addMetric = function() {
-      var last_control = this.querySelectorAll("fn-metric-control");
-      console.log(last_control);
+      var controls = this.querySelectorAll("fn-metric-control");
       var new_control = document.createElement("fn-metric-control");
       var ref_elem = this.querySelector("fn-controls[type='secondary']");
-      console.log(ref_elem.parentNode);
+
+      if (controls) {
+        var index = parseInt(
+          controls[controls.length - 1].getAttribute('data-index'), 10);
+        if (!isNaN(index)) {
+          new_control.setAttribute('data-index', index + 1);
+        }
+      }
       ref_elem.parentNode.insertBefore(new_control, ref_elem);
+    };
+
+    this.removeMetric = function(index) {
+
     }
 
 /************************* controls handle functions **************************/
@@ -447,21 +505,6 @@
       tooltip.initShowIf(chevron_right, function() {
         return !(daterangepicker.nextIsSelectable());
       });
-
-      /* handle events */
-      var metric_control = this.querySelector("fn-metric-control");
-      console.log(metric_control);
-      metric_control.addEventListener(
-        "fn-metric-control-attr-changed", function(e) {
-          console.log("chanhged");
-          base.updateUrlParams(e.detail);
-        },
-      false);
-
-      metric_control.addEventListener('fn-metric-control-add-metric', function() {
-        console.log("add metric");
-        base.addMetric();
-      }, false);
 
       time_range.addEventListener("fn-dropdown-item-click", function(e) {
         var endtime = base.getQueryParamOrDefaultValue("end_time");

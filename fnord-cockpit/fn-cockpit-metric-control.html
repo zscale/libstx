@@ -334,7 +334,7 @@
   </div>
   <div class='right'>
     <fn-button id="control_btn" data-size="tiny">
-      <i class="fa"></i>
+      <i class="fa fa-times"></i>
     </fn-button>
   </div>
   <fn-tooltip id='tooltip_aggr'>
@@ -351,22 +351,13 @@
       var shadow = this.createShadowRoot();
       shadow.appendChild(tpl);
 
-      if (this.hasAttribute('data-metric')) {this.init() }
-      if (this.hasAttribute('data-index')) {this.handleControlBtn();}
-    }
-
-    this.attributeChangedCallback = function(attr, old_val, new_val) {
-      switch (attr) {
-        case "data-metric":
-          this.init();
-          break;
-        case 'data-index':
-          this.handleControlBtn();
-          break;
-        default:
-          break;
+      if (this.getAttribute('data-index') == 0) {
+        this.setAddButton();
+      } else {
+        this.setRemoveButton();
       }
     }
+
 
 
     this.handleAggregationDisplay = function() {
@@ -388,30 +379,30 @@
       this.handleAggregationDisplay();
     };
 
-    this.handleControlBtn = function() {
+    this.setAddButton = function() {
       var base = this;
-      var eventFunction;
-      var btn = this.shadowRoot.getElementById("control_btn");
+      var button = this.shadowRoot.getElementById('control_btn');
       var tooltip = this.shadowRoot.getElementById("control_tooltip");
-      tooltip.init(btn);
+      tooltip.innerHTML = "Add Metric";
+      tooltip.init(button);
 
-      if (this.getAttribute('data-index') == 0) {
-        btn.querySelector("i").classList.add("fa-plus");
-        tooltip.innerHTML = "Add Metric";
-        eventFunction = function() {return base.fireAddMetricEvent();}
-      } else {
-        btn.querySelector("i").classList.add("fa-times");
-        tooltip.innerHTML = "Remove Metric";
-        eventFunction = function() {return this.fireRemoveMetricEvent();}
-      }
-
-      var base = this;
-
-      btn.addEventListener('fn-button-click', function() {
-        eventFunction();
+      button.querySelector("i").classList.add("fa-plus");
+      button.addEventListener('fn-button-click', function() {
+        base.fireAddMetricEvent();
       }, false);
+    };
 
-    }
+    this.setRemoveButton = function() {
+      var base = this;
+      var button = this.shadowRoot.getElementById('control_btn');
+      var tooltip = this.shadowRoot.getElementById("control_tooltip");
+      tooltip.innerHTML = "Remove Metric";
+      tooltip.init(button);
+
+      button.addEventListener('fn-button-click', function() {
+        base.fireRemoveMetricEvent();
+      }, false);
+    };
 
     this.handleSelectMetricControls = function() {
       var base = this;
@@ -542,13 +533,19 @@
     };
 
     this.fireAddMetricEvent = function() {
-      console.log("fire event");
       this.dispatchEvent(new Event('fn-metric-control-add-metric'));
     };
 
     this.fireRemoveMetricEvent = function() {
       //add detail index
-      this.dispatchEvent(new Event('fn-metric-control-remove-metric'));
+      var removeEvent = new CustomEvent(
+        'fn-metric-control-remove-metric', {
+          'detail': {'index' :this.getAttribute('data-index')},
+          bubbles: true,
+          cancelable: true
+      });
+
+      this.dispatchEvent(removeEvent);
     };
 
     this.attributeChangedEvent = function(attr) {
