@@ -12,9 +12,9 @@
 #include <xzero/net/LocalConnector.h>
 #include <xzero/net/InetConnector.h>
 #include <xzero/net/IPAddress.h>
+#include <xzero/WallClock.h>
 #include <xzero/executor/DirectExecutor.h>
 #include <xzero/executor/NativeScheduler.h>
-#include <xzero/support/libev/LibevClock.h>
 
 using xzero::Buffer;
 using xzero::IPAddress;
