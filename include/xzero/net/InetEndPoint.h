@@ -9,7 +9,6 @@
 
 #include <xzero/Api.h>
 #include <xzero/sysconfig.h>
-#include <xzero/io/Selectable.h>
 #include <xzero/IdleTimeout.h>
 #include <xzero/net/EndPoint.h>
 #include <xzero/net/IPAddress.h>
@@ -17,7 +16,6 @@
 namespace xzero {
 
 class InetConnector;
-class SelectionKey;
 
 /**
  * TCP/IP endpoint, as created by the InetConnector.
