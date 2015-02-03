@@ -21,7 +21,6 @@
 #include <string>
 #include <ctime>
 #include <pthread.h>
-#include <ev++.h>
 
 namespace xzero {
 
@@ -37,7 +36,7 @@ namespace xzero {
  */
 class XZERO_API DateTime {
  private:
-  ev_tstamp value_;
+  double value_;
   mutable Buffer http_;
   mutable Buffer htlog_;
 
@@ -56,12 +55,12 @@ class XZERO_API DateTime {
   explicit DateTime(const std::string& http_v);
 
   /** Initializes this object with the given timestamp. */
-  explicit DateTime(ev::tstamp v);
+  explicit DateTime(double v);
 
   ~DateTime();
 
-  /** Retrieves the timestamp as type @c ev::tstamp, as used by libev. */
-  ev::tstamp value() const;
+  /** Retrieves the timestamp as type @c double, as used by libev. */
+  double value() const;
 
   /** Retrieves the timestamp as @c time_t. */
   std::time_t unixtime() const;
@@ -73,10 +72,11 @@ class XZERO_API DateTime {
    */
   const Buffer& http_str() const;
   const Buffer& htlog_str() const;
+  std::string to_s() const;
 
   void update();
-  void update(ev::tstamp vvalue);
-  DateTime& operator=(ev::tstamp value);
+  void update(double vvalue);
+  DateTime& operator=(double value);
   DateTime& operator=(const DateTime& value);
 
   bool valid() const;
@@ -106,17 +106,17 @@ inline time_t DateTime::mktime(const char* v) {
   return 0;
 }
 
-inline ev::tstamp DateTime::value() const { return value_; }
+inline double DateTime::value() const { return value_; }
 
 inline std::time_t DateTime::unixtime() const {
   return static_cast<std::time_t>(value_);
 }
 
 inline void DateTime::update() {
-  update(static_cast<ev::tstamp>(std::time(nullptr)));
+  update(static_cast<double>(std::time(nullptr)));
 }
 
-inline void DateTime::update(ev::tstamp v) {
+inline void DateTime::update(double v) {
   if (value_ != v) {
     value_ = v;
     http_.clear();
@@ -124,7 +124,7 @@ inline void DateTime::update(ev::tstamp v) {
   }
 }
 
-inline DateTime& DateTime::operator=(ev::tstamp value) {
+inline DateTime& DateTime::operator=(double value) {
   update(value);
   return *this;
 }
@@ -141,7 +141,7 @@ inline int DateTime::compare(const DateTime& a, const DateTime& b) {
 }
 
 inline TimeSpan operator-(const DateTime& a, const DateTime& b) {
-  ev::tstamp diff = a.value() - b.value();
+  double diff = a.value() - b.value();
 
   if (diff < 0) diff = -diff;
 

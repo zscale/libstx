@@ -18,7 +18,6 @@
 #include <xzero/Api.h>
 #include <xzero/Buffer.h>
 #include <cstdio>
-#include <ev.h>
 
 namespace xzero {
 
@@ -27,16 +26,16 @@ namespace xzero {
  */
 class XZERO_API TimeSpan {
  private:
-  ev_tstamp value_;
+  double value_;
 
  public:
   TimeSpan() : value_(0) {}
-  TimeSpan(ev_tstamp v) : value_(v) {}
+  TimeSpan(double v) : value_(v) {}
   TimeSpan(std::size_t v) : value_(v) {}
   TimeSpan(const TimeSpan& v) : value_(v.value_) {}
 
-  ev_tstamp value() const { return value_; }
-  ev_tstamp operator()() const { return value_; }
+  double value() const { return value_; }
+  double operator()() const { return value_; }
 
   int days() const { return ((int)value_ / ticksPerDay()); }
   int hours() const {
@@ -66,14 +65,14 @@ class XZERO_API TimeSpan {
     return TimeSpan(ticksPerSecond() * v);
   }
   static TimeSpan fromMilliseconds(std::size_t v) {
-    return TimeSpan(ev_tstamp(v / 1000 + (unsigned(v) % 1000) / 1000.0));
+    return TimeSpan(double(v / 1000 + (unsigned(v) % 1000) / 1000.0));
   }
   static TimeSpan fromMicroseconds(long v) {
-    return TimeSpan(ev_tstamp(
+    return TimeSpan(double(
         v / 1000000 + (uint64_t(v) % 1000000) / 1000000.0));
   }
   static TimeSpan fromNanoseconds(long v) {
-    return TimeSpan(ev_tstamp(
+    return TimeSpan(double(
         v / 1000000000 + (uint64_t(v) % 1000000000) / 1000000000.0));
   }
 
