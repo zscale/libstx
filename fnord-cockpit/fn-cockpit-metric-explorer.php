@@ -184,6 +184,11 @@ function fn_render_metric_explorer($rpc_url) {
     return path;
   }
 
+  function setUrlHash(url_hash) {
+    window.history.pushState({url: url_hash}, "#", url_hash);
+    window.location.hash = url_hash;
+  }
+
   window.addEventListener('fn-ready' ,function() {
     var fragment = window.location.hash;
     if (fragment) {

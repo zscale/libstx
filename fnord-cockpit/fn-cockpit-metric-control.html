@@ -487,27 +487,24 @@
       });
 
       rollup.addEventListener("fn-dropdown-item-click", function(e) {
-        var view = e.srcElement.getAttribute('data-value');
-        base.setAttribute("data-rollup", view);
+        base.params.aggr_fn = e.srcElement.getAttribute('data-value');
         base.handleAggregationDisplay();
-        base.attributeChangedEvent({"view" : view});
+        base.attributeChangedEvent("aggr_fn");
       }, false);
 
       time_window.addEventListener("fn-dropdown-item-click", function(e) {
-        var value = e.srcElement.getAttribute('data-value');
-        base.setAttribute('data-aggr_window', value);
-        base.attributeChangedEvent({"aggr_window": value});
+        base.params.aggr_window = e.srcElement.getAttribute('data-value');
+        base.attributeChangedEvent("aggr_window");
       }, false);
 
       time_step.addEventListener("fn-dropdown-item-click", function(e) {
-        var value = e.srcElement.getAttribute('data-value');
-        base.setAttribute('data-aggr_step', value);
-        base.attributeChangedEvent({"aggr_step": value});
+        base.params.aggr_step = e.srcElement.getAttribute('data-value');
+        base.attributeChangedEvent("aggr_step");
       }, false);
 
       scale_input.addEventListener('fn-input-submit', function(e) {
-        base.setAttribute('data-scale', e.detail);
-        base.attributeChangedEvent({"scale" : e.detail});
+        base.params.scale = e.detail;
+        base.attributeChangedEvent("scale");
       }, false);
 
     }
@@ -563,7 +560,7 @@
     this.attributeChangedEvent = function(attr) {
       var attrEvent = new CustomEvent(
         'fn-metric-control-attr-changed', {
-        "detail" : attr,
+        "detail" : {"key": attr},
         bubbels: true,
         cancelable: true
       });
