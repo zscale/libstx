@@ -546,15 +546,7 @@
     };
 
     this.fireRemoveMetricEvent = function() {
-      //add detail index
-      var removeEvent = new CustomEvent(
-        'fn-metric-control-remove-metric', {
-          'detail': {'index' :this.getAttribute('data-index')},
-          bubbles: true,
-          cancelable: true
-      });
-
-      this.dispatchEvent(removeEvent);
+      this.dispatchEvent(new Event('fn-metric-control-remove-metric'));
     };
 
     this.attributeChangedEvent = function(attr) {
