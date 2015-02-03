@@ -1,10 +1,7 @@
 if(ENABLE_EXAMPLES)
 
-  # add_executable(scheduler scheduler.cpp)
-  # target_link_libraries(scheduler xzero)
-
-  # add_executable(compress compress.cpp)
-  # target_link_libraries(compress xzero)
+  add_executable(compress compress.cpp)
+  target_link_libraries(compress xzero)
 
   add_executable(echo-server echo-server.cpp)
   target_link_libraries(echo-server xzero)
@@ -33,8 +30,8 @@ if(ENABLE_EXAMPLES)
   # add_executable(http-service http-service.cpp)
   # target_link_libraries(http-service xzero)
 
-  # add_executable(threaded-executor threaded-executor.cpp)
-  # target_link_libraries(threaded-executor xzero)
+  add_executable(threaded-executor threaded-executor.cpp)
+  target_link_libraries(threaded-executor xzero)
 
   # add_executable(hello_http hello_http.cpp)
   # target_link_libraries(hello_http xzero)

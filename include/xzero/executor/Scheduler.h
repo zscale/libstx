@@ -32,7 +32,6 @@ class XZERO_API Scheduler : public Executor {
     }
 
     ~Handle() {
-      cancel();
     }
 
     void cancel() {
