@@ -351,14 +351,20 @@
       var shadow = this.createShadowRoot();
       shadow.appendChild(tpl);
 
-      if (this.getAttribute('data-index') == 0) {
-        this.setAddButton();
-      } else {
-        this.setRemoveButton();
+      if (this.getAttribute('data-resolved') == "resolved" &&
+          typeof this.params == 'object') {
+            this.init();
       }
+
     }
 
-
+    this.attributeChangedCallback = function(attr, old_val, new_val) {
+      if (attr == "data-resolved" &&
+          new_val == "resolved" &&
+          typeof this.params == 'object') {
+            this.init();
+      }
+    }
 
     this.handleAggregationDisplay = function() {
       var view = this.getAttribute('data-rollup');
@@ -374,6 +380,12 @@
     };
 
     this.init = function() {
+      if (this.getAttribute('data-index') == 0) {
+        this.setAddButton();
+      } else {
+        this.setRemoveButton();
+      }
+
       this.handleControls();
       this.handleSelectMetricControls();
       this.handleAggregationDisplay();
@@ -451,19 +463,19 @@
 
     this.handleControls = function() {
       var base = this;
-      this.shadowRoot.querySelector("h3").innerHTML = this.getAttribute('data-metric');
+      this.shadowRoot.querySelector("h3").innerHTML = this.params.name;
       var rollup = this.shadowRoot.getElementById("rollup");
-      rollup.setAttribute('data-preselected', this.getAttribute('data-rollup'));
+      rollup.setAttribute('data-preselected', this.params.aggr_fn);
 
       var time_window = this.shadowRoot.getElementById("time_window");
-      time_window.setAttribute('data-preselected', this.getAttribute('data-aggr_window'));
+      time_window.setAttribute('data-preselected', this.params.aggr_window);
 
       var time_step = this.shadowRoot.getElementById("time_step");
-      time_step.setAttribute('data-preselected', this.getAttribute('data-aggr_step'));
+      time_step.setAttribute('data-preselected', this.params.aggr_step);
 
       var scale_input = this.shadowRoot.getElementById("scale_input");
-      scale_input.setAttribute('data-value', this.getAttribute('data-scale'));
-      scale_input.setAttribute('data-placeholder', this.getAttribute('data-scale'));
+      scale_input.setAttribute('data-value', this.params.scale);
+      scale_input.setAttribute('data-placeholder', this.params.scale);
 
       var tooltip_aggr = this.shadowRoot.getElementById("tooltip_aggr");
       tooltip_aggr.initShowIf(time_window, function() {

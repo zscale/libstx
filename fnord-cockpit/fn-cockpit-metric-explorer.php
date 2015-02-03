@@ -145,9 +145,7 @@ function fn_render_metric_explorer($rpc_url) {
         }
       }
 
-      if (metricIndex > 0) {
-        params["metric" + metricIndex] = metricCollector;
-      }
+      params["metric" + metricIndex] = metricCollector;
       params.metrics = metricIndex + 1;
     }
 

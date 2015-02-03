@@ -193,7 +193,6 @@
       this.updateData(this.getAttribute("data-format"));
     };
 
-
     this.init = function() {
       this.handleGenericControls();
       this.handleDateTimeControls();
@@ -206,110 +205,6 @@
         this.initMetricControl(this.addMetricControl(i), i);
       }
     };
-
-    this.initMetricControl = function(metric, index) {
-      metric.setAttribute('data-index', index);
-      var metric_params = {
-        "name": this.getMetricUrlParamOrDefault("name", index),
-        "aggr_fn": this.getMetricUrlParamOrDefault("aggr_fn", index),
-        "aggr_window": this.getMetricUrlParamOrDefault("aggr_window", index),
-        "aggr_step": this.getMetricUrlParamOrDefault("aggr_step", index),
-        "scale": this.getMetricUrlParamOrDefault("scale", index)
-      }
-
-      if (metric_params.name) {
-        metric_params.columns = this.getMetricColumns(name);
-      }
-
-      /*
-        base.updateUrlParams(
-          base.addRequiredURLParamsForView(
-            base.getGenericParamOrDefault("view")));
-      });*/
-
-      metric.params = metric_params;
-      metric.setAttribute('data-resolved', 'resolved');
-
-      /* handle events */
-      metric.addEventListener(
-        "fn-metric-control-attr-changed", function(e) {
-          base.updateUrlParams(e.detail);
-        },
-      false);
-
-      if (index > 0) {
-        metric.addEventListener('fn-metric-control-remove-metric', function(e) {
-          base.removeMetricControl();
-        }, false);
-      } else {
-        metric.addEventListener('fn-metric-control-add-metric', function() {
-          base.addMetricControl();
-        }, false);
-      }
-    };
-
-    this.getMetricColumns = function(metric) {
-      var url = baseUrl + "list?filter=" + encodeURIComponent(metric);
-      var columns = {}
-      Fnord.httpGet(url, function(r) {
-        if (r.status == 200) {
-          var json = JSON.parse(r.response);
-          json.metrics.map(function(m) {
-            columns = m.labels.join(",");
-            //control.handleGroupByControls(m.labels.join(","));
-          });
-        }
-
-        return columns;
-      });
-    }
-
-
-
-    this.getMetricUrlParamOrDefault = function(key, index) {
-      var defaults = {
-        "aggr_fn": "sum",
-        "aggr_window": "5",
-        "aggr_step": "10",
-        "scale" : "0.8"
-      }
-
-      var value = this.params["metric" + index][key];
-      if (value == undefined) {
-        value = defaults[key];
-      }
-
-      return value;
-    };
-
-    this.getGenericParamOrDefault = function(key) {
-      var defaults = {
-        end_time : Math.round(Date.now() / 1000),
-        /* 5 minutes  */
-        time_range : 3600,
-        /* 10, 5 seconds */
-        aggr_step : 10,
-        aggr_window : 5,
-        logarithmic : false,
-        inverted: false,
-        min: 0
-      }
-
-      if (key == "time_range") {
-        var end_time = parseInt(this.getGenericParamOrDefault("end_time"), 10);
-        var start_time = parseInt(this.params['start_time'], 10);
-        if (!isNaN(start_time)) {
-          return end_time - start_time;
-        } else {
-          return defaults['time_range'];
-        }
-      }
-
-      var value = (this.params[key])?
-        this.params[key] : defaults[key];
-
-      return value;
-    }
 
     this.buildQueryUrl = function(format) {
       var url = baseUrl + "timeseries?";
@@ -392,45 +287,7 @@
 
       fn_table.renderTable();
       this.querySelector("#result_pane_loader").removeAttribute("data-loading");
-    }
-
-
-    /* returns all missing params */
-    this.addRequiredURLParamsForView = function(view) {
-      var new_params = {};
-      var update = false;
-      if (view == "count" ||
-          view == "sum"   ||
-          view == "mean"  ||
-          view == "min"   ||
-          view == "max" ) {
-
-        var time_window = this.params.query_params.aggr_window;
-        if (time_window == undefined) {
-          new_params.aggr_window = this.getGenericParamOrDefault("aggr_window");
-          update = true;
-        }
-        var aggr_step = this.params.query_params.aggr_step;
-        if (aggr_step == undefined) {
-          new_params.aggr_step = this.getGenericParamOrDefault("aggr_step");
-          update = true;
-        }
-      }
-
-      var group_by = this.params.query_params.by;
-      if (group_by == undefined) {
-        new_params.by = this.columns;
-        update = true;
-      }
-      var param_columns = this.params.query_params.columns;
-      if (param_columns == undefined) {
-        new_params.columns = this.columns;
-        update = true;
-      }
-
-      return new_params;
     };
-
 
     this.updateUrlParams = function(new_params) {
       for (var key in new_params) {
@@ -444,7 +301,6 @@
       }
     };
 
-    
     this.onRefresh = function() {
       var end_time = Date.now();
       var time_range = this.getGenericParamOrDefault('time_range');
@@ -452,7 +308,82 @@
       this.updateUrlParams({
         'end_time' : end_time,
         'start_time' : start_time});
-    }
+    };
+
+/*********************** Metric Controls *****************************/
+    this.getMetricUrlParamOrDefault = function(key, index) {
+      var defaults = {
+        "aggr_fn": "sum",
+        "aggr_window": "5",
+        "aggr_step": "10",
+        "scale" : "0.8"
+      }
+
+      console.log(this.params);
+      var value = this.params["metric" + index][key];
+      if (value == undefined) {
+        value = defaults[key];
+      }
+
+      return value;
+    };
+
+    this.getMetricColumns = function(metric) {
+      var url = baseUrl + "list?filter=" + encodeURIComponent(metric);
+      var columns = {}
+      Fnord.httpGet(url, function(r) {
+        if (r.status == 200) {
+          var json = JSON.parse(r.response);
+          json.metrics.map(function(m) {
+            columns = m.labels.join(",");
+            //control.handleGroupByControls(m.labels.join(","));
+          });
+        }
+
+        return columns;
+      });
+    };
+
+    this.initMetricControl = function(metric, index) {
+      metric.setAttribute('data-index', index);
+      var aggr_fn = this.getMetricUrlParamOrDefault("aggr_fn", index);
+      var metric_params = {
+        "name": this.getMetricUrlParamOrDefault("name", index),
+        "aggr_fn": aggr_fn,
+        "scale": this.getMetricUrlParamOrDefault("scale", index)
+      }
+
+      if (aggr_fn != "value") {
+        metric_params.aggr_window =
+          this.getMetricUrlParamOrDefault("aggr_window", index);
+        metric_params.aggr_step =
+          this.getMetricUrlParamOrDefault("aggr_step", index);
+      }
+
+      if (metric_params.name) {
+        metric_params.columns = this.getMetricColumns(name);
+      }
+
+      metric.params = metric_params;
+      metric.setAttribute('data-resolved', 'resolved');
+
+      /* handle events */
+      metric.addEventListener(
+        "fn-metric-control-attr-changed", function(e) {
+          base.updateUrlParams(e.detail);
+        },
+      false);
+
+      if (index > 0) {
+        metric.addEventListener('fn-metric-control-remove-metric', function(e) {
+          base.removeMetricControl();
+        }, false);
+      } else {
+        metric.addEventListener('fn-metric-control-add-metric', function() {
+          base.addMetricControl();
+        }, false);
+      }
+    };
 
     this.addMetricControl = function(index) {
       var controls = this.querySelectorAll("fn-metric-control");
@@ -475,7 +406,35 @@
 
     }
 
-/************************* controls handle functions **************************/
+/************************* Generic Controls **************************/
+    this.getGenericParamOrDefault = function(key) {
+      var defaults = {
+        end_time : Math.round(Date.now() / 1000),
+        /* 5 minutes  */
+        time_range : 3600,
+        /* 10, 5 seconds */
+        aggr_step : 10,
+        aggr_window : 5,
+        logarithmic : false,
+        inverted: false,
+        min: 0
+      }
+
+      if (key == "time_range") {
+        var end_time = parseInt(this.getGenericParamOrDefault("end_time"), 10);
+        var start_time = parseInt(this.params['start_time'], 10);
+        if (!isNaN(start_time)) {
+          return end_time - start_time;
+        } else {
+          return defaults['time_range'];
+        }
+      }
+
+      var value = (this.params[key])?
+        this.params[key] : defaults[key];
+
+      return value;
+    }
 
     this.splitColumns = function(columns) {
       if (columns.length == 0) {return [];}
@@ -511,7 +470,7 @@
       var daterangepicker = this.querySelector("fn-daterangepicker");
       daterangepicker.setAttribute('data-daterange', (time_range_val * 1000));
       daterangepicker.setAttribute('data-endtime', (end_time * 1000));
-      /*var chevron_right = daterangepicker.shadowRoot.querySelector(".fa-chevron-right");
+     /* var chevron_right = daterangepicker.shadowRoot.querySelector(".fa-chevron-right");
 
       var tooltip = this.querySelector("#ttp_endtime");
       tooltip.initShowIf(chevron_right, function() {
