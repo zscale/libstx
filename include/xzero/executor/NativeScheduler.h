@@ -16,7 +16,6 @@
 
 namespace xzero {
 
-class NativeKey;
 class WallClock;
 
 class XZERO_API NativeScheduler : public Scheduler {
@@ -55,7 +54,6 @@ class XZERO_API NativeScheduler : public Scheduler {
 
  private:
   WallClock* clock_;
-  std::list<NativeKey*> keys_;
   std::mutex lock_;
   int wakeupPipe_[2];
 
