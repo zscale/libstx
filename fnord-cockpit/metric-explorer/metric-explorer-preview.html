@@ -440,6 +440,8 @@
       var metric_control = 
         this.querySelector("fn-metric-control[data-index='" + index + "']");
 
+      metric_control.parentNode.removeChild(metric_control);
+
       if (this.params["metric" + index]) {
         //metric has been initialised
         delete this.params["metric" + index];
