@@ -76,26 +76,33 @@
       border-bottom: none !important;
     }
 
-
+    fn-datepicker /deep/ #datepicker_widget {
+      left: 170px;
+    }
 
     .result_pane fn-pager {
       float:right;
       margin-right: 5px;
     }
 
+    fn-dropdown#view {
+      margin: 10px 20px 0 0;
+    }
+
   </style>
   <fn-loader>
     <div class="navigation">
-      <fn-button id="embed_btn" data-size='tiny'>
+      <fn-button id="embed_btn" class="right" data-size='tiny'>
         <i class='fa fa-share'></i>
-        Embed
       </fn-button>
-      <fn-button id="auto_refresh" data-toggle data-size='tiny'>
+      <fn-button id="auto_refresh" class="right" data-toggle data-size='tiny'>
         <i class='fa fa-refresh'></i>
-        Auto Refresh
       </fn-button>
-      <fn-button data-format="csv" style="margin-right:15px;" class="right" data-size="tiny">Raw</fn-button>
-      <fn-button data-format="svg" class="right" data-state="active" data-size="tiny">Chart</fn-button>
+      <fn-dropdown id="view" class="right">
+        <fn-dropdown-header>Chart</fn-dropdown-header>
+        <fn-dropdown-item data-value='svg'>Chart</fn-dropdown-item>
+        <fn-dropdown-item data-value='csv'>Raw</fn-dropdown-item>
+      </fn-dropdown>
     </div>
     <fn-metric-control data-index="0"></fn-metric-control>
     <fn-controls type='secondary'>
@@ -111,7 +118,7 @@
             <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
             <fn-dropdown-item data-value=86400>1 day</fn-dropdown-item>
           </fn-dropdown>
-          <fn-datepicker data-time-select data-selectable="past">
+          <fn-datepicker data-size="small" data-time-select data-selectable="past">
           </fn-datepicker>
 
           <fn-daterangepicker data-size="small" data-selectable='past'>
@@ -158,6 +165,8 @@
   <fn-tooltip data-pointer="right" id='ttp_endtime'>
     Please select a date in the past
   </fn-tooltip>
+  <fn-tooltip id="ttp_embed">Embed</fn-tooltip>
+  <fn-tooltip id="ttp_refresh">Auto Refresh</fn-tooltip>
 </template>
 
 <script type='text/javascript'>
@@ -184,7 +193,7 @@
           this.init();
           break;
         case 'data-format' :
-          this.toggleView(new_val);
+          this.updateData(new_val);
           break;
         default:
           break;
@@ -290,15 +299,6 @@
         'from' : from});
     };
 
-    this.toggleView = function(format) {
-      this.querySelector(".result_pane.active").classList.remove("active");
-      this.querySelector(".result_pane[data-format='"+ format +"']").classList.add("active");
-
-      this.querySelector("fn-button[data-format][data-state='active']").removeAttribute("data-state");
-      this.querySelector("fn-button[data-format='"+ format +"']").setAttribute("data-state", "active");
-
-      this.updateData(format);
-    };
 
     this.renderCsvAsTable = function(csv) {
       var fn_table = this.querySelector(".result_pane[data-format='csv'] fn-table");
@@ -427,6 +427,10 @@
           base.initMetricControl(this, index, e.detail.name);
           base.update();
         }, false);
+
+        new_control.addEventListener('fn-metric-control-remove-metric', function() {
+          base.removeMetricControl(index);
+        }, false);
       }
 
       return new_control;
@@ -435,9 +439,13 @@
     this.removeMetricControl = function(index) {
       var metric_control = 
         this.querySelector("fn-metric-control[data-index='" + index + "']");
-      metric_control.parentNode.removeChild(metric_control);
 
-      delete this.params["metric" + index];
+      if (this.params["metric" + index]) {
+        //metric has already been initialised
+        delete this.params["metric" + index];
+        this.params.metrics = this.params.metrics - 1;
+      }
+
       this.update();
     }
 
@@ -556,13 +564,12 @@
       }
 
       /* handle Events */
-      this.querySelector("fn-button[data-format='csv']").addEventListener('fn-button-click', function() {
-        base.setAttribute("data-format", "csv");
-      }, false);
+      this.querySelector(
+        "fn-dropdown#view").addEventListener('fn-dropdown-item-click', function(e) {
+          base.setAttribute("data-format", e.srcElement.getAttribute('data-value'));
+        },
+      false);
 
-      this.querySelector("fn-button[data-format='svg']").addEventListener('fn-button-click', function() {
-        base.setAttribute("data-format", "svg");
-      }, false);
 
       log_scale.addEventListener("fn-checkbox-select", function(e) {
         base.updateGenericParams({"logarithmic" : true});
