@@ -45,6 +45,8 @@ class XZERO_API NativeScheduler : public Scheduler {
   void runLoopOnce() override;
   void breakLoop() override;
 
+  size_t timerCount();
+
  protected:
   void removeFromTimersList(Handle* handle);
   HandleRef insertIntoTimersList(DateTime dt, HandleRef handle);
