@@ -268,8 +268,8 @@
           base.fireTimeInputSubmitEvent();
           return;
         }
-        if (!FnordMetric.util.isNavKey(e.keyCode) &&
-          !FnordMetric.util.isNumKey(e.keyCode)) {
+        if (!base.isNavKey(e.keyCode) &&
+          !base.isNumKey(e.keyCode)) {
             e.preventDefault();
         }
       }, false);
@@ -291,8 +291,8 @@
           base.fireTimeInputSubmitEvent();
           return;
         }
-        if (!FnordMetric.util.isNavKey(e.keyCode) &&
-          !FnordMetric.util.isNumKey(e.keyCode)) {
+        if (!base.isNavKey(e.keyCode) &&
+          !base.isNumKey(e.keyCode)) {
             e.preventDefault();
         }
       }, false);
