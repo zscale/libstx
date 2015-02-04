@@ -41,11 +41,11 @@ class XZERO_API NativeScheduler : public Scheduler {
   HandleRef executeAt(DateTime dt, Task task) override;
   HandleRef executeOnReadable(int fd, Task task) override;
   HandleRef executeOnWritable(int fd, Task task) override;
-
+  size_t timerCount() override;
+  size_t readerCount() override;
+  size_t writerCount() override;
   void runLoopOnce() override;
   void breakLoop() override;
-
-  size_t timerCount();
 
  protected:
   void removeFromTimersList(Handle* handle);
