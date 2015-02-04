@@ -98,7 +98,7 @@
       <fn-button id="auto_refresh" class="right" data-toggle data-size='tiny'>
         <i class='fa fa-refresh'></i>
       </fn-button>
-      <fn-dropdown id="view" class="right">
+      <fn-dropdown data-style="small" id="view" class="right">
         <fn-dropdown-header>Chart</fn-dropdown-header>
         <fn-dropdown-item data-value='svg'>Chart</fn-dropdown-item>
         <fn-dropdown-item data-value='csv'>Raw</fn-dropdown-item>
@@ -165,8 +165,8 @@
   <fn-tooltip data-pointer="right" id='ttp_endtime'>
     Please select a date in the past
   </fn-tooltip>
-  <fn-tooltip id="ttp_embed">Embed</fn-tooltip>
-  <fn-tooltip id="ttp_refresh">Auto Refresh</fn-tooltip>
+  <fn-tooltip data-pointer='right' id="ttp_embed">Embed</fn-tooltip>
+  <fn-tooltip data-pointer='right' id="ttp_refresh">Auto Refresh</fn-tooltip>
 </template>
 
 <script type='text/javascript'>
