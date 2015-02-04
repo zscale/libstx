@@ -26,8 +26,6 @@
       float:right;
     }
 
-    
-
     .group {
       height: 100%;
       float: left;
@@ -132,32 +130,32 @@
 
     .metric {
       float:left;
-      width: inherit;
       height: 70px;
+      width: 250px;
     }
 
     .metric > .view {
       display: none;
-      width: 280px;
-      padding-left: 20px;
+      min-width: 200px;
+      width: 100%;
     }
 
     .metric > .view.active {
       display: block;
     }
 
+
     .metric > .view > h3 {
       font-size: 1rem;
       padding: 0;
-      margin: 18px 0 0;
+      margin: 18px 0 0 15px;
       white-space: nowrap;
       overflow: hidden;
-      width: inherit;
     }
 
     .metric .view fn-search {
       width: 280px;
-      margin-top: 7px;
+      margin: 7px 0 0 20px;
       display: block;
     }
 
@@ -171,6 +169,8 @@
 
     .metric .view .fa {
       opacity: 0.7;
+      margin: 4px 0 0 4px;
+      font-size:0.9em;
     }
     .metric .view .fa:hover {
       cursor: pointer;
@@ -354,6 +354,8 @@
       if (this.getAttribute('data-resolved') == "resolved" &&
           typeof this.params == 'object') {
             this.init();
+      } else {
+        this.setControlButton();
       }
 
       this.handleSelectMetricControls();
@@ -380,15 +382,18 @@
     };
 
     this.init = function() {
+      this.setControlButton();
+      this.handleControls();
+      this.handleSelectMetricControls();
+      this.handleAggregationDisplay();
+    };
+
+    this.setControlButton = function() {
       if (this.getAttribute('data-index') == 0) {
         this.setAddButton();
       } else {
         this.setRemoveButton();
       }
-
-      this.handleControls();
-      this.handleSelectMetricControls();
-      this.handleAggregationDisplay();
     };
 
     this.setAddButton = function() {
@@ -447,7 +452,6 @@
       }, false);
 
       search.addEventListener('fn-search-submit', function() {
-        console.log(base.hasAttribute('data-resolved'));
         if (base.getAttribute('data-resolved') == 'resolved') {
           //change metric
           base.params.name = this.getValue();
