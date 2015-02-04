@@ -49,7 +49,7 @@ class XZERO_API NativeScheduler : public Scheduler {
  protected:
   void removeFromTimersList(Handle* handle);
   HandleRef insertIntoTimersList(DateTime dt, HandleRef handle);
-  void collectTimeouts();
+  void collectTimeouts(std::vector<HandleRef>* result);
 
  private:
   WallClock* clock_;
