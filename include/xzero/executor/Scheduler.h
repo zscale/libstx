@@ -115,6 +115,18 @@ class XZERO_API Scheduler : public Executor {
   virtual size_t writerCount() = 0;
 
   /**
+   * Retrieves the number of pending tasks.
+   *
+   * @see execute(Task task)
+   */
+  virtual size_t taskCount() = 0;
+
+  /**
+   * Runs the event loop until no event is to be served.
+   */
+  virtual void runLoop() = 0;
+
+  /**
    * Runs the event loop exactly once, possibly blocking until an event is
    * fired..
    */
