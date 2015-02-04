@@ -87,7 +87,6 @@ int main(int argc, const char* argv[]) {
   xzero::NativeScheduler scheduler;
   xzero::WallClock* clock = xzero::WallClock::system();
   xzero::Server server;
-  bool running = true;
 
   auto localConnector = server.addConnector<xzero::LocalConnector>(&executor);
   localConnector->addConnectionFactory<EchoFactory>();
@@ -102,9 +101,7 @@ int main(int argc, const char* argv[]) {
   auto ep = localConnector->createClient("Hello, World!\n");
   printf("local result: %s", ep->output().c_str());
 
-  while (running) {
-    scheduler.runLoopOnce();
-  }
+  scheduler.runLoop();
 
   server.stop();
 
