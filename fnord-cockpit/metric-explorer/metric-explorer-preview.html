@@ -441,7 +441,7 @@
         this.querySelector("fn-metric-control[data-index='" + index + "']");
 
       if (this.params["metric" + index]) {
-        //metric has already been initialised
+        //metric has been initialised
         delete this.params["metric" + index];
         this.params.metrics = this.params.metrics - 1;
       }
@@ -513,12 +513,12 @@
       var daterangepicker = this.querySelector("fn-daterangepicker");
       daterangepicker.setAttribute('data-daterange', (time_range_val * 1000));
       daterangepicker.setAttribute('data-endtime', (end_time * 1000));
-     /* var chevron_right = daterangepicker.shadowRoot.querySelector(".fa-chevron-right");
+      var chevron_right = daterangepicker.shadowRoot.querySelector(".fa-chevron-right");
 
       var tooltip = this.querySelector("#ttp_endtime");
       tooltip.initShowIf(chevron_right, function() {
         return !(daterangepicker.nextIsSelectable());
-      });*/
+      });
 
       time_range.addEventListener("fn-dropdown-item-click", function(e) {
         var endtime = base.getGenericParamOrDefault("until");
@@ -556,6 +556,11 @@
       /* init */
       var log_scale = this.querySelector("#log_scale");
       var inv_scale = this.querySelector("#inv_scale");
+      var embed_btn = this.querySelector("#embed_btn");
+      var autorefresh_btn = this.querySelector("#auto_refresh");
+      var modal = this.querySelector("fn-modal");
+      var interval_id;
+
       if (this.getGenericParamOrDefault("logarithmic") === "true") {
         log_scale.setAttribute("data-preselected", true);
       }
@@ -563,13 +568,15 @@
         inv_scale.setAttribute("data-preselected", true);
       }
 
+      this.querySelector("fn-tooltip#ttp_embed").init(embed_btn);
+      this.querySelector("fn-tooltip#ttp_refresh").init(autorefresh_btn);
+
       /* handle Events */
       this.querySelector(
         "fn-dropdown#view").addEventListener('fn-dropdown-item-click', function(e) {
           base.setAttribute("data-format", e.srcElement.getAttribute('data-value'));
         },
       false);
-
 
       log_scale.addEventListener("fn-checkbox-select", function(e) {
         base.updateGenericParams({"logarithmic" : true});
@@ -587,8 +594,7 @@
         base.updateGenericParams({"inverted" : false});
       }, false);
 
-      var interval_id;
-      this.querySelector("#auto_refresh").addEventListener('fn-button-click', function() {
+      autorefresh_btn.addEventListener('fn-button-click', function() {
         if (this.getAttribute('data-state') == "active") {
           window.clearInterval(interval_id);
           this.removeAttribute('data-state');
@@ -598,8 +604,7 @@
         }
       }, false);
 
-      var modal = this.querySelector("fn-modal");
-      this.querySelector("#embed_btn").addEventListener('fn-button-click', function() {
+      embed_btn.addEventListener('fn-button-click', function() {
         modal.querySelector("span").innerHTML = baseUrl + base.getAttribute('data-url');
         modal.show();
       }, false);
