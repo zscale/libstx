@@ -45,6 +45,8 @@ class XZERO_API Scheduler : public Executor {
       onFire_();
     }
 
+    Task getAction() const { return onFire_; }
+
    private:
     std::function<void(Handle*)> onCancel_;
     Task onFire_;
@@ -77,6 +79,28 @@ class XZERO_API Scheduler : public Executor {
    * Runs given task when given selectable is non-blocking writable.
    */
   virtual HandleRef executeOnWritable(int fd, Task task) = 0;
+
+  /**
+   * Retrieves the number of active timers.
+   *
+   * @see executeAt(DateTime dt, Task task)
+   * @see executeAfter(TimeSpan ts, Task task)
+   */
+  virtual size_t timerCount() = 0;
+
+  /**
+   * Retrieves the number of active read-interests.
+   *
+   * @see executeOnReadable(int fd, Task task)
+   */
+  virtual size_t readerCount() = 0;
+
+  /**
+   * Retrieves the number of active write-interests.
+   *
+   * @see executeOnWritable(int fd, Task task)
+   */
+  virtual size_t writerCount() = 0;
 
   /**
    * Runs the event loop exactly once, possibly blocking until an event is
