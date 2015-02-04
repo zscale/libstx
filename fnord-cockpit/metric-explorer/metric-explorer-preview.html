@@ -170,6 +170,12 @@
         this.init()
       }
 
+      document.addEventListener("DOMContentLoaded", function() {
+        var loader = this.querySelector("#result_pane_loader"); 
+        var pos_top = loader.getBoundingClientRect().top;
+        loader.style.height = (window.innerHeight - pos_top - 36) + "px";
+      }, false);
+
     };
 
     this.attributeChangedCallback = function(attr, old_val, new_val) {
