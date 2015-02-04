@@ -28,28 +28,39 @@ class XZERO_API Scheduler : public Executor {
    public:
     Handle(Task onFire, std::function<void(Handle*)> onCancel)
         : onFire_(onFire),
-          onCancel_(onCancel) {
+          onCancel_(onCancel),
+          isCancelled_(false) {
     }
 
     ~Handle() {
     }
 
     void cancel() {
+      isCancelled_ = true;
       if (onCancel_) {
         auto cancelThat = std::move(onCancel_);
         cancelThat(this);
       }
     }
 
-    void fire() {
-      onFire_();
+    bool isCancelled() const {
+      return isCancelled_;
     }
 
-    Task getAction() const { return onFire_; }
+    Task getAction() const {
+      return onFire_;
+    }
+
+    void fire() {
+      if (!isCancelled_) {
+        onFire_();
+      }
+    }
 
    private:
     std::function<void(Handle*)> onCancel_;
     Task onFire_;
+    bool isCancelled_;
   };
 
   typedef std::shared_ptr<Handle> HandleRef;
