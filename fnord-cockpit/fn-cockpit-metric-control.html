@@ -354,8 +354,8 @@
       if (this.getAttribute('data-resolved') == "resolved" &&
           typeof this.params == 'object') {
             this.init();
-      } else {
-        this.setControlButton();
+      } else if (this.getAttribute('data-index') != 0) {
+        this.setRemoveButton();
       }
 
       this.handleSelectMetricControls();
