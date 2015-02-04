@@ -43,6 +43,8 @@ class XZERO_API NativeScheduler : public Scheduler {
   size_t timerCount() override;
   size_t readerCount() override;
   size_t writerCount() override;
+  size_t taskCount() override;
+  void runLoop() override;
   void runLoopOnce() override;
   void breakLoop() override;
 
