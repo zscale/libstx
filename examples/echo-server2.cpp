@@ -127,11 +127,7 @@ void ThreadedScheduler::start() {
     threadedExecutor_.execute(name, [i, name, scheduler]() {
       printf("executing: %s\n", name);
       setCpuAffinity(i);
-      while (true/*TODO*/) {
-        printf("executing: %s (enter loop)\n", name);
-        scheduler->runLoopOnce();
-        printf("executing: %s (leave loop)\n", name);
-      }
+      scheduler->runLoop();
     });
   }
 }

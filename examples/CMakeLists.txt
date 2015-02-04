@@ -9,8 +9,8 @@ if(ENABLE_EXAMPLES)
   add_executable(echo-server2 echo-server2.cpp)
   target_link_libraries(echo-server2 xzero)
 
-  # add_executable(http-hello1 http-hello1.cpp)
-  # target_link_libraries(http-hello1 xzero)
+  add_executable(http-hello1 http-hello1.cpp)
+  target_link_libraries(http-hello1 xzero)
 
   # add_executable(http-exceptions http-exceptions.cpp)
   # target_link_libraries(http-exceptions xzero)
