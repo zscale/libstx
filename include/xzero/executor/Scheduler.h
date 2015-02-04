@@ -48,10 +48,6 @@ class XZERO_API Scheduler : public Executor {
       return isCancelled_.load();
     }
 
-    Task getAction() const {
-      return onFire_;
-    }
-
     void fire() {
       if (!isCancelled_.load()) {
         onFire_();
