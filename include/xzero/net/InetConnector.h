@@ -11,6 +11,7 @@
 #include <xzero/sysconfig.h>
 #include <xzero/net/Connector.h>
 #include <xzero/net/IPAddress.h>
+#include <xzero/executor/Scheduler.h>
 #include <xzero/TimeSpan.h>
 #include <list>
 #include <deque>
@@ -231,6 +232,7 @@ class XZERO_API InetConnector : public Connector {
 
  private:
   Scheduler* scheduler_;
+  Scheduler::HandleRef schedulerHandle_;
 
   std::list<InetEndPoint*> connectedEndPoints_;
   std::mutex mutex_;
