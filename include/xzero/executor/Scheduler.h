@@ -13,6 +13,7 @@
 #include <vector>
 #include <functional>
 #include <memory>
+#include <atomic>
 
 namespace xzero {
 
@@ -36,7 +37,7 @@ class XZERO_API Scheduler : public Executor {
     }
 
     void cancel() {
-      isCancelled_ = true;
+      isCancelled_.store(true);
       if (onCancel_) {
         auto cancelThat = std::move(onCancel_);
         cancelThat(this);
@@ -44,7 +45,7 @@ class XZERO_API Scheduler : public Executor {
     }
 
     bool isCancelled() const {
-      return isCancelled_;
+      return isCancelled_.load();
     }
 
     Task getAction() const {
@@ -52,7 +53,7 @@ class XZERO_API Scheduler : public Executor {
     }
 
     void fire() {
-      if (!isCancelled_) {
+      if (!isCancelled_.load()) {
         onFire_();
       }
     }
@@ -60,7 +61,7 @@ class XZERO_API Scheduler : public Executor {
    private:
     std::function<void(Handle*)> onCancel_;
     Task onFire_;
-    bool isCancelled_;
+    std::atomic<bool> isCancelled_;
   };
 
   typedef std::shared_ptr<Handle> HandleRef;
