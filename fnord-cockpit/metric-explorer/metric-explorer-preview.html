@@ -82,6 +82,11 @@
       margin-right: 5px;
     }
 
+    .result_pane fn-table {
+      display:block;
+      float:left;
+    }
+
     fn-dropdown#view {
       margin: 10px 20px 0 0;
     }
@@ -145,13 +150,6 @@
       <div class="result_pane active" data-format="svg">
       </div>
       <div class="result_pane" data-format="csv">
-        <fn-table data-per-page="25" data-page="0">
-          <fn-table-column>Metric</fn-table-column>
-          <fn-table-column>Time</fn-table-column>
-          <fn-table-column>Value</fn-table-column>
-          <table>
-          </table>
-        </fn-table>
       </div>
     </fn-loader>
     <fn-modal id="embed">
@@ -187,8 +185,11 @@
 
       document.addEventListener("DOMContentLoaded", function() {
         var loader = this.querySelector("#result_pane_loader"); 
-        var pos_top = loader.getBoundingClientRect().top;
-        loader.style.height = (window.innerHeight - pos_top - 36) + "px";
+        var height =
+          (window.innerHeight - loader.getBoundingClientRect().top - 36) + "px"
+        loader.style.height = height;
+        this.querySelector(
+          ".result_pane[data-format='csv']").style.height = height;
       }, false);
 
     };
@@ -277,7 +278,6 @@
         if (r.status == 200) {
           if (format == "csv") {
             base.renderCsvAsTable(r.response);
-            return;
           } else {
             base.renderChart(r.response);
           }
@@ -306,31 +306,74 @@
 
     this.renderChart = function(resp) {
       var pane = this.querySelector(".result_pane[data-format='svg']");
+      this.querySelector(".result_pane.active").classList.remove("active");
+      pane.classList.add("active");
       pane.innerHTML = "";
       pane.innerHTML = resp;
       this.querySelector("#result_pane_loader").removeAttribute("data-loading");
     }
 
     this.renderCsvAsTable = function(csv) {
-      var fn_table = this.querySelector(".result_pane[data-format='csv'] fn-table");
+      var base = this;
+      var pane = this.querySelector(".result_pane[data-format='csv']");
+      var fn_table = this.createNewTable();
       var table = fn_table.querySelector("table");
       var data_points = csv.split(/\n/);
+      var metric = csv.substr(0, csv.indexOf(";"));
+      this.querySelector(".result_pane.active").classList.remove("active");
+      pane.classList.add("active");
+      pane.innerHTML = "";
+      pane.appendChild(fn_table);
 
       data_points.forEach(function(point) {
-        var tr_elem = document.createElement("tr");
+        if (point.length > 0) {
+          var entries = point.split(";");
 
-        point.split(";").forEach(function(entry) {
-          var td_elem = document.createElement("td");
-          td_elem.innerHTML = entry;
-          tr_elem.appendChild(td_elem);
-        });
+          if (entries[0] != metric) {
+            fn_table.renderTable();
 
-        table.appendChild(tr_elem);
+            metric = entries[0];
+            fn_table = base.createNewTable();
+            table = fn_table.querySelector("table");
+            pane.appendChild(fn_table);
+          }
+
+          base.renderTableRow(entries, table);
+        }
       });
 
       fn_table.renderTable();
       this.querySelector("#result_pane_loader").removeAttribute("data-loading");
     };
+
+    this.renderTableRow = function(entries, table) {
+      var tr_elem = document.createElement("tr");
+      entries.forEach(function(entry) {
+        var td_elem = document.createElement("td");
+        td_elem.innerHTML = entry;
+        tr_elem.appendChild(td_elem);
+      });
+
+      table.appendChild(tr_elem);
+    }
+
+    this.createNewTable = function() {
+      var table = document.createElement("fn-table");
+      var columns = ["Metric", "Time", "Value"];
+
+      table.setAttribute('data-per-page', 25);
+      table.setAttribute('data-page', 0);
+
+      columns.forEach(function(c) {
+        var table_column = document.createElement("fn-table-column");
+        table_column.innerHTML = c;
+        table.appendChild(table_column);
+      });
+
+      table.appendChild(document.createElement("table"));
+
+      return table;
+    }
 
 
 /*********************** Metric Controls *****************************/
