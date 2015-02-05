@@ -16,17 +16,25 @@
 #include <xzero/http/HttpInput.h>
 #include <xzero/http/HttpInputListener.h>
 #include <xzero/http/v1/Http1ConnectionFactory.h>
+#include <xzero/logging/LogTarget.h>
+#include <xzero/logging/LogAggregator.h>
 #include <vector>
 #include <string>
 
 class HttpEcho : public xzero::HttpInputListener {
  public:
   HttpEcho(xzero::HttpRequest* req, xzero::HttpResponse* resp)
-      : request_(req), response_(resp), bodyChunk_() {
-
+      : request_(req), response_(resp), bodyChunk_()
+  {
+    printf("going\n");
     if (request_->expect100Continue())
-       response_->send100Continue(nullptr);
+      response_->send100Continue(std::bind(&HttpEcho::go, this));
+    else
+      go();
+  }
 
+  void go() {
+    printf("go\n");
     request_->input()->setListener(this);
     response_->setStatus(xzero::HttpStatus::Ok);
 
@@ -61,6 +69,9 @@ class HttpEcho : public xzero::HttpInputListener {
 };
 
 int main() {
+  xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
+  xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
+
   xzero::NativeScheduler scheduler;
   xzero::WallClock* clock = xzero::WallClock::monotonic();
 
