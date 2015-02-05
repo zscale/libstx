@@ -16,13 +16,17 @@
 #include <xzero/http/HttpOutputCompressor.h>
 #include <xzero/http/HttpFileHandler.h>
 #include <xzero/http/v1/Http1ConnectionFactory.h>
-#include <ev++.h>
+#include <xzero/logging/LogTarget.h>
+#include <xzero/logging/LogAggregator.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
 int main(int argc, const char* argv[]) {
+  xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
+  xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
+
   xzero::NativeScheduler scheduler;
   xzero::WallClock* clock = xzero::WallClock::monotonic();
 

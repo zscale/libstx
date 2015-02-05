@@ -15,7 +15,6 @@
 #include <xzero/executor/NativeScheduler.h>
 #include <xzero/WallClock.h>
 #include <cctype>
-#include <ev++.h>
 
 class Capslock : public xzero::Filter {
  public:

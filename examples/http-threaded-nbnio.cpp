@@ -20,7 +20,6 @@
 #include <xzero/WallClock.h>
 #include <xzero/TimeSpan.h>
 #include <unistd.h>
-#include <ev++.h>
 
 void runJob(xzero::HttpRequest* request, xzero::HttpResponse* response, xzero::Executor* context) {
   timespec ts;
