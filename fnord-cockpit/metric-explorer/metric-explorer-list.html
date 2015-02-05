@@ -177,6 +177,8 @@
       var loader = this.querySelector("fn-loader");
       var table = this.querySelector("fn-table table");
       var url = baseUrl + "list" + url_query;
+      console.log("url", url);
+      var url = "http://127.0.0.1:8000/metrics/list" + url_query;
 
       Fnord.httpGet(url, function(r) {
         if (r.status === 200) {
