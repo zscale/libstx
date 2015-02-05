@@ -352,48 +352,62 @@
       var shadow = this.createShadowRoot();
       shadow.appendChild(tpl);
 
-      if (this.getAttribute('data-resolved') == "resolved" &&
-          typeof this.params == 'object') {
-            this.init();
-      } else if (this.getAttribute('data-index') != 0) {
-        this.setRemoveButton();
-      }
+      var state = this.getAttribute('data-state');
 
-      this.handleSelectMetricControls();
+      if (state == "initialised" && typeof this.params == 'object') {
+        this.init(true);
+      } else if (state == 'select-metrc') {
+        //new metric_control that hasn't been intialised yet
+        this.init(false)
+      }
     };
 
     this.attributeChangedCallback = function(attr, old_val, new_val) {
-      if (attr == "data-resolved" &&
-          new_val == "resolved" &&
-          typeof this.params == 'object') {
-            this.init();
+      if (attr == "data-state") {
+        if (new_val == "initialised" && typeof this.params == 'object') {
+          return this.init(true);
+        }
+
+        if (new_val == "select-metric") {
+          this.init(false);
+        }
       }
     };
 
     this.handleAggregationDisplay = function() {
-      var time_window = this.shadowRoot.getElementById("time_window");
-      var time_step = this.shadowRoot.getElementById("time_step");
-      if (this.params.aggr_fn == "value" ) {
-        time_window.setAttribute("data-state", "disabled");
-        time_step.setAttribute("data-state", "disabled");
-      } else {
-        time_window.removeAttribute("data-state");
-        time_step.removeAttribute("data-state");
-      }
+      var base = this;
+      var elems = [
+        this.shadowRoot.getElementById("time_window"),
+        this.shadowRoot.getElementById("time_step")
+      ];
+
+      elems.forEach(function(elem) {
+        if (base.params.aggr_fn == "value" ) {
+          elem.setAttribute('data-state', 'disabled');
+        } else {
+          elem.removeAttribute('data-state');
+        }
+      });
     };
 
-    this.init = function() {
-      this.setControlButton();
-      this.handleControls();
-      this.handleSelectMetricControls();
-      this.handleAggregationDisplay();
+    this.init = function(dataInitialised) {
+      if (!this.basicInit) {
+        this.basicInit = true;
+        this.setControlButton();
+        this.handleSelectMetricControls();
+      }
+
+      if (dataInitialised) {
+        this.handleControls();
+        this.handleAggregationDisplay();
+      }
     };
 
     this.columnsReloaded = function() {
       if (this.params.columns.length > 0) {
         this.handleGroupByControls();
       }
-    }
+    };
 
     this.setControlButton = function() {
       if (this.getAttribute('data-index') == 0) {
@@ -412,6 +426,7 @@
 
       button.querySelector("i").classList.add("fa-plus");
       button.addEventListener('fn-button-click', function() {
+        base.setHeaderMetricView();
         base.fireAddMetricEvent();
       }, false);
     };
@@ -459,15 +474,17 @@
       }, false);
 
       search.addEventListener('fn-search-submit', function() {
-        if (base.getAttribute('data-resolved') == 'resolved') {
+        if (base.getAttribute('data-state') == 'initialised') {
           //change metric
           base.params.name = this.getValue();
           base.attributeChangedEvent("name");
-          base.toggleMetricView();
+          base.setHeader();
+          base.setHeaderMetricView();
         } else {
           //select new metric
           base.fireNewMetricEvent(this.getValue());
         }
+
       }, false);
     }
 
@@ -479,13 +496,23 @@
         ".metric .view[name='search']").classList.toggle("active");
     }
 
-    this.handleControls = function() {
-      var base = this;
-      this.shadowRoot.querySelector(
-        ".metric .view[name='header']").classList.add("active");
+    this.setHeaderMetricView = function() {
       this.shadowRoot.querySelector(
         ".metric .view[name='search']").classList.remove("active");
+
+      this.shadowRoot.querySelector(
+        ".metric .view[name='header']").classList.add("active");
+    }
+
+    this.setHeader = function() {
       this.shadowRoot.querySelector("h3").innerHTML = this.params.name;
+    }
+
+    this.handleControls = function() {
+      var base = this;
+      this.setHeader();
+      this.setHeaderMetricView();
+
       var rollup = this.shadowRoot.getElementById("rollup");
       rollup.setAttribute('data-preselected', this.params.aggr_fn);
 
@@ -529,13 +556,13 @@
         base.attributeChangedEvent("scale");
       }, false);
 
-    }
+    };
 
     this.splitColumns = function(columns) {
       if (columns.length == 0) {return [];}
 
       return columns.split(",");
-    }
+    };
 
     this.addToCSV = function(csv, value) {
       if (csv.length == 0) {return value;}
@@ -543,14 +570,14 @@
       if (csv.indexOf(value) > - 1) {return csv;}
 
       return (csv += "," + value);
-    }
+    };
 
     this.removeFromCSV = function(csv, value) {
       if (csv == value || csv.length == 0) {return "";}
 
       var regex = new RegExp("," + value);
       return (csv.replace(regex, ""));
-    }
+    };
 
     this.handleGroupByControls = function() {
       var base = this;
@@ -599,7 +626,7 @@
       );
 
       this.dispatchEvent(metricEvent);
-    }
+    };
 
     this.fireAddMetricEvent = function() {
       this.dispatchEvent(new Event('fn-metric-control-add-metric'));
@@ -618,8 +645,7 @@
       });
 
       this.dispatchEvent(attrEvent);
-    }
-
+    };
 
   };
   window.addEventListener("fn-ready", function() {
