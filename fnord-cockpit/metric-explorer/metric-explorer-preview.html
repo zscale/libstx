@@ -44,11 +44,12 @@
 
     #result_pane_loader fn-message {
       display:none;
-      margin: 2em 4em;
     }
 
     #result_pane_loader fn-message.active {
       display: block;
+      margin: auto;
+      margin-top: 25px;
     }
 
     .result_pane {
@@ -91,7 +92,6 @@
     .result_pane fn-table {
       display:block;
     }
-
 
     fn-dropdown#view {
       margin: 10px 20px 0 0;
@@ -137,7 +137,6 @@
           </fn-dropdown>
           <fn-datepicker data-size="small" data-time-select data-selectable="past">
           </fn-datepicker>
-
           <fn-daterangepicker data-size="small" data-selectable='past'>
           </fn-daterangepicker>
         </div>
@@ -152,7 +151,8 @@
       </fn-controls-section>
     </fn-controls>
     <fn-loader id="result_pane_loader" data-loading data-resolved="data-resolved" data-transparent>
-      <fn-message data-state='error'></fn-message>
+      <fn-message data-state='error'>
+      </fn-message>
       <div class="result_pane active" data-format="svg">
       </div>
       <div class="result_pane" data-format="csv">
@@ -289,6 +289,8 @@
           } else {
             base.renderChart(r.response);
           }
+        } else {
+          base.renderError(r);
         }
       });
     };
@@ -318,8 +320,10 @@
       pane.classList.add("active");
       pane.innerHTML = "";
       pane.innerHTML = resp;
+      this.querySelector(
+        "#result_pane_loader fn-message").classList.remove("active");
       this.querySelector("#result_pane_loader").removeAttribute("data-loading");
-    }
+    };
 
     this.renderCsvAsTable = function(csv) {
       var base = this;
@@ -358,6 +362,8 @@
       base.renderPagerFor(fn_table, container, row_count);
       fn_table.renderTable();
 
+      this.querySelector(
+        "#result_pane_loader fn-message").classList.remove("active");
       this.querySelector("#result_pane_loader").removeAttribute("data-loading");
     };
 
@@ -385,7 +391,7 @@
 
       parent_elem.appendChild(pager);
       pager.forElement(table_elem);
-    }
+    };
 
     this.createNewTableContainer = function() {
       var container = document.createElement("div");
@@ -408,6 +414,24 @@
       container.appendChild(table);
 
       return container;
+    };
+
+    this.renderError = function(response) {
+      var loader = this.querySelector("#result_pane_loader");
+      var msg_elem = loader.querySelector("fn-message");
+      var header_elem = document.createElement("fn-message-header");
+      var text_elem = document.createElement("fn-message-text");
+
+      header_elem.innerHTML = response.statusText;
+      text_elem.innerHTML =
+        "statusCode: " + response.status + " " + response.response;
+      msg_elem.innerHTML = "";
+      msg_elem.appendChild(header_elem);
+      msg_elem.appendChild(text_elem);
+
+      loader.querySelector(".result_pane.active").classList.remove("active");
+      msg_elem.classList.add("active");
+      loader.removeAttribute("data-loading");
     }
 
 
