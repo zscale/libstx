@@ -20,6 +20,7 @@ function fn_render_metric_explorer($rpc_url) {
 
 <script type='text/javascript'>
   var baseUrl = "<?= $rpc_url ?>";
+
   var views = {
     "metrics" : "<fn-metric-explorer-list></fn-metric-explorer-list>",
     "metric" : "<fn-metric-explorer-preview></fn-metric-explorer-preview>",
@@ -100,13 +101,13 @@ function fn_render_metric_explorer($rpc_url) {
   };
 
   function isMetricParam(key) {
-    var metricParamKeys = ["aggr_fn", "aggr_window", "aggr_step", "scale"];
+    var metricParamKeys = ["aggr_fn", "aggr_window", "aggr_step", "scale", "group_by"];
     return (metricParamKeys.indexOf(key) > -1);
   }
 
   function isGenericParam(key) {
     //params that can be changed
-    var genericParamKeys = ["from", "until", "logarithmic", "inverted", "metrics"];
+    var genericParamKeys = ["from", "until", "logarithmic", "inverted", "metrics", "format"];
     return (genericParamKeys.indexOf(key) > -1);
   }
 
