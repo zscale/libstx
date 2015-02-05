@@ -77,15 +77,21 @@
       left: 170px;
     }
 
-    .result_pane fn-pager {
+    .result_pane .table_ui {
+      height: 100%;
+      float:left;
+      margin-left: 10px;
+    }
+
+    .result_pane .table_ui fn-pager {
+      margin-top: 5px;
       float:right;
-      margin-right: 5px;
     }
 
     .result_pane fn-table {
       display:block;
-      float:left;
     }
+
 
     fn-dropdown#view {
       margin: 10px 20px 0 0;
@@ -316,33 +322,40 @@
     this.renderCsvAsTable = function(csv) {
       var base = this;
       var pane = this.querySelector(".result_pane[data-format='csv']");
-      var fn_table = this.createNewTable();
+      var container = this.createNewTableContainer();
+      var fn_table = container.querySelector("fn-table");
       var table = fn_table.querySelector("table");
       var data_points = csv.split(/\n/);
       var metric = csv.substr(0, csv.indexOf(";"));
+      var row_count = 0;
+
       this.querySelector(".result_pane.active").classList.remove("active");
       pane.classList.add("active");
       pane.innerHTML = "";
-      pane.appendChild(fn_table);
+      pane.appendChild(container);
 
       data_points.forEach(function(point) {
         if (point.length > 0) {
           var entries = point.split(";");
 
           if (entries[0] != metric) {
+            base.renderPagerFor(fn_table, container, row_count);
             fn_table.renderTable();
 
             metric = entries[0];
-            fn_table = base.createNewTable();
+            container = base.createNewTableContainer();
+            fn_table = container.querySelector("fn-table");
             table = fn_table.querySelector("table");
-            pane.appendChild(fn_table);
+            pane.appendChild(container);
           }
-
+          row_count++;
           base.renderTableRow(entries, table);
         }
       });
 
+      base.renderPagerFor(fn_table, container, row_count);
       fn_table.renderTable();
+
       this.querySelector("#result_pane_loader").removeAttribute("data-loading");
     };
 
@@ -355,14 +368,33 @@
       });
 
       table.appendChild(tr_elem);
+    };
+
+    this.renderPagerFor = function(table_elem, parent_elem, list_size) {
+      var pager = document.createElement("fn-pager");
+
+      Fnord.setAttributes({
+        'data-for': '',
+        'data-first-item': 1,
+        'data-per-page': 25,
+        'data-circling': '',
+        'data-last-item': list_size
+      }, pager);
+
+      parent_elem.appendChild(pager);
+      pager.forElement(table_elem);
     }
 
-    this.createNewTable = function() {
+    this.createNewTableContainer = function() {
+      var container = document.createElement("div");
       var table = document.createElement("fn-table");
       var columns = ["Metric", "Time", "Value"];
 
-      table.setAttribute('data-per-page', 25);
-      table.setAttribute('data-page', 0);
+      container.className = "table_ui";
+      Fnord.setAttributes({
+        'data-per-page': 25,
+        'data-page': 0
+      }, table);
 
       columns.forEach(function(c) {
         var table_column = document.createElement("fn-table-column");
@@ -371,8 +403,9 @@
       });
 
       table.appendChild(document.createElement("table"));
+      container.appendChild(table);
 
-      return table;
+      return container;
     }
 
 
