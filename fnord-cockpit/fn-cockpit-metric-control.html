@@ -379,6 +379,12 @@
       this.handleAggregationDisplay();
     };
 
+    this.columnsReloaded = function() {
+      if (this.params.columns.length > 0) {
+        this.handleGroupByControls();
+      }
+    }
+
     this.setControlButton = function() {
       if (this.getAttribute('data-index') == 0) {
         this.setAddButton();
@@ -515,36 +521,63 @@
 
     }
 
-    this.handleGroupByControls = function(columns) {
-      var base = this;
+    this.splitColumns = function(columns) {
+      if (columns.length == 0) {return [];}
 
-     /* var columns = this.splitColumns(this.("columns"));
-      var by = this.splitColumns(this.getQueryParamOrDefaultValue("by"));
+      return columns.split(",");
+    }
+
+    this.addToCSV = function(csv, value) {
+      if (csv.length == 0) {return value;}
+      //value already included
+      if (csv.indexOf(value) > - 1) {return csv;}
+
+      return (csv += "," + value);
+    }
+
+    this.removeFromCSV = function(csv, value) {
+      if (csv == value || csv.length == 0) {return "";}
+
+      var regex = new RegExp("," + value);
+      return (csv.replace(regex, ""));
+    }
+
+    this.handleGroupByControls = function() {
+      var base = this;
+      var group_by_field = this.shadowRoot.querySelector(".group.group_by");
+      var columns = this.splitColumns(this.params.columns);
+      var group_by = this.splitColumns(this.params.group_by);
+
 
       if (columns.length > 0 ) {
-        group_by_field.className += " active";
+        group_by_field.classList.add("active");
       }
 
       columns.map(function(c) {
         var button = document.createElement("fn-button");
         button.innerHTML = c;
-        if (by.indexOf(c) > -1) {
+        button.setAttribute('data-value', c);
+        button.setAttribute('data-size', 'tiny');
+
+        if (group_by.indexOf(c) > -1) {
           button.setAttribute("data-active", "active");
         }
+
         group_by_field.appendChild(button);
         button.addEventListener("fn-button-click", function() {
           var isActive = this.hasAttribute("data-active");
-          var columns = base.getQueryParamOrDefaultValue("by");
+          var group_by_csv = base.params.group_by;
           if (isActive) {
             this.removeAttribute("data-active");
-            columns = FnordMetric.util.removeFromCSV(columns, this.innerText);
+            group_by_csv = base.removeFromCSV(group_by_csv, this.getAttribute('data-value'));
+            base.removeFromCSV("foo,bar,blah", this.getAttribute('data-value'));
           } else {
             this.setAttribute("data-active", "active");
-            columns = FnordMetric.util.addToCSV(columns, this.innerText);
+            group_by_csv = base.addToCSV(group_by_csv, this.getAttribute('data-value'));
           }
-          base.updateUrlParams({"by": columns});
+          //base.({"by": columns});
         });
-      });*/
+      });
     };
 
     this.fireNewMetricEvent = function(name) {
