@@ -151,7 +151,7 @@
       </fn-controls-section>
     </fn-controls>
     <fn-loader id="result_pane_loader" data-loading data-resolved="data-resolved" data-transparent>
-      <fn-message data-state='error'>
+      <fn-message>
       </fn-message>
       <div class="result_pane active" data-format="svg">
       </div>
@@ -236,6 +236,16 @@
       this.updateData(this.getAttribute('data-format'));
     };
 
+    this.updateGenericParams = function(new_params) {
+      for (var key in new_params) {
+        if (new_params[key] != undefined) {
+          this.params[key] = new_params[key].toString();
+        }
+      }
+
+      this.update();
+    };
+
     this.buildQueryUrl = function(format) {
       var url = "";
 
@@ -248,6 +258,7 @@
               metric_params[key] == "undefined") {continue;}
 
           if (key == "name") {
+            //name is first param
             url += (i == 0)? "" : "&";
             url += "metric=" + encodeURIComponent(metric_params[key]);
           } else if (key == "aggr_fn") {
@@ -256,6 +267,7 @@
               url += "&" + key + "=" + metric_params[key];
             }
           } else if (isMetricParam(key)) {
+            //all other metric params
             url += "&" + key + "=" + metric_params[key];
           }
         }
@@ -284,25 +296,26 @@
 
       Fnord.httpGet(url, function(r) {
         if (r.status == 200) {
-          if (format == "csv") {
-            base.renderCsvAsTable(r.response);
-          } else {
-            base.renderChart(r.response);
+          if (format == "svg") {
+            return base.renderChart(r.response);
           }
-        } else {
-          base.renderError(r);
+
+          if (r.response.length > 0) {
+            return base.renderCsvAsTable(r.response);
+          }
+
+          //no data points don't cause an error if format is csv
+          var resp = {
+            'status': r.status,
+            'statusText': r.statusText,
+            'response': "Empty Table"
+          }
+          return base.renderError(resp);
+
         }
+
+        return base.renderError(r);
       });
-    };
-
-    this.updateGenericParams = function(new_params) {
-      for (var key in new_params) {
-        if (new_params[key] != undefined) {
-          this.params[key] = new_params[key].toString();
-        }
-      }
-
-      this.update();
     };
 
     this.onRefresh = function() {
@@ -314,14 +327,19 @@
         'from' : from});
     };
 
+    this.hideActiveResult = function() {
+      var active_elem = this.querySelector("#result_pane_loader .active")
+      if (active_elem) {
+        active_elem.classList.remove("active");
+      }
+    }
+
     this.renderChart = function(resp) {
       var pane = this.querySelector(".result_pane[data-format='svg']");
-      this.querySelector(".result_pane.active").classList.remove("active");
+      this.hideActiveResult();
       pane.classList.add("active");
       pane.innerHTML = "";
       pane.innerHTML = resp;
-      this.querySelector(
-        "#result_pane_loader fn-message").classList.remove("active");
       this.querySelector("#result_pane_loader").removeAttribute("data-loading");
     };
 
@@ -335,7 +353,7 @@
       var metric = csv.substr(0, csv.indexOf(";"));
       var row_count = 0;
 
-      this.querySelector(".result_pane.active").classList.remove("active");
+      this.hideActiveResult();
       pane.classList.add("active");
       pane.innerHTML = "";
       pane.appendChild(container);
@@ -362,8 +380,6 @@
       base.renderPagerFor(fn_table, container, row_count);
       fn_table.renderTable();
 
-      this.querySelector(
-        "#result_pane_loader fn-message").classList.remove("active");
       this.querySelector("#result_pane_loader").removeAttribute("data-loading");
     };
 
@@ -429,17 +445,16 @@
       msg_elem.appendChild(header_elem);
       msg_elem.appendChild(text_elem);
 
-      loader.querySelector(".result_pane.active").classList.remove("active");
+      this.hideActiveResult();
       msg_elem.classList.add("active");
       loader.removeAttribute("data-loading");
-    }
-
+    };
 
 /*********************** Metric Controls *****************************/
     this.metricParamChanged = function(params, key) {
       this.params["metric" + params.index] = params;
       this.update();
-    }
+    };
 
     this.getMetricUrlParamOrDefault = function(key, index) {
       var defaults = {
@@ -499,13 +514,14 @@
 
       metric.params = metric_params;
       metric.setAttribute('data-index', index);
-      metric.setAttribute('data-resolved', 'resolved');
+      metric.setAttribute('data-state', 'initialised');
 
       if (metric.params.name) {
+        //reload metric columns
         metric_params.columns = this.setMetricColumns(metric);
       }
 
-      /* handle events */
+      // handle events
       metric.addEventListener(
         "fn-metric-control-attr-changed", function(e) {
           base.metricParamChanged(this.params, e.detail.key);
@@ -535,6 +551,7 @@
           controls[controls.length - 1].getAttribute('data-index'), 10) + 1;
       }
 
+      new_control.setAttribute('data-state', 'select-metric');
       new_control.setAttribute('data-index', index);
       ref_elem.parentNode.insertBefore(new_control, ref_elem);
 
