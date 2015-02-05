@@ -24,7 +24,7 @@ namespace xzero {
  * If the FileRef was initialized with auto-close set to on, its
  * underlying resource file descriptor will be automatically closed.
  */
-struct XZERO_API FileRef {
+class XZERO_API FileRef {
  private:
   FileRef(const FileRef&) = delete;
   FileRef& operator=(const FileRef&) = delete;
