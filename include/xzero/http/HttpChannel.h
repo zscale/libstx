@@ -28,7 +28,7 @@ class HttpOutputCompressor;
 
 enum class HttpChannelState {
   READING,  //!< currently reading request info
-  HANDLING, //!< currently handling the request
+  HANDLING, //!< currently handling the request (that is generating response)
   SENDING,  //!< currently sending data
   DONE,     //!< handling request done
 };
@@ -148,10 +148,10 @@ class XZERO_API HttpChannel : public HttpListener {
   void removeAllOutputFilters();
 
   HttpChannelState state() const noexcept { return state_; }
+  void setState(HttpChannelState newState);
 
  protected:
-  void setState(HttpChannelState newState);
-  CompletionHandler makeCompleter(CompletionHandler&& next);
+  CompletionHandler makeCompleter(CompletionHandler next);
   virtual std::unique_ptr<HttpOutput> createOutput();
   void handleRequest();
   void onBeforeSend();

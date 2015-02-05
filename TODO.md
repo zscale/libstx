@@ -1,12 +1,15 @@
 ## FiXME
 
-- enum SelectionTrigger { Edge, Level }
-- NativeSelector (ET, using epoll, poll, select)
-- NativeScheduler
+- `curl -r a-b,c-d $URL` fails while with `-r a-b` succeeds
+- support multiple wantFlush() (currently double-registering)
 
 ## Incomplete TODO items
 
 ### Milestone 1
+
+- NativeScheduler a typedef to the best OS's implementation
+- linux: LinuxScheduler (using epoll, timerfd, eventfd)
+- generic: SelectScheduler (using select, pipe)
 
 - [ ] ensure 100-continue is sent async, too (maybe not needed)
 - [ ] timeout management (ideally testable)
