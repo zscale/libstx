@@ -14,7 +14,6 @@
 #include <xzero/http/v1/Http1ConnectionFactory.h>
 #include <xzero/WallClock.h>
 #include <unistd.h>
-#include <ev++.h>
 
 int main() {
   xzero::ThreadedExecutor threadedExecutor;

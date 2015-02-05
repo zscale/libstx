@@ -125,6 +125,10 @@ class XZERO_API HttpFileHandler {
   /**
    * Handles given @p request if a local file (based on @p docroot) exists.
    *
+   * Iff the given request was successfully handled, the response is
+   * being also marked as completed, and thus, any future call to
+   * the request or response object will be invalid.
+   *
    * @param request the request to handle.
    * @param response the response to generate.
    * @param docroot request's document root into the local file system.
