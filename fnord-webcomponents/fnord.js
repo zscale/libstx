@@ -109,6 +109,12 @@ Fnord.jsonRPC = function(url, method, params, callback) {
   }
 };
 
+Fnord.setAttributes = function(attrs, elem) {
+  for (var key in attrs) {
+    elem.setAttribute(key, attrs[key]);
+  }
+}
+
 Fnord.parseQueryString = function(qstr) {
   var path;
   var query_params = {};
