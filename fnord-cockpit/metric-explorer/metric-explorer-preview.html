@@ -86,6 +86,15 @@
       margin: 10px 20px 0 0;
     }
 
+    fn-modal-content code {
+      word-wrap: break-word;
+    }
+
+    fn-modal-content .header {
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
   </style>
   <fn-loader>
     <div class="navigation">
@@ -267,12 +276,9 @@
           if (format == "csv") {
             base.renderCsvAsTable(r.response);
             return;
+          } else {
+            base.renderChart(r.response);
           }
-
-          var pane = base.querySelector(".result_pane[data-format='"+ format +"']");
-          pane.innerHTML = "";
-          pane.innerHTML = r.response;
-          base.querySelector("#result_pane_loader").removeAttribute("data-loading");
         }
       });
     };
@@ -296,6 +302,12 @@
         'from' : from});
     };
 
+    this.renderChart = function(resp) {
+      var pane = this.querySelector(".result_pane[data-format='svg']");
+      pane.innerHTML = "";
+      pane.innerHTML = resp;
+      this.querySelector("#result_pane_loader").removeAttribute("data-loading");
+    }
 
     this.renderCsvAsTable = function(csv) {
       var fn_table = this.querySelector(".result_pane[data-format='csv'] fn-table");
@@ -330,7 +342,8 @@
         "aggr_fn": "sum",
         "aggr_window": "5",
         "aggr_step": "10",
-        "scale" : "0.8"
+        "scale" : "0.8",
+        "group_by" : ""
       }
 
       if (this.params["metric" + index] && this.params["metric" + index][key]) {
@@ -340,19 +353,19 @@
       return defaults[key] ;
     };
 
-    this.getMetricColumns = function(metric) {
-      var url = baseUrl + "list?filter=" + encodeURIComponent(metric);
-      var columns = {}
+    this.setMetricColumns = function(metric_control) {
+      var url = baseUrl + "list?filter=" + encodeURIComponent(metric_control.params.name);
+      metric_control.params.group_by = this.getMetricUrlParamOrDefault(
+        "group_by", metric_control.params.index);
+
       Fnord.httpGet(url, function(r) {
         if (r.status == 200) {
           var json = JSON.parse(r.response);
           json.metrics.map(function(m) {
-            columns = m.labels.join(",");
-            //control.handleGroupByControls(m.labels.join(","));
+            metric_control.params.columns = m.labels.join(",");
           });
+          metric_control.columnsReloaded();
         }
-
-        return columns;
       });
     };
 
@@ -374,17 +387,19 @@
           this.getMetricUrlParamOrDefault("aggr_step", index);
       }
 
-      if (metric_params.name) {
-        metric_params.columns = this.getMetricColumns(name);
-      }
 
       if (this.params["metric" + index] == undefined) {
         this.params["metric" + index] = metric_params;
         this.params.metrics += 1;
       }
+
       metric.params = metric_params;
       metric.setAttribute('data-index', index);
       metric.setAttribute('data-resolved', 'resolved');
+
+      if (metric.params.name) {
+        metric_params.columns = this.setMetricColumns(metric);
+      }
 
       /* handle events */
       metric.addEventListener(
@@ -476,12 +491,6 @@
         this.params[key] : defaults[key];
 
       return value;
-    }
-
-    this.splitColumns = function(columns) {
-      if (columns.length == 0) {return [];}
-
-      return columns.split(",");
     }
 
     this.updateDateTimeElems = function(end_time) {
@@ -604,7 +613,8 @@
       }, false);
 
       embed_btn.addEventListener('fn-button-click', function() {
-        modal.querySelector("span").innerHTML = baseUrl + base.getAttribute('data-url');
+        modal.querySelector("span").innerHTML =
+          baseUrl + base.buildQueryUrl(base.getAttribute('data-format'));
         modal.show();
       }, false);
     };
