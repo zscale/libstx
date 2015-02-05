@@ -72,6 +72,7 @@ class XZERO_API InetEndPoint : public EndPoint {
   InetConnector* connector_;
   Scheduler* scheduler_;
   IdleTimeout idleTimeout_;
+  Scheduler::HandleRef io_;
   int handle_;
   bool isCorking_;
   int isBusy_;
