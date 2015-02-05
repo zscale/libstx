@@ -243,7 +243,9 @@
         var metric_params = this.params["metric" + i];
 
         for (var key in metric_params) {
-          if (!metric_params[key] || metric_params[key].length == 0) {continue;}
+          if (!metric_params[key] ||
+              metric_params[key].length == 0 ||
+              metric_params[key] == "undefined") {continue;}
 
           if (key == "name") {
             url += (i == 0)? "" : "&";
