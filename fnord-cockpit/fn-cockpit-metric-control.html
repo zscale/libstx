@@ -486,7 +486,7 @@
         }
 
       }, false);
-    }
+    };
 
     this.toggleMetricView = function() {
       this.shadowRoot.querySelector(
@@ -494,7 +494,7 @@
 
       this.shadowRoot.querySelector(
         ".metric .view[name='search']").classList.toggle("active");
-    }
+    };
 
     this.setHeaderMetricView = function() {
       this.shadowRoot.querySelector(
@@ -502,11 +502,11 @@
 
       this.shadowRoot.querySelector(
         ".metric .view[name='header']").classList.add("active");
-    }
+    };
 
     this.setHeader = function() {
       this.shadowRoot.querySelector("h3").innerHTML = this.params.name;
-    }
+    };
 
     this.handleControls = function() {
       var base = this;
@@ -555,7 +555,6 @@
         base.params.scale = e.detail;
         base.attributeChangedEvent("scale");
       }, false);
-
     };
 
     this.splitColumns = function(columns) {
@@ -584,7 +583,6 @@
       var group_by_field = this.shadowRoot.querySelector(".group.group_by");
       var columns = this.splitColumns(this.params.columns);
       var group_by = this.splitColumns(this.params.group_by);
-
 
       if (columns.length > 0 ) {
         group_by_field.classList.add("active");
@@ -646,8 +644,8 @@
 
       this.dispatchEvent(attrEvent);
     };
-
   };
+
   window.addEventListener("fn-ready", function() {
     Fnord.registerComponent("fn-metric-control", MetricControlComponent);
   }, false);
