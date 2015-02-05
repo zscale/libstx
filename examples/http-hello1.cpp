@@ -14,14 +14,10 @@
 #include <xzero/http/HttpResponse.h>
 #include <xzero/http/HttpOutput.h>
 #include <xzero/http/v1/Http1ConnectionFactory.h>
-#include <ev++.h>
 
 int main() {
-  ev::loop_ref loop = ev::default_loop(0);
   auto clock = xzero::WallClock::system();
   xzero::NativeScheduler scheduler;
-  bool running = true;
-
   xzero::Server server;
 
   auto inet = server.addConnector<xzero::InetConnector>(
@@ -39,7 +35,6 @@ int main() {
     response->setReason("because");
 
     if (request->path() == "/bye") {
-      running = false;
       server.stop();
     }
 
