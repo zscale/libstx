@@ -13,6 +13,7 @@
 #include <vector>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <atomic>
 
 namespace xzero {
@@ -28,7 +29,8 @@ class XZERO_API Scheduler : public Executor {
   class Handle {
    public:
     Handle(Task onFire, std::function<void(Handle*)> onCancel)
-        : onFire_(onFire),
+        : mutex_(),
+          onFire_(onFire),
           onCancel_(onCancel),
           isCancelled_(false) {
     }
@@ -37,6 +39,7 @@ class XZERO_API Scheduler : public Executor {
     }
 
     void cancel() {
+      std::lock_guard<std::mutex> lk(mutex_);
       isCancelled_.store(true);
       if (onCancel_) {
         auto cancelThat = std::move(onCancel_);
@@ -49,14 +52,16 @@ class XZERO_API Scheduler : public Executor {
     }
 
     void fire() {
+      std::lock_guard<std::mutex> lk(mutex_);
       if (!isCancelled_.load()) {
         onFire_();
       }
     }
 
    private:
-    std::function<void(Handle*)> onCancel_;
+    std::mutex mutex_;
     Task onFire_;
+    std::function<void(Handle*)> onCancel_;
     std::atomic<bool> isCancelled_;
   };
 
