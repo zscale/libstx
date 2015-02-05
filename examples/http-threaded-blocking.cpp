@@ -12,16 +12,11 @@
 #include <xzero/http/HttpResponse.h>
 #include <xzero/http/HttpOutput.h>
 #include <xzero/http/v1/Http1ConnectionFactory.h>
-#include <xzero/logging/LogAggregator.h>
-#include <xzero/logging/LogTarget.h>
 #include <xzero/WallClock.h>
 #include <unistd.h>
 #include <ev++.h>
 
 int main() {
-  // xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
-  // xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
-
   xzero::ThreadedExecutor threadedExecutor;
   xzero::Server server;
   xzero::WallClock* clock = xzero::WallClock::system();

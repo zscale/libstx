@@ -12,11 +12,8 @@
 #include <xzero/http/HttpOutput.h>
 #include <xzero/net/IPAddress.h>
 #include <xzero/io/Filter.h>
-#include <xzero/logging/LogAggregator.h>
-#include <xzero/logging/LogTarget.h>
-#include <xzero/support/libev/LibevScheduler.h>
-#include <xzero/support/libev/LibevSelector.h>
-#include <xzero/support/libev/LibevClock.h>
+#include <xzero/executor/NativeScheduler.h>
+#include <xzero/WallClock.h>
 #include <cctype>
 #include <ev++.h>
 
@@ -134,19 +131,14 @@ class MyHandler : public xzero::HttpService::Handler {
 };
 
 int main(int argc, const char* argv[]) {
-  // xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
-  // xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
-
-  ev::loop_ref loop = ev::default_loop(0);
-  xzero::support::LibevScheduler scheduler(loop);
-  xzero::support::LibevSelector selector(loop);
-  xzero::support::LibevClock clock(loop);
+  xzero::NativeScheduler scheduler;
+  xzero::WallClock* clock = xzero::WallClock::system();
 
   MyHandler myHandler;
   xzero::HttpService::BuiltinAssetHandler builtinAssets;
   xzero::HttpService httpService;
 
-  httpService.configureInet(&scheduler, &scheduler, &selector, &clock,
+  httpService.configureInet(&scheduler, &scheduler, clock,
                             xzero::TimeSpan::fromSeconds(10),
                             xzero::IPAddress("0.0.0.0"), 3000);
   httpService.addHandler(&myHandler);
@@ -155,7 +147,7 @@ int main(int argc, const char* argv[]) {
   builtinAssets.addAsset("/base.css", "text/css", "h2 { color: green; }\n");
 
   httpService.start();
-  selector.select();
+  scheduler.runLoop();
   httpService.stop();
 
   return 0;
