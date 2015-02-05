@@ -10,17 +10,13 @@
  */
 
 #include <xzero/executor/ThreadPool.h>
+#include <xzero/executor/NativeScheduler.h>
 #include <xzero/net/Server.h>
 #include <xzero/net/InetConnector.h>
 #include <xzero/http/HttpRequest.h>
 #include <xzero/http/HttpResponse.h>
 #include <xzero/http/HttpOutput.h>
 #include <xzero/http/v1/Http1ConnectionFactory.h>
-#include <xzero/support/libev/LibevScheduler.h>
-#include <xzero/support/libev/LibevSelector.h>
-#include <xzero/support/libev/LibevClock.h>
-#include <xzero/logging/LogAggregator.h>
-#include <xzero/logging/LogTarget.h>
 #include <xzero/WallClock.h>
 #include <xzero/TimeSpan.h>
 #include <unistd.h>
@@ -51,25 +47,20 @@ void runJob(xzero::HttpRequest* request, xzero::HttpResponse* response, xzero::E
 }
 
 int main() {
-  xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
-  xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
-
-  ev::loop_ref loop = ev::default_loop(0);
-  xzero::support::LibevScheduler scheduler(loop);
-  xzero::support::LibevSelector selector(loop);
-  xzero::support::LibevClock clock(loop);
+  xzero::NativeScheduler scheduler;
+  xzero::WallClock* clock = xzero::WallClock::system();
 
   //xzero::ThreadPool threaded(16);
   xzero::Server server;
   bool shutdown = false;
 
   auto inet = server.addConnector<xzero::InetConnector>(
-      "http", &scheduler, &scheduler, &selector, &clock,
+      "http", &scheduler, &scheduler, clock,
       xzero::TimeSpan::fromSeconds(30),
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
 
   auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(
-      &clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));
+      clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));
 
   http->setHandler([&](xzero::HttpRequest* request, xzero::HttpResponse* response) {
     printf("request\n");
@@ -79,10 +70,7 @@ int main() {
   });
 
   server.start();
-
-  while (true)
-    selector.select();
-
+  scheduler.runLoop();
   server.stop();
   return 0;
 }

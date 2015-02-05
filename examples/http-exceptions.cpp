@@ -6,50 +6,38 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero/executor/DirectExecutor.h>
+#include <xzero/executor/NativeScheduler.h>
 #include <xzero/net/Server.h>
 #include <xzero/net/InetConnector.h>
 #include <xzero/http/HttpRequest.h>
 #include <xzero/http/HttpResponse.h>
 #include <xzero/http/HttpOutput.h>
 #include <xzero/http/v1/Http1ConnectionFactory.h>
-#include <xzero/support/libev/LibevScheduler.h>
-#include <xzero/support/libev/LibevSelector.h>
-#include <xzero/support/libev/LibevClock.h>
 #include <xzero/logging/LogAggregator.h>
 #include <xzero/logging/LogTarget.h>
 #include <xzero/RuntimeError.h>
-#include <ev++.h>
+#include <xzero/WallClock.h>
 
 int main() {
-  // xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
-  // xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
-
   auto errorHandler = [](const std::exception& e) {
     xzero::consoleLogger(e);
   };
 
-  ev::loop_ref loop = ev::default_loop(0);
-  xzero::support::LibevScheduler scheduler(loop, errorHandler);
-  xzero::support::LibevSelector selector(loop, errorHandler);
-  xzero::support::LibevClock clock(loop);
+  xzero::WallClock* clock = xzero::WallClock::system();
+  xzero::NativeScheduler scheduler(errorHandler, clock);
 
   scheduler.setExceptionHandler(errorHandler);
 
   xzero::Server server;
   auto inet = server.addConnector<xzero::InetConnector>(
-      "http", &scheduler, &scheduler, &selector, &clock,
+      "http", &scheduler, &scheduler, clock,
       xzero::TimeSpan::fromSeconds(30),
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(
-      &clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));
+      clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));
 
   http->setHandler([](xzero::HttpRequest* request,
                       xzero::HttpResponse* response) {
-    auto r = RUNTIME_ERROR("x");
-    for (const auto& frame: r.backtrace()) {
-      printf("frame: %s\n", frame.c_str());
-    }
-
     if (request->path() == "/raise")
       throw RUNTIME_ERROR("maybe raise");
 
@@ -60,7 +48,7 @@ int main() {
 
   try {
     server.start();
-    selector.select();
+    scheduler.runLoop();
     server.stop();
   } catch (...) {
   }
