@@ -159,7 +159,7 @@ class MyWorker : public ThreadedScheduler::Worker { // {{{
 static int wi = 0;
 MyWorker::MyWorker()
     : scheduler_(new xzero::NativeScheduler()),
-      clock_(xzero::WallClock::system()),
+      clock_(xzero::WallClock::monotonic()),
       i_(wi++) {
   printf("Creating worker %d\n", i_);
 }

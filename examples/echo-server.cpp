@@ -85,7 +85,7 @@ std::unique_ptr<xzero::InetConnector> createInetConnector( // {{{
 int main(int argc, const char* argv[]) {
   xzero::DirectExecutor executor(false);
   xzero::NativeScheduler scheduler;
-  xzero::WallClock* clock = xzero::WallClock::system();
+  xzero::WallClock* clock = xzero::WallClock::monotonic();
   xzero::Server server;
 
   auto localConnector = server.addConnector<xzero::LocalConnector>(&executor);

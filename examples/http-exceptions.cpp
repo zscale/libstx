@@ -23,7 +23,7 @@ int main() {
     xzero::consoleLogger(e);
   };
 
-  xzero::WallClock* clock = xzero::WallClock::system();
+  xzero::WallClock* clock = xzero::WallClock::monotonic();
   xzero::NativeScheduler scheduler(errorHandler, clock);
 
   scheduler.setExceptionHandler(errorHandler);

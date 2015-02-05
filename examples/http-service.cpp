@@ -132,7 +132,7 @@ class MyHandler : public xzero::HttpService::Handler {
 
 int main(int argc, const char* argv[]) {
   xzero::NativeScheduler scheduler;
-  xzero::WallClock* clock = xzero::WallClock::system();
+  xzero::WallClock* clock = xzero::WallClock::monotonic();
 
   MyHandler myHandler;
   xzero::HttpService::BuiltinAssetHandler builtinAssets;

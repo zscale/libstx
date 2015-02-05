@@ -16,7 +16,7 @@
 #include <xzero/http/v1/Http1ConnectionFactory.h>
 
 int main() {
-  auto clock = xzero::WallClock::system();
+  auto clock = xzero::WallClock::monotonic();
   xzero::NativeScheduler scheduler;
   xzero::Server server;
 
