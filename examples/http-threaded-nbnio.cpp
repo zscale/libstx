@@ -48,7 +48,7 @@ void runJob(xzero::HttpRequest* request, xzero::HttpResponse* response, xzero::E
 
 int main() {
   xzero::NativeScheduler scheduler;
-  xzero::WallClock* clock = xzero::WallClock::system();
+  xzero::WallClock* clock = xzero::WallClock::monotonic();
 
   //xzero::ThreadPool threaded(16);
   xzero::Server server;

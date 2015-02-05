@@ -25,6 +25,11 @@ class XZERO_API WallClock {
    * Retrieves a global unique system clock using the standard C runtime.
    */
   static WallClock* system();
+
+  /**
+   * Retrieves a process-global monotonic clock that never jumps back in time.
+   */
+  static WallClock* monotonic();
 };
 
 } // namespace xzero

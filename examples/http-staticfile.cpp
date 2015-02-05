@@ -24,7 +24,7 @@
 
 int main(int argc, const char* argv[]) {
   xzero::NativeScheduler scheduler;
-  xzero::WallClock* clock = xzero::WallClock::system();
+  xzero::WallClock* clock = xzero::WallClock::monotonic();
 
   std::string docroot = argc == 2 ? argv[1] : ".";
   xzero::Server server;

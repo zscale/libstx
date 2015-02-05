@@ -19,7 +19,7 @@
 int main() {
   xzero::ThreadedExecutor threadedExecutor;
   xzero::Server server;
-  xzero::WallClock* clock = xzero::WallClock::system();
+  xzero::WallClock* clock = xzero::WallClock::monotonic();
   bool shutdown = false;
 
   auto inet = server.addConnector<xzero::InetConnector>(

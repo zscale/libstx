@@ -62,7 +62,7 @@ class HttpEcho : public xzero::HttpInputListener {
 
 int main() {
   xzero::NativeScheduler scheduler;
-  xzero::WallClock* clock = xzero::WallClock::system();
+  xzero::WallClock* clock = xzero::WallClock::monotonic();
 
   xzero::Server server;
   auto inet = server.addConnector<xzero::InetConnector>(
