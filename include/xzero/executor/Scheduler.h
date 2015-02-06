@@ -24,39 +24,32 @@ namespace xzero {
 class XZERO_API Scheduler : public Executor {
  public:
   /**
-   * it basically supports 2 actions, fire and termination.
+   * It basically supports 2 actions, fire and cancellation.
    */
-  class Handle {
+  class XZERO_API Handle {
    public:
-    Handle(Task onFire, std::function<void(Handle*)> onCancel)
-        : mutex_(),
-          onFire_(onFire),
-          onCancel_(onCancel),
-          isCancelled_(false) {
-    }
+    Handle(Task onFire, std::function<void(Handle*)> onCancel);
 
-    ~Handle() {
-    }
+    /** Tests if the interest behind this handle was cancelled already. */
+    bool isCancelled() const { return isCancelled_.load(); }
 
-    void cancel() {
-      std::lock_guard<std::mutex> lk(mutex_);
-      isCancelled_.store(true);
-      if (onCancel_) {
-        auto cancelThat = std::move(onCancel_);
-        cancelThat(this);
-      }
-    }
+    /**
+     * Cancels the interest, causing the callback not to be fired.
+     */
+    void cancel();
 
-    bool isCancelled() const {
-      return isCancelled_.load();
-    }
+   private:
+    /**
+     * This method is invoked internally when the given intended event fired.
+     *
+     * Do not use this explicitely unless your code can deal with it.
+     *
+     * This method will not invoke the fire-callback if @c cancel() was invoked
+     * already.
+     */
+    void fire();
 
-    void fire() {
-      std::lock_guard<std::mutex> lk(mutex_);
-      if (!isCancelled_.load()) {
-        onFire_();
-      }
-    }
+    friend class Scheduler;
 
    private:
     std::mutex mutex_;
