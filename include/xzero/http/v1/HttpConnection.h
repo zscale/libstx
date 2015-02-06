@@ -49,15 +49,15 @@ class XZERO_API HttpConnection : public HttpTransport {
   void completed() override;
 
   void send(HttpResponseInfo&& responseInfo, Buffer&& chunk,
-            CompletionHandler&& onComplete) override;
+            CompletionHandler onComplete) override;
   void send(HttpResponseInfo&& responseInfo, const BufferRef& chunk,
-            CompletionHandler&& onComplete) override;
+            CompletionHandler onComplete) override;
   void send(HttpResponseInfo&& responseInfo, FileRef&& chunk,
-            CompletionHandler&& onComplete) override;
+            CompletionHandler onComplete) override;
 
-  void send(Buffer&& chunk, CompletionHandler&& onComplete) override;
-  void send(const BufferRef& chunk, CompletionHandler&& onComplete) override;
-  void send(FileRef&& chunk, CompletionHandler&& onComplete) override;
+  void send(Buffer&& chunk, CompletionHandler onComplete) override;
+  void send(const BufferRef& chunk, CompletionHandler onComplete) override;
+  void send(FileRef&& chunk, CompletionHandler onComplete) override;
 
   void setInputBufferSize(size_t size) override;
 
