@@ -151,7 +151,6 @@ class XZERO_API HttpChannel : public HttpListener {
   void setState(HttpChannelState newState);
 
  protected:
-  CompletionHandler makeCompleter(CompletionHandler next);
   virtual std::unique_ptr<HttpOutput> createOutput();
   void handleRequest();
   void onBeforeSend();
