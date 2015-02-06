@@ -4,6 +4,14 @@
 - do we want to wrap all HTTP/1 protocol stuff into `xzero::http::v1`?
 - or do we just want to rename some classes to `Http1Connection`, ...?
 
+```
+xzero::http         | generic HTTP API
+xzero::http::v1     | transport for HTTP 0.9 to 1.1
+xzero::http::v2     | transport for HTTP 2.0
+xzero::http::fcgi   | transport for FastCGI transport
+xzero::http::mock   | transport for abstract access (including unit tests)
+```
+
 ## Incomplete TODO items
 
 ### Milestone 1
@@ -41,6 +49,8 @@
 - [ ] doxygen: how to document a group of functions all at once (or, how to copydoc)
 - [ ] test: call completed() before contentLength is satisfied in non-chunked mode (shall be transport generic)
 - [ ] test: attempt to write more data than contentLength in non-chunked mode (shall be transport generic)
+- [ ] merge libflow into libxzero
+- [ ] merge libfnord into libxzero
 
 ### Usage Ideas
 
