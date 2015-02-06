@@ -1,8 +1,5 @@
 ## FiXME
 
-- `curl -r a-b,c-d $URL` fails while with `-r a-b` succeeds
-- support multiple wantFlush() (currently double-registering)
-
 ## Incomplete TODO items
 
 ### Milestone 1
@@ -11,6 +8,9 @@
 - linux: LinuxScheduler (using epoll, timerfd, eventfd)
 - generic: SelectScheduler (using select, pipe)
 
+- [x] make HttpFileHandler testable
+- [ ] HttpFileHandler: make ETag-header generation customizable?
+- [ ] write full tests for HttpFileHandler using MockTransport
 - [ ] ensure 100-continue is sent async, too (maybe not needed)
 - [ ] timeout management (ideally testable)
 - [ ] rework exception management

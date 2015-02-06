@@ -11,6 +11,7 @@
 #include <xzero/sysconfig.h>
 #include <xzero/http/HttpStatus.h>
 #include <string>
+#include <functional>
 #include <unordered_map>
 #include <sys/stat.h>
 
@@ -96,6 +97,22 @@ class XZERO_API HttpFileHandler {
                   const std::string& mimetypes,
                   const std::string& defaultMimeType);
 
+  /**
+   * Initializes static file handler.
+   *
+   * @param mtime whether or not to include Last-Modified timestamp
+   * @param size whether or not to include file size
+   * @param inode whether or not to include file's system inode
+   * @param mimetypes if non-empty, given file will be loaded as mimetypes file.
+   * @param defaultMimeType default mimetype to use if no mapping exists.
+   * @param generateBoundaryID boundary-ID generator function that generates
+   *                           response-local unique boundary IDs.
+   */
+  HttpFileHandler(bool mtime, bool size, bool inode,
+                  const std::string& mimetypes,
+                  const std::string& defaultMimeType,
+                  std::function<std::string()> generateBoundaryID);
+
   ~HttpFileHandler();
 
   /**
@@ -175,6 +192,7 @@ class XZERO_API HttpFileHandler {
   bool etagConsiderINode_;
   std::unordered_map<std::string, std::string> mimetypes_;
   std::string defaultMimeType_;
+  std::function<std::string()> generateBoundaryID_;
 
   // TODO stat cache
   // TODO fd cache

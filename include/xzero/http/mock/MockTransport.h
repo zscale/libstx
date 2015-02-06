@@ -60,6 +60,7 @@ class XZERO_API MockTransport : public HttpTransport {
                 size_t maxRequestUriLength,
                 size_t maxRequestBodyLength,
                 HttpOutputCompressor* outputCompressor);
+
   ~MockTransport();
 
   /**
