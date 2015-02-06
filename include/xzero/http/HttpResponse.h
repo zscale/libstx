@@ -94,7 +94,7 @@ class XZERO_API HttpResponse {
    * requested this behaviour via <code>Expect: 100-continue</code>
    * request header.
    */
-  void send100Continue(CompletionHandler&& onComplete);
+  void send100Continue(CompletionHandler onComplete);
 
   /**
    * Responds with an error response message.

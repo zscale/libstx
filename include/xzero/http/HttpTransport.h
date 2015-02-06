@@ -51,7 +51,7 @@ class XZERO_API HttpTransport : public Connection {
    * @note You must ensure the data chunk is available until sending completed!
    */
   virtual void send(HttpResponseInfo&& responseInfo, const BufferRef& chunk,
-                    CompletionHandler&& onComplete) = 0;
+                    CompletionHandler onComplete) = 0;
 
   /**
    * Initiates sending a response to the client.
@@ -61,7 +61,7 @@ class XZERO_API HttpTransport : public Connection {
    * @param onComplete callback invoked when sending chunk is succeed/failed.
    */
   virtual void send(HttpResponseInfo&& responseInfo, Buffer&& chunk,
-                    CompletionHandler&& onComplete) = 0;
+                    CompletionHandler onComplete) = 0;
 
   /**
    * Initiates sending a response to the client.
@@ -71,7 +71,7 @@ class XZERO_API HttpTransport : public Connection {
    * @param onComplete callback invoked when sending chunk is succeed/failed.
    */
   virtual void send(HttpResponseInfo&& responseInfo, FileRef&& chunk,
-                    CompletionHandler&& onComplete) = 0;
+                    CompletionHandler onComplete) = 0;
 
   /**
    * Transfers this data chunk to the output stream.
@@ -79,7 +79,7 @@ class XZERO_API HttpTransport : public Connection {
    * @param chunk response body chunk
    * @param onComplete callback invoked when sending chunk is succeed/failed.
    */
-  virtual void send(Buffer&& chunk, CompletionHandler&& onComplete) = 0;
+  virtual void send(Buffer&& chunk, CompletionHandler onComplete) = 0;
 
   /**
    * Transfers this file data chunk to the output stream.
@@ -87,7 +87,7 @@ class XZERO_API HttpTransport : public Connection {
    * @param chunk response body chunk represented as a file.
    * @param onComplete callback invoked when sending chunk is succeed/failed.
    */
-  virtual void send(FileRef&& chunk, CompletionHandler&& onComplete) = 0;
+  virtual void send(FileRef&& chunk, CompletionHandler onComplete) = 0;
 
   /**
    * Transfers this data chunk to the output stream.
@@ -95,7 +95,7 @@ class XZERO_API HttpTransport : public Connection {
    * @param chunk response body chunk
    * @param onComplete callback invoked when sending chunk is succeed/failed.
    */
-  virtual void send(const BufferRef& chunk, CompletionHandler&& onComplete) = 0;
+  virtual void send(const BufferRef& chunk, CompletionHandler onComplete) = 0;
 };
 
 inline HttpTransport::HttpTransport(std::shared_ptr<EndPoint> endpoint,

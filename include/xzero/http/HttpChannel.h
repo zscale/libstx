@@ -68,7 +68,7 @@ class XZERO_API HttpChannel : public HttpListener {
    * The response will auto-commit the response status line and
    * response headers if not done yet.
    */
-  void send(Buffer&& data, CompletionHandler&& onComplete);
+  void send(Buffer&& data, CompletionHandler onComplete);
 
   /**
    * Sends a response body chunk @p data.
@@ -81,7 +81,7 @@ class XZERO_API HttpChannel : public HttpListener {
    *
    * @note You must ensure the data chunk is available until sending completed!
    */
-  void send(const BufferRef& data, CompletionHandler&& onComplete);
+  void send(const BufferRef& data, CompletionHandler onComplete);
 
   /**
    * Sends a response body chunk as defined by @p file.
@@ -93,12 +93,12 @@ class XZERO_API HttpChannel : public HttpListener {
    * The response will auto-commit the response status line and
    * response headers if not done yet.
    */
-  void send(FileRef&& file, CompletionHandler&& onComplete);
+  void send(FileRef&& file, CompletionHandler onComplete);
 
   /**
    * Sends an 100-continue intermediate response message.
    */
-  void send100Continue(CompletionHandler&& onComplete);
+  void send100Continue(CompletionHandler onComplete);
 
   /**
    * Retrieves the request object for the current request.
@@ -130,7 +130,7 @@ class XZERO_API HttpChannel : public HttpListener {
    *
    * @param onComplete callback invoked when sending chunk is succeed/failed.
    */
-  void commit(CompletionHandler&& onComplete);
+  void commit(CompletionHandler onComplete);
 
   /**
    * Adds a custom output-filter.
