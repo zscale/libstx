@@ -77,7 +77,7 @@ class XZERO_API MockTransport : public HttpTransport {
    */
   void run(HttpVersion version, const std::string& method,
            const std::string& entity, const HeaderFieldList& headers,
-           const std::string& body);
+           const std::string& body = "");
 
   /** Retrieves the response message status line and headers. */
   const HttpResponseInfo& responseInfo() const XZERO_NOEXCEPT;
