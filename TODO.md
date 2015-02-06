@@ -1,5 +1,9 @@
 ## FiXME
 
+- do we want to wrap all HTTP stuff into namespace `xzero::http`
+- do we want to wrap all HTTP/1 protocol stuff into `xzero::http::v1`?
+- or do we just want to rename some classes to `Http1Connection`, ...?
+
 ## Incomplete TODO items
 
 ### Milestone 1
