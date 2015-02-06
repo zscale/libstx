@@ -48,8 +48,6 @@ static int processor_count() {
 
 /**
  * Threaded CPU-core affine multiplexed I/O network service.
- *
- * @todo Make this class 100% libev independant.
  */
 class ThreadedScheduler { // {{{
  public:

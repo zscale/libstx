@@ -4,8 +4,7 @@
 - Testability
 - Composability
 - Ability to support different HTTP transport protocols (HTTP/1, HTTP/2, FCGI, SPDY, ...)
-- Platform Independancy (also abstracting away event loops, timers, clocks,
-  but providing default adaptors for `libev`)
+- Platform Independancy (also abstracting away event loops, timers, clocks)
 - Abstract away threading model
   - single threaded, non-blocking I/O
   - thread pool, non-blocking I/O

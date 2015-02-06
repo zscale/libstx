@@ -29,7 +29,7 @@ written in modern C++.
 ```sh
 # Installs required dependencies
 sudo apt-get install make cmake pkg-config git gcc-4.8 g++-4.8 \
-    libev-dev zlib1g-dev libpcre3-dev
+    zlib1g-dev libpcre3-dev
 
 # If you want to built the tests, you must install libgtest-dev
 # and then built it yourself
