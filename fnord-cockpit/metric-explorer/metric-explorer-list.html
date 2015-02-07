@@ -61,14 +61,13 @@
     }
   </style>
 
-  <fn-loader data-loading data-loader-type="loader3">
-    <fn-message data-state='error'>
+  <fn-loader data-transparent data-loading data-loader-type="loader3">
+    <fn-message class="overview" data-state='error'>
       <fn-message-header>
         Server Error
       </fn-message-header>
       <fn-message-text>
-        We're sorry. The server encountered an error and was unable to complete 
-        your request.
+        Unable to connect to Server
         <br />
         <span></span>
       </fn-message-text>
@@ -81,7 +80,7 @@
         </fn-search>
       </div>
       <div style="border-top: 1px solid #bbb; background: #fff;">
-        <fn-table data-per-page="25" data-page-"0" data-clickable>
+        <fn-table data-per-page="25" data-page="0" data-clickable>
           <fn-table-column data-sortable data-presort="asc">Metric</fn-table-column>
           <fn-table-column>Labels</fn-table-column>
           <fn-table-column data-sortable>Last Insert</fn-table-column>
@@ -105,6 +104,7 @@
       if (this.hasAttribute('data-url')) {
         this.init();
       }
+
     };
 
     this.attributeChangedCallback = function(attr, new_val, old_val) {
@@ -114,7 +114,7 @@
     };
 
     this.init = function() {
-      var params = parseUrlQueryString(this.getAttribute('data-url'));
+      var params = Fnord.parseUrlQueryString(this.getAttribute('data-url'));
       var metric_url = "";
       var header = "All Metrics";
       var openPreview = false;
@@ -127,6 +127,7 @@
             openPreview = true;
       }
 
+      this.querySelector("fn-loader").style.height = (window.innerHeight - 65) + "px";
       this.loadMetricList(metric_url, openPreview);
       this.setHeader(header);
       this.initSearch();
@@ -223,11 +224,14 @@
 
 
     this.initTablePager = function(list_size) {
-      console.log("init", list_size);
       var pager = this.querySelector("fn-pager");
       var table = this.querySelector("fn-table");
       pager.setAttribute('data-last-item', list_size);
       pager.forElement(table);
+
+      pager.addEventListener('fn-pager-turn', function() {
+
+      }, false);
     };
 
 
@@ -235,9 +239,10 @@
       var end = Math.round(Date.now() / 1000);
       var start = end - 3600;
       var raw_url = 
-        "#metric?metric="+ encodeURIComponent(metric_key) +
-        "&view=sum&start_time=" + start +
-        "&end_time=" + end;
+        "metric?metric="+ encodeURIComponent(metric_key) +
+        "&aggr_fn=sum&&aggr_window=5&aggr_step=10&from=" + start +
+        "&until=" + end +
+        "&scale=0.8";
       openUrl(raw_url, true)
 
     };
@@ -248,8 +253,8 @@
       msg.setAttribute('data-state', 'error');
       this.querySelector("fn-loader").style.paddingTop = "50px";
       msg.querySelector("fn-message-text span").innerHTML =
-        statusCode + " " + text;
-    }
+        "statusCode: "+ statusCode;
+    };
   };
 
   window.addEventListener('fn-ready', function() {
