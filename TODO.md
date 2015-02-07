@@ -23,10 +23,10 @@ xzero::http::mock   | transport for abstract access (including unit tests)
 - [x] make HttpFileHandler testable
 - [ ] HttpFileHandler: make ETag-header generation customizable?
 - [ ] write full tests for HttpFileHandler using MockTransport
-- [ ] ensure 100-continue is sent async, too (maybe not needed)
+- [x] ensure 100-continue is sent async, too (maybe not needed)
 - [ ] timeout management (ideally testable)
 - [ ] rework exception management
-- [ ] how to handle accept() errors (i.e. in InetConnector)?
+- [x] how to handle accept() errors (i.e. in InetConnector)?
 
 ### Milestone 2
 
