@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/executor/SafeCall.h>
 #include <xzero/sysconfig.h>
 
 #include <exception>
@@ -27,7 +28,7 @@ namespace xzero {
  * @see DirectExecutor
  * @see ThreadPool
  */
-class XZERO_API Executor {
+class XZERO_API Executor : public SafeCall {
  public:
   explicit Executor(std::function<void(const std::exception&)>&& eh);
   virtual ~Executor();
@@ -40,35 +41,9 @@ class XZERO_API Executor {
   virtual void execute(Task&& task) = 0;
 
   /**
-   * Configures exception handler.
-   */
-  void setExceptionHandler(std::function<void(const std::exception&)>&& eh);
-
-  /**
    * Retrieves a human readable name of this executor (for introspection only).
    */
   virtual std::string toString() const = 0;
-
-  /**
-   * Standard exception console logger.
-   */
-  static void standardConsoleLogger(const std::exception& e);
-
- protected:
-  /**
-   * Handles uncaught exception.
-   */
-  void handleException(const std::exception& e) XZERO_NOEXCEPT;
-
-  /**
-   * Savely invokes given task within the callers context.
-   *
-   * @see setExceptionHandler(std::function<void(const std::exception&)>&&)
-   */
-  void safeCall(const Task& task) XZERO_NOEXCEPT;
-
- private:
-  std::function<void(const std::exception&)> exceptionHandler_;
 };
 
 } // namespace xzero
