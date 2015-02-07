@@ -10,9 +10,31 @@
 -->
 <template id="fn-metric-explorer-preview-base-tpl">
   <style type='text/css'>
+    .navigation {
+      padding: 0 15px;
+    }
     .navigation fn-button {
       margin: 5px 8px 0 0;
     }
+
+    .navigation .item {
+      vertical-align: middle;
+      margin-left: 0.8%;
+    }
+
+    .navigation .item:first-child {
+      margin-left: 0;
+    }
+
+    .navigation .item .text {
+      font-size: 0.95em;
+    }
+
+    .navigation .item fn-dropdown {
+      margin-top: 10px;
+    }
+
+
 
     .group {
       height: 100%;
@@ -93,8 +115,9 @@
       display:block;
     }
 
-    fn-dropdown#view {
-      margin: 10px 20px 0 0;
+    fn-metric-control {
+      border-bottom: 1px solid #ddd;
+      border-top: 1px solid #ddd;
     }
 
     fn-modal-content code {
@@ -106,25 +129,36 @@
       margin-bottom: 10px;
     }
 
+
   </style>
   <fn-loader>
     <div class="navigation">
-      <fn-button id="embed_btn" class="right" data-size='tiny'>
-        <i class='fa fa-share'></i>
+      <div class="item left">
+        <span class="text">View</span>
+        <fn-dropdown data-style="inline small" id="view" >
+          <fn-dropdown-header>Chart</fn-dropdown-header>
+          <fn-dropdown-item data-value='svg'>Chart</fn-dropdown-item>
+          <fn-dropdown-item data-value='csv'>Raw</fn-dropdown-item>
+        </fn-dropdown>
+      </div>
+      <div class="item left">
+        <span class="text">Chart Settings</span>
+        <fn-dropdown data-style="inline small" id="chart_settings">
+          <fn-dropdown-header>Linear</fn-dropdown-header>
+          <fn-dropdown-item data-value='linear'>Linar</fn-dropdown-item>
+          <fn-dropdown-item data-value='logarithmic'>Logarithmic</fn-dropdown-item>
+          <fn-dropdown-item data-value='inverted'>Inverted</fn-dropdown-item>
+        </fn-dropdown>
+      </div>
+      <fn-button id="embed_btn" class="item left" data-size='tiny'>
+        <i class='fa fa-share'></i>Embed
       </fn-button>
-      <fn-button id="auto_refresh" class="right" data-toggle data-size='tiny'>
-        <i class='fa fa-refresh'></i>
+      <fn-button id="auto_refresh" class="item left" data-toggle data-size='tiny'>
+        <i class='fa fa-refresh'></i>Auto Refresh
       </fn-button>
-      <fn-dropdown data-style="small" id="view" class="right">
-        <fn-dropdown-header>Chart</fn-dropdown-header>
-        <fn-dropdown-item data-value='svg'>Chart</fn-dropdown-item>
-        <fn-dropdown-item data-value='csv'>Raw</fn-dropdown-item>
-      </fn-dropdown>
-    </div>
-    <fn-metric-control data-index="0"></fn-metric-control>
-    <fn-controls type='secondary'>
-      <fn-controls-section data-position='left'>
-        <div class="group timenav">
+
+      <div class="item right">
+        <fn-date-time-selector>
           <fn-dropdown id='timerange' data-style="input small">
             <fn-dropdown-header>1 hour</fn-dropdown-header>
             <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
@@ -135,21 +169,12 @@
             <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
             <fn-dropdown-item data-value=86400>1 day</fn-dropdown-item>
           </fn-dropdown>
-          <fn-datepicker data-size="small" data-time-select data-selectable="past">
-          </fn-datepicker>
-          <fn-daterangepicker data-size="small" data-selectable='past'>
-          </fn-daterangepicker>
-        </div>
-      </fn-controls-section>
-      <fn-controls-section data-position='right'>
-        <fn-checkbox data-style="small" id="inv_scale" style="margin-right: 10px;">
-          <fn-checkbox-label>Inverted</fn-checkbox-label>
-        </fn-checkbox>
-        <fn-checkbox data-style="small" id="log_scale">
-          <fn-checkbox-label>Logarithmic</fn-checkbox-label>
-        </fn-checkbox>
-      </fn-controls-section>
-    </fn-controls>
+        </fn-date-time-selector>
+      </div>
+    </div>
+
+    <fn-metric-control data-index="0"></fn-metric-control>
+
     <fn-loader id="result_pane_loader" data-loading data-resolved="data-resolved" data-transparent>
       <fn-message>
       </fn-message>
@@ -627,8 +652,8 @@
 
 
     this.handleDateTimeControls = function() {
-      var base = this;
-      /* init */
+      /*var base = this;
+      // init 
       var time_range_val = parseInt(
         this.getGenericParamOrDefault("time_range"), 10);
       var end_time = parseInt(this.getGenericParamOrDefault("until"), 10);
@@ -676,9 +701,9 @@
           var endtime = parseInt(this.getAttribute("data-endtime"), 10);
           endtime = Math.round(endtime / 1000);
           base.updateDateTimeElems(endtime);
-      }, false);
+      }, false);*/
 
-    }
+    };
 
     this.handleGenericControls = function() {
       var base = this;
@@ -707,7 +732,7 @@
         },
       false);
 
-      log_scale.addEventListener("fn-checkbox-select", function(e) {
+    /*  log_scale.addEventListener("fn-checkbox-select", function(e) {
         base.updateGenericParams({"logarithmic" : true});
       }, false);
 
@@ -721,7 +746,7 @@
 
       inv_scale.addEventListener("fn-checkbox-unselect", function(e) {
         base.updateGenericParams({"inverted" : false});
-      }, false);
+      }, false);*/
 
       autorefresh_btn.addEventListener('fn-button-click', function() {
         if (this.getAttribute('data-state') == "active") {
