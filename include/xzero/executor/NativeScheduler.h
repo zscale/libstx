@@ -34,7 +34,7 @@ class XZERO_API NativeScheduler : public Scheduler {
 
   ~NativeScheduler();
 
-  void execute(Task&& task) override;
+  void execute(Task task) override;
   std::string toString() const override;
   HandleRef executeAfter(TimeSpan delay, Task task) override;
   HandleRef executeAt(DateTime dt, Task task) override;

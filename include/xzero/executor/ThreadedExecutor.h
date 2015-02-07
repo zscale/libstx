@@ -25,12 +25,12 @@ namespace xzero {
 class XZERO_API ThreadedExecutor : public Executor {
  public:
   ThreadedExecutor() : ThreadedExecutor(nullptr) {}
-  ThreadedExecutor(std::function<void(const std::exception&)>&& eh);
+  explicit ThreadedExecutor(std::function<void(const std::exception&)> eh);
   ~ThreadedExecutor();
 
-  void execute(const std::string& name, Task&& task);
+  void execute(const std::string& name, Task task);
 
-  void execute(Task&& task) override;
+  void execute(Task task) override;
   std::string toString() const override;
   void joinAll();
 

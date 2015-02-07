@@ -60,7 +60,7 @@ class XZERO_API Scheduler : public Executor {
 
   typedef std::shared_ptr<Handle> HandleRef;
 
-  Scheduler(std::function<void(const std::exception&)>&& eh)
+  Scheduler(std::function<void(const std::exception&)> eh)
       : Executor(std::move(eh)) {}
 
   /**

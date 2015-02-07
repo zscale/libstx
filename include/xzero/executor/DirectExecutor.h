@@ -23,9 +23,9 @@ class XZERO_API DirectExecutor : public Executor {
  public:
   DirectExecutor(
     bool recursive = false,
-    std::function<void(const std::exception&)>&& eh = nullptr);
+    std::function<void(const std::exception&)> eh = nullptr);
 
-  void execute(Task&& task) override;
+  void execute(Task task) override;
   std::string toString() const override;
 
   /** Tests whether this executor is currently running some task. */

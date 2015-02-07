@@ -32,19 +32,19 @@ class XZERO_API ThreadPool : public Executor {
    * Initializes this thread pool.
    * @param num_threads number of threads to allocate.
    */
-  ThreadPool(size_t num_threads) : ThreadPool(num_threads, nullptr) {}
+  explicit ThreadPool(size_t num_threads) : ThreadPool(num_threads, nullptr) {}
 
   /**
    * Initializes this thread pool as many threads as CPU cores are available.
    */
-  ThreadPool(std::function<void(const std::exception&)>&& eh);
+  explicit ThreadPool(std::function<void(const std::exception&)> eh);
 
   /**
    * Initializes this thread pool.
    *
    * @param num_threads number of threads to allocate.
    */
-  ThreadPool(size_t num_threads, std::function<void(const std::exception&)>&& eh);
+  ThreadPool(size_t num_threads, std::function<void(const std::exception&)> eh);
 
   ~ThreadPool();
 
@@ -71,7 +71,7 @@ class XZERO_API ThreadPool : public Executor {
   void wait();
 
   // overrides
-  void execute(Task&& task) override;
+  void execute(Task task) override;
   std::string toString() const override;
 
  private:
