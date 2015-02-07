@@ -30,7 +30,7 @@ class XZERO_API SafeCall {
   /**
    * Savely invokes given task within the callers context.
    *
-   * @see setExceptionHandler(std::function<void(const std::exception&)>&&)
+   * @see setExceptionHandler(std::function<void(const std::exception&)>)
    */
   void safeCall(std::function<void()> callee) XZERO_NOEXCEPT;
 

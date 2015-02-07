@@ -30,7 +30,7 @@ namespace xzero {
  */
 class XZERO_API Executor : protected SafeCall {
  public:
-  explicit Executor(std::function<void(const std::exception&)>&& eh);
+  explicit Executor(std::function<void(const std::exception&)> eh);
   virtual ~Executor();
 
   typedef std::function<void()> Task;
@@ -40,7 +40,7 @@ class XZERO_API Executor : protected SafeCall {
   /**
    * Executes given task.
    */
-  virtual void execute(Task&& task) = 0;
+  virtual void execute(Task task) = 0;
 
   /**
    * Retrieves a human readable name of this executor (for introspection only).
