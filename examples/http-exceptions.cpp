@@ -17,6 +17,7 @@
 #include <xzero/logging/LogTarget.h>
 #include <xzero/RuntimeError.h>
 #include <xzero/WallClock.h>
+#include <xzero/RuntimeError.h>
 
 int main() {
   auto errorHandler = [](const std::exception& e) {
@@ -32,6 +33,7 @@ int main() {
   auto inet = server.addConnector<xzero::InetConnector>(
       "http", &scheduler, &scheduler, clock,
       xzero::TimeSpan::fromSeconds(30),
+      &xzero::consoleLogger,
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(
       clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));

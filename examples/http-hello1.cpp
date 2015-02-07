@@ -5,6 +5,7 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
+#include <xzero/RuntimeError.h>
 #include <xzero/WallClock.h>
 #include <xzero/executor/NativeScheduler.h>
 #include <xzero/executor/DirectExecutor.h>
@@ -23,6 +24,7 @@ int main() {
   auto inet = server.addConnector<xzero::InetConnector>(
       "http", &scheduler, &scheduler,  clock,
       xzero::TimeSpan::fromSeconds(60),
+      &xzero::consoleLogger,
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   inet->setBlocking(false);
 

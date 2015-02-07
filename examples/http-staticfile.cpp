@@ -8,6 +8,7 @@
 #include <xzero/executor/DirectExecutor.h>
 #include <xzero/executor/NativeScheduler.h>
 #include <xzero/WallClock.h>
+#include <xzero/RuntimeError.h>
 #include <xzero/net/Server.h>
 #include <xzero/net/InetConnector.h>
 #include <xzero/http/HttpRequest.h>
@@ -35,6 +36,7 @@ int main(int argc, const char* argv[]) {
   auto inet = server.addConnector<xzero::InetConnector>(
       "http", &scheduler, &scheduler, clock,
       xzero::TimeSpan::fromSeconds(30),
+      &xzero::consoleLogger,
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(
       clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));
