@@ -10,8 +10,28 @@
 -->
 <template id="fn-metric-explorer-preview-base-tpl">
   <style type='text/css'>
+    .navigation {
+      padding: 0 15px;
+    }
     .navigation fn-button {
       margin: 5px 8px 0 0;
+    }
+
+    .navigation .item {
+      vertical-align: middle;
+      margin-left: 0.8%;
+    }
+
+    .navigation .item:first-child {
+      margin-left: 0;
+    }
+
+    .navigation .item .text {
+      font-size: 0.95em;
+    }
+
+    .navigation .item fn-dropdown {
+      margin-top: 10px;
     }
 
 
@@ -21,7 +41,6 @@
       float: left;
       padding: 14px 20px 0 20px;
     }
-
 
     .group b {
       font-weight: normal;
@@ -47,11 +66,12 @@
 
     #result_pane_loader fn-message {
       display:none;
-      margin: 2em 4em;
     }
 
     #result_pane_loader fn-message.active {
       display: block;
+      margin: auto;
+      margin-top: 25px;
     }
 
     .result_pane {
@@ -76,30 +96,69 @@
       border-bottom: none !important;
     }
 
-
-    .result_pane fn-pager {
-      float:right;
-      margin-right: 5px;
+    fn-datepicker /deep/ #datepicker_widget {
+      left: 170px;
     }
+
+    .result_pane .table_ui {
+      height: 100%;
+      float:left;
+      margin-left: 10px;
+    }
+
+    .result_pane .table_ui fn-pager {
+      margin-top: 5px;
+      float:right;
+    }
+
+    .result_pane fn-table {
+      display:block;
+    }
+
+    fn-metric-control {
+      border-bottom: 1px solid #ddd;
+      border-top: 1px solid #ddd;
+    }
+
+    fn-modal-content code {
+      word-wrap: break-word;
+    }
+
+    fn-modal-content .header {
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
 
   </style>
   <fn-loader>
     <div class="navigation">
-      <fn-button id="embed_btn" data-size='tiny'>
-        <i class='fa fa-share'></i>
-        Embed
+      <div class="item left">
+        <span class="text">View</span>
+        <fn-dropdown data-style="inline small" id="view" >
+          <fn-dropdown-header>Chart</fn-dropdown-header>
+          <fn-dropdown-item data-value='svg'>Chart</fn-dropdown-item>
+          <fn-dropdown-item data-value='csv'>Raw</fn-dropdown-item>
+        </fn-dropdown>
+      </div>
+      <div class="item left">
+        <span class="text">Chart Settings</span>
+        <fn-dropdown data-style="inline small" id="chart_settings">
+          <fn-dropdown-header>Linear</fn-dropdown-header>
+          <fn-dropdown-item data-value='linear'>Linar</fn-dropdown-item>
+          <fn-dropdown-item data-value='logarithmic'>Logarithmic</fn-dropdown-item>
+          <fn-dropdown-item data-value='inverted'>Inverted</fn-dropdown-item>
+        </fn-dropdown>
+      </div>
+      <fn-button id="embed_btn" class="item left" data-size='tiny'>
+        <i class='fa fa-share'></i>Embed
       </fn-button>
-      <fn-button id="auto_refresh" data-toggle data-size='tiny'>
-        <i class='fa fa-refresh'></i>
-        Auto Refresh
+      <fn-button id="auto_refresh" class="item left" data-toggle data-size='tiny'>
+        <i class='fa fa-refresh'></i>Auto Refresh
       </fn-button>
-      <fn-button data-format="csv" style="margin-right:15px;" class="right" data-size="tiny">Raw</fn-button>
-      <fn-button data-format="svg" class="right" data-state="active" data-size="tiny">Chart</fn-button>
-    </div>
-    <fn-cockpit-metric-control></fn-cockpit-metric-control>
-    <fn-controls type='secondary'>
-      <fn-controls-section data-position='left'>
-        <div class="group timenav">
+
+      <div class="item right">
+        <fn-date-time-selector>
           <fn-dropdown id='timerange' data-style="input small">
             <fn-dropdown-header>1 hour</fn-dropdown-header>
             <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
@@ -110,34 +169,18 @@
             <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
             <fn-dropdown-item data-value=86400>1 day</fn-dropdown-item>
           </fn-dropdown>
-          <fn-datepicker data-time-select data-selectable="past">
-          </fn-datepicker>
+        </fn-date-time-selector>
+      </div>
+    </div>
 
-          <fn-daterangepicker data-size="small" data-selectable='past'>
-          </fn-daterangepicker>
-        </div>
-      </fn-controls-section>
-      <fn-controls-section data-position='right'>
-        <fn-checkbox data-style="small" id="inv_scale" style="margin-right: 10px;">
-          <fn-checkbox-label>Inverted</fn-checkbox-label>
-        </fn-checkbox>
-        <fn-checkbox data-style="small" id="log_scale">
-          <fn-checkbox-label>Logarithmic</fn-checkbox-label>
-        </fn-checkbox>
-      </fn-controls-section>
-    </fn-controls>
+    <fn-metric-control data-index="0"></fn-metric-control>
+
     <fn-loader id="result_pane_loader" data-loading data-resolved="data-resolved" data-transparent>
-      <fn-message data-state='error'></fn-message>
+      <fn-message>
+      </fn-message>
       <div class="result_pane active" data-format="svg">
       </div>
       <div class="result_pane" data-format="csv">
-        <fn-table data-per-page="25" data-page="0">
-          <fn-table-column>Metric</fn-table-column>
-          <fn-table-column>Time</fn-table-column>
-          <fn-table-column>Value</fn-table-column>
-          <table>
-          </table>
-        </fn-table>
       </div>
     </fn-loader>
     <fn-modal id="embed">
@@ -157,6 +200,8 @@
   <fn-tooltip data-pointer="right" id='ttp_endtime'>
     Please select a date in the past
   </fn-tooltip>
+  <fn-tooltip data-pointer='right' id="ttp_embed">Embed</fn-tooltip>
+  <fn-tooltip data-pointer='right' id="ttp_refresh">Auto Refresh</fn-tooltip>
 </template>
 
 <script type='text/javascript'>
@@ -166,201 +211,408 @@
       this.appendChild(tpl);
 
       if (this.getAttribute('data-url') != null) {
-        this.onUrlChange(true);
+        this.init()
       }
+
+      document.addEventListener("DOMContentLoaded", function() {
+        var loader = this.querySelector("#result_pane_loader"); 
+        var height =
+          (window.innerHeight - loader.getBoundingClientRect().top - 30) + "px"
+        loader.style.height = height;
+        this.querySelector(
+          ".result_pane[data-format='csv']").style.height = height;
+      }, false);
 
     };
 
     this.attributeChangedCallback = function(attr, old_val, new_val) {
       switch (attr) {
         case 'data-url' :
-          this.onUrlChange(old_val == null);
+          this.init();
           break;
         case 'data-format' :
-          this.toggleView(new_val);
+          this.updateData(new_val);
           break;
         default:
           break;
       }
     };
 
-    this.onUrlChange = function(init) {
-      this.params = parseUrlQueryString(this.getAttribute("data-url"));
+    this.init = function() {
+      this.params = Fnord.parseMetricQueryUrl(this.getAttribute("data-url"));
+      this.updateData(this.getAttribute('data-format'));
+      this.handleGenericControls();
+      this.handleDateTimeControls();
 
-      if (init) {
-        this.init();
+      //init mainMetric
+      this.initMetricControl(
+        this.querySelector("fn-metric-control"), 0, this.params.metric0.name);
+
+      //init subMetrics
+      for (var i = 1; i < parseInt(this.params.metrics, 10); i++) {
+        this.initMetricControl(
+          this.addMetricControl(i, false), i, this.params["metric" + i]["name"]);
       }
-
-      this.updateData(this.getAttribute("data-format"));
     };
 
-    this.init = function() {
-      var base = this;
-      var metric = this.params.query_params.innerViewValue;
-      var url = baseUrl + "list?filter=" + encodeURIComponent(metric);
-      var control = this.querySelector("fn-cockpit-metric-control");
-      control.setAttribute('data-metric', metric);
+    this.update = function() {
+      var url_hash = "#metric?" + this.buildQueryUrl();
+      setUrlHash(url_hash);
+      this.updateData(this.getAttribute('data-format'));
+    };
 
-      control.setAttribute('data-rollup', this.getQueryParamOrDefaultValue("view"));
-      control.setAttribute('data-aggr_window', this.getQueryParamOrDefaultValue("aggr_window"));
-      control.setAttribute('data-aggr_step', this.getQueryParamOrDefaultValue("aggr_step"));
-      control.setAttribute('data-scale', this.getQueryParamOrDefaultValue("scale"));
-
-
-      Fnord.httpGet(url, function(r) {
-        if (r.status == 200) {
-          var json = JSON.parse(r.response);
-          json.metrics.map(function(m) {
-            base.columns = m.labels.join(",");
-            control.handleGroupByControls(m.labels.join(","));
-          });
+    this.updateGenericParams = function(new_params) {
+      for (var key in new_params) {
+        if (new_params[key] != undefined) {
+          this.params[key] = new_params[key].toString();
         }
-        base.columns = [];
-        base.updateUrlParams(
-          base.addRequiredURLParamsForView(
-            base.getQueryParamOrDefaultValue("view")));
-        base.handleBasicControls();
-        base.handleDateTimeControls();
-      });
+      }
+
+      this.update();
     };
 
     this.buildQueryUrl = function(format) {
-      var url =
-        baseUrl + "timeseries" +
-        "?metric=" + this.params.query_params.innerViewValue +
-        "&from=" + this.getQueryParamOrDefaultValue("start_time") +
-        "&until=" + this.getQueryParamOrDefaultValue("end_time") +
-        "&logarithmic=" + this.getQueryParamOrDefaultValue("logarithmic") +
-        "&inverted=" + this.getQueryParamOrDefaultValue("inverted");
+      var url = "";
 
-      var view = this.getQueryParamOrDefaultValue("view");
-      if (view != 'value') {
-        url +=
-          "&aggr_fn=" + view +
-          "&aggr_window=" + this.getQueryParamOrDefaultValue("aggr_window") +
-          "&aggr_step=" + this.getQueryParamOrDefaultValue("aggr_step");
+      for (var i = 0; i < parseInt(this.params.metrics, 10); i++) {
+        var metric_params = this.params["metric" + i];
+
+        for (var key in metric_params) {
+          if (!metric_params[key] ||
+              metric_params[key].length == 0 ||
+              metric_params[key] == "undefined") {continue;}
+
+          if (key == "name") {
+            //name is first param
+            url += (i == 0)? "" : "&";
+            url += "metric=" + encodeURIComponent(metric_params[key]);
+          } else if (key == "aggr_fn") {
+            //value is automatically returned if aggr_fn isn't set
+            if (metric_params[key] != "value") {
+              url += "&" + key + "=" + metric_params[key];
+            }
+          } else if (Fnord.isMetricParam(key)) {
+            //all other metric params
+            url += "&" + key + "=" + metric_params[key];
+          }
+        }
       }
 
       url +=
+        "&from=" + this.getGenericParamOrDefault("from") +
+        "&until=" + this.getGenericParamOrDefault("until") +
+        "&logarithmic=" + this.getGenericParamOrDefault("logarithmic") +
+        "&inverted=" + this.getGenericParamOrDefault("inverted") +
         "&format=" + format +
-        "&min=" + this.getQueryParamOrDefaultValue("min") +
+        "&min=" + this.getGenericParamOrDefault("min") +
         "&height=" + (document.body.offsetHeight - 255) +
         "&width=" + (document.body.offsetWidth - 20) +
         "&grid=both" +
-        "&scale=" + this.getQueryParamOrDefaultValue("aggr_step") +
         "&axis_right=true" +
         "&legend=toprightinside";
 
       return url;
     };
 
-    this.toggleView = function(format) {
-      this.querySelector(".result_pane.active").classList.remove("active");
-      this.querySelector(".result_pane[data-format='"+ format +"']").classList.add("active");
-
-      this.querySelector("fn-button[data-format][data-state='active']").removeAttribute("data-state");
-      this.querySelector("fn-button[data-format='"+ format +"']").setAttribute("data-state", "active");
-
-      this.updateData(format);
-    };
-
     this.updateData = function(format) {
       var base = this;
       format = format ? format : "svg";
-      var url = this.buildQueryUrl(format);
+      var url = baseUrl + "timeseries?" + this.buildQueryUrl(format);
 
       Fnord.httpGet(url, function(r) {
         if (r.status == 200) {
-          if (format == "csv") {
-            base.renderCsvAsTable(r.response);
-            return;
+          if (format == "svg") {
+            return base.renderChart(r.response);
           }
 
-          var pane = base.querySelector(".result_pane[data-format='"+ format +"']");
-          pane.innerHTML = "";
-          pane.innerHTML = r.response;
-          base.querySelector("#result_pane_loader").removeAttribute("data-loading");
+          if (r.response.length > 0) {
+            return base.renderCsvAsTable(r.response);
+          }
+
+          //no data points don't cause an error if format is csv
+          var resp = {
+            'status': r.status,
+            'statusText': r.statusText,
+            'response': "Empty Table"
+          }
+          return base.renderError(resp);
+
         }
+
+        return base.renderError(r);
       });
+    };
+
+    this.onRefresh = function() {
+      var end_time = Date.now();
+      var time_range = this.getGenericParamOrDefault('time_range');
+      var start_time = end_time - time_range;
+      this.updateGenericParams({
+        'until' : until,
+        'from' : from});
+    };
+
+    this.hideActiveResult = function() {
+      var active_elem = this.querySelector("#result_pane_loader .active")
+      if (active_elem) {
+        active_elem.classList.remove("active");
+      }
+    }
+
+    this.renderChart = function(resp) {
+      var pane = this.querySelector(".result_pane[data-format='svg']");
+      this.hideActiveResult();
+      pane.classList.add("active");
+      pane.innerHTML = "";
+      pane.innerHTML = resp;
+      this.querySelector("#result_pane_loader").removeAttribute("data-loading");
     };
 
     this.renderCsvAsTable = function(csv) {
-      var fn_table = this.querySelector(".result_pane[data-format='csv'] fn-table");
+      var base = this;
+      var pane = this.querySelector(".result_pane[data-format='csv']");
+      var container = this.createNewTableContainer();
+      var fn_table = container.querySelector("fn-table");
       var table = fn_table.querySelector("table");
       var data_points = csv.split(/\n/);
+      var metric = csv.substr(0, csv.indexOf(";"));
+      var row_count = 0;
+
+      this.hideActiveResult();
+      pane.classList.add("active");
+      pane.innerHTML = "";
+      pane.appendChild(container);
 
       data_points.forEach(function(point) {
-        var tr_elem = document.createElement("tr");
+        if (point.length > 0) {
+          var entries = point.split(";");
 
-        point.split(";").forEach(function(entry) {
-          var td_elem = document.createElement("td");
-          td_elem.innerHTML = entry;
-          tr_elem.appendChild(td_elem);
-        });
+          if (entries[0] != metric) {
+            base.renderPagerFor(fn_table, container, row_count);
+            fn_table.renderTable();
 
-        table.appendChild(tr_elem);
+            metric = entries[0];
+            container = base.createNewTableContainer();
+            fn_table = container.querySelector("fn-table");
+            table = fn_table.querySelector("table");
+            pane.appendChild(container);
+          }
+          row_count++;
+          base.renderTableRow(entries, table);
+        }
       });
 
+      base.renderPagerFor(fn_table, container, row_count);
       fn_table.renderTable();
+
       this.querySelector("#result_pane_loader").removeAttribute("data-loading");
+    };
+
+    this.renderTableRow = function(entries, table) {
+      var tr_elem = document.createElement("tr");
+      entries.forEach(function(entry) {
+        var td_elem = document.createElement("td");
+        td_elem.innerHTML = entry;
+        tr_elem.appendChild(td_elem);
+      });
+
+      table.appendChild(tr_elem);
+    };
+
+    this.renderPagerFor = function(table_elem, parent_elem, list_size) {
+      var pager = document.createElement("fn-pager");
+
+      Fnord.setAttributes({
+        'data-for': '',
+        'data-first-item': 1,
+        'data-per-page': 25,
+        'data-circling': '',
+        'data-last-item': list_size
+      }, pager);
+
+      parent_elem.appendChild(pager);
+      pager.forElement(table_elem);
+    };
+
+    this.createNewTableContainer = function() {
+      var container = document.createElement("div");
+      var table = document.createElement("fn-table");
+      var columns = ["Metric", "Time", "Value"];
+
+      container.className = "table_ui";
+      Fnord.setAttributes({
+        'data-per-page': 25,
+        'data-page': 0
+      }, table);
+
+      columns.forEach(function(c) {
+        var table_column = document.createElement("fn-table-column");
+        table_column.innerHTML = c;
+        table.appendChild(table_column);
+      });
+
+      table.appendChild(document.createElement("table"));
+      container.appendChild(table);
+
+      return container;
+    };
+
+    this.renderError = function(response) {
+      var loader = this.querySelector("#result_pane_loader");
+      var msg_elem = loader.querySelector("fn-message");
+      var header_elem = document.createElement("fn-message-header");
+      var text_elem = document.createElement("fn-message-text");
+
+      header_elem.innerHTML = response.statusText;
+      text_elem.innerHTML =
+        "statusCode: " + response.status + " " + response.response;
+      msg_elem.innerHTML = "";
+      msg_elem.appendChild(header_elem);
+      msg_elem.appendChild(text_elem);
+
+      this.hideActiveResult();
+      msg_elem.classList.add("active");
+      loader.removeAttribute("data-loading");
+    };
+
+/*********************** Metric Controls *****************************/
+    this.metricParamChanged = function(params, key) {
+      this.params["metric" + params.index] = params;
+      this.update();
+    };
+
+    this.getMetricUrlParamOrDefault = function(key, index) {
+      var defaults = {
+        "aggr_fn": "sum",
+        "aggr_window": "5",
+        "aggr_step": "10",
+        "scale" : "0.8",
+        "group_by" : ""
+      }
+
+      if (this.params["metric" + index] && this.params["metric" + index][key]) {
+        return this.params["metric" + index][key];
+      }
+
+      return defaults[key] ;
+    };
+
+    this.setMetricColumns = function(metric_control) {
+      var url = baseUrl + "list?filter=" + encodeURIComponent(metric_control.params.name);
+      metric_control.params.group_by = this.getMetricUrlParamOrDefault(
+        "group_by", metric_control.params.index);
+
+      Fnord.httpGet(url, function(r) {
+        if (r.status == 200) {
+          var json = JSON.parse(r.response);
+          json.metrics.map(function(m) {
+            metric_control.params.columns = m.labels.join(",");
+          });
+          metric_control.columnsReloaded();
+        }
+      });
+    };
+
+    this.initMetricControl = function(metric, index, name) {
+      var base = this;
+      var aggr_fn = this.getMetricUrlParamOrDefault("aggr_fn", index);
+
+      var metric_params = {
+        "name": name,
+        "aggr_fn": aggr_fn,
+        "scale": this.getMetricUrlParamOrDefault("scale", index),
+        "index" : index
+      }
+
+      if (aggr_fn != "value") {
+        metric_params.aggr_window =
+          this.getMetricUrlParamOrDefault("aggr_window", index);
+        metric_params.aggr_step =
+          this.getMetricUrlParamOrDefault("aggr_step", index);
+      }
+
+
+      if (this.params["metric" + index] == undefined) {
+        this.params["metric" + index] = metric_params;
+        this.params.metrics += 1;
+      }
+
+      metric.params = metric_params;
+      metric.setAttribute('data-index', index);
+      metric.setAttribute('data-state', 'initialised');
+
+      if (metric.params.name) {
+        //reload metric columns
+        metric_params.columns = this.setMetricColumns(metric);
+      }
+
+      // handle events
+      metric.addEventListener(
+        "fn-metric-control-attr-changed", function(e) {
+          base.metricParamChanged(this.params, e.detail.key);
+        },
+      false);
+
+      if (index > 0) {
+        metric.addEventListener('fn-metric-control-remove-metric', function() {
+          base.removeMetricControl(this.getAttribute('data-index'));
+        }, false);
+      } else {
+        metric.addEventListener('fn-metric-control-add-metric', function() {
+          base.addMetricControl(null, true);
+        }, false);
+      }
+    };
+
+    this.addMetricControl = function(index, setEventListener) {
+      var base = this;
+      var controls = this.querySelectorAll("fn-metric-control");
+      var new_control = document.createElement("fn-metric-control");
+      var ref_elem = this.querySelector("fn-controls[type='secondary']");
+      var index = index;
+
+      if (!index && controls) {
+        index = parseInt(
+          controls[controls.length - 1].getAttribute('data-index'), 10) + 1;
+      }
+
+      new_control.setAttribute('data-state', 'select-metric');
+      new_control.setAttribute('data-index', index);
+      ref_elem.parentNode.insertBefore(new_control, ref_elem);
+
+      if (setEventListener) {
+        new_control.addEventListener('fn-metric-control-new-metric', function(e) {
+          base.initMetricControl(this, index, e.detail.name);
+          base.update();
+        }, false);
+
+        new_control.addEventListener('fn-metric-control-remove-metric', function() {
+          base.removeMetricControl(index);
+        }, false);
+      }
+
+      return new_control;
+    };
+
+    this.removeMetricControl = function(index) {
+      var metric_control = 
+        this.querySelector("fn-metric-control[data-index='" + index + "']");
+
+      metric_control.parentNode.removeChild(metric_control);
+
+      if (this.params["metric" + index]) {
+        //metric has been initialised
+        delete this.params["metric" + index];
+        this.params.metrics = this.params.metrics - 1;
+      }
+
+      this.update();
     }
 
-
-    /* returns all missing params */
-    this.addRequiredURLParamsForView = function(view) {
-      var new_params = {};
-      var update = false;
-      if (view == "count" ||
-          view == "sum"   ||
-          view == "mean"  ||
-          view == "min"   ||
-          view == "max" ) {
-
-        var time_window = this.params.query_params.aggr_window;
-        if (time_window == undefined) {
-          new_params.aggr_window = this.getQueryParamOrDefaultValue("aggr_window");
-          update = true;
-        }
-        var aggr_step = this.params.query_params.aggr_step;
-        if (aggr_step == undefined) {
-          new_params.aggr_step = this.getQueryParamOrDefaultValue("aggr_step");
-          update = true;
-        }
-      }
-
-      var group_by = this.params.query_params.by;
-      if (group_by == undefined) {
-        new_params.by = this.columns;
-        update = true;
-      }
-      var param_columns = this.params.query_params.columns;
-      if (param_columns == undefined) {
-        new_params.columns = this.columns;
-        update = true;
-      }
-
-      return new_params;
-    };
-
-
-    this.updateUrlParams = function(new_params) {
-      for (var key in new_params) {
-        if (new_params[key] != undefined) {
-          this.params.query_params[key] = new_params[key].toString();
-        }
-      }
-
-      var path = setUrlFromQueryString("metric", this.params.query_params, true);
-      if (this.getAttribute('data-url') != path) {
-        this.setAttribute("data-url", path);
-      }
-    };
-
-    this.getQueryParamOrDefaultValue = function(key) {
+/************************* Generic Controls **************************/
+    this.getGenericParamOrDefault = function(key) {
       var defaults = {
-        view : "sum",
-        columns : this.columns,
-        end_time : Math.round(Date.now() / 1000),
+        until : Math.round(Date.now() / 1000),
         /* 5 minutes  */
         time_range : 3600,
         /* 10, 5 seconds */
@@ -368,14 +620,12 @@
         aggr_window : 5,
         logarithmic : false,
         inverted: false,
-        by: this.columns,
-        min: 0,
-        scale: 0.8
+        min: 0
       }
 
       if (key == "time_range") {
-        var end_time = parseInt(this.getQueryParamOrDefaultValue("end_time"), 10);
-        var start_time = parseInt(this.params['start_time'], 10);
+        var end_time = parseInt(this.getGenericParamOrDefault("until"), 10);
+        var start_time = parseInt(this.params['from'], 10);
         if (!isNaN(start_time)) {
           return end_time - start_time;
         } else {
@@ -383,34 +633,17 @@
         }
       }
 
-      var value = (this.params.query_params[key] == undefined)?
-        defaults[key] : this.params.query_params[key];
+      var value = (this.params[key])?
+        this.params[key] : defaults[key];
 
       return value;
-    };
-
-    this.onRefresh = function() {
-      var end_time = Date.now();
-      var time_range = this.getQueryParamOrDefaultValue('time_range');
-      var start_time = end_time - time_range;
-      this.updateUrlParams({
-        'end_time' : end_time,
-        'start_time' : start_time});
-    }
-
-/************************* controls handle functions **************************/
-
-    this.splitColumns = function(columns) {
-      if (columns.length == 0) {return [];}
-
-      return columns.split(",");
     }
 
     this.updateDateTimeElems = function(end_time) {
       var params = parseUrlQueryString(this.getAttribute("data-url"));
-      var date_range = this.getQueryParamOrDefaultValue("time_range");
+      var date_range = this.getGenericParamOrDefault("time_range");
       var start_time = parseInt(end_time, 10) - parseInt(date_range, 10);
-      this.updateUrlParams({"end_time" : end_time, "start_time" : start_time});
+      this.updateGenericParams({"until" : end_time, "from" : start_time});
       var datepicker = this.querySelector("fn-datepicker");
       datepicker.setAttribute("data-timestamp", end_time * 1000);
       var daterangepicker = this.querySelector("fn-daterangepicker");
@@ -419,11 +652,11 @@
 
 
     this.handleDateTimeControls = function() {
-      var base = this;
-      /* init */
+      /*var base = this;
+      // init 
       var time_range_val = parseInt(
-        this.getQueryParamOrDefaultValue("time_range"), 10);
-      var end_time = parseInt(this.getQueryParamOrDefaultValue("end_time"), 10);
+        this.getGenericParamOrDefault("time_range"), 10);
+      var end_time = parseInt(this.getGenericParamOrDefault("until"), 10);
 
       var time_range = this.querySelector("#timerange");
       time_range.setAttribute('data-preselected', time_range_val);
@@ -434,7 +667,6 @@
       var daterangepicker = this.querySelector("fn-daterangepicker");
       daterangepicker.setAttribute('data-daterange', (time_range_val * 1000));
       daterangepicker.setAttribute('data-endtime', (end_time * 1000));
-
       var chevron_right = daterangepicker.shadowRoot.querySelector(".fa-chevron-right");
 
       var tooltip = this.querySelector("#ttp_endtime");
@@ -442,18 +674,11 @@
         return !(daterangepicker.nextIsSelectable());
       });
 
-      /* handle events */
-      this.querySelector("fn-cockpit-metric-control").addEventListener(
-        "fn-cockpit-metric-control-attr-changed", function(e) {
-          base.updateUrlParams(e.detail);
-        },
-      false);
-
       time_range.addEventListener("fn-dropdown-item-click", function(e) {
-        var endtime = base.getQueryParamOrDefaultValue("end_time");
+        var endtime = base.getGenericParamOrDefault("until");
         var date_range = parseInt(e.srcElement.getAttribute('data-value'));
         var starttime = parseInt(endtime, 10) - date_range;
-        base.updateUrlParams({"start_time": starttime});
+        base.updateGenericParams({"from": starttime});
         //check
         daterangepicker.setAttribute("data-daterange", (date_range * 1000));
       }, false);
@@ -476,49 +701,54 @@
           var endtime = parseInt(this.getAttribute("data-endtime"), 10);
           endtime = Math.round(endtime / 1000);
           base.updateDateTimeElems(endtime);
-      }, false);
+      }, false);*/
 
-    }
+    };
 
-    this.handleBasicControls = function() {
+    this.handleGenericControls = function() {
       var base = this;
       /* init */
       var log_scale = this.querySelector("#log_scale");
       var inv_scale = this.querySelector("#inv_scale");
-      if (this.getQueryParamOrDefaultValue("logarithmic")) {
+      var embed_btn = this.querySelector("#embed_btn");
+      var autorefresh_btn = this.querySelector("#auto_refresh");
+      var modal = this.querySelector("fn-modal");
+      var interval_id;
+
+      if (this.getGenericParamOrDefault("logarithmic") === "true") {
         log_scale.setAttribute("data-preselected", true);
       }
-      if (this.getQueryParamOrDefaultValue("inverted")) {
+      if (this.getGenericParamOrDefault("inverted") === "true") {
         inv_scale.setAttribute("data-preselected", true);
       }
 
+      this.querySelector("fn-tooltip#ttp_embed").init(embed_btn);
+      this.querySelector("fn-tooltip#ttp_refresh").init(autorefresh_btn);
+
       /* handle Events */
-      this.querySelector("fn-button[data-format='csv']").addEventListener('fn-button-click', function() {
-        base.setAttribute("data-format", "csv");
-      }, false);
+      this.querySelector(
+        "fn-dropdown#view").addEventListener('fn-dropdown-item-click', function(e) {
+          base.setAttribute("data-format", e.srcElement.getAttribute('data-value'));
+        },
+      false);
 
-      this.querySelector("fn-button[data-format='svg']").addEventListener('fn-button-click', function() {
-        base.setAttribute("data-format", "svg");
-      }, false);
-
-      log_scale.addEventListener("fn-checkbox-select", function(e) {
-        base.updateUrlParams({"logarithmic" : true});
+    /*  log_scale.addEventListener("fn-checkbox-select", function(e) {
+        base.updateGenericParams({"logarithmic" : true});
       }, false);
 
       inv_scale.addEventListener("fn-checkbox-select", function(e) {
-        base.updateUrlParams({"inverted" : true});
+        base.updateGenericParams({"inverted" : true});
       }, false);
 
       log_scale.addEventListener("fn-checkbox-unselect", function(e) {
-        base.updateUrlParams({"logarithmic" : false});
+        base.updateGenericParams({"logarithmic" : false});
       }, false);
 
       inv_scale.addEventListener("fn-checkbox-unselect", function(e) {
-        base.updateUrlParams({"inverted" : false});
-      }, false);
+        base.updateGenericParams({"inverted" : false});
+      }, false);*/
 
-      var interval_id;
-      this.querySelector("#auto_refresh").addEventListener('fn-button-click', function() {
+      autorefresh_btn.addEventListener('fn-button-click', function() {
         if (this.getAttribute('data-state') == "active") {
           window.clearInterval(interval_id);
           this.removeAttribute('data-state');
@@ -528,9 +758,9 @@
         }
       }, false);
 
-      var modal = this.querySelector("fn-modal");
-      this.querySelector("#embed_btn").addEventListener('fn-button-click', function() {
-        modal.querySelector("span").innerHTML = baseUrl + base.getAttribute('data-url');
+      embed_btn.addEventListener('fn-button-click', function() {
+        modal.querySelector("span").innerHTML =
+          baseUrl + base.buildQueryUrl(base.getAttribute('data-format'));
         modal.show();
       }, false);
     };

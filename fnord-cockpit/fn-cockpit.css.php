@@ -42,6 +42,14 @@ a {
   color: rgba(0,0,0,.8);
 }
 
+.hideable {
+  display: none;
+}
+
+.hideable.active {
+  display: block;
+}
+
 ul.fn-cockpit-navigation {
   background: #fff;
   border-bottom: 1px solid #ddd;
@@ -235,3 +243,12 @@ h1.small {
   color: #555;
 }
 
+fn-message {
+  width: 40%;
+  min-width: 550px;
+  margin: auto;
+}
+
+fn-message.overview {
+  margin-top: 50px;
+}
