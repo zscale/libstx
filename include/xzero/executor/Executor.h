@@ -28,12 +28,14 @@ namespace xzero {
  * @see DirectExecutor
  * @see ThreadPool
  */
-class XZERO_API Executor : public SafeCall {
+class XZERO_API Executor : protected SafeCall {
  public:
   explicit Executor(std::function<void(const std::exception&)>&& eh);
   virtual ~Executor();
 
   typedef std::function<void()> Task;
+
+  using SafeCall::setExceptionHandler;
 
   /**
    * Executes given task.
