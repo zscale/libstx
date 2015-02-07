@@ -19,6 +19,7 @@
 #include <xzero/http/v1/Http1ConnectionFactory.h>
 #include <xzero/WallClock.h>
 #include <xzero/TimeSpan.h>
+#include <xzero/RuntimeError.h>
 #include <unistd.h>
 
 void runJob(xzero::HttpRequest* request, xzero::HttpResponse* response, xzero::Executor* context) {
@@ -56,6 +57,7 @@ int main() {
   auto inet = server.addConnector<xzero::InetConnector>(
       "http", &scheduler, &scheduler, clock,
       xzero::TimeSpan::fromSeconds(30),
+      &xzero::consoleLogger,
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
 
   auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(

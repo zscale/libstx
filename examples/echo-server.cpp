@@ -15,6 +15,7 @@
 #include <xzero/WallClock.h>
 #include <xzero/executor/DirectExecutor.h>
 #include <xzero/executor/NativeScheduler.h>
+#include <xzero/RuntimeError.h>
 
 using xzero::Buffer;
 using xzero::IPAddress;
@@ -69,7 +70,8 @@ std::unique_ptr<xzero::InetConnector> createInetConnector( // {{{
 
   std::unique_ptr<xzero::InetConnector> inetConnector(
       new xzero::InetConnector(name, executor, scheduler, clock,
-        xzero::TimeSpan::fromSeconds(30)));
+        xzero::TimeSpan::fromSeconds(30),
+        &xzero::consoleLogger));
 
   inetConnector->open(IPAddress("0.0.0.0"), port, 128, true, true);
   inetConnector->setBlocking(false);

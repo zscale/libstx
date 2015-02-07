@@ -11,6 +11,7 @@
 #include <xzero/sysconfig.h>
 #include <xzero/net/Connector.h>
 #include <xzero/net/IPAddress.h>
+#include <xzero/executor/Executor.h>
 #include <xzero/executor/Scheduler.h>
 #include <xzero/TimeSpan.h>
 #include <list>
@@ -37,6 +38,7 @@ class XZERO_API InetConnector : public Connector {
    * @param scheduler Scheduler service to use for scheduling tasks
    * @param clock Wall clock used for timeout management.
    * @param idleTimeout timespan indicating how long a connection may be idle.
+   * @param eh exception handler for errors in hooks or during events.
    * @param ipaddress TCP/IP address to listen on
    * @param port TCP/IP port number to listen on
    * @param backlog TCP backlog for this listener.
@@ -47,6 +49,7 @@ class XZERO_API InetConnector : public Connector {
    */
   InetConnector(const std::string& name, Executor* executor,
                 Scheduler* scheduler, WallClock* clock, TimeSpan idleTimeout,
+                std::function<void(const std::exception&)> eh,
                 const IPAddress& ipaddress, int port, int backlog,
                 bool reuseAddr, bool reusePort);
 
@@ -58,9 +61,11 @@ class XZERO_API InetConnector : public Connector {
    * @param scheduler Scheduler service to use for timeout management
    * @param clock Wall clock used for timeout management.
    * @param idleTimeout timespan indicating how long a connection may be idle.
+   * @param eh exception handler for errors in hooks or during events.
    */
   InetConnector(const std::string& name, Executor* executor,
-                Scheduler* scheduler, WallClock* clock, TimeSpan idleTimeout);
+                Scheduler* scheduler, WallClock* clock, TimeSpan idleTimeout,
+                std::function<void(const std::exception&)> eh);
 
   ~InetConnector();
 
@@ -233,6 +238,9 @@ class XZERO_API InetConnector : public Connector {
  private:
   Scheduler* scheduler_;
   Scheduler::HandleRef schedulerHandle_;
+
+  /** Hook invokation wrapper to catch unhandled exceptions. */
+  SafeCall safeCall_;
 
   std::list<InetEndPoint*> connectedEndPoints_;
   std::mutex mutex_;

@@ -13,6 +13,7 @@
 #include <xzero/http/HttpOutput.h>
 #include <xzero/http/v1/Http1ConnectionFactory.h>
 #include <xzero/WallClock.h>
+#include <xzero/RuntimeError.h>
 #include <unistd.h>
 
 int main() {
@@ -24,6 +25,7 @@ int main() {
   auto inet = server.addConnector<xzero::InetConnector>(
       "http", &threadedExecutor, nullptr, nullptr, clock,
       xzero::TimeSpan::fromSeconds(30),
+      &xzero::consoleLogger,
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   inet->setBlocking(true);
 

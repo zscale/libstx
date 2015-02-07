@@ -13,6 +13,7 @@
 #include <xzero/net/IPAddress.h>
 #include <xzero/executor/ThreadedExecutor.h>
 #include <xzero/executor/NativeScheduler.h>
+#include <xzero/RuntimeError.h>
 #include <xzero/WallClock.h>
 #include <xzero/sysconfig.h>
 #include <xzero/Buffer.h>
@@ -246,6 +247,7 @@ int main(int argc, char* argv[]) {
     auto inet = std::unique_ptr<xzero::InetConnector>(new xzero::InetConnector(
         "echo", ew->executor(), ew->scheduler(), ew->clock(),
         xzero::TimeSpan::fromSeconds(30),
+        &xzero::consoleLogger,
         xzero::IPAddress("0.0.0.0"), 3000, 128, true, true));
 
     inet->setBlocking(false);
