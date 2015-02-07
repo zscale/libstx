@@ -130,7 +130,7 @@
       border: none;
       height: auto;
       border-top: none;
-      line-height: 1.2em;
+      line-height: 1.2rem;
       color: rgba(0, 0, 0, 0.8);
       padding: 0.65rem 1.25rem !important;
       font-size: 1rem;
@@ -279,6 +279,11 @@
       margin: 0 0 0 .2em;
     }
 
+    #dropdown_ui.small ul#menu li.item {
+      font-size: 0.875rem;
+      line-height: 0.9rem;
+    }
+
 
      /*--------------
       Small Input like
@@ -287,11 +292,6 @@
       min-width: 130px;
       font-size: 0.9rem;
     }
-
-    #dropdown_ui.input.small ul#menu li.item {
-      font-size: 0.9rem;
-    }
-
 
     /*--------------
       Compact Input like
@@ -330,6 +330,11 @@
       margin-top: 0.25em;
       border-radius: 0.2857rem;
     }
+
+    #dropdown_ui.small.inline ul#menu{
+      margin-top: 0.18em;
+    }
+
 
     /*--------------
       Labeled
@@ -521,8 +526,6 @@
       if (this.querySelector("fn-dropdown-label") != null) {
         class_name += " labeled";
       }
-
-      console.log(class_name);
 
       dropdown_ui.className = class_name;
     };
