@@ -114,7 +114,7 @@
     };
 
     this.init = function() {
-      var params = parseUrlQueryString(this.getAttribute('data-url'));
+      var params = Fnord.parseUrlQueryString(this.getAttribute('data-url'));
       var metric_url = "";
       var header = "All Metrics";
       var openPreview = false;
