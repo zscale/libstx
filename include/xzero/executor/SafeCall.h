@@ -17,6 +17,13 @@
 
 namespace xzero {
 
+/**
+ * helper class for safely invoking callbacks with regards to unhandled
+ * exceptions.
+ *
+ * Unhandled exceptions will be caught and passed to the exception handler,
+ * i.e. to log them.
+ */
 class XZERO_API SafeCall {
  public:
   SafeCall();
@@ -30,10 +37,17 @@ class XZERO_API SafeCall {
   /**
    * Savely invokes given task within the callers context.
    *
+   * A call to this function will never leak an unhandled exception.
+   *
    * @see setExceptionHandler(std::function<void(const std::exception&)>)
    */
   void safeCall(std::function<void()> callee) XZERO_NOEXCEPT;
 
+  /**
+   * Convinience call operator.
+   *
+   * @see void safeCall(std::function<void()> callee)
+   */
   void operator()(std::function<void()> callee) XZERO_NOEXCEPT {
     safeCall(callee);
   }
