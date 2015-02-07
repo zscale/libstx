@@ -192,7 +192,7 @@
       document.addEventListener("DOMContentLoaded", function() {
         var loader = this.querySelector("#result_pane_loader"); 
         var height =
-          (window.innerHeight - loader.getBoundingClientRect().top - 36) + "px"
+          (window.innerHeight - loader.getBoundingClientRect().top - 30) + "px"
         loader.style.height = height;
         this.querySelector(
           ".result_pane[data-format='csv']").style.height = height;
@@ -214,7 +214,7 @@
     };
 
     this.init = function() {
-      this.params = parseMetricQueryUrl(this.getAttribute("data-url"));
+      this.params = Fnord.parseMetricQueryUrl(this.getAttribute("data-url"));
       this.updateData(this.getAttribute('data-format'));
       this.handleGenericControls();
       this.handleDateTimeControls();
@@ -266,7 +266,7 @@
             if (metric_params[key] != "value") {
               url += "&" + key + "=" + metric_params[key];
             }
-          } else if (isMetricParam(key)) {
+          } else if (Fnord.isMetricParam(key)) {
             //all other metric params
             url += "&" + key + "=" + metric_params[key];
           }
