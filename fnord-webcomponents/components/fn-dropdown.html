@@ -13,7 +13,7 @@
     display: block;
   }
 
-  fn-dropdown[data-style="inline"] {
+  fn-dropdown[data-style~="inline"] {
     display: inline-block;
   }
 
@@ -452,9 +452,6 @@
     #dropdown_ui[data-state='disabled'] li.item:hover {
       opacity: 0.8;
     }
-
-
-
   </style>
 
   <div id="dropdown_ui">
@@ -524,6 +521,8 @@
       if (this.querySelector("fn-dropdown-label") != null) {
         class_name += " labeled";
       }
+
+      console.log(class_name);
 
       dropdown_ui.className = class_name;
     };
