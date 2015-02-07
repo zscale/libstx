@@ -177,7 +177,6 @@
       var loader = this.querySelector("fn-loader");
       var table = this.querySelector("fn-table table");
       var url = baseUrl + "list" + url_query;
-      console.log("url", url);
 
       Fnord.httpGet(url, function(r) {
         if (r.status === 200) {
@@ -229,6 +228,10 @@
       var table = this.querySelector("fn-table");
       pager.setAttribute('data-last-item', list_size);
       pager.forElement(table);
+
+      pager.addEventListener('fn-pager-turn', function() {
+
+      }, false);
     };
 
 
@@ -236,7 +239,7 @@
       var end = Math.round(Date.now() / 1000);
       var start = end - 3600;
       var raw_url = 
-        "#metric?metric="+ encodeURIComponent(metric_key) +
+        "metric?metric="+ encodeURIComponent(metric_key) +
         "&aggr_fn=sum&&aggr_window=5&aggr_step=10&from=" + start +
         "&until=" + end +
         "&scale=0.8";
