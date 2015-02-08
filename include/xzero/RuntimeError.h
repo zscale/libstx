@@ -8,6 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <xzero/StackTrace.h>
 #include <xzero/sysconfig.h>
 #include <vector>
 #include <string>
@@ -31,8 +32,7 @@ class XZERO_API RuntimeError : public std::runtime_error {
  private:
   const char* sourceFile_;
   int sourceLine_;
-  void** frames_;
-  int frameCount_;
+  StackTrace stackTrace_;
 };
 
 XZERO_API void consoleLogger(const std::exception& e);
