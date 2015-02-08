@@ -265,5 +265,13 @@ Fnord.isGenericParam = function(key) {
   return (genericParamKeys.indexOf(key) > -1);
 }
 
+Fnord.openUrl = function(url) {
+  alert("openurl is not defined!");
+}
+
+Fnord.setUrlHash = function(url_hash) {
+  window.history.pushState({url: url_hash}, "#", url_hash);
+  window.location.hash = url_hash;
+}
 
 Fnord.ready();
