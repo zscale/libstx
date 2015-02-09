@@ -50,9 +50,9 @@ class XZERO_API LocalConnector : public Connector {
   void start() override;
   bool isStarted() const XZERO_NOEXCEPT override;
   void stop() override;
-  std::list<EndPoint*> connectedEndPoints() override;
+  std::list<RefPtr<EndPoint>> connectedEndPoints() override;
 
-  std::shared_ptr<LocalEndPoint> createClient(const std::string& rawRequestMessage);
+  RefPtr<LocalEndPoint> createClient(const std::string& rawRequestMessage);
 
  private:
   bool acceptOne();
@@ -68,8 +68,8 @@ class XZERO_API LocalConnector : public Connector {
 
  private:
   bool isStarted_;
-  std::deque<std::shared_ptr<LocalEndPoint>> pendingConnects_;
-  std::list<std::shared_ptr<LocalEndPoint>> connectedEndPoints_;
+  std::deque<RefPtr<LocalEndPoint>> pendingConnects_;
+  std::list<RefPtr<LocalEndPoint>> connectedEndPoints_;
 };
 
 inline bool LocalConnector::isStarted() const XZERO_NOEXCEPT {

@@ -8,7 +8,7 @@
 #pragma once
 
 #include <xzero/Api.h>
-#include <memory>
+#include <xzero/RefPtr.h>
 #include <string>
 
 namespace xzero {
@@ -57,7 +57,7 @@ class XZERO_API ConnectionFactory {
    * @param connector the Connector that accepted the incoming connection.
    * @param endpoint the endpoint that corresponds to this connection.
    */
-  virtual Connection* create(Connector* connector, std::shared_ptr<EndPoint> endpoint) = 0;
+  virtual Connection* create(Connector* connector, EndPoint* endpoint) = 0;
 
   virtual std::string toString() const;
 

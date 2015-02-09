@@ -14,6 +14,7 @@
 #include <xzero/executor/Executor.h>
 #include <xzero/executor/Scheduler.h>
 #include <xzero/TimeSpan.h>
+#include <xzero/RefPtr.h>
 #include <list>
 #include <deque>
 #include <mutex>
@@ -191,14 +192,9 @@ class XZERO_API InetConnector : public Connector {
   void start() override;
   bool isStarted() const XZERO_NOEXCEPT override;
   void stop() override;
-  std::list<EndPoint*> connectedEndPoints() override;
+  std::list<RefPtr<EndPoint>> connectedEndPoints() override;
 
  private:
-  /**
-   * Invoked internally by InetEndPoint to actually destroy/recycle this object.
-   */
-  void release(Connection* inetConnection);
-
   /**
    * Registers to the Scheduler API for new incoming connections.
    */
@@ -242,7 +238,7 @@ class XZERO_API InetConnector : public Connector {
   /** Hook invokation wrapper to catch unhandled exceptions. */
   SafeCall safeCall_;
 
-  std::list<InetEndPoint*> connectedEndPoints_;
+  std::list<RefPtr<InetEndPoint>> connectedEndPoints_;
   std::mutex mutex_;
   int socket_;
   int addressFamily_;

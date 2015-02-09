@@ -12,6 +12,7 @@
 #include <xzero/IdleTimeout.h>
 #include <xzero/net/EndPoint.h>
 #include <xzero/net/IPAddress.h>
+#include <atomic>
 
 namespace xzero {
 
@@ -36,13 +37,6 @@ class XZERO_API InetEndPoint : public EndPoint {
    * Retrieves local address + port.
    */
   std::pair<IPAddress, int> localAddress() const;
-
-  /**
-   * Tests whether this InetEndPoint is currently handling and I/O notification.
-   * @see wantFill()
-   * @see wantFlush()
-   */
-  bool isBusy() const XZERO_NOEXCEPT { return isBusy_; }
 
   // EndPoint overrides
   bool isOpen() const XZERO_NOEXCEPT override;
@@ -75,20 +69,6 @@ class XZERO_API InetEndPoint : public EndPoint {
   Scheduler::HandleRef io_;
   int handle_;
   bool isCorking_;
-  int isBusy_;
-
-  /**
-   * Helper class to aid easy scoped business refcounting to ease exception
-   * handling.
-   */
-  class BusyGuard {
-   public:
-    BusyGuard(InetEndPoint* ep) XZERO_NOEXCEPT : ep_(ep) { ep->isBusy_++; }
-    ~BusyGuard() XZERO_NOEXCEPT { ep_->isBusy_--; }
-
-   private:
-    InetEndPoint* ep_;
-  };
 };
 
 } // namespace xzero

@@ -11,6 +11,7 @@
 #include <xzero/sysconfig.h>
 #include <xzero/Buffer.h>
 #include <xzero/TimeSpan.h>
+#include <xzero/RefCounted.h>
 #include <string>
 
 namespace xzero {
@@ -33,14 +34,14 @@ class Connection;
  * @see InetEndPoint
  * @see Connection
  */
-class EndPoint {
+class EndPoint : public RefCounted {
  private:
   EndPoint(EndPoint&) = delete;
   EndPoint& operator=(EndPoint&) = delete;
 
  public:
   EndPoint() XZERO_NOEXCEPT;
-  virtual ~EndPoint() {}
+  ~EndPoint();
 
   /**
    * Retrieves the connection object associated with this EndPoint.
