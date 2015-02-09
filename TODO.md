@@ -16,20 +16,14 @@ xzero::http::mock   | transport for abstract access (including unit tests)
 
 ### Milestone 1
 
-- NativeScheduler a typedef to the best OS's implementation
-- linux: LinuxScheduler (using epoll, timerfd, eventfd)
-- generic: SelectScheduler (using select, pipe)
-
-- [x] make HttpFileHandler testable
-- [ ] HttpFileHandler: make ETag-header generation customizable?
-- [ ] write full tests for HttpFileHandler using MockTransport
-- [x] ensure 100-continue is sent async, too (maybe not needed)
 - [ ] timeout management (ideally testable)
 - [ ] rework exception management
-- [x] how to handle accept() errors (i.e. in InetConnector)?
+- [ ] HttpFileHandler: make ETag-header generation customizable?
+- [ ] write full tests for HttpFileHandler using MockTransport
 
 ### Milestone 2
 
+- [ ] LinuxScheduler (using epoll, timerfd, eventfd)
 - [ ] fcgi transport
 - [ ] SSL support, `SslConnector` & `SslEndPoint` chaining to real
       connector/endpoint.
