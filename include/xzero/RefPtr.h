@@ -40,10 +40,6 @@ class XZERO_API RefPtr {
   T* obj_;
 };
 
-// type alias, to keep API kind of in sync with libfnord
-template<typename T>
-using AutoPtr = RefPtr<T>;
-
 // {{{ RefPtr impl
 template<typename T>
 RefPtr<T>::RefPtr()
