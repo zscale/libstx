@@ -31,7 +31,7 @@ class Http1Channel;
  */
 class XZERO_API HttpConnection : public HttpTransport {
  public:
-  HttpConnection(std::shared_ptr<EndPoint> endpoint,
+  HttpConnection(EndPoint* endpoint,
                  Executor* executor,
                  const HttpHandler& handler,
                  HttpDateGenerator* dateGenerator,

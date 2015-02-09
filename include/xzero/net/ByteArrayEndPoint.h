@@ -51,13 +51,6 @@ class XZERO_API ByteArrayEndPoint : public EndPoint {
    */
   const Buffer& output() const;
 
-  /**
-   * Tests whether this InetEndPoint is currently handling and I/O notification.
-   * @see wantFill()
-   * @see wantFlush()
-   */
-  bool isBusy() const XZERO_NOEXCEPT { return isBusy_; }
-
   // overrides
   void close() override;
   bool isOpen() const override;
@@ -76,7 +69,6 @@ class XZERO_API ByteArrayEndPoint : public EndPoint {
 
  private:
   LocalConnector* connector_;
-  int isBusy_;
   Buffer input_;
   size_t readPos_;
   Buffer output_;

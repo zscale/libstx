@@ -29,7 +29,7 @@ class HttpResponseInfo;
  */
 class XZERO_API HttpTransport : public Connection {
  public:
-  HttpTransport(std::shared_ptr<EndPoint> endpoint, Executor* executor);
+  HttpTransport(EndPoint* endpoint, Executor* executor);
 
   /**
    * Cancels communication completely.
@@ -98,7 +98,7 @@ class XZERO_API HttpTransport : public Connection {
   virtual void send(const BufferRef& chunk, CompletionHandler onComplete) = 0;
 };
 
-inline HttpTransport::HttpTransport(std::shared_ptr<EndPoint> endpoint,
+inline HttpTransport::HttpTransport(EndPoint* endpoint,
                                     Executor* executor)
     : Connection(endpoint, executor) {
 }

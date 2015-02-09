@@ -28,7 +28,7 @@ class ConnectionListener;
  */
 class XZERO_API Connection {
  public:
-  Connection(std::shared_ptr<EndPoint> endpoint, Executor* executor);
+  Connection(EndPoint* endpoint, Executor* executor);
   virtual ~Connection();
 
   /**
@@ -119,13 +119,13 @@ class XZERO_API Connection {
   virtual bool onReadTimeout();
 
  private:
-  std::shared_ptr<EndPoint> endpoint_;
+  EndPoint* endpoint_;
   Executor* executor_;
   std::list<ConnectionListener*> listeners_;
 };
 
 inline EndPoint* Connection::endpoint() const XZERO_NOEXCEPT {
-  return endpoint_.get();
+  return endpoint_;
 }
 
 inline Executor* Connection::executor() const XZERO_NOEXCEPT {

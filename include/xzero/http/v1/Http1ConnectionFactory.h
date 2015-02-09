@@ -35,8 +35,7 @@ class XZERO_API Http1ConnectionFactory : public HttpConnectionFactory {
   TimeSpan maxKeepAlive() const XZERO_NOEXCEPT { return maxKeepAlive_; }
   void setMaxKeepAlive(TimeSpan value) { maxKeepAlive_ = value; }
 
-  Connection* create(Connector* connector,
-                     std::shared_ptr<EndPoint> endpoint) override;
+  Connection* create(Connector* connector, EndPoint* endpoint) override;
 
  private:
   size_t maxRequestCount_;

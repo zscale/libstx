@@ -9,6 +9,7 @@
 
 #include <xzero/Api.h>
 #include <xzero/sysconfig.h>
+#include <xzero/RefPtr.h>
 #include <unordered_map>
 #include <memory>
 #include <string>
@@ -79,7 +80,7 @@ class XZERO_API Connector {
   /**
    * Retrieves list of currently connected endpoints.
    */
-  virtual std::list<EndPoint*> connectedEndPoints() = 0;
+  virtual std::list<RefPtr<EndPoint>> connectedEndPoints() = 0;
 
   /**
    * Registeres a new connection factory.

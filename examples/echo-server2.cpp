@@ -181,7 +181,7 @@ static std::condition_variable quitCondition;
 
 class EchoConnection : public xzero::Connection { // {{{
  public:
-  EchoConnection(std::shared_ptr<xzero::EndPoint> endpoint,
+  EchoConnection(xzero::EndPoint* endpoint,
                  xzero::Executor* executor)
       : xzero::Connection(endpoint, executor) {
     printf("EchoConnection()\n");
@@ -227,7 +227,7 @@ class EchoFactory : public xzero::ConnectionFactory { // {{{
   EchoFactory() : xzero::ConnectionFactory("echo") {}
 
   EchoConnection* create(xzero::Connector* connector,
-                         std::shared_ptr<xzero::EndPoint> endpoint) override {
+                         xzero::EndPoint* endpoint) override {
     return static_cast<EchoConnection*>(configure(
         new EchoConnection(endpoint, connector->executor()),
         connector));
