@@ -14,9 +14,11 @@ namespace xzero {
 template<typename T>
 class XZERO_API RefPtr {
  public:
+  RefPtr();
   RefPtr(T* obj);
   RefPtr(RefPtr<T>&& other);
   RefPtr(const RefPtr<T>& other);
+  RefPtr<T>& operator=(RefPtr<T>&& other);
   RefPtr<T>& operator=(const RefPtr<T>& other);
   RefPtr(std::nullptr_t);
   ~RefPtr();
@@ -24,6 +26,13 @@ class XZERO_API RefPtr {
   T* get() { return obj_; }
   T* operator->() { return obj_; }
   T& operator*() { return *obj_; }
+
+  const T* get() const { return obj_; }
+  const T* operator->() const { return obj_; }
+  const T& operator*() const { return *obj_; }
+
+  template<typename U>
+  RefPtr<U> as() const { return RefPtr<U>(static_cast<U*>(obj_)); }
 
   T* release();
 
@@ -36,6 +45,11 @@ template<typename T>
 using AutoPtr = RefPtr<T>;
 
 // {{{ RefPtr impl
+template<typename T>
+RefPtr<T>::RefPtr()
+    : obj_(nullptr) {
+}
+
 template<typename T>
 RefPtr<T>::RefPtr(T* obj)
     : obj_(obj) {
@@ -56,6 +70,20 @@ template<typename T>
 RefPtr<T>::RefPtr(RefPtr<T>&& other)
     : obj_(other.obj_) {
   other.obj_ = nullptr;
+}
+
+template<typename T>
+RefPtr<T>& RefPtr<T>::operator=(RefPtr<T>&& other) {
+  if (obj_)
+    obj_->unref();
+
+  obj_ = other.obj_;
+  other.obj_ = nullptr;
+
+  if (obj_)
+    obj_->ref();
+
+  return *this;
 }
 
 template<typename T>
