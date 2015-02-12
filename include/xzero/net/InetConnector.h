@@ -209,7 +209,14 @@ class XZERO_API InetConnector : public Connector {
    * @see isBlocking() const
    * @see setBlocking(bool enable)
    */
-  bool acceptOne();
+  int acceptOne();
+
+  /**
+   * Creates an EndPoint instance for given client file descriptor.
+   */
+  RefPtr<EndPoint> createEndPoint(int cfd);
+
+  void createConnection(const RefPtr<EndPoint>& endpoint);
 
   /**
    * Accepts as many pending connections as possible.
@@ -228,7 +235,7 @@ class XZERO_API InetConnector : public Connector {
    * @see Connection::onClose()
    * @see ConnectionListener::onClosed(Connection*)
    */
-  void onEndPointClosed(InetEndPoint* endpoint);
+  void onEndPointClosed(EndPoint* endpoint);
   friend class InetEndPoint;
 
  private:
@@ -238,7 +245,7 @@ class XZERO_API InetConnector : public Connector {
   /** Hook invokation wrapper to catch unhandled exceptions. */
   SafeCall safeCall_;
 
-  std::list<RefPtr<InetEndPoint>> connectedEndPoints_;
+  std::list<RefPtr<EndPoint>> connectedEndPoints_;
   std::mutex mutex_;
   int socket_;
   int addressFamily_;
