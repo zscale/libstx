@@ -23,31 +23,35 @@ class XZERO_API RefPtr {
   RefPtr(std::nullptr_t);
   ~RefPtr();
 
-  T* get() { return obj_; }
-  T* operator->() { return obj_; }
-  T& operator*() { return *obj_; }
-
-  const T* get() const { return obj_; }
-  const T* operator->() const { return obj_; }
-  const T& operator*() const { return *obj_; }
+  T* get() const;
+  T* operator->() const;
+  T& operator*() const;
 
   template<typename U>
-  RefPtr<U> as() const { return RefPtr<U>(static_cast<U*>(obj_)); }
+  RefPtr<U> as() const;
 
   T* release();
+  void reset();
+
+  bool operator==(const RefPtr<T>& other) const;
+  bool operator!=(const RefPtr<T>& other) const;
+
+  bool operator==(const T* other) const;
+  bool operator!=(const T* other) const;
 
  private:
   T* obj_;
 };
 
+
 // {{{ RefPtr impl
 template<typename T>
-RefPtr<T>::RefPtr()
+inline RefPtr<T>::RefPtr()
     : obj_(nullptr) {
 }
 
 template<typename T>
-RefPtr<T>::RefPtr(T* obj)
+inline RefPtr<T>::RefPtr(T* obj)
     : obj_(obj) {
   if (obj_) {
     obj_->ref();
@@ -55,7 +59,7 @@ RefPtr<T>::RefPtr(T* obj)
 }
 
 template<typename T>
-RefPtr<T>::RefPtr(const RefPtr<T>& other)
+inline RefPtr<T>::RefPtr(const RefPtr<T>& other)
     : obj_(other.obj_) {
   if (obj_) {
     obj_->ref();
@@ -63,13 +67,13 @@ RefPtr<T>::RefPtr(const RefPtr<T>& other)
 }
 
 template<typename T>
-RefPtr<T>::RefPtr(RefPtr<T>&& other)
+inline RefPtr<T>::RefPtr(RefPtr<T>&& other)
     : obj_(other.obj_) {
   other.obj_ = nullptr;
 }
 
 template<typename T>
-RefPtr<T>& RefPtr<T>::operator=(RefPtr<T>&& other) {
+inline RefPtr<T>& RefPtr<T>::operator=(RefPtr<T>&& other) {
   if (obj_)
     obj_->unref();
 
@@ -83,7 +87,7 @@ RefPtr<T>& RefPtr<T>::operator=(RefPtr<T>&& other) {
 }
 
 template<typename T>
-RefPtr<T>& RefPtr<T>::operator=(const RefPtr<T>& other) {
+inline RefPtr<T>& RefPtr<T>::operator=(const RefPtr<T>& other) {
   if (obj_)
     obj_->unref();
 
@@ -96,22 +100,71 @@ RefPtr<T>& RefPtr<T>::operator=(const RefPtr<T>& other) {
 }
 
 template<typename T>
-RefPtr<T>::RefPtr(std::nullptr_t)
+inline RefPtr<T>::RefPtr(std::nullptr_t)
     : obj_(nullptr) {
 }
 
 template<typename T>
-RefPtr<T>::~RefPtr() {
+inline RefPtr<T>::~RefPtr() {
   if (obj_) {
     obj_->unref();
   }
 }
 
 template<typename T>
-T* RefPtr<T>::release() {
+inline T* RefPtr<T>::get() const {
+  return obj_;
+}
+
+template<typename T>
+inline T* RefPtr<T>::operator->() const {
+  return obj_;
+}
+
+template<typename T>
+inline T& RefPtr<T>::operator*() const {
+  return *obj_;
+}
+
+template<typename T>
+template<typename U>
+inline RefPtr<U> RefPtr<T>::as() const {
+  return RefPtr<U>(static_cast<U*>(obj_));
+}
+
+template<typename T>
+inline T* RefPtr<T>::release() {
   T* t = obj_;
   obj_ = nullptr;
   return t;
+}
+
+template<typename T>
+inline void RefPtr<T>::reset() {
+  if (obj_)
+    obj_->unref();
+
+  obj_ = nullptr;
+}
+
+template<typename T>
+bool RefPtr<T>::operator==(const RefPtr<T>& other) const {
+  return get() == other.get();
+}
+
+template<typename T>
+bool RefPtr<T>::operator!=(const RefPtr<T>& other) const {
+  return get() != other.get();
+}
+
+template<typename T>
+bool RefPtr<T>::operator==(const T* other) const {
+  return get() == other;
+}
+
+template<typename T>
+bool RefPtr<T>::operator!=(const T* other) const {
+  return get() != other;
 }
 //}}}
 
