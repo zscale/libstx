@@ -28,6 +28,9 @@ class XZERO_API RefPtr {
   T& operator*() const;
 
   template<typename U>
+  U* weak_as() const;
+
+  template<typename U>
   RefPtr<U> as() const;
 
   T* release();
@@ -124,6 +127,12 @@ inline T* RefPtr<T>::operator->() const {
 template<typename T>
 inline T& RefPtr<T>::operator*() const {
   return *obj_;
+}
+
+template<typename T>
+template<typename U>
+inline U* RefPtr<T>::weak_as() const {
+  return static_cast<U*>(obj_);
 }
 
 template<typename T>
