@@ -7,13 +7,14 @@
 #pragma once
 
 #include <xzero/net/EndPoint.h>
+#include <xzero/executor/Scheduler.h>
 #include <xzero/IdleTimeout.h>
 #include <openssl/ssl.h>
+#include <openssl/bio.h>
 
 namespace xzero {
 
 class SslConnector;
-class Scheduler;
 
 class SslEndPoint : public EndPoint {
  public:
@@ -73,12 +74,17 @@ class SslEndPoint : public EndPoint {
   void onWrite();
   void onShutdown();
 
+  friend class SslConnector;
+
  private:
   int handle_;
   SslConnector* connector_;
   Scheduler* scheduler_;
-  IdleTimeout idleTimeout_;
   SSL* ssl_;
+  BIO* writeBio_;
+  BIO* readBio_;
+  Scheduler::HandleRef io_;
+  IdleTimeout idleTimeout_;
   Buffer readBuffer_;
   Buffer writeBuffer_;
 };

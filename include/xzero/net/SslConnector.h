@@ -52,6 +52,7 @@ class SslConnector : public InetConnector {
   bool isStarted() const XZERO_NOEXCEPT override;
   void stop() override;
   std::list<RefPtr<EndPoint>> connectedEndPoints() override;
+  void onEndPointCreated(const RefPtr<EndPoint>& endpoint);
 
  private:
   std::list<SSL_CTX*> contexts_;

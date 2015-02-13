@@ -216,7 +216,12 @@ class XZERO_API InetConnector : public Connector {
    */
   RefPtr<EndPoint> createEndPoint(int cfd);
 
-  void createConnection(const RefPtr<EndPoint>& endpoint);
+  /**
+   * Invoked once the EndPoint and its Connection is created and associated.
+   *
+   * The default implementation invoked @c Connection::onOpen().
+   */
+  virtual void onEndPointCreated(const RefPtr<EndPoint>& endpoint);
 
   /**
    * Accepts as many pending connections as possible.
