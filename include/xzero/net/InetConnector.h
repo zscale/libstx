@@ -25,6 +25,7 @@ class Connection;
 class Executor;
 class Scheduler;
 class InetEndPoint;
+class SslEndPoint;
 
 /**
  * TCP/IP Internet Connector API
@@ -214,7 +215,7 @@ class XZERO_API InetConnector : public Connector {
   /**
    * Creates an EndPoint instance for given client file descriptor.
    */
-  RefPtr<EndPoint> createEndPoint(int cfd);
+  virtual RefPtr<EndPoint> createEndPoint(int cfd);
 
   /**
    * Invoked once the EndPoint and its Connection is created and associated.
@@ -242,6 +243,7 @@ class XZERO_API InetConnector : public Connector {
    */
   void onEndPointClosed(EndPoint* endpoint);
   friend class InetEndPoint;
+  friend class SslEndPoint;
 
  private:
   Scheduler* scheduler_;

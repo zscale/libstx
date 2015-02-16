@@ -6,6 +6,7 @@
 // the License at: http://opensource.org/licenses/MIT
 #pragma once
 
+#include <xzero/Api.h>
 #include <xzero/net/InetConnector.h>
 #include <xzero/net/SslEndPoint.h>
 #include <list>
@@ -13,7 +14,7 @@
 
 namespace xzero {
 
-class SslConnector : public InetConnector {
+class XZERO_API SslConnector : public InetConnector {
  public:
   /**
    * Initializes this connector.
@@ -52,11 +53,26 @@ class SslConnector : public InetConnector {
   bool isStarted() const XZERO_NOEXCEPT override;
   void stop() override;
   std::list<RefPtr<EndPoint>> connectedEndPoints() override;
-  void onEndPointCreated(const RefPtr<EndPoint>& endpoint);
+
+  RefPtr<EndPoint> createEndPoint(int cfd) override;
+  void onEndPointCreated(const RefPtr<EndPoint>& endpoint) override;
+
+ private:
+  SSL_CTX* defaultContext() const;
+
+  static int tls1_servername_cb(SSL* ssl, int* ad, SslConnector* connector);
+
+  friend class SslEndPoint;
 
  private:
   std::list<SSL_CTX*> contexts_;
 };
+
+inline SSL_CTX* SslConnector::defaultContext() const {
+  return !contexts_.empty()
+      ? contexts_.front()
+      : nullptr;
+}
 
 } // namespace xzero
 
