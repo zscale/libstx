@@ -16,17 +16,18 @@ xzero::http::mock   | transport for abstract access (including unit tests)
 
 ### Milestone 1
 
-- [ ] timeout management (ideally testable)
-- [ ] rework exception management
-- [ ] HttpFileHandler: make ETag-header generation customizable?
-- [ ] write full tests for HttpFileHandler using MockTransport
+- [x] SSL: basic `SslConnector` & `SslEndPoint`
+- [ ] SSL: ability to setup a certificate password challenge callback
+- [ ] SSL: finish SNI support
+- [ ] improve timeout management (ideally testable)
+- [ ] improve (debug) logging facility
 
 ### Milestone 2
 
+- [ ] HttpFileHandler: make ETag-header generation customizable?
+- [ ] write full tests for HttpFileHandler using MockTransport
 - [ ] LinuxScheduler (using epoll, timerfd, eventfd)
 - [ ] fcgi transport
-- [ ] SSL support, `SslConnector` & `SslEndPoint` chaining to real
-      connector/endpoint.
 - [ ] net: improved EndPoint timeout handling
       (distinguish between read/write/keepalive timeouts)
 - [ ] evaluate the need of a connection/request lifecycle hook API

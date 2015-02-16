@@ -11,6 +11,7 @@
 #include <xzero/net/Connection.h>
 #include <xzero/net/LocalConnector.h>
 #include <xzero/net/InetConnector.h>
+#include <xzero/net/SslConnector.h>
 #include <xzero/net/IPAddress.h>
 #include <xzero/WallClock.h>
 #include <xzero/executor/DirectExecutor.h>
@@ -83,6 +84,22 @@ std::unique_ptr<xzero::InetConnector> createInetConnector( // {{{
   return inetConnector;
 }
 // }}}
+std::unique_ptr<xzero::SslConnector> createSslConnector( // {{{
+    const std::string& name, int port, xzero::Executor* executor,
+    xzero::Scheduler* scheduler, xzero::WallClock* clock) {
+
+  std::unique_ptr<xzero::SslConnector> connector(
+      new xzero::SslConnector(name, executor, scheduler, clock,
+                              xzero::TimeSpan::fromSeconds(30),
+                              &xzero::consoleLogger,
+                              IPAddress("0.0.0.0"), port, 128, true, true));
+
+  connector->addContext("../../server.crt", "../../server.key");
+
+  return connector;
+}
+// }}}
+
 
 int main(int argc, const char* argv[]) {
   xzero::DirectExecutor executor(false);
@@ -97,6 +114,11 @@ int main(int argc, const char* argv[]) {
                                            clock);
   inetConnector->addConnectionFactory<EchoFactory>();
   server.addConnector(std::move(inetConnector));
+
+  auto sslConnector = createSslConnector("ssl", 3443, &executor, &scheduler,
+                                         clock);
+  sslConnector->addConnectionFactory<EchoFactory>();
+  server.addConnector(std::move(sslConnector));
 
   server.start();
 

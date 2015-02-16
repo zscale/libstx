@@ -6,17 +6,17 @@
 // the License at: http://opensource.org/licenses/MIT
 #pragma once
 
+#include <xzero/Api.h>
 #include <xzero/net/EndPoint.h>
 #include <xzero/executor/Scheduler.h>
 #include <xzero/IdleTimeout.h>
 #include <openssl/ssl.h>
-#include <openssl/bio.h>
 
 namespace xzero {
 
 class SslConnector;
 
-class SslEndPoint : public EndPoint {
+class XZERO_API SslEndPoint : public EndPoint {
  public:
   SslEndPoint(int socket, SslConnector* connector, Scheduler* scheduler);
   ~SslEndPoint();
@@ -25,6 +25,11 @@ class SslEndPoint : public EndPoint {
 
   bool isOpen() const override;
   void close() override;
+
+  /**
+   * Closes the connection the hard way, by ignoring the SSL layer.
+   */
+  void abort();
 
   /**
    * Reads from remote endpoint and fills given buffer with it.
@@ -69,24 +74,26 @@ class SslEndPoint : public EndPoint {
   void onHandshake();
   void fillable();
   void flushable();
-  void onShutdown();
+  void shutdown();
+  void onTimeout();
 
   friend class SslConnector;
 
   enum class Desire { None, Read, Write };
 
+  static void tlsext_debug_cb(
+      SSL* ssl, int client_server, int type,
+      unsigned char* data, int len, SslEndPoint* self);
+
  private:
   int handle_;
+  bool isCorking_;
   SslConnector* connector_;
   Scheduler* scheduler_;
-  BIO* bio_;
   SSL* ssl_;
-  Desire userDesire_;
   Desire bioDesire_;
   Scheduler::HandleRef io_;
   IdleTimeout idleTimeout_;
-  Buffer readBuffer_;
-  Buffer writeBuffer_;
 };
 
 } // namespace xzero
