@@ -66,23 +66,23 @@ class SslEndPoint : public EndPoint {
   std::string toString() const override;
 
  private:
+  void onHandshake();
   void fillable();
   void flushable();
-
-  void onHandshake();
-  void onRead();
-  void onWrite();
   void onShutdown();
 
   friend class SslConnector;
+
+  enum class Desire { None, Read, Write };
 
  private:
   int handle_;
   SslConnector* connector_;
   Scheduler* scheduler_;
+  BIO* bio_;
   SSL* ssl_;
-  BIO* writeBio_;
-  BIO* readBio_;
+  Desire userDesire_;
+  Desire bioDesire_;
   Scheduler::HandleRef io_;
   IdleTimeout idleTimeout_;
   Buffer readBuffer_;
