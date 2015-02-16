@@ -7,6 +7,7 @@
 #pragma once
 
 #include <xzero/Api.h>
+#include <utility>
 #include <atomic>
 
 namespace xzero {
@@ -15,13 +16,16 @@ template<typename T>
 class XZERO_API RefPtr {
  public:
   RefPtr();
+  RefPtr(std::nullptr_t);
   RefPtr(T* obj);
   RefPtr(RefPtr<T>&& other);
   RefPtr(const RefPtr<T>& other);
   RefPtr<T>& operator=(RefPtr<T>&& other);
   RefPtr<T>& operator=(const RefPtr<T>& other);
-  RefPtr(std::nullptr_t);
   ~RefPtr();
+
+  bool empty() const;
+  size_t refCount() const;
 
   T* get() const;
   T* operator->() const;
@@ -46,10 +50,17 @@ class XZERO_API RefPtr {
   T* obj_;
 };
 
+template<typename T, typename... Args>
+XZERO_API RefPtr<T> make_ref(Args... args);
 
 // {{{ RefPtr impl
 template<typename T>
 inline RefPtr<T>::RefPtr()
+    : obj_(nullptr) {
+}
+
+template<typename T>
+inline RefPtr<T>::RefPtr(std::nullptr_t)
     : obj_(nullptr) {
 }
 
@@ -63,7 +74,7 @@ inline RefPtr<T>::RefPtr(T* obj)
 
 template<typename T>
 inline RefPtr<T>::RefPtr(const RefPtr<T>& other)
-    : obj_(other.obj_) {
+    : obj_(other.get()) {
   if (obj_) {
     obj_->ref();
   }
@@ -71,8 +82,7 @@ inline RefPtr<T>::RefPtr(const RefPtr<T>& other)
 
 template<typename T>
 inline RefPtr<T>::RefPtr(RefPtr<T>&& other)
-    : obj_(other.obj_) {
-  other.obj_ = nullptr;
+    : obj_(other.release()) {
 }
 
 template<typename T>
@@ -80,11 +90,7 @@ inline RefPtr<T>& RefPtr<T>::operator=(RefPtr<T>&& other) {
   if (obj_)
     obj_->unref();
 
-  obj_ = other.obj_;
-  other.obj_ = nullptr;
-
-  if (obj_)
-    obj_->ref();
+  obj_ = other.release();
 
   return *this;
 }
@@ -103,14 +109,23 @@ inline RefPtr<T>& RefPtr<T>::operator=(const RefPtr<T>& other) {
 }
 
 template<typename T>
-inline RefPtr<T>::RefPtr(std::nullptr_t)
-    : obj_(nullptr) {
-}
-
-template<typename T>
 inline RefPtr<T>::~RefPtr() {
   if (obj_) {
     obj_->unref();
+  }
+}
+
+template<typename T>
+bool RefPtr<T>::empty() const {
+  return obj_ == nullptr;
+}
+
+template<typename T>
+size_t RefPtr<T>::refCount() const {
+  if (obj_) {
+    return obj_->refCount();
+  } else {
+    return 0;
   }
 }
 
@@ -176,5 +191,11 @@ bool RefPtr<T>::operator!=(const T* other) const {
   return get() != other;
 }
 //}}}
+// {{{ free functions impl
+template<typename T, typename... Args>
+inline RefPtr<T> make_ref(Args... args) {
+  return RefPtr<T>(new T(std::move(args)...));
+}
+// }}}
 
 } // namespace xzero
