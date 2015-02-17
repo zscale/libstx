@@ -17,8 +17,11 @@ xzero::http::mock   | transport for abstract access (including unit tests)
 ### Milestone 1
 
 - [x] SSL: basic `SslConnector` & `SslEndPoint`
+- [x] SSL: finish SNI support
+- [x] SSL: NPN support
+- [ ] SSL: ALPN support
 - [ ] SSL: ability to setup a certificate password challenge callback
-- [ ] SSL: finish SNI support
+- [ ] SSL: SslConnector to select ConnectionFactory based on NPN/ALPN
 - [ ] improve timeout management (ideally testable)
 - [ ] improve (debug) logging facility
 
