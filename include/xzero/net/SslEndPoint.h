@@ -16,6 +16,9 @@ namespace xzero {
 
 class SslConnector;
 
+/**
+ * SSL EndPoint, aka SSL socket.
+ */
 class XZERO_API SslEndPoint : public EndPoint {
  public:
   SslEndPoint(int socket, SslConnector* connector, Scheduler* scheduler);
@@ -69,6 +72,14 @@ class XZERO_API SslEndPoint : public EndPoint {
   bool isCorking() const override;
   void setCorking(bool enable) override;
   std::string toString() const override;
+
+  /**
+   * Retrieves the string that is identifies the negotiated next protocol, such
+   * as "HTTP/1.1" or "SPDY/3.1".
+   *
+   * This method is implemented using NPN or ALPN protocol extensions to TLS.
+   */
+  BufferRef nextProtocolNegotiated() const;
 
  private:
   void onHandshake();

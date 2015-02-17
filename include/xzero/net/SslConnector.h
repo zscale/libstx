@@ -10,10 +10,19 @@
 #include <xzero/net/InetConnector.h>
 #include <xzero/net/SslEndPoint.h>
 #include <list>
+#include <memory>
 #include <openssl/ssl.h>
 
 namespace xzero {
 
+class SslContext;
+
+/**
+ * SSL Connector.
+ *
+ * @see InetConnector
+ * @see SslEndPoint
+ */
 class XZERO_API SslConnector : public InetConnector {
  public:
   /**
@@ -57,20 +66,23 @@ class XZERO_API SslConnector : public InetConnector {
   RefPtr<EndPoint> createEndPoint(int cfd) override;
   void onEndPointCreated(const RefPtr<EndPoint>& endpoint) override;
 
- private:
-  SSL_CTX* defaultContext() const;
+  SslContext* selectContext(const char* servername) const;
 
-  static int tls1_servername_cb(SSL* ssl, int* ad, SslConnector* connector);
+ private:
+  SslContext* defaultContext() const;
+
+  static int selectContext(SSL* ssl, int* ad, SslConnector* connector);
 
   friend class SslEndPoint;
+  friend class SslContext;
 
  private:
-  std::list<SSL_CTX*> contexts_;
+  std::list<std::unique_ptr<SslContext>> contexts_;
 };
 
-inline SSL_CTX* SslConnector::defaultContext() const {
+inline SslContext* SslConnector::defaultContext() const {
   return !contexts_.empty()
-      ? contexts_.front()
+      ? contexts_.front().get()
       : nullptr;
 }
 
