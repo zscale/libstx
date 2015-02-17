@@ -35,6 +35,9 @@ class XZERO_API SslContext {
   static int onServerName(SSL* ssl, int* ad, SslContext* self);
   static int onNextProtosAdvertised(SSL* ssl,
       const unsigned char** out, unsigned int* outlen, void* pself);
+  static int onAppLayerProtoNegotiation(SSL* ssl,
+      const unsigned char **out, unsigned char *outlen,
+      const unsigned char *in, unsigned int inlen, void *pself);
 
  private:
   SslConnector* connector_;
