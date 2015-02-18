@@ -15,3 +15,7 @@
 /debian/tmp/
 /debian/files
 *-stamp
+
+# SSL test files
+/server.crt
+/server.key

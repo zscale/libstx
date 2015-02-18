@@ -1,13 +1,9 @@
-## FiXME
-
-- do we want to wrap all HTTP stuff into namespace `xzero::http`
-- do we want to wrap all HTTP/1 protocol stuff into `xzero::http::v1`?
-- or do we just want to rename some classes to `Http1Connection`, ...?
+## namespaces
 
 ```
 xzero::http         | generic HTTP API
-xzero::http::v1     | transport for HTTP 0.9 to 1.1
-xzero::http::v2     | transport for HTTP 2.0
+xzero::http::http1  | transport for HTTP 0.9 to 1.1
+xzero::http::http2  | transport for HTTP 2.0
 xzero::http::fcgi   | transport for FastCGI transport
 xzero::http::mock   | transport for abstract access (including unit tests)
 ```
@@ -19,11 +15,14 @@ libxzero/
   xzero-base/          | base APIs, including networking
   xzero-http/          | HTTP APIs, generic and specific transports
   xzero-flow/          | Flow Language
-  xzero-stats/         | Stats Service
-  xzero-chart/         | [paul]
-  xzero-metricdb/      | [paul]
-  xzero-sstable/       [ [paul]
-  xzero-webcomponents/ | [paul]
+  xzero-stats/         | StatsD Service
+  xzero-chart/         | [paul-lib]
+  xzero-metricdb/      | [paul-lib]
+  xzero-sstable/       [ [paul-lib]
+  xzero-webcomponents/ | [paul-lib]
+
+xzero/
+  RegExp.{h,cpp}
 
 xzero-http/
   http1/
