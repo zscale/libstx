@@ -1,22 +1,12 @@
 # Xzero C++ Library Collection
 
-[ ![Build status - Travis-ci](https://secure.travis-ci.org/xzero/xzero.png) ](http://travis-ci.org/xzero/xzero)
+[ ![Build Status - Travis-CI](https://secure.travis-ci.org/xzero/xzero.png) ](http://travis-ci.org/xzero/xzero)
 
-- official website: http://xzero.io/
-- github: https://github.com/xzero/xzero-libraries
+- github: https://github.com/xzero/xzero
 - travis-ci: https://travis-ci.org/xzero/xzero
 
-`libxzero` is a thin low-latency, scalable, and embeddable HTTP server library
-written in modern C++.
-
-### Feature Highlights
-
-* Composable API
-- HTTP/1.1, including chunked trailer and pipelining support
-* Generic core HTTP API with support for: HTTP (HTTPS, FCGI, HTTP/2, ...)
-- Client-cache aware and partial static file serving
-- zero-copy networking optimizations
-- Unit Tests
+This is a collection of C++ system libraries modeled for server application
+development.
 
 ## Installation Requirements
 
@@ -24,31 +14,11 @@ written in modern C++.
 - cmake (for building only)
 - gtest (optional, for unit testing)
 
-### Building from Source on Ubuntu 14.04:
+## Uses
 
-```sh
-# Installs required dependencies
-sudo apt-get install make cmake pkg-config git gcc-4.8 g++-4.8 \
-    zlib1g-dev libpcre3-dev
-
-# If you want to built the tests, you must install libgtest-dev
-# and then built it yourself
-sudo apt-get install libgtest-dev
-cd /usr/src/gtest && sudo cmake . && sudo make && \
-     sudo cp -vpi libgtest*.a /usr/local/lib/; cd -
-
-# Clone the repository
-git clone git://github.com/xzero/libxzero.git && cd libxzero
-
-# Now run cmake to bootstrap the build
-cmake .
-
-# Now compiling should just work
-make && sudo make install
-
-# Try out an example
-./examples/http-hello1
-```
+- x0d, HTTP web server
+- fnordmetric2
+- ...
 
 LICENSE
 -------
