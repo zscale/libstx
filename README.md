@@ -1,10 +1,10 @@
-# libxzero C++ HTTP Library
+# Xzero C++ Library Collection
 
-[ ![Build status - Travis-ci](https://secure.travis-ci.org/xzero/libxzero.png) ](http://travis-ci.org/xzero/libxzero)
+[ ![Build status - Travis-ci](https://secure.travis-ci.org/xzero/xzero.png) ](http://travis-ci.org/xzero/xzero)
 
 - official website: http://xzero.io/
-- github: https://github.com/xzero/libxzero
-- travis-ci: https://travis-ci.org/xzero/libxzero
+- github: https://github.com/xzero/xzero-libraries
+- travis-ci: https://travis-ci.org/xzero/xzero
 
 `libxzero` is a thin low-latency, scalable, and embeddable HTTP server library
 written in modern C++.
