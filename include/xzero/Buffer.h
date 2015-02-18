@@ -148,6 +148,7 @@ class XZERO_API BufferBase {
   size_t find(PodType (&value)[N], size_t offset = 0) const;
   size_t find(const value_type* value, size_t offset = 0) const;
   size_t find(const BufferRef& value, size_t offset = 0) const;
+  size_t find(const std::string& value, size_t offset = 0) const;
   size_t find(value_type value, size_t offset = 0) const;
 
   // rfind
@@ -632,6 +633,12 @@ inline size_t BufferBase<T>::find(const BufferRef& buf, size_t offset) const {
   }
 
   return npos;
+}
+
+template <typename T>
+inline size_t BufferBase<T>::find(
+    const std::string& value, size_t offset) const {
+  return find(BufferRef(value.data(), value.size()), offset);
 }
 
 template <typename T>
