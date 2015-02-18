@@ -12,6 +12,65 @@ xzero::http::fcgi   | transport for FastCGI transport
 xzero::http::mock   | transport for abstract access (including unit tests)
 ```
 
+## FHS
+
+```
+libxzero/
+  xzero-base/          | base APIs, including networking
+  xzero-http/          | HTTP APIs, generic and specific transports
+  xzero-flow/          | Flow Language
+  xzero-stats/         | Stats Service
+  xzero-chart/         | [paul]
+  xzero-metricdb/      | [paul]
+  xzero-sstable/       [ [paul]
+  xzero-webcomponents/ | [paul]
+
+xzero-http/
+  http1/
+    Channel
+  http2/
+  fcgi/
+  mock/
+  StatusCode
+  Transport
+  Channel
+  Request
+  Response
+  ...
+
+#include <xzero-http/http1/HttpConnectionFactory.h>
+xzero::http::http1::ConnectionFactory
+xzero::http::StatusCode
+xzero::http::Channel
+xzero::http::Request
+xzero::http::Response
+
+xzero-flow/
+  ast/
+    ASTVisitor
+    ...
+  ir/
+    Instr
+    BasicBlock
+    ...
+  transform/
+    ...
+  vm/
+    Program
+    ...
+  generator/
+    IRGenerator/
+  Type
+  Token
+  Lexer
+  Parser
+
+
+#include <xzero-flow/ir/Instr.h>
+xzero::flow::ir::Instr
+
+```
+
 ## Incomplete TODO items
 
 ### Milestone 1
