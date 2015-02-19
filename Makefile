@@ -11,7 +11,7 @@ help:
 debug:
 	@mkdir -p build/debug
 	@cd build/debug && cmake -G${GENERATOR} ../.. \
-		-DENABLE_PCRE=yes
+		-DENABLE_PCRE=yes \
 		-DCMAKE_BUILD_TYPE="debug" \
 		-DCMAKE_CXX_FLAGS_DEBUG="-O0 -g3 -fsanitize=address" \
 		-DCMAKE_INSTALL_PREFIX="${PWD}/build/target/debug"
@@ -25,10 +25,9 @@ test:
 release:
 	mkdir -p build/release
 	cd build/release && cmake -G${GENERATOR} ../.. \
+		-DENABLE_PCRE=yes \
 		-DCMAKE_BUILD_TYPE="release" \
 		-DCMAKE_CXX_FLAGS_RELEASE="-O3 -g -march=native" \
-		-DENABLE_EXAMPLES=yes \
-		-DENABLE_TESTS=yes \
 		-DCMAKE_INSTALL_PREFIX="/usr"
 	@cd build/release && make
 
