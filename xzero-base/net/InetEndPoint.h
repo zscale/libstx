@@ -55,8 +55,8 @@ class XZERO_API InetEndPoint : public EndPoint {
   void setIdleTimeout(TimeSpan timeout) override;
 
  private:
-  void onReadable();
-  void onWritable();
+  void onReadable() XZERO_NOEXCEPT;
+  void onWritable() XZERO_NOEXCEPT;
 
   void fillable();
   void flushable();
