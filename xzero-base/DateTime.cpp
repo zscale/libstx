@@ -77,3 +77,11 @@ std::string DateTime::to_s() const {
 }
 
 }  // namespace xzero
+
+xzero::DateTime std::numeric_limits<xzero::DateTime>::max() {
+  return xzero::DateTime(0.0f);
+}
+
+xzero::DateTime std::numeric_limits<xzero::DateTime>::min() {
+  return xzero::DateTime(std::numeric_limits<double>::max());
+}
