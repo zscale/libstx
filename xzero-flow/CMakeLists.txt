@@ -72,11 +72,23 @@ add_library(xzero_flow STATIC ${xzero_flow_SRC})
 target_link_libraries(xzero-flow pthread dl xzero_base)
 install(TARGETS xzero_flow DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
+# headers
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+        FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+        FILES_MATCHING PATTERN "*.h"
+                       PATTERN "CMakeFiles" EXCLUDE)
+
 # test-flow
 file(GLOB_RECURSE xzero_flow_test_SRC "*-test.cpp")
 add_executable(test-flow ${CMAKE_CURRENT_SOURCE_DIR}/../test-main.cpp ${xzero_flow_test_SRC})
 target_link_libraries(test-flow xzero-flow xzero-base gtest)
 
 # pkg-config target
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/xzero-flow.pc.cmake
+               ${CMAKE_CURRENT_BINARY_DIR}/xzero-flow.pc)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/xzero-flow.pc 
         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
