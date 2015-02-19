@@ -5,7 +5,7 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <xzero/executor/ThreadedExecutor.h>
+#include <xzero-base/executor/ThreadedExecutor.h>
 
 int main() {
   xzero::ThreadedExecutor executor;

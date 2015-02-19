@@ -9,17 +9,17 @@
  * XXX demo: MTB request handler with STNB I/O.
  */
 
-#include <xzero/executor/ThreadPool.h>
-#include <xzero/executor/NativeScheduler.h>
-#include <xzero/net/Server.h>
-#include <xzero/net/InetConnector.h>
-#include <xzero/http/HttpRequest.h>
-#include <xzero/http/HttpResponse.h>
-#include <xzero/http/HttpOutput.h>
-#include <xzero/http/v1/Http1ConnectionFactory.h>
-#include <xzero/WallClock.h>
-#include <xzero/TimeSpan.h>
-#include <xzero/RuntimeError.h>
+#include <xzero-base/executor/ThreadPool.h>
+#include <xzero-base/executor/NativeScheduler.h>
+#include <xzero-base/net/Server.h>
+#include <xzero-base/net/InetConnector.h>
+#include <xzero-base/WallClock.h>
+#include <xzero-base/TimeSpan.h>
+#include <xzero-base/RuntimeError.h>
+#include <xzero-http/HttpRequest.h>
+#include <xzero-http/HttpResponse.h>
+#include <xzero-http/HttpOutput.h>
+#include <xzero-http/http1/Http1ConnectionFactory.h>
 #include <unistd.h>
 
 void runJob(xzero::HttpRequest* request, xzero::HttpResponse* response, xzero::Executor* context) {

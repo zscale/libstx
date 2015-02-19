@@ -1,3 +1,17 @@
+Flow Control Configuration Language
+===================================
+
+```
+# Example Flow:
+
+handler main {
+  if req.path =^ '/private/' {
+    return 403;
+  }
+  docroot '/var/www';
+  staticfile;
+}
+```
 
 Flow Engine Rewrite
 ===================

@@ -5,18 +5,18 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <xzero/net/Server.h>
-#include <xzero/net/ConnectionFactory.h>
-#include <xzero/net/Connection.h>
-#include <xzero/net/LocalConnector.h>
-#include <xzero/net/InetConnector.h>
-#include <xzero/net/IPAddress.h>
-#include <xzero/executor/ThreadedExecutor.h>
-#include <xzero/executor/NativeScheduler.h>
-#include <xzero/RuntimeError.h>
-#include <xzero/WallClock.h>
-#include <xzero/sysconfig.h>
-#include <xzero/Buffer.h>
+#include <xzero-base/net/Server.h>
+#include <xzero-base/net/ConnectionFactory.h>
+#include <xzero-base/net/Connection.h>
+#include <xzero-base/net/LocalConnector.h>
+#include <xzero-base/net/InetConnector.h>
+#include <xzero-base/net/IPAddress.h>
+#include <xzero-base/executor/ThreadedExecutor.h>
+#include <xzero-base/executor/NativeScheduler.h>
+#include <xzero-base/RuntimeError.h>
+#include <xzero-base/WallClock.h>
+#include <xzero-base/sysconfig.h>
+#include <xzero-base/Buffer.h>
 #include <algorithm>
 #include <vector>
 #include <mutex>

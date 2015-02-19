@@ -5,15 +5,17 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <xzero/http/HttpService.h>
-#include <xzero/http/HttpRequest.h>
-#include <xzero/http/HttpResponse.h>
-#include <xzero/http/HttpInput.h>
-#include <xzero/http/HttpOutput.h>
-#include <xzero/net/IPAddress.h>
-#include <xzero/io/Filter.h>
-#include <xzero/executor/NativeScheduler.h>
-#include <xzero/WallClock.h>
+#include <xzero-http/HttpService.h>
+#include <xzero-http/HttpRequest.h>
+#include <xzero-http/HttpResponse.h>
+#include <xzero-http/HttpInput.h>
+#include <xzero-http/HttpOutput.h>
+
+#include <xzero-base/net/IPAddress.h>
+#include <xzero-base/io/Filter.h>
+#include <xzero-base/executor/NativeScheduler.h>
+#include <xzero-base/WallClock.h>
+
 #include <cctype>
 
 class Capslock : public xzero::Filter {
