@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(xzero-flow)
+project(xzero-flow CXX)
 set(XZERO_FLOW_VERSION "0.3.0")
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
