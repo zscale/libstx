@@ -18,6 +18,7 @@
 #include <xzero-base/Api.h>
 #include <xzero-base/Buffer.h>
 #include <xzero-base/TimeSpan.h>
+#include <limits>
 #include <string>
 #include <ctime>
 #include <pthread.h>
@@ -186,5 +187,13 @@ inline bool operator>(const DateTime& a, const DateTime& b) {
 //@}
 
 }  // namespace xzero
+
+namespace std {
+template <> class numeric_limits<xzero::DateTime> {
+public:
+  static XZERO_API xzero::DateTime max();
+  static XZERO_API xzero::DateTime min();
+};
+}
 
 #endif
