@@ -238,7 +238,7 @@ size_t InetEndPoint::flush(int fd, off_t offset, size_t size) {
 #endif
 }
 
-void InetEndPoint::onReadable() {
+void InetEndPoint::onReadable() XZERO_NOEXCEPT {
   RefPtr<EndPoint> _guard(this);
 
   try {
