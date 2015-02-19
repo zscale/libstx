@@ -173,13 +173,12 @@ class XZERO_HTTP_API HttpParser {
   void onProtocolError(HttpStatus code, const std::string& message = "");
 
  private:
-  HttpListener* listener_;
-
   // lexer constants
   enum { CR = 0x0D, LF = 0x0A, SP = 0x20, HT = 0x09 };
 
-  ParseMode mode_;  //!< parsing mode (request/response/something)
-  State state_;     //!< the current parser/processing state
+  ParseMode mode_;          //!< parsing mode (request/response/something)
+  HttpListener* listener_;  //!< HTTP message component listener
+  State state_;             //!< the current parser/processing state
 
   // implicit LWS handling
   State lwsNext_;  //!< state to apply on successfull LWS
