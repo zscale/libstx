@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 project(xzero-base)
 set(XZERO_BASE_VERSION "0.11.0-dev")
 
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
+include(XzeroCommon)
 include(FindPkgConfig)
 include(FindDoxygen)
 include(CheckIncludeFiles)
@@ -13,12 +15,6 @@ include(CheckTypeSize)
 include(CheckLibraryExists)
 include(CheckCSourceCompiles)
 include(CMakeDetermineCCompiler)
-
-if(APPLE)
-  set(CMAKE_CXX_FLAGS "-std=c++14 -stdlib=libc++")
-else()
-  set(CMAKE_CXX_FLAGS "-std=c++11")
-endif()
 
 CHECK_INCLUDE_FILES(sys/sendfile.h HAVE_SYS_SENDFILE_H)
 CHECK_FUNCTION_EXISTS(sendfile HAVE_SENDFILE)
@@ -69,8 +65,11 @@ if(HAVE_BZLIB_H)
 endif(HAVE_BZLIB_H)
 
 # PCRE
+option(ENABLE_PCRE "With PCRE support [default: off]" OFF)
 if(ENABLE_PCRE)
   pkg_check_modules(PCRE REQUIRED libpcre>=7.0)
+else()
+  pkg_check_modules(PCRE libpcre>=7.0)
 endif()
 
 # OpenSSL support
@@ -136,9 +135,18 @@ add_library(xzero-base SHARED ${xzero_base_SRC})
 target_link_libraries(xzero-base pthread dl
     ${ZLIB_LIBRARIES} ${SSL_LIBRARIES} ${PCRE_LIBRARIES})
 set_target_properties(xzero-base PROPERTIES VERSION ${XZERO_BASE_VERSION})
-set_target_properties(xzero-base PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO=1")
+set_target_properties(xzero-base PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO_BASE=1")
 install(TARGETS xzero-base DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 # libxzero_base.a
 add_library(xzero_base STATIC ${xzero_base_SRC})
 install(TARGETS xzero_base DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+
+# test-base
+file(GLOB_RECURSE xzero_base_test_SRC "*-test.cpp")
+add_executable(test-base ../test-main.cpp ${xzero_base_test_SRC})
+target_link_libraries(test-base xzero-base gtest)
+
+# pkg-config target
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/xzero-base.pc 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)

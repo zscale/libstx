@@ -16,7 +16,7 @@
 namespace xzero {
 namespace flow {
 
-class FLOW_API ConstantArray : public Constant {
+class XZERO_FLOW_API ConstantArray : public Constant {
  public:
   ConstantArray(const std::vector<Constant*>& elements,
                 const std::string& name = "")

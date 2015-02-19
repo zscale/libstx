@@ -14,7 +14,7 @@ namespace flow {
 
 class IRHandler;
 
-class FLOW_API HandlerPass {
+class XZERO_FLOW_API HandlerPass {
  public:
   explicit HandlerPass(const char* name) : name_(name) {}
 

@@ -15,7 +15,7 @@ namespace flow {
 
 class ASTNode;
 
-class FLOW_API ASTPrinter : public ASTVisitor {
+class XZERO_FLOW_API ASTPrinter : public ASTVisitor {
  public:
   static void print(ASTNode* node);
 

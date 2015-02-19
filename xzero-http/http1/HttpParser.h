@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/sysconfig.h>
 #include <xzero-base/Buffer.h>
 #include <xzero-http/HttpStatus.h>
@@ -26,7 +26,7 @@ namespace http1 {
  *
  * @see HttpListener
  */
-class XZERO_API HttpParser {
+class XZERO_HTTP_API HttpParser {
  public:
   // {{{ enums
   /**
@@ -204,7 +204,7 @@ class XZERO_API HttpParser {
   ssize_t contentLength_;  //!< content length of whole content or current chunk
 };
 
-XZERO_API std::string to_string(http1::HttpParser::State state);
+XZERO_HTTP_API std::string to_string(http1::HttpParser::State state);
 
 }  // namespace http1
 

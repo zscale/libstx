@@ -20,7 +20,7 @@ namespace flow {
 
 class ASTNode;
 
-class FLOW_API FlowCallVisitor : public ASTVisitor {
+class XZERO_FLOW_API FlowCallVisitor : public ASTVisitor {
  private:
   std::vector<CallExpr*> calls_;
 

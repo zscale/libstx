@@ -24,7 +24,7 @@ namespace flow {
  * Transforms a Flow-AST into an SSA-conform IR.
  *
  */
-class FLOW_API IRGenerator : public IRBuilder, public ASTVisitor {
+class XZERO_FLOW_API IRGenerator : public IRBuilder, public ASTVisitor {
  public:
   IRGenerator();
   ~IRGenerator();

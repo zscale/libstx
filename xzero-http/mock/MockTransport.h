@@ -12,7 +12,7 @@
 #include <xzero-http/HttpResponseInfo.h>
 #include <xzero-http/HttpChannel.h>
 #include <xzero-base/Buffer.h>
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/sysconfig.h>
 
 namespace xzero {
@@ -36,7 +36,7 @@ class Executor;
  * @see HttpHandler
  * @see Executor
  */
-class XZERO_API MockTransport : public HttpTransport {
+class XZERO_HTTP_API MockTransport : public HttpTransport {
  public:
   /**
    * Initializes the mock transport object.

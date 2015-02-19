@@ -5,20 +5,17 @@
 - github: https://github.com/xzero/xzero
 - travis-ci: https://travis-ci.org/xzero/xzero
 
-This is a collection of C++ system libraries modeled for server application
-development.
+This is a collection of C++ system libraries.
 
 ## Installation Requirements
 
-- gcc >= 4.8.0 (for building only, CLANG >= 3.4 with libc++ is also supported)
+- gcc >= 4.8.0 (for building only, clang >= 3.4 with libc++)
 - cmake (for building only)
 - gtest (optional, for unit testing)
 
 ## Uses
 
-- x0d, HTTP web server
-- fnordmetric2
-- ...
+- TODO
 
 LICENSE
 -------

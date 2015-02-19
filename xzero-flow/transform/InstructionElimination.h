@@ -18,7 +18,7 @@ class BasicBlock;
 /**
  * Eliminates empty blocks, that are just jumping to the next block.
  */
-class FLOW_API InstructionElimination : public HandlerPass {
+class XZERO_FLOW_API InstructionElimination : public HandlerPass {
  public:
   InstructionElimination() : HandlerPass("InstructionElimination") {}
 

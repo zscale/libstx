@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/Buffer.h>
 #include <xzero-base/DateTime.h>
 #include <mutex>
@@ -19,7 +19,7 @@ class WallClock;
 /**
  * API to generate an HTTP conform Date response header field value.
  */
-class XZERO_API HttpDateGenerator {
+class XZERO_HTTP_API HttpDateGenerator {
  public:
   explicit HttpDateGenerator(WallClock* clock);
 

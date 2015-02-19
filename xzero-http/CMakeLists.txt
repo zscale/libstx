@@ -3,11 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 project(xzero-http)
 set(XZERO_HTTP_VERSION "0.11.0-dev")
 
-if(APPLE)
-  set(CMAKE_CXX_FLAGS "-std=c++14 -stdlib=libc++")
-else()
-  set(CMAKE_CXX_FLAGS "-std=c++11")
-endif()
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
+include(XzeroCommon)
 
 set(xzero_http_SRC
   # common
@@ -31,6 +28,9 @@ set(xzero_http_SRC
   HttpTransport.cpp
   HttpVersion.cpp
 
+  # mock
+  mock/MockTransport.cpp
+
   # http/1.1
   http1/Http1Channel.cpp
   http1/Http1ConnectionFactory.cpp
@@ -53,10 +53,19 @@ configure_file(
 add_library(xzero-http SHARED ${xzero_http_SRC})
 target_link_libraries(xzero-http pthread dl xzero-base)
 set_target_properties(xzero-http PROPERTIES VERSION ${XZERO_HTTP_VERSION})
-set_target_properties(xzero-http PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO=1")
+set_target_properties(xzero-http PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO_HTTP=1")
 install(TARGETS xzero-http DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 # libxzero_http.a
 add_library(xzero_http STATIC ${xzero_http_SRC})
 target_link_libraries(xzero-http pthread dl xzero_base)
 install(TARGETS xzero_http DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+
+# test-http
+file(GLOB_RECURSE xzero_http_test_SRC "*-test.cpp")
+add_executable(test-http ../test-main.cpp ${xzero_http_test_SRC})
+target_link_libraries(test-http xzero-http xzero-base gtest)
+
+# pkg-config target
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/xzero-http.pc 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)

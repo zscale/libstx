@@ -27,7 +27,7 @@ namespace flow {
 class IRBuilder;
 class ConstantArray;
 
-class FLOW_API IRProgram {
+class XZERO_FLOW_API IRProgram {
  public:
   IRProgram();
   ~IRProgram();

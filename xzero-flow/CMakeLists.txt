@@ -1,13 +1,12 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(xzero-flow)
-set(XZERO_FLOW_VERSION "0.11.0-dev")
+set(XZERO_FLOW_VERSION "0.3.0")
 
-if(APPLE)
-  set(CMAKE_CXX_FLAGS "-std=c++14 -stdlib=libc++")
-else()
-  set(CMAKE_CXX_FLAGS "-std=c++11")
-endif()
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
+include(XzeroCommon)
+
+option(ENABLE_FLOW_DIRECT_THREADED_VM "Flow VM using direct threaded mode [default: off]" OFF)
 
 set(xzero_flow_SRC
   AST.cpp
@@ -65,7 +64,7 @@ configure_file(
 add_library(xzero-flow SHARED ${xzero_flow_SRC})
 target_link_libraries(xzero-flow pthread dl xzero-base)
 set_target_properties(xzero-flow PROPERTIES VERSION ${XZERO_FLOW_VERSION})
-set_target_properties(xzero-flow PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO=1")
+set_target_properties(xzero-flow PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO_FLOW=1")
 install(TARGETS xzero-flow DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 # libxzero_flow.a
@@ -73,3 +72,11 @@ add_library(xzero_flow STATIC ${xzero_flow_SRC})
 target_link_libraries(xzero-flow pthread dl xzero_base)
 install(TARGETS xzero_flow DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
+# test-flow
+file(GLOB_RECURSE xzero_flow_test_SRC "*-test.cpp")
+add_executable(test-flow ${CMAKE_CURRENT_SOURCE_DIR}/../test-main.cpp ${xzero_flow_test_SRC})
+target_link_libraries(test-flow xzero-flow xzero-base gtest)
+
+# pkg-config target
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/xzero-flow.pc 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)

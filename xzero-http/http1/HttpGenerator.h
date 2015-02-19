@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/sysconfig.h>
 #include <xzero-http/HttpVersion.h>
 #include <xzero-http/HttpStatus.h>
@@ -31,7 +31,7 @@ namespace http1 {
  *
  * @todo how to support sendfile() alike optimizations
  */
-class XZERO_API HttpGenerator {
+class XZERO_HTTP_API HttpGenerator {
   enum class State {
     None,
     WritingBody,

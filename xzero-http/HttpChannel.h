@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/CompletionHandler.h>
 #include <xzero-http/HttpListener.h>
 #include <xzero-http/HttpHandler.h>
@@ -33,7 +33,7 @@ enum class HttpChannelState {
   DONE,     //!< handling request done
 };
 
-XZERO_API std::string to_string(HttpChannelState state);
+XZERO_HTTP_API std::string to_string(HttpChannelState state);
 
 /**
  * Semantic HTTP message exchange layer.
@@ -42,7 +42,7 @@ XZERO_API std::string to_string(HttpChannelState state);
  *
  * @see HttpTransport
  */
-class XZERO_API HttpChannel : public HttpListener {
+class XZERO_HTTP_API HttpChannel : public HttpListener {
  public:
   HttpChannel(HttpTransport* transport,
               const HttpHandler& handler,

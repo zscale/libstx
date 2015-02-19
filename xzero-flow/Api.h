@@ -8,8 +8,14 @@
 #ifndef flow_api_hpp
 #define flow_api_hpp (1)
 
-#include <xzero-base/Api.h>
+#include <xzero-base/Defines.h>
 
-#define FLOW_API XZERO_API
+// libxzero-flow exports
+#if defined(BUILD_XZERO_FLOW)
+#define XZERO_FLOW_API XZERO_EXPORT
+#else
+#define XZERO_FLOW_API XZERO_IMPORT
+#endif
+
 
 #endif

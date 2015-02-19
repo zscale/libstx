@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <string>
 
 namespace xzero {
@@ -15,7 +15,7 @@ namespace xzero {
 /**
  * Represents a single HTTP message header name/value pair.
  */
-class XZERO_API HeaderField {
+class XZERO_HTTP_API HeaderField {
  public:
   HeaderField() = default;
   HeaderField(HeaderField&&) = default;

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <string>
 
 namespace xzero {
@@ -15,7 +15,7 @@ namespace xzero {
 /**
  * Callback API for HTTP message body availability.
  */
-class XZERO_API HttpInputListener {
+class XZERO_HTTP_API HttpInputListener {
  public:
   virtual ~HttpInputListener() {}
 

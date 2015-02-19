@@ -42,7 +42,7 @@ class InstructionVisitor;
  * @see BasicBlock
  * @see IRHandler
  */
-class FLOW_API Instr : public Value {
+class XZERO_FLOW_API Instr : public Value {
  protected:
   Instr(const Instr& v);
 

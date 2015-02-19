@@ -19,7 +19,7 @@ namespace xzero {
 namespace flow {
 namespace vm {
 
-class FLOW_API Params {
+class XZERO_FLOW_API Params {
  private:
   int argc_;
   Register* argv_;

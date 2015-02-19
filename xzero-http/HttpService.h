@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/TimeSpan.h>
 #include <xzero-base/DateTime.h> // BuiltinAssetHandler
 #include <vector>
@@ -31,7 +31,7 @@ class IPAddress;
  *
  * @note HTTP/1 is always enabled by default.
  */
-class XZERO_API HttpService {
+class XZERO_HTTP_API HttpService {
  private:
   class InputListener;
 
@@ -91,7 +91,7 @@ class XZERO_API HttpService {
 /**
  * Interface for general purpose HTTP request handlers.
  */
-class XZERO_API HttpService::Handler {
+class XZERO_HTTP_API HttpService::Handler {
  public:
   /**
    * Attempts to handle the given request.
@@ -105,7 +105,7 @@ class XZERO_API HttpService::Handler {
 /**
  * Builtin Asset Handler for HttpService.
  */
-class XZERO_API HttpService::BuiltinAssetHandler : public Handler {
+class XZERO_HTTP_API HttpService::BuiltinAssetHandler : public Handler {
  public:
   BuiltinAssetHandler();
 

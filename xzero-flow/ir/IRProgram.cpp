@@ -60,22 +60,22 @@ T* IRProgram::get(std::vector<T*>& table, const U& literal) {
   return value;
 }
 
-template FLOW_API ConstantInt* IRProgram::get<ConstantInt, int64_t>(
+template XZERO_FLOW_API ConstantInt* IRProgram::get<ConstantInt, int64_t>(
     std::vector<ConstantInt*>&, const int64_t&);
-template FLOW_API ConstantArray* IRProgram::get<
+template XZERO_FLOW_API ConstantArray* IRProgram::get<
     ConstantArray, std::vector<Constant*>>(std::vector<ConstantArray*>&,
                                            const std::vector<Constant*>&);
-template FLOW_API ConstantString* IRProgram::get<ConstantString, std::string>(
+template XZERO_FLOW_API ConstantString* IRProgram::get<ConstantString, std::string>(
     std::vector<ConstantString*>&, const std::string&);
-template FLOW_API ConstantIP* IRProgram::get<ConstantIP, IPAddress>(
+template XZERO_FLOW_API ConstantIP* IRProgram::get<ConstantIP, IPAddress>(
     std::vector<ConstantIP*>&, const IPAddress&);
-template FLOW_API ConstantCidr* IRProgram::get<ConstantCidr, Cidr>(
+template XZERO_FLOW_API ConstantCidr* IRProgram::get<ConstantCidr, Cidr>(
     std::vector<ConstantCidr*>&, const Cidr&);
-template FLOW_API ConstantRegExp* IRProgram::get<ConstantRegExp, RegExp>(
+template XZERO_FLOW_API ConstantRegExp* IRProgram::get<ConstantRegExp, RegExp>(
     std::vector<ConstantRegExp*>&, const RegExp&);
-template FLOW_API IRBuiltinHandler* IRProgram::get<IRBuiltinHandler, Signature>(
+template XZERO_FLOW_API IRBuiltinHandler* IRProgram::get<IRBuiltinHandler, Signature>(
     std::vector<IRBuiltinHandler*>&, const Signature&);
-template FLOW_API IRBuiltinFunction* IRProgram::get<IRBuiltinFunction, Signature>(
+template XZERO_FLOW_API IRBuiltinFunction* IRProgram::get<IRBuiltinFunction, Signature>(
     std::vector<IRBuiltinFunction*>&, const Signature&);
 
 }  // namespace flow

@@ -13,7 +13,7 @@
 namespace xzero {
 namespace flow {
 
-class FLOW_API Constant : public Value {
+class XZERO_FLOW_API Constant : public Value {
  public:
   Constant(FlowType ty, const std::string& name) : Value(ty, name) {}
 

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/sysconfig.h>
 #include <xzero-base/Buffer.h>
 #include <xzero-http/HeaderFieldList.h>
@@ -21,7 +21,7 @@ namespace xzero {
 /**
  * Represents an HTTP request message.
  */
-class XZERO_API HttpRequest {
+class XZERO_HTTP_API HttpRequest {
  public:
   HttpRequest();
   explicit HttpRequest(std::unique_ptr<HttpInput>&& input);
@@ -78,8 +78,6 @@ class XZERO_API HttpRequest {
   HeaderFieldList headers_;
 
   std::unique_ptr<HttpInput> input_;
-
-  bool handled_;
 };
 
 }  // namespace xzero

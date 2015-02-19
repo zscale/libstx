@@ -11,15 +11,16 @@ help:
 debug:
 	@mkdir -p build/debug
 	@cd build/debug && cmake -G${GENERATOR} ../.. \
+		-DENABLE_PCRE=yes
 		-DCMAKE_BUILD_TYPE="debug" \
 		-DCMAKE_CXX_FLAGS_DEBUG="-O0 -g3 -fsanitize=address" \
-		-DENABLE_EXAMPLES=yes \
-		-DENABLE_TESTS=yes \
 		-DCMAKE_INSTALL_PREFIX="${PWD}/build/target/debug"
 	@cd build/debug && make
 
 test:
-	@cd build/debug && ./test/libxzero-test
+	@${PWD}/libxzer-base/test-base
+	@${PWD}/libxzer-http/test-http
+	@${PWD}/libxzer-flow/test-flow
 
 release:
 	mkdir -p build/release
