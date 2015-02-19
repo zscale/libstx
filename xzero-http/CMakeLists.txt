@@ -61,11 +61,23 @@ add_library(xzero_http STATIC ${xzero_http_SRC})
 target_link_libraries(xzero-http pthread dl xzero_base)
 install(TARGETS xzero_http DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
+# headers
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+        FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+        FILES_MATCHING PATTERN "*.h"
+                       PATTERN "CMakeFiles" EXCLUDE)
+
 # test-http
 file(GLOB_RECURSE xzero_http_test_SRC "*-test.cpp")
 add_executable(test-http ../test-main.cpp ${xzero_http_test_SRC})
 target_link_libraries(test-http xzero-http xzero-base gtest)
 
 # pkg-config target
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/xzero-http.pc.cmake
+               ${CMAKE_CURRENT_BINARY_DIR}/xzero-http.pc)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/xzero-http.pc 
         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)

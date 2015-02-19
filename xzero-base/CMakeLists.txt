@@ -142,11 +142,23 @@ install(TARGETS xzero-base DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 add_library(xzero_base STATIC ${xzero_base_SRC})
 install(TARGETS xzero_base DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
+# headers
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+        FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+        FILES_MATCHING PATTERN "*.h"
+                       PATTERN "CMakeFiles" EXCLUDE)
+
 # test-base
 file(GLOB_RECURSE xzero_base_test_SRC "*-test.cpp")
 add_executable(test-base ../test-main.cpp ${xzero_base_test_SRC})
 target_link_libraries(test-base xzero-base gtest)
 
 # pkg-config target
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/xzero-base.pc.cmake
+               ${CMAKE_CURRENT_BINARY_DIR}/xzero-base.pc)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/xzero-base.pc 
         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
