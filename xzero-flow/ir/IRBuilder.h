@@ -36,7 +36,7 @@ class IRProgram;
 class IRBuilder;
 class ConstantArray;
 
-class FLOW_API IRBuilder {
+class XZERO_FLOW_API IRBuilder {
  private:
   IRProgram* program_;
   IRHandler* handler_;

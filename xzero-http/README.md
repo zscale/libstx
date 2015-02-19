@@ -15,3 +15,46 @@ written in modern C++.
 ## Installation Requirements
 
 - `libxzero-base` including its dependencies
+
+### Renaming
+
+```
+xzero::http::http1::
+  Http1Channel              | Channel
+  Http1ConnectionFactory    | ConnectionFactory
+  HttpConnection            | Connection
+  HttpGenerator             | Generator
+  HttpParser                | Parser
+
+xzero::http::
+  BadMessage                |
+  HeaderField               |
+  HeaderFieldList           |
+  HttpBufferedInput         |
+  HttpChannel               | Channel
+  HttpConnectionFactory     | ConnectionFactory
+  HttpDateGenerator         | DateGenerator
+  HttpFile                  | File
+  HttpFileHandler           | FileHandler
+  HttpHandler               | Handler
+  HttpInfo                  | MessageInfo
+  HttpInput                 | MessageBodyReader
+  HttpInputListener         | MessageBodyListener
+  HttpListener              | MessageListener
+  HttpMethod                | RequestMethod
+  HttpOutput                | MessageBodyWriter
+  HttpOutputCompressor      | OutputCompressor
+  HttpRangeDef              | RangeDef
+  HttpRequest               | Request
+  HttpRequestInfo           | RequestInfo
+  HttpResponse              | Response
+  HttpResponseInfo          | ResponseInfo
+  HttpService               | Service
+  HttpStatus                | StatusCode
+  HttpTransport             | Transport
+  HttpVersion               | Version
+
+```
+
+
+

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/sysconfig.h>
 #include <xzero-base/TimeSpan.h>
 #include <xzero-http/HttpConnectionFactory.h>
@@ -18,7 +18,7 @@ namespace http1 {
 /**
  * Connection factory for HTTP/1 connections.
  */
-class XZERO_API Http1ConnectionFactory : public HttpConnectionFactory {
+class XZERO_HTTP_API Http1ConnectionFactory : public HttpConnectionFactory {
  public:
   Http1ConnectionFactory(
       WallClock* clock,

@@ -5,7 +5,7 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/sysconfig.h>
 #include <stdexcept>
 
@@ -14,7 +14,7 @@ namespace xzero {
 /**
  * Helper exception that is thrown on semantic message errors by HttpChannel.
  */
-class XZERO_API BadMessage : public std::runtime_error {
+class XZERO_HTTP_API BadMessage : public std::runtime_error {
  public:
   explicit BadMessage(HttpStatus code)
       : BadMessage(code, to_string(code)) {}

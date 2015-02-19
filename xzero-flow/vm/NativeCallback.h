@@ -30,7 +30,7 @@ class Params;
 class Runner;
 class Runtime;
 
-class FLOW_API NativeCallback {
+class XZERO_FLOW_API NativeCallback {
  public:
   typedef std::function<void(Params& args)> Functor;
   typedef std::function<bool(Instr*)> Verifier;

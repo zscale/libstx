@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/sysconfig.h>
 #include <xzero-base/net/ConnectionFactory.h>
 #include <xzero-http/HttpHandler.h>
@@ -24,7 +24,7 @@ class WallClock;
  *
  * This provides common functionality to all HTTP connection factories.
  */
-class XZERO_API HttpConnectionFactory : public ConnectionFactory {
+class XZERO_HTTP_API HttpConnectionFactory : public ConnectionFactory {
  public:
   /**
    * Base initiailization for the HTTP connection factory.

@@ -22,7 +22,7 @@ namespace vm {
 class Program;
 class Runner;
 
-class FLOW_API Handler {
+class XZERO_FLOW_API Handler {
  public:
   Handler();
   Handler(Program* program, const std::string& name,

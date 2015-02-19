@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/Buffer.h>
 #include <xzero-base/TimeSpan.h>
 #include <xzero-base/net/EndPointWriter.h>
@@ -29,7 +29,7 @@ class Http1Channel;
 /**
  * @brief Implements a HTTP/1.1 transport connection.
  */
-class XZERO_API HttpConnection : public HttpTransport {
+class XZERO_HTTP_API HttpConnection : public HttpTransport {
  public:
   HttpConnection(EndPoint* endpoint,
                  Executor* executor,

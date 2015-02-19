@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <string>
 #include <functional>
 #include <unordered_map>
@@ -23,7 +23,7 @@ class HttpFile;
  *
  * @note this class is not meant to be thread safe.
  */
-class XZERO_API HttpFileHandler {
+class XZERO_HTTP_API HttpFileHandler {
  public:
   /**
    * Initializes static file handler.

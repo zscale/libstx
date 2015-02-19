@@ -33,7 +33,7 @@ class IRBuilder;
  *
  * @see Instr, IRHandler, IRBuilder
  */
-class FLOW_API BasicBlock : public Value {
+class XZERO_FLOW_API BasicBlock : public Value {
  public:
   explicit BasicBlock(const std::string& name);
   ~BasicBlock();

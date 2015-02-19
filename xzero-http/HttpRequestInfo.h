@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/sysconfig.h>
 #include <xzero-http/HttpInfo.h>
 #include <string>
@@ -17,7 +17,7 @@ namespace xzero {
 /**
  * HTTP Request Message Info.
  */
-class XZERO_API HttpRequestInfo : public HttpInfo {
+class XZERO_HTTP_API HttpRequestInfo : public HttpInfo {
  public:
   HttpRequestInfo();
   HttpRequestInfo(HttpVersion version, const std::string& method,

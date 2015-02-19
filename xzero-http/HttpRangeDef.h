@@ -15,7 +15,7 @@
 #ifndef x0_HttpRangeDef_h
 #define x0_HttpRangeDef_h
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/Buffer.h>
 
 #include <vector>
@@ -29,7 +29,7 @@ namespace xzero {
 /**
  * \brief represents a Range-header field with high-level access.
  */
-class XZERO_API HttpRangeDef {
+class XZERO_HTTP_API HttpRangeDef {
  public:
   typedef std::pair<std::size_t, std::size_t> element_type;
 

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/sysconfig.h>
 #include <xzero-http/HttpVersion.h>
 #include <xzero-http/HeaderFieldList.h>
@@ -21,7 +21,7 @@ namespace xzero {
  * @see HttpRequestInfo
  * @see HttpResponseInfo
  */
-class XZERO_API HttpInfo {
+class XZERO_HTTP_API HttpInfo {
  public:
   HttpInfo(HttpVersion version, size_t contentLength,
            const HeaderFieldList& headers,

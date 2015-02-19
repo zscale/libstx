@@ -18,7 +18,7 @@ class HandlerPass;
 class IRHandler;
 class IRProgram;
 
-class FLOW_API PassManager {
+class XZERO_FLOW_API PassManager {
  public:
   PassManager();
   ~PassManager();

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <string>
 #include <functional>
 #include <unordered_map>
@@ -20,7 +20,7 @@ namespace xzero {
  *
  * @see HttpFileHandler
  */
-class XZERO_API HttpFile {
+class XZERO_HTTP_API HttpFile {
  public:
   HttpFile(const HttpFile&) = delete;
   HttpFile& operator=(const HttpFile&) = delete;

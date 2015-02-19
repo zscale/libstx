@@ -18,7 +18,7 @@
 namespace xzero {
 namespace flow {
 
-class FLOW_API IRBuiltinHandler : public Constant {
+class XZERO_FLOW_API IRBuiltinHandler : public Constant {
  public:
   IRBuiltinHandler(const vm::Signature& sig)
       : Constant(FlowType::Boolean, sig.name()), signature_(sig) {}

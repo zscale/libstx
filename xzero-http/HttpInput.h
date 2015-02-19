@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/sysconfig.h>
 
 namespace xzero {
@@ -19,7 +19,7 @@ class HttpInputListener;
 /**
  * Abstract HTTP message body consumer API.
  */
-class XZERO_API HttpInput {
+class XZERO_HTTP_API HttpInput {
  public:
   HttpInput();
   virtual ~HttpInput();

@@ -53,7 +53,7 @@ class CondStmt;
 class MatchStmt;
 class AssignStmt;
 
-class FLOW_API ASTVisitor {
+class XZERO_FLOW_API ASTVisitor {
  public:
   virtual ~ASTVisitor() {}
 

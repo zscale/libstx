@@ -1,11 +1,12 @@
-## namespaces
+## misc.
 
 ```
-xzero::http         | generic HTTP API
-xzero::http::http1  | transport for HTTP 0.9 to 1.1
-xzero::http::http2  | transport for HTTP 2.0
-xzero::http::fcgi   | transport for FastCGI transport
-xzero::http::mock   | transport for abstract access (including unit tests)
+libxzero/
+  examples/
+    xzero-$MOD/
+      hello.cpp
+  xzero-$MOD/
+    xzero-$MOD.pc
 ```
 
 ## FHS

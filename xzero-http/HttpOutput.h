@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <xzero-base/Api.h>
+#include <xzero-http/Api.h>
 #include <xzero-base/sysconfig.h>
 #include <xzero-base/Buffer.h>
 #include <xzero-base/CompletionHandler.h>
@@ -23,7 +23,7 @@ class Filter;
 /**
  * Represents the HTTP response body producer API.
  */
-class XZERO_API HttpOutput {
+class XZERO_HTTP_API HttpOutput {
  public:
   explicit HttpOutput(HttpChannel* channel);
   virtual ~HttpOutput();

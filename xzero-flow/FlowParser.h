@@ -32,7 +32,7 @@ class NativeCallback;
 
 class FlowLexer;
 
-class FLOW_API FlowParser {
+class XZERO_FLOW_API FlowParser {
   std::unique_ptr<FlowLexer> lexer_;
   SymbolTable* scopeStack_;
   vm::Runtime* runtime_;
