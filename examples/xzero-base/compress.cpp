@@ -5,8 +5,8 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <xzero/io/GzipFilter.h>
-#include <xzero/Buffer.h>
+#include <xzero-base/io/GzipFilter.h>
+#include <xzero-base/Buffer.h>
 #include <unistd.h>
 #include <stdio.h>
 
