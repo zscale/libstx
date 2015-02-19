@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
 include(XzeroCommon)
 include(FindPkgConfig)
 include(FindDoxygen)
+include(FindOpenSSL)
 include(CheckIncludeFiles)
 include(CheckIncludeFileCXX)
 include(CheckFunctionExists)
@@ -72,8 +73,11 @@ else()
   pkg_check_modules(PCRE libpcre>=7.0)
 endif()
 
-# OpenSSL support
-set(SSL_LIBRARIES ssl)
+if(NOT OPENSSL_FOUND)
+  message(FATAL_ERROR "OpenSSL not found ;-(")
+else()
+  message(STATUS "OpenSSL found ;-)")
+endif()
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/sysconfig.h.cmake
@@ -133,7 +137,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 # libxzero-base.so
 add_library(xzero-base SHARED ${xzero_base_SRC})
 target_link_libraries(xzero-base pthread dl
-    ${ZLIB_LIBRARIES} ${SSL_LIBRARIES} ${PCRE_LIBRARIES})
+    ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES} ${PCRE_LIBRARIES})
 set_target_properties(xzero-base PROPERTIES VERSION ${XZERO_BASE_VERSION})
 set_target_properties(xzero-base PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO_BASE=1")
 install(TARGETS xzero-base DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
