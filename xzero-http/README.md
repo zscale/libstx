@@ -27,10 +27,10 @@ xzero::http::http1::
   HttpParser                | Parser
 
 xzero::http::
-  BadMessage                |
-  HeaderField               |
-  HeaderFieldList           |
-  HttpBufferedInput         |
+  BadMessage                | ?
+  HeaderField               | HeaderField
+  HeaderFieldList           | HeaderFieldList
+  HttpBufferedInput         | ?
   HttpChannel               | Channel
   HttpConnectionFactory     | ConnectionFactory
   HttpDateGenerator         | DateGenerator
