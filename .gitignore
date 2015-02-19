@@ -16,6 +16,5 @@
 /debian/files
 *-stamp
 
-# SSL test files
-/server.crt
-/server.key
+# some developer-local sandbox
+/sandbox
