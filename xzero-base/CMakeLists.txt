@@ -108,6 +108,8 @@ set(xzero_base_SRC
   executor/ThreadedExecutor.cpp
   executor/ThreadPool.cpp
 
+  hash/FNV.cpp
+
   io/GzipFilter.cpp
   io/FileRef.cpp
   io/Filter.cpp
