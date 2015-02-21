@@ -9,15 +9,14 @@
 #include <xzero-base/net/ConnectionFactory.h>
 #include <xzero-base/net/Connection.h>
 #include <xzero-base/WallClock.h>
-#include <xzero-base/logging/LogSource.h>
+#include <xzero-base/logging.h>
 #include <xzero-base/executor/Executor.h>
 #include <algorithm>
 
 namespace xzero {
 
-static LogSource localConnectorLogger("net.LocalConnector");
 #ifndef NDEBUG
-#define TRACE(msg...) do { localConnectorLogger.trace(msg); } while (0)
+#define TRACE(msg...) logTrace("net.LocalConnector", msg)
 #else
 #define TRACE(msg...) do {} while (0)
 #endif

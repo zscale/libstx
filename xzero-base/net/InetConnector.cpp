@@ -250,7 +250,7 @@ bool InetConnector::deferAccept() const {
 }
 
 void InetConnector::setDeferAccept(bool enable) {
-#if defined(TCP_DEFER_ACCEPT) && defined(ENABLE_TCP_DEFER_ACCEPT)
+#if defined(TCP_DEFER_ACCEPT)
   int rc = enable ? 1 : 0;
   if (::setsockopt(socket_, SOL_TCP, TCP_DEFER_ACCEPT, &rc, sizeof(rc)) < 0) {
     throw std::system_error(errno, std::system_category());

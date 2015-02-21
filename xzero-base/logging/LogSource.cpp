@@ -13,39 +13,57 @@
 
 namespace xzero {
 
-LogSource::LogSource(const std::string& className) : className_(className) {
-  LogAggregator::get().registerSource(this);
+LogSource::LogSource(const std::string& componentName)
+    : componentName_(componentName) {
 }
 
-LogSource::~LogSource() { LogAggregator::get().unregisterSource(this); }
+LogSource::~LogSource() {
+}
 
 #define LOG_SOURCE_MSG(level, fmt) \
-  if (static_cast<int>(LogLevel::level) <= static_cast<int>(LogAggregator::get().logLevel())) { \
-    if (LogTarget* target = LogAggregator::get().logTarget()) {        \
-      char msg[512];                                                   \
-      int n = snprintf(msg, sizeof(msg), "[%s] ", className_.c_str()); \
-      va_list va;                                                      \
-      va_start(va, fmt);                                               \
-      vsnprintf(msg + n, sizeof(msg) - n, fmt, va);                    \
-      va_end(va);                                                      \
-      target->level(msg);                                              \
-    }                                                                  \
+  if (static_cast<int>(LogLevel::level) <=                                     \
+      static_cast<int>(LogAggregator::get().logLevel())) {                     \
+    if (LogTarget* target = LogAggregator::get().logTarget()) {                \
+      char msg[512];                                                           \
+      int n = snprintf(msg, sizeof(msg), "[%s] ", componentName_.c_str());     \
+      va_list va;                                                              \
+      va_start(va, fmt);                                                       \
+      vsnprintf(msg + n, sizeof(msg) - n, fmt, va);                            \
+      va_end(va);                                                              \
+      target->level(msg);                                                      \
+    }                                                                          \
   }
 
-void LogSource::trace(const char* fmt, ...) { LOG_SOURCE_MSG(trace, fmt); }
+void LogSource::trace(const char* fmt, ...) {
+  LOG_SOURCE_MSG(trace, fmt);
+}
 
-void LogSource::debug(const char* fmt, ...) { LOG_SOURCE_MSG(debug, fmt); }
+void LogSource::debug(const char* fmt, ...) {
+  LOG_SOURCE_MSG(debug, fmt);
+}
 
-void LogSource::info(const char* fmt, ...) { LOG_SOURCE_MSG(info, fmt); }
+void LogSource::info(const char* fmt, ...) {
+  LOG_SOURCE_MSG(info, fmt);
+}
 
-void LogSource::warn(const char* fmt, ...) { LOG_SOURCE_MSG(warn, fmt); }
+void LogSource::warn(const char* fmt, ...) {
+  LOG_SOURCE_MSG(warn, fmt);
+}
 
-void LogSource::error(const char* fmt, ...) { LOG_SOURCE_MSG(error, fmt); }
+void LogSource::error(const char* fmt, ...) {
+  LOG_SOURCE_MSG(error, fmt);
+}
 
-void LogSource::enable() { enabled_ = true; }
+void LogSource::enable() {
+  enabled_ = true;
+}
 
-bool LogSource::isEnabled() const XZERO_NOEXCEPT { return enabled_; }
+bool LogSource::isEnabled() const XZERO_NOEXCEPT {
+  return enabled_;
+}
 
-void LogSource::disable() { enabled_ = false; }
+void LogSource::disable() {
+  enabled_ = false;
+}
 
 }  // namespace xzero

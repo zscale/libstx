@@ -23,7 +23,7 @@ namespace xzero {
  */
 class XZERO_API LogSource {
  public:
-  explicit LogSource(const std::string& className);
+  explicit LogSource(const std::string& component);
   ~LogSource();
 
   void trace(const char* fmt, ...);
@@ -36,10 +36,10 @@ class XZERO_API LogSource {
   bool isEnabled() const XZERO_NOEXCEPT;
   void disable();
 
-  const std::string& className() const XZERO_NOEXCEPT { return className_; }
+  const std::string& componentName() const XZERO_NOEXCEPT { return componentName_; }
 
  private:
-  std::string className_;
+  std::string componentName_;
   bool enabled_;
 };
 

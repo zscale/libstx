@@ -6,14 +6,13 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero-base/executor/DirectExecutor.h>
-#include <xzero-base/logging/LogSource.h>
+#include <xzero-base/logging.h>
 #include <stdio.h>
 
 namespace xzero {
 
-static LogSource directExecutorLogger("executor.DirectExecutor");
 #ifndef NDEBUG
-#define TRACE(msg...) do { directExecutorLogger.trace(msg); } while (0)
+#define TRACE(msg...) logTrace("executor.DirectExecutor", msg)
 #else
 #define TRACE(msg...) do {} while (0)
 #endif

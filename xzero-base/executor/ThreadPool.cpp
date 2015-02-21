@@ -6,7 +6,7 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero-base/executor/ThreadPool.h>
-#include <xzero-base/logging/LogSource.h>
+#include <xzero-base/logging.h>
 #include <xzero-base/sysconfig.h>
 #include <system_error>
 #include <exception>
@@ -22,10 +22,10 @@
 
 namespace xzero {
 
-static LogSource threadPoolLogger("ThreadPool");
-#define ERROR(msg...) do { threadPoolLogger.error(msg); } while (0)
+#define ERROR(msg...) logError("ThreadPool", msg)
+
 #ifndef NDEBUG
-#define TRACE(msg...) do { threadPoolLogger.trace(msg); } while (0)
+#define TRACE(msg...) logTrace("ThreadPool", msg)
 #else
 #define TRACE(msg...) do {} while (0)
 #endif

@@ -16,7 +16,7 @@
 #include <xzero-http/HttpInputListener.h>
 #include <xzero-http/BadMessage.h>
 #include <xzero-http/sysconfig.h>
-#include <xzero-base/logging/LogSource.h>
+#include <xzero-base/logging.h>
 #include <xzero-base/io/FileRef.h>
 #include <xzero-base/io/Filter.h>
 #include <xzero-base/RuntimeError.h>
@@ -24,10 +24,10 @@
 
 namespace xzero {
 
-static LogSource connectionLogger("http.HttpChannel");
-#define ERROR(msg...) do { connectionLogger.error(msg); } while (0)
+#define ERROR(msg...) logError("http.HttpChannel", msg)
+
 #ifndef NDEBUG
-#define TRACE(msg...) do { connectionLogger.trace(msg); } while (0)
+#define TRACE(msg...) logTrace("http.HttpChannel", msg)
 #else
 #define TRACE(msg...) do {} while (0)
 #endif

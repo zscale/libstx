@@ -17,7 +17,7 @@
 #include <xzero-base/net/EndPoint.h>
 #include <xzero-base/net/EndPointWriter.h>
 #include <xzero-base/executor/Executor.h>
-#include <xzero-base/logging/LogSource.h>
+#include <xzero-base/logging.h>
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/WallClock.h>
 #include <xzero-base/sysconfig.h>
@@ -27,10 +27,10 @@
 namespace xzero {
 namespace http1 {
 
-static LogSource connectionLogger("http1.HttpConnection");
-#define ERROR(msg...) do { connectionLogger.error(msg); } while (0)
+#define ERROR(msg...) logError("http1.HttpConnection", msg)
+
 #ifndef NDEBUG
-#define TRACE(msg...) do { connectionLogger.trace(msg); } while (0)
+#define TRACE(msg...) logTrace("http1.HttpConnection", msg)
 #else
 #define TRACE(msg...) do {} while (0)
 #endif

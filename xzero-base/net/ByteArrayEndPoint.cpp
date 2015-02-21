@@ -9,16 +9,15 @@
 #include <xzero-base/net/Connection.h>
 #include <xzero-base/net/LocalConnector.h>
 #include <xzero-base/executor/Executor.h>
-#include <xzero-base/logging/LogSource.h>
+#include <xzero-base/logging.h>
 #include <system_error>
 #include <stdio.h>
 #include <unistd.h>
 
 namespace xzero {
 
-static LogSource localEndPointLogger("net.ByteArrayEndPoint");
 #ifndef NDEBUG
-#define TRACE(msg...) do { localEndPointLogger.trace(msg); } while (0)
+#define TRACE(msg...) logTrace("net.ByteArrayEndPoint", msg)
 #else
 #define TRACE(msg...) do {} while (0)
 #endif
