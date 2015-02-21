@@ -6,14 +6,13 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero-http/HttpRequest.h>
-#include <xzero-base/logging/LogSource.h>
+#include <xzero-base/logging.h>
 
 namespace xzero {
 
 #ifndef NDEBUG
-static LogSource requestLogger("http1.HttpRequest");
-# define DEBUG(msg...) do { requestLogger.debug(msg); } while (0)
-# define TRACE(msg...) do { requestLogger.trace(msg); } while (0)
+# define DEBUG(msg...) logDebug("http.HttpRequest", msg)
+# define TRACE(msg...) logTrace("http.HttpRequest", msg)
 #else
 # define DEBUG(msg...) do {} while (0)
 # define TRACE(msg...) do {} while (0)

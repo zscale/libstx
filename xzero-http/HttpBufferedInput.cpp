@@ -7,16 +7,15 @@
 
 #include <xzero-http/HttpBufferedInput.h>
 #include <xzero-http/HttpInputListener.h>
-#include <xzero-base/logging/LogSource.h>
+#include <xzero-base/logging.h>
 #include <xzero-base/sysconfig.h>
 
 namespace xzero {
 
 // TODO support buffering input into a temp file (via O_TMPFILE if available)
 
-static LogSource inputLogger("http.HttpBufferedInput");
 #ifndef NDEBUG
-#define TRACE(msg...) do { inputLogger.trace(msg); } while (0)
+#define TRACE(msg...) logTrace("http.HttpBufferedInput", msg)
 #else
 #define TRACE(msg...) do {} while (0)
 #endif

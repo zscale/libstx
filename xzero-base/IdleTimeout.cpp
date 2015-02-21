@@ -7,16 +7,15 @@
 
 #include <xzero-base/IdleTimeout.h>
 #include <xzero-base/WallClock.h>
-#include <xzero-base/logging/LogSource.h>
+#include <xzero-base/logging.h>
 #include <xzero-base/executor/Scheduler.h>
 #include <assert.h>
 
 namespace xzero {
 
-static LogSource idleTimeoutLogger("IdleTimeout");
-#define ERROR(msg...) do { idleTimeoutLogger.error(msg); } while (0)
+#define ERROR(msg...) do { logError("IdleTimeout", msg); } while (0)
 #ifndef NDEBUG
-#define TRACE(msg...) do { idleTimeoutLogger.trace(msg); } while (0)
+#define TRACE(msg...) do { logTrace("IdleTimeout", msg); } while (0)
 #else
 #define TRACE(msg...) do {} while (0)
 #endif

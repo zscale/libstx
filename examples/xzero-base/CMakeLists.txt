@@ -1,3 +1,6 @@
+add_executable(logging-simple logging-simple.cpp)
+target_link_libraries(logging-simple xzero-base)
+
 add_executable(compress compress.cpp)
 target_link_libraries(compress xzero-base)
 

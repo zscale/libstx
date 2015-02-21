@@ -9,7 +9,7 @@
 #include <xzero-base/net/InetConnector.h>
 #include <xzero-base/net/Connection.h>
 #include <xzero-base/executor/Executor.h>
-#include <xzero-base/logging/LogSource.h>
+#include <xzero-base/logging.h>
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/Buffer.h>
 #include <xzero-base/sysconfig.h>
@@ -27,13 +27,12 @@
 
 namespace xzero {
 
-static LogSource inetEndPointLogger("net.InetEndPoint");
+#define ERROR(msg...) logError("net.InetEndPoint", msg)
+
 #ifndef NDEBUG
-#define TRACE(msg...) do { inetEndPointLogger.trace(msg); } while (0)
-#define ERROR(msg...) do { inetEndPointLogger.error(msg); } while (0)
+#define TRACE(msg...) logTrace("net.InetEndPoint", msg)
 #else
 #define TRACE(msg...) do {} while (0)
-#define ERROR(msg...) do {} while (0)
 #endif
 
 InetEndPoint::InetEndPoint(int socket,

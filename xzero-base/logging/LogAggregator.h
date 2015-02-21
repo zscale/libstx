@@ -11,6 +11,7 @@
 #include <xzero-base/sysconfig.h>
 #include <xzero-base/logging/LogLevel.h>
 #include <string>
+#include <mutex>
 #include <unordered_map>
 
 namespace xzero {
@@ -23,8 +24,9 @@ class LogTarget;
  */
 class XZERO_API LogAggregator {
  public:
-  LogAggregator() : LogAggregator(LogLevel::Warning, nullptr) {}
+  LogAggregator();
   LogAggregator(LogLevel logLevel, LogTarget* logTarget);
+  ~LogAggregator();
 
   LogLevel logLevel() const XZERO_NOEXCEPT { return logLevel_; }
   void setLogLevel(LogLevel level) { logLevel_ = level; }
@@ -34,13 +36,14 @@ class XZERO_API LogAggregator {
 
   void registerSource(LogSource* source);
   void unregisterSource(LogSource* source);
-  LogSource* findSource(const std::string& className) const;
+  LogSource* getSource(const std::string& className);
 
   static LogAggregator& get();
 
  private:
   LogTarget* target_;
   LogLevel logLevel_;
+  std::mutex mutex_;
   std::unordered_map<std::string, bool> enabledSources_;
   std::unordered_map<std::string, LogSource*> activeSources_;
 };

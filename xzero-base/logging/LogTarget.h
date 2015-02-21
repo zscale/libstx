@@ -31,6 +31,7 @@ class XZERO_API LogTarget {
 
   static LogTarget* console(); // standard console logger
   static LogTarget* syslog();  // standard syslog logger
+  static LogTarget* null();
 };
 
 }  // namespace xzero
