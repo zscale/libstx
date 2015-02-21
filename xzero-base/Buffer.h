@@ -5,13 +5,6 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-// This file is part of the "x0" project, http://xzero.io/
-//   (c) 2009-2014 Christian Parpart <trapni@gmail.com>
-//
-// Licensed under the MIT License (the "License"); you may not use this
-// file except in compliance with the License. You may obtain a copy of
-// the License at: http://opensource.org/licenses/MIT
-
 #pragma once
 
 #include <xzero-base/Api.h>
@@ -298,6 +291,8 @@ class XZERO_API BufferRef : public BufferBase<char*> {
 
   BufferRef& operator=(const BufferRef& v);
 
+  void swap(BufferRef& other);
+
   /**
    * Random access operator.
    */
@@ -378,8 +373,6 @@ class XZERO_API MutableBuffer : public BufferRef {
   MutableBuffer(const MutableBuffer& other);
   MutableBuffer(char* value, size_t capacity, size_t size);
   MutableBuffer(MutableBuffer&& v);
-
-  void swap(MutableBuffer<ensure>& v);
 
   bool resize(size_t value);
 
@@ -477,6 +470,11 @@ class XZERO_API Buffer : public MutableBuffer<mutableEnsure> {
   Buffer& operator=(const std::string& v);
   Buffer& operator=(const value_type* v);
 
+  void swap(Buffer& other);
+
+  size_t mark() const XZERO_NOEXCEPT;
+  void setMark(size_t value);
+
   BufferSlice slice(size_t offset = 0) const;
   BufferSlice slice(size_t offset, size_t size) const;
 
@@ -486,6 +484,9 @@ class XZERO_API Buffer : public MutableBuffer<mutableEnsure> {
   //	bool operator!() const;
 
   static Buffer fromCopy(const value_type* data, size_t count);
+
+ private:
+  size_t mark_;
 };
 // }}}
 // {{{ BufferSlice
@@ -1131,6 +1132,11 @@ inline BufferRef& BufferRef::operator=(const BufferRef& v) {
   return *this;
 }
 
+inline void BufferRef::swap(xzero::BufferRef& other) {
+  std::swap(data_, other.data_);
+  std::swap(size_, other.size_);
+}
+
 inline BufferRef::const_reference_type BufferRef::operator[](
     size_t index) const {
   assert(index < size_);
@@ -1171,13 +1177,6 @@ template <bool (*ensure)(void*, size_t)>
 inline MutableBuffer<ensure>::MutableBuffer(char* value, size_t capacity,
                                             size_t size)
     : BufferRef(value, size), capacity_(capacity) {}
-
-template <bool (*ensure)(void*, size_t)>
-inline void MutableBuffer<ensure>::swap(MutableBuffer<ensure>& other) {
-  std::swap(data_, other.data_);
-  std::swap(size_, other.size_);
-  std::swap(capacity_, other.capacity_);
-}
 
 template <bool (*ensure)(void*, size_t)>
 inline bool MutableBuffer<ensure>::resize(size_t value) {
@@ -1476,7 +1475,16 @@ inline FixedBuffer::FixedBuffer(FixedBuffer&& v)
 }
 
 inline FixedBuffer::FixedBuffer(char* data, size_t capacity, size_t size)
-    : MutableBuffer<immutableEnsure>(data, capacity, size) {}
+    : MutableBuffer<immutableEnsure>(data, capacity, size) {
+}
+
+inline Buffer& Buffer::operator=(Buffer&& v) {
+  swap(v);
+  v.clear();
+  v.setMark(0);
+
+  return *this;
+}
 
 inline FixedBuffer& FixedBuffer::operator=(const FixedBuffer& v) {
   clear();
@@ -1509,66 +1517,72 @@ inline FixedBuffer& FixedBuffer::operator=(const value_type* v) {
 }
 // }}}
 // {{{ Buffer impl
-inline Buffer::Buffer() : MutableBuffer<mutableEnsure>() {}
+inline Buffer::Buffer()
+    : MutableBuffer<mutableEnsure>(),
+      mark_(0) {
+}
 
 inline Buffer::Buffer(const BufferRef& v, size_t offset, size_t count)
-    : MutableBuffer<mutableEnsure>() {
+    : MutableBuffer<mutableEnsure>(),
+      mark_(0) {
   assert(offset + count <= v.size());
 
   push_back(v.data() + offset, count);
 }
 
-inline Buffer::Buffer(const BufferRef& v) : MutableBuffer<mutableEnsure>() {
+inline Buffer::Buffer(const BufferRef& v)
+    : MutableBuffer<mutableEnsure>(),
+      mark_(0) {
   push_back(v.data(), v.size());
 }
 
-inline Buffer::Buffer(size_t _capacity) : MutableBuffer<mutableEnsure>() {
+inline Buffer::Buffer(size_t _capacity)
+    : MutableBuffer<mutableEnsure>(),
+      mark_(0) {
   reserve(_capacity);
 }
 
 template <typename PodType, size_t N>
 inline Buffer::Buffer(PodType (&value)[N])
-    : MutableBuffer<mutableEnsure>() {
+    : MutableBuffer<mutableEnsure>(),
+      mark_(0) {
   reserve(N);
   push_back(value, N - 1);
 }
 
 inline Buffer::Buffer(const value_type* value, size_t size)
-    : MutableBuffer<mutableEnsure>() {
+    : MutableBuffer<mutableEnsure>(),
+      mark_(0) {
   reserve(size + 1);
   push_back(value, size);
 }
 
-inline Buffer::Buffer(const char* v) : MutableBuffer<mutableEnsure>() {
+inline Buffer::Buffer(const char* v)
+    : MutableBuffer<mutableEnsure>(),
+      mark_(0) {
   push_back(v);
 }
 
-inline Buffer::Buffer(const std::string& v) : MutableBuffer<mutableEnsure>() {
+inline Buffer::Buffer(const std::string& v)
+    : MutableBuffer<mutableEnsure>(),
+      mark_(0) {
   reserve(v.size() + 1);
   push_back(v.data(), v.size());
 }
 
-inline Buffer::Buffer(const Buffer& v) : MutableBuffer<mutableEnsure>() {
+inline Buffer::Buffer(const Buffer& v)
+    : MutableBuffer<mutableEnsure>(),
+      mark_(0) {
   push_back(v.data(), v.size());
 }
 
 inline Buffer::Buffer(Buffer&& v)
-    : MutableBuffer<mutableEnsure>(std::move(v)) {}
+    : MutableBuffer<mutableEnsure>(std::move(v)),
+      mark_(0) {
+}
 
-inline Buffer::~Buffer() { reserve(0); }
-
-inline Buffer& Buffer::operator=(Buffer&& v) {
-  reserve(0);  // special case, frees the buffer if available and managed
-
-  data_ = v.data_;
-  size_ = v.size_;
-  capacity_ = v.capacity_;
-
-  v.data_ = 0;
-  v.size_ = 0;
-  v.capacity_ = 0;
-
-  return *this;
+inline Buffer::~Buffer() {
+  reserve(0);
 }
 
 inline Buffer& Buffer::operator=(const Buffer& v) {
@@ -1599,6 +1613,21 @@ inline Buffer& Buffer::operator=(const value_type* v) {
   return *this;
 }
 
+inline void Buffer::swap(xzero::Buffer& other) {
+  std::swap(data_, other.data_);
+  std::swap(size_, other.size_);
+  std::swap(capacity_, other.capacity_);
+  std::swap(mark_, other.mark_);
+}
+
+inline size_t Buffer::mark() const XZERO_NOEXCEPT {
+  return mark_;
+}
+
+inline void Buffer::setMark(size_t value) {
+  mark_ = value;
+}
+
 inline BufferSlice Buffer::slice(size_t offset) const {
   assert(offset <= size());
   return BufferSlice(*(Buffer*)this, offset, size() - offset);
@@ -1619,12 +1648,16 @@ inline Buffer Buffer::fromCopy(const value_type* data, size_t count) {
 }
 // }}}
 // {{{ BufferSlice impl
-inline BufferSlice::BufferSlice() : BufferBase<Buffer>() {}
+inline BufferSlice::BufferSlice() : BufferBase<Buffer>() {
+}
 
 inline BufferSlice::BufferSlice(Buffer& buffer, size_t offset, size_t size)
-    : BufferBase<Buffer>(data_type(&buffer, offset), size) {}
+    : BufferBase<Buffer>(data_type(&buffer, offset), size) {
+}
 
-inline BufferSlice::BufferSlice(const BufferSlice& v) : BufferBase<Buffer>(v) {}
+inline BufferSlice::BufferSlice(const BufferSlice& v)
+    : BufferBase<Buffer>(v) {
+}
 
 inline BufferSlice& BufferSlice::operator=(const BufferSlice& v) {
   data_ = v.data_;
@@ -1648,16 +1681,16 @@ inline BufferSlice BufferSlice::slice(size_t offset, size_t count) const {
                            size() - offset);
 }
 
-/** shifts view's left margin by given bytes to the left, thus, increasing
- * view's size.
+/** Shifts view's left margin by given bytes to the left, thus, increasing
+ *  view's size.
  */
 inline void BufferSlice::shl(ssize_t value) {
   assert(data_.offset_ - value >= 0);
   data_.offset_ -= value;
 }
 
-/** shifts view's right margin by given bytes to the right, thus, increasing
- * view's size.
+/** Shifts view's right margin by given bytes to the right, thus, increasing
+ *  view's size.
  */
 inline void BufferSlice::shr(ssize_t value) { size_ += value; }
 // }}}
@@ -1667,6 +1700,14 @@ inline Buffer operator+(const BufferRef& a, const BufferRef& b) {
   buf.push_back(a);
   buf.push_back(b);
   return buf;
+}
+
+inline void swap(xzero::Buffer& left, xzero::Buffer& right) {
+  left.swap(right);
+}
+
+inline void swap(xzero::BufferRef& left, xzero::BufferRef& right) {
+  left.swap(right);
 }
 // }}}
 }  // namespace xzero
