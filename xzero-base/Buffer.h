@@ -1714,18 +1714,18 @@ inline void swap(xzero::BufferRef& left, xzero::BufferRef& right) {
 
 // {{{ std::hash<BufferBase<T>>
 namespace xzero {
-// Fowler / Noll / Vo (FNV) Hash-Implementation
-template <typename T>
-uint32_t hash(const T& array) XZERO_NOEXCEPT {
-  uint32_t result = 2166136261u;
+  // Fowler / Noll / Vo (FNV) Hash-Implementation
+  template <typename T>
+  uint32_t _hash(const T& array) XZERO_NOEXCEPT {
+    uint32_t result = 2166136261u;
 
-  for (auto value : array) {
-    result ^= value;
-    result *= 16777619;
+    for (auto value : array) {
+      result ^= value;
+      result *= 16777619;
+    }
+
+    return result;
   }
-
-  return result;
-}
 }
 
 namespace std {
@@ -1735,7 +1735,7 @@ struct hash<xzero::BufferSlice> {
   typedef uint32_t result_type;
 
   result_type operator()(const argument_type& value) const XZERO_NOEXCEPT {
-    return xzero::hash(value);
+    return xzero::_hash(value);
   }
 };
 
@@ -1745,7 +1745,7 @@ struct hash<xzero::BufferRef> {
   typedef uint32_t result_type;
 
   result_type operator()(const argument_type& value) const XZERO_NOEXCEPT {
-    return xzero::hash(value);
+    return xzero::_hash(value);
   }
 };
 
@@ -1755,7 +1755,7 @@ struct hash<xzero::Buffer> {
   typedef uint32_t result_type;
 
   result_type operator()(const argument_type& value) const XZERO_NOEXCEPT {
-    return xzero::hash(value);
+    return xzero::_hash(value);
   }
 };
 
