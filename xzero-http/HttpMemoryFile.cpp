@@ -36,7 +36,7 @@ HttpMemoryFile::HttpMemoryFile(
     : HttpFile(path, mimetype),
       data_(),
       mtime_(time(nullptr)),
-      etag_(std::to_string(hash::FNV<uint64_t>().hash((uint8_t*)data, length))),
+      etag_(std::to_string(hash::FNV<uint64_t>().hash(data, length))),
       shm_path_(path),
       memfd_(-1) {
 
