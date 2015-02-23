@@ -28,10 +28,18 @@ set(xzero_http_SRC
   HttpTransport.cpp
   HttpVersion.cpp
 
-  # mock
+  # file
+  HttpFile.cpp
+  HttpFileRepository.cpp
+  HttpLocalFile.cpp
+  HttpLocalFileRepository.cpp
+  HttpMemoryFile.cpp
+  HttpMemoryFileRepository.cpp
+
+  # transport: mock
   mock/MockTransport.cpp
 
-  # http/1.1
+  # transport: http/1.1
   http1/Http1Channel.cpp
   http1/Http1ConnectionFactory.cpp
   http1/HttpConnection.cpp

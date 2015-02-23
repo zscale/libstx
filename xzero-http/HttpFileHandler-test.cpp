@@ -15,8 +15,10 @@
 #include <xzero-http/HttpOutput.h>
 #include <xzero-http/BadMessage.h>
 #include <xzero-http/HttpFileHandler.h>
+#include <xzero-http/HttpLocalFileRepository.h>
 
 #include <xzero-base/executor/DirectExecutor.h>
+#include <xzero-base/MimeTypes.h>
 #include <xzero-base/Buffer.h>
 
 #include <gtest/gtest.h>
@@ -29,10 +31,9 @@ static std::string generateBoundaryID() {
 
 void staticfileHandler(HttpRequest* request, HttpResponse* response) {
   const std::string docroot = ".";
-  HttpFileHandler staticfile(true, true, true,
-                             "/etc/mime.types",
-                             "application/unknown",
-                             &generateBoundaryID);
+  MimeTypes mimetypes;
+  HttpLocalFileRepository repo(mimetypes, true, true, true);
+  HttpFileHandler staticfile(repo, &generateBoundaryID);
 
   if (staticfile.handle(request, response, docroot))
     return;

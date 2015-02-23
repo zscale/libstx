@@ -9,6 +9,7 @@
 
 #include <xzero-http/Api.h>
 #include <string>
+#include <memory>
 #include <functional>
 #include <unordered_map>
 
@@ -17,6 +18,8 @@ namespace xzero {
 class HttpRequest;
 class HttpResponse;
 class HttpFile;
+class HttpFileRepository;
+class MimeTypes;
 
 /**
  * Handles GET/HEAD requests to local files.
@@ -28,66 +31,21 @@ class XZERO_HTTP_API HttpFileHandler {
   /**
    * Initializes static file handler.
    *
-   * @param mtime whether or not to include Last-Modified timestamp
-   * @param size whether or not to include file size
-   * @param inode whether or not to include file's system inode
+   * @param repo file repository to serve from.
    */
-  HttpFileHandler(bool mtime, bool size, bool inode);
+  explicit HttpFileHandler(HttpFileRepository& repo);
 
   /**
    * Initializes static file handler.
    *
-   * @param mtime whether or not to include Last-Modified timestamp
-   * @param size whether or not to include file size
-   * @param inode whether or not to include file's system inode
-   * @param mimetypes if non-empty, given file will be loaded as mimetypes file.
-   * @param defaultMimeType default mimetype to use if no mapping exists.
-   */
-  HttpFileHandler(bool mtime, bool size, bool inode,
-                  const std::string& mimetypes,
-                  const std::string& defaultMimeType);
-
-  /**
-   * Initializes static file handler.
-   *
-   * @param mtime whether or not to include Last-Modified timestamp
-   * @param size whether or not to include file size
-   * @param inode whether or not to include file's system inode
-   * @param mimetypes if non-empty, given file will be loaded as mimetypes file.
-   * @param defaultMimeType default mimetype to use if no mapping exists.
+   * @param repo               file repository to serve from.
    * @param generateBoundaryID boundary-ID generator function that generates
    *                           response-local unique boundary IDs.
    */
-  HttpFileHandler(bool mtime, bool size, bool inode,
-                  const std::string& mimetypes,
-                  const std::string& defaultMimeType,
+  HttpFileHandler(HttpFileRepository& repo,
                   std::function<std::string()> generateBoundaryID);
 
   ~HttpFileHandler();
-
-  /**
-   * Configures ETag generation.
-   *
-   * @param mtime whether or not to include Last-Modified timestamp
-   * @param size whether or not to include file size
-   * @param inode whether or not to include file's system inode
-   */
-  void configureETag(bool mtime, bool size, bool inode);
-
-  /** Loads the mimetype map from given local file at @p path. */
-  void loadMimeTypesFromLocal(const std::string& path);
-
-  /** Retrieves a mimetype based on given file @p path name. */
-  std::string getMimeType(const std::string& path);
-
-  /** Retrieves the mimetype mappings (from file extension to mimetype). */
-  const std::unordered_map<std::string, std::string>& mimetypes() const XZERO_NOEXCEPT;
-
-  /** Retrieves the default mimetype. */
-  const std::string& defaultMimeType() const XZERO_NOEXCEPT;
-
-  /** Sets the default mimetype to given @p value. */
-  void setDefaultMimeType(const std::string& value);
 
   /**
    * Handles given @p request if a local file (based on @p docroot) exists.
@@ -137,30 +95,11 @@ class XZERO_HTTP_API HttpFileHandler {
                           HttpRequest* request, HttpResponse* response);
 
  private:
-  bool etagConsiderMTime_;
-  bool etagConsiderSize_;
-  bool etagConsiderINode_;
-  std::unordered_map<std::string, std::string> mimetypes_;
-  std::string defaultMimeType_;
+  HttpFileRepository& fileRepository_;
   std::function<std::string()> generateBoundaryID_;
 
   // TODO stat cache
   // TODO fd cache
 };
-
-// {{{ inlines
-inline const std::unordered_map<std::string, std::string>&
-    HttpFileHandler::mimetypes() const XZERO_NOEXCEPT {
-  return mimetypes_;
-}
-
-inline const std::string& HttpFileHandler::defaultMimeType() const XZERO_NOEXCEPT {
-  return defaultMimeType_;
-}
-
-inline void HttpFileHandler::setDefaultMimeType(const std::string& value) {
-  defaultMimeType_ = value;
-}
-// }}}
 
 } // namespace xzero
