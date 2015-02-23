@@ -8,10 +8,9 @@
 #pragma once
 
 #include <xzero-http/Api.h>
+#include <xzero-base/Buffer.h>
 #include <string>
 #include <functional>
-#include <unordered_map>
-#include <sys/stat.h>
 
 namespace xzero {
 
@@ -19,48 +18,42 @@ namespace xzero {
  * HTTP servable file.
  *
  * @see HttpFileHandler
+ * @see HttpLocalFile, HttpMemoryFile
+ * @see HttpFileRepository
  */
 class XZERO_HTTP_API HttpFile {
  public:
   HttpFile(const HttpFile&) = delete;
   HttpFile& operator=(const HttpFile&) = delete;
 
-  HttpFile(const std::string& path, const std::string& mimetype, bool mtime,
-           bool size, bool inode);
+  HttpFile(const std::string& path, const std::string& mimetype);
 
-  ~HttpFile();
+  virtual ~HttpFile();
 
-  bool isError() const XZERO_NOEXCEPT { return errno_ != 0; }
-  int errorCode() const XZERO_NOEXCEPT { return errno_; }
-
-  const std::string& path() const { return path_; }
   std::string filename() const;
+  const std::string& path() const { return path_; }
   const std::string& mimetype() const { return mimetype_; }
-  const std::string& etag() const;
   const std::string& lastModified() const;
 
-  size_t size() const XZERO_NOEXCEPT { return stat_.st_size; }
-  time_t mtime() const XZERO_NOEXCEPT { return stat_.st_mtime; }
-  operator const struct stat*() const { return &stat_; }
-  const struct stat* operator->() const { return &stat_; }
+  virtual const std::string& etag() const = 0;
 
-  bool isRegular() const XZERO_NOEXCEPT { return S_ISREG(stat_.st_mode); }
-
-  void update();
+  virtual size_t size() const XZERO_NOEXCEPT = 0;
+  virtual time_t mtime() const XZERO_NOEXCEPT = 0;
+  virtual size_t inode() const XZERO_NOEXCEPT = 0;
+  virtual bool isRegular() const XZERO_NOEXCEPT = 0;
 
   /** Creates a file descriptor for this file. */
-  int tryCreateChannel();
+  virtual int tryCreateChannel() = 0;
+
+  void setErrorCode(int ec) { errno_ = ec; }
+  int errorCode() const XZERO_NOEXCEPT { return errno_; }
 
  private:
   std::string path_;
-  int errno_;
   std::string mimetype_;
-  bool etagConsiderMTime_;
-  bool etagConsiderSize_;
-  bool etagConsiderINode_;
-  mutable std::string etag_;
+
+  int errno_;
   mutable std::string lastModified_;
-  struct stat stat_;
 };
 
 } // namespace xzero

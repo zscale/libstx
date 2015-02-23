@@ -13,17 +13,15 @@
 #include <xzero-base/net/InetConnector.h>
 #include <xzero-base/logging/LogTarget.h>
 #include <xzero-base/logging/LogAggregator.h>
+#include <xzero-base/MimeTypes.h>
 
+#include <xzero-http/HttpLocalFileRepository.h>
 #include <xzero-http/HttpRequest.h>
 #include <xzero-http/HttpResponse.h>
 #include <xzero-http/HttpOutput.h>
 #include <xzero-http/HttpOutputCompressor.h>
 #include <xzero-http/HttpFileHandler.h>
 #include <xzero-http/http1/Http1ConnectionFactory.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 
 int main(int argc, const char* argv[]) {
   xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
@@ -45,8 +43,9 @@ int main(int argc, const char* argv[]) {
   xzero::HttpOutputCompressor* compressor = http->outputCompressor();
   compressor->setMinSize(5);
 
-  xzero::HttpFileHandler fileHandler(true, true, true, "/etc/mime.types",
-                                     "application/octet-stream");
+  xzero::MimeTypes mimetypes("/etc/mime.types", "application/octet-stream");
+  xzero::HttpLocalFileRepository localFiles(mimetypes, true, true, true);
+  xzero::HttpFileHandler fileHandler(localFiles);
 
   http->setHandler([&](xzero::HttpRequest* request, xzero::HttpResponse* response) {
     if (!fileHandler.handle(request, response, docroot)) {
