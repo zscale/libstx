@@ -73,6 +73,9 @@ else()
   pkg_check_modules(PCRE libpcre>=7.0)
 endif()
 
+# required for shm_open/shm_unlink
+set(RT_LIBRARIES rt)
+
 if(NOT OPENSSL_FOUND)
   message(FATAL_ERROR "OpenSSL not found ;-(")
 else()
@@ -94,6 +97,7 @@ set(xzero_base_SRC
   TimeSpan.cpp
   Tokenizer.cpp
   WallClock.cpp
+  MimeTypes.cpp
 
   logging/LogAggregator.cpp
   logging/LogLevel.cpp
@@ -136,10 +140,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+set(XZERO_BASE_LIBRARIES pthread dl
+    ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES} ${PCRE_LIBRARIES} ${RT_LIBRARIES})
+
 # libxzero-base.so
 add_library(xzero-base SHARED ${xzero_base_SRC})
-target_link_libraries(xzero-base pthread dl
-    ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES} ${PCRE_LIBRARIES})
+target_link_libraries(xzero-base ${XZERO_BASE_LIBRARIES})
 set_target_properties(xzero-base PROPERTIES VERSION ${XZERO_BASE_VERSION})
 set_target_properties(xzero-base PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO_BASE=1")
 install(TARGETS xzero-base DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
