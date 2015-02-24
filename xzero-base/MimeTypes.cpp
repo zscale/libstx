@@ -6,14 +6,9 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero-base/MimeTypes.h>
+#include <xzero-base/io/FileUtil.h>
 #include <xzero-base/Tokenizer.h>
 #include <xzero-base/Buffer.h>
-#include <xzero-base/sysconfig.h>
-#include <system_error>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
 
 namespace xzero {
 
@@ -31,31 +26,9 @@ MimeTypes::MimeTypes(const std::string& path,
   }
 }
 
-static inline void readFile(const std::string& path, Buffer* output) {
-  int fd = open(path.c_str(), O_RDONLY);
-  if (fd < 0)
-    throw std::system_error(errno, std::system_category());
-
-  struct stat st;
-  if (fstat(fd, &st) < 0)
-    throw std::system_error(errno, std::system_category());
-
-  output->reserve(st.st_size + 1);
-  ssize_t nread = ::read(fd, output->data(), st.st_size);
-  if (nread < 0) {
-    ::close(fd);
-    throw std::system_error(errno, std::system_category());
-  }
-
-  output->data()[nread] = '\0';
-  output->resize(nread);
-  ::close(fd);
-}
-
 /** Loads the mimetype map from given local file at @p path. */
 void MimeTypes::loadFromLocal(const std::string& path) {
-  Buffer input;
-  readFile(path, &input);
+  Buffer input = FileUtil::read(path);
 
   mimetypes_.clear();
   auto lines = Tokenizer<BufferRef, Buffer>::tokenize(input, "\n");
