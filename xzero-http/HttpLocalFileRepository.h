@@ -8,6 +8,7 @@
 
 #include <xzero-http/Api.h>
 #include <xzero-http/HttpFileRepository.h>
+#include <string>
 
 namespace xzero {
 
