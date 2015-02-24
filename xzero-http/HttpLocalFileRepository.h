@@ -20,13 +20,17 @@ class XZERO_HTTP_API HttpLocalFileRepository : public HttpFileRepository {
    * Initializes local file repository.
    *
    * @param mimetypes mimetypes database to use for creating entity tags.
+   * @param basedir base directory to start all lookups from (like "/").
    * @param etagMtime whether or not to include Last-Modified timestamp in etag.
    * @param etagSize whether or not to include file size in etag.
    * @param etagInode whether or not to include file's system inode in etag.
    */
   HttpLocalFileRepository(
       MimeTypes& mimetypes,
+      const std::string& basedir,
       bool etagMtime, bool etagSize, bool etagInode);
+
+  const std::string baseDirectory() const { return basedir_; }
 
   HttpFileRef getFile(const std::string& requestPath,
                       const std::string& docroot) override;
@@ -44,6 +48,7 @@ class XZERO_HTTP_API HttpLocalFileRepository : public HttpFileRepository {
   friend class HttpLocalFile;
 
   MimeTypes& mimetypes_;
+  std::string basedir_;
   bool etagConsiderMTime_;
   bool etagConsiderSize_;
   bool etagConsiderINode_;
