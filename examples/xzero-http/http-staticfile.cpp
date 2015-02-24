@@ -11,8 +11,6 @@
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/net/Server.h>
 #include <xzero-base/net/InetConnector.h>
-#include <xzero-base/logging/LogTarget.h>
-#include <xzero-base/logging/LogAggregator.h>
 #include <xzero-base/io/FileUtil.h>
 #include <xzero-base/MimeTypes.h>
 
@@ -25,9 +23,6 @@
 #include <xzero-http/http1/Http1ConnectionFactory.h>
 
 int main(int argc, const char* argv[]) {
-  xzero::LogAggregator::get().setLogTarget(xzero::LogTarget::console());
-  xzero::LogAggregator::get().setLogLevel(xzero::LogLevel::Trace);
-
   xzero::NativeScheduler scheduler;
   xzero::WallClock* clock = xzero::WallClock::monotonic();
 
