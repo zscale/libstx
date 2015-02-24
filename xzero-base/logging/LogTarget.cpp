@@ -10,6 +10,7 @@
 #include <mutex>
 #include <stdio.h>
 #include <stdarg.h>
+#include <sys/syslog.h>
 
 namespace xzero {
 
@@ -62,13 +63,58 @@ ConsoleLogger* ConsoleLogger::get() {
   return &instance;
 }
 // }}}
+// {{{ SyslogLogger
+class SyslogLogger : public LogTarget {
+ public:
+  void trace(const std::string& msg) override {
+    ::syslog(LOG_DEBUG, "[thread:%d] %s\n", threadId(), msg.c_str());
+  }
+
+  void debug(const std::string& msg) override {
+    ::syslog(LOG_DEBUG, "[thread:%d] %s\n", threadId(), msg.c_str());
+  }
+
+  void info(const std::string& msg) override {
+    ::syslog(LOG_INFO, "[thread:%d] %s\n", threadId(), msg.c_str());
+  }
+
+  void warn(const std::string& msg) override {
+    ::syslog(LOG_WARNING, "[thread:%d] %s\n", threadId(), msg.c_str());
+  }
+
+  void error(const std::string& msg) override {
+    ::syslog(LOG_ERR, "[thread:%d] %s\n", threadId(), msg.c_str());
+  }
+
+  int threadId() {
+    std::lock_guard<std::mutex> _lg(lock_);
+    pthread_t tid = pthread_self();
+    auto i = threadMap_.find(tid);
+    if (i != threadMap_.end()) {
+      return i->second;
+    }
+    threadMap_[tid] = threadMap_.size() + 1;
+    return threadMap_.size();
+  }
+
+  std::mutex lock_;
+  std::unordered_map<pthread_t, int> threadMap_;
+
+  static SyslogLogger* get();
+};
+
+SyslogLogger* SyslogLogger::get() {
+  static SyslogLogger instance;
+  return &instance;
+}
+// }}}
 // {{{ LogTarget
 LogTarget* LogTarget::console() {
   return ConsoleLogger::get();
 }
 
 LogTarget* LogTarget::syslog() {
-  return nullptr; // TODO
+  return SyslogLogger::get();
 }
 // }}}
 
