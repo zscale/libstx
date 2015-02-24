@@ -36,6 +36,8 @@
 #define XZERO_DEPRECATED __attribute__((__deprecated__))
 #define XZERO_PURE __attribute__((pure))
 #define XZERO_PACKED __attribute__((packed))
+#define XZERO_INIT __attribute__((constructor))
+#define XZERO_FINI __attribute__((destructor))
 #if !defined(likely)
 #define likely(x) __builtin_expect((x), 1)
 #endif
@@ -51,6 +53,8 @@
 #define XZERO_DEPRECATED __attribute__((__deprecated__))
 #define XZERO_PURE __attribute__((pure))
 #define XZERO_PACKED __attribute__((packed))
+#define XZERO_INIT /*!*/
+#define XZERO_FINI /*!*/
 #if !defined(likely)
 #define likely(x) (x)
 #endif
@@ -66,6 +70,8 @@
 #define XZERO_DEPRECATED         /*!*/
 #define XZERO_PURE               /*!*/
 #define XZERO_PACKED __packed    /* ? */
+#define XZERO_INIT               /*!*/
+#define XZERO_FINI               /*!*/
 #if !defined(likely)
 #define likely(x) (x)
 #endif
@@ -82,6 +88,8 @@
 #define XZERO_DEPRECATED         /*!*/
 #define XZERO_PURE               /*!*/
 #define XZERO_PACKED             /*!*/
+#define XZERO_INIT               /*!*/
+#define XZERO_FINI               /*!*/
 #if !defined(likely)
 #define likely(x) (x)
 #endif
