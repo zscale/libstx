@@ -117,6 +117,7 @@ set(xzero_base_SRC
   io/GzipFilter.cpp
   io/FileRef.cpp
   io/Filter.cpp
+  io/FileUtil.cpp
 
   net/ByteArrayEndPoint.cpp
   net/Cidr.cpp
