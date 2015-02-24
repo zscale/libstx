@@ -8,6 +8,8 @@
 #include <xzero-base/logging/LogAggregator.h>
 #include <xzero-base/logging/LogSource.h>
 #include <xzero-base/logging/LogTarget.h>
+#include <xzero-base/logging.h>
+#include <xzero-base/Buffer.h>
 #include <stdlib.h>
 
 namespace xzero {
@@ -62,6 +64,26 @@ LogSource* LogAggregator::getSource(const std::string& componentName) {
 LogAggregator& LogAggregator::get() {
   static LogAggregator aggregator;
   return aggregator;
+}
+
+XZERO_INIT static void initializeLogAggregator() {
+  try {
+    if (const char* target = getenv("XZERO_LOGTARGET")) {
+      if (iequals(target, "console")) {
+        LogAggregator::get().setLogTarget(LogTarget::console());
+      } else if (iequals(target, "syslog")) {
+        LogAggregator::get().setLogTarget(LogTarget::syslog());
+      } else {
+        logError("logging", "Unknown log target \"%s\"", target);
+      }
+    }
+
+    if (const char* level = getenv("XZERO_LOGLEVEL")) {
+      LogAggregator::get().setLogLevel(to_loglevel(level));
+    }
+  } catch (...) {
+    // eat my lunch pack
+  }
 }
 
 } // namespace xzero
