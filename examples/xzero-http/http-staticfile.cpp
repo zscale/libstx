@@ -13,6 +13,7 @@
 #include <xzero-base/net/InetConnector.h>
 #include <xzero-base/logging/LogTarget.h>
 #include <xzero-base/logging/LogAggregator.h>
+#include <xzero-base/io/FileUtil.h>
 #include <xzero-base/MimeTypes.h>
 
 #include <xzero-http/HttpLocalFileRepository.h>
@@ -31,6 +32,8 @@ int main(int argc, const char* argv[]) {
   xzero::WallClock* clock = xzero::WallClock::monotonic();
 
   std::string docroot = argc == 2 ? argv[1] : ".";
+  docroot = xzero::FileUtil::realpath(docroot);
+
   xzero::Server server;
   auto inet = server.addConnector<xzero::InetConnector>(
       "http", &scheduler, &scheduler, clock,
@@ -44,7 +47,7 @@ int main(int argc, const char* argv[]) {
   compressor->setMinSize(5);
 
   xzero::MimeTypes mimetypes("/etc/mime.types", "application/octet-stream");
-  xzero::HttpLocalFileRepository localFiles(mimetypes, true, true, true);
+  xzero::HttpLocalFileRepository localFiles(mimetypes, "/", true, true, true);
   xzero::HttpFileHandler fileHandler(localFiles);
 
   http->setHandler([&](xzero::HttpRequest* request, xzero::HttpResponse* response) {
