@@ -125,6 +125,7 @@ set(xzero_base_SRC
   net/Connection.cpp
   net/ConnectionFactory.cpp
   net/Connector.cpp
+  net/DnsClient.cpp
   net/EndPoint.cpp
   net/EndPointWriter.cpp
   net/InetConnector.cpp
