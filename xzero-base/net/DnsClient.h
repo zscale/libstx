@@ -22,8 +22,14 @@ namespace xzero {
 class XZERO_API DnsClient {
  public:
   IPAddress resolve(const std::string& name);
+  IPAddress resolve(const std::string& name, int ipVersion);
+
   std::vector<IPAddress> resolveAll(const std::string& name);
+  std::vector<IPAddress> resolveAll(const std::string& name, int ipVersion);
   void clearCache();
+
+ private:
+  static std::vector<IPAddress> filter(const std::vector<IPAddress>& ips, int ipv);
 
  private:
   std::unordered_map<std::string, std::vector<IPAddress>> cache_;
