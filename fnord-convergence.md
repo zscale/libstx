@@ -5,16 +5,12 @@
 
 ### converge
 
-- [ ] io: FileUtil
 - [ ] io: File, FileRef
 - [ ] io: FileRepository
-- [ ] timeconstants: but via already existing TimeSpan
 - [ ] Exception
 - [ ] ExceptionHandler
 - [ ] flagparser as posix/getopt compliant option parser
-- [ ] Random
 - [ ] MappedFile
-- [ ] DnsCache
 - [ ] UDP networking
 - [ ] BufferUtil
 - [ ] string formatting: `StringUtil::format()` as `std::string formatString(fmt, ...)`
@@ -31,6 +27,10 @@
 - [x] logging api
 - [x] FNV
 - [x] Assets: as part of HttpFileHandler
+- [x] io: FileUtil
+- [x] Random
+- [x] timeconstants: via already existing `TimeSpan`
+- [x] DnsCache: as DnsClient
 
 ### concerns
 
