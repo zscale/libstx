@@ -1,3 +1,6 @@
+add_executable(dns-resolver dns-resolver.cpp)
+target_link_libraries(dns-resolver xzero-base)
+
 add_executable(logging-simple logging-simple.cpp)
 target_link_libraries(logging-simple xzero-base)
 
