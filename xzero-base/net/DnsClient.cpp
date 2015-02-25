@@ -6,21 +6,31 @@
 
 namespace xzero {
 
+// TODO: prefer getnameinfo as gethostbyname() is not IPv6-friendly
+
 std::vector<IPAddress> DnsClient::resolveAll(const std::string& name) {
   std::lock_guard<std::mutex> _lk(cacheMutex_);
   auto i = cache_.find(name);
   if (i != cache_.end())
     return i->second;
 
-  // TODO: use gethostbyname_r() if available
-
   hostent* he = gethostbyname(name.c_str());
   if (he == nullptr)
     throw RUNTIME_ERROR(hstrerror(h_errno));
 
   std::vector<IPAddress> list;
-  for (int i = 0; he->h_addr_list[i]; ++i)
-    list.push_back(IPAddress(he->h_addr_list[i]));
+  for (int i = 0; he->h_addr_list[i]; ++i) {
+    switch (he->h_addrtype) {
+      case AF_INET:
+        list.push_back(IPAddress((in_addr*) he->h_addr_list[i]));
+        break;
+      case AF_INET6:
+        list.push_back(IPAddress((in6_addr*) he->h_addr_list[i]));
+        break;
+      default:
+        break;
+    }
+  }
 
   return cache_[name] = list;
 }
@@ -31,15 +41,23 @@ IPAddress DnsClient::resolve(const std::string& name) {
   if (i != cache_.end())
     return i->second[0];
 
-  // TODO: use gethostbyname_r() if available
-
   hostent* he = gethostbyname(name.c_str());
   if (he == nullptr)
     throw RUNTIME_ERROR(hstrerror(h_errno));
 
   std::vector<IPAddress> list;
-  for (int i = 0; he->h_addr_list[i]; ++i)
-    list.push_back(IPAddress(he->h_addr_list[i]));
+  for (int i = 0; he->h_addr_list[i]; ++i) {
+    switch (he->h_addrtype) {
+      case AF_INET:
+        list.push_back(IPAddress((in_addr*) he->h_addr_list[i]));
+        break;
+      case AF_INET6:
+        list.push_back(IPAddress((in6_addr*) he->h_addr_list[i]));
+        break;
+      default:
+        break;
+    }
+  }
 
   cache_[name] = list;
 
