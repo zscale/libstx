@@ -91,13 +91,14 @@ set(xzero_base_SRC
   Buffer.cpp
   DateTime.cpp
   IdleTimeout.cpp
+  MimeTypes.cpp
+  Random.cpp
   RegExp.cpp
   RuntimeError.cpp
   StackTrace.cpp
   TimeSpan.cpp
   Tokenizer.cpp
   WallClock.cpp
-  MimeTypes.cpp
 
   logging/LogAggregator.cpp
   logging/LogLevel.cpp
