@@ -43,6 +43,8 @@ class XZERO_API IPAddress {
 
  public:
   IPAddress();
+  explicit IPAddress(const in_addr* saddr);
+  explicit IPAddress(const in6_addr* saddr);
   explicit IPAddress(const sockaddr_in* saddr);
   explicit IPAddress(const sockaddr_in6* saddr);
   explicit IPAddress(const std::string& text, int family = 0);
@@ -69,6 +71,18 @@ inline IPAddress::IPAddress() {
   family_ = 0;
   cstr_[0] = '\0';
   memset(buf_, 0, sizeof(buf_));
+}
+
+inline IPAddress::IPAddress(const in_addr* saddr) {
+  family_ = AF_INET;
+  cstr_[0] = '\0';
+  memcpy(buf_, saddr, sizeof(*saddr));
+}
+
+inline IPAddress::IPAddress(const in6_addr* saddr) {
+  family_ = AF_INET6;
+  cstr_[0] = '\0';
+  memcpy(buf_, saddr, sizeof(*saddr));
 }
 
 inline IPAddress::IPAddress(const sockaddr_in* saddr) {
