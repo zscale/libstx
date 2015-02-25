@@ -9,8 +9,13 @@ namespace xzero {
 std::vector<IPAddress> DnsClient::resolveAll(const std::string& name, int ipv) {
   std::lock_guard<std::mutex> _lk(cacheMutex_);
   auto i = cache_.find(name);
-  if (i != cache_.end())
-    return filter(i->second, ipv);
+  if (i != cache_.end()) {
+    if (ipv) {
+      return filter(i->second, ipv);
+    } else {
+      return i->second;
+    }
+  }
 
   addrinfo* res = nullptr;
   addrinfo hints;
@@ -37,11 +42,16 @@ std::vector<IPAddress> DnsClient::resolveAll(const std::string& name, int ipv) {
         break;
     }
   }
-  return filter(cache_[name] = list, ipv);
+
+  if (ipv) {
+    return filter(cache_[name] = list, ipv);
+  } else {
+    return cache_[name] = list;
+  }
 }
 
 std::vector<IPAddress> DnsClient::resolveAll(const std::string& name) {
-  return resolveAll(name, IPAddress::V4);
+  return resolveAll(name, 0);
 }
 
 IPAddress DnsClient::resolve(const std::string& name, int ipv) {
@@ -49,14 +59,19 @@ IPAddress DnsClient::resolve(const std::string& name, int ipv) {
   {
     std::lock_guard<std::mutex> _lk(cacheMutex_);
     auto i = cache_.find(name);
-    if (i != cache_.end())
-      return filter(i->second, ipv)[0];
+    if (i != cache_.end()) {
+      if (ipv) {
+        return filter(i->second, ipv)[0];
+      } else {
+        return i->second[0];
+      }
+    }
   }
   return resolveAll(name, ipv)[0];
 }
 
 IPAddress DnsClient::resolve(const std::string& name) {
-  return resolve(name, IPAddress::V4);
+  return resolve(name, 0);
 }
 
 void DnsClient::clearCache() {
@@ -66,6 +81,9 @@ void DnsClient::clearCache() {
 
 std::vector<IPAddress> DnsClient::filter(
     const std::vector<IPAddress>& ips, int ipv) {
+  if (!ipv)
+    return ips;
+
   std::vector<IPAddress> result;
 
   for (const IPAddress& ip: ips)
