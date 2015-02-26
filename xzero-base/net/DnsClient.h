@@ -29,18 +29,26 @@ class XZERO_API DnsClient {
 
   /** Retrieves all IPv6 addresses for given DNS name.
    *
-   * @throw if none found or an error occurred.
+   * @throw RuntimeError if none found or an error occurred.
    */
   const std::vector<IPAddress>& ipv6(const std::string& name);
 
   /** Retrieves all IPv4 and IPv6 addresses for given DNS name.
    *
-   * @throw if none found or an error occurred.
+   * @throw RuntimeError if none found or an error occurred.
    */
   std::vector<IPAddress> ip(const std::string& name);
 
-  // TODO
+  /** Retrieves all TXT records for given DNS name.
+   *
+   * @throw RuntimeError if none found or an error occurred.
+   */
   std::vector<std::string> txt(const std::string& name);
+
+  /** Retrieves all MX records for given DNS name.
+   *
+   * @throw RuntimeError if none found or an error occurred.
+   */
   std::vector<std::pair<int, std::string>> mx(const std::string& name);
 
   void clearIPv4();
