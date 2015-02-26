@@ -21,19 +21,47 @@ namespace xzero {
  */
 class XZERO_API DnsClient {
  public:
-  IPAddress resolve(const std::string& name);
-  IPAddress resolve(const std::string& name, int ipVersion);
+  /** Retrieves all IPv4 addresses for given DNS name.
+   *
+   * @throw if none found or an error occurred.
+   */
+  const std::vector<IPAddress>& ipv4(const std::string& name);
 
-  std::vector<IPAddress> resolveAll(const std::string& name);
-  std::vector<IPAddress> resolveAll(const std::string& name, int ipVersion);
-  void clearCache();
+  /** Retrieves all IPv6 addresses for given DNS name.
+   *
+   * @throw if none found or an error occurred.
+   */
+  const std::vector<IPAddress>& ipv6(const std::string& name);
+
+  /** Retrieves all IPv4 and IPv6 addresses for given DNS name.
+   *
+   * @throw if none found or an error occurred.
+   */
+  std::vector<IPAddress> ip(const std::string& name);
+
+  // TODO
+  std::vector<std::string> txt(const std::string& name);
+  std::vector<std::pair<int, std::string>> mx(const std::string& name);
+
+  void clearIPv4();
+  void clearIPv6();
+  void clearIP();
+  void clearTXT();
+  void clearMX();
 
  private:
-  static std::vector<IPAddress> filter(const std::vector<IPAddress>& ips, int ipv);
+  template<typename InetType, const int AddressFamilty>
+  static const std::vector<IPAddress>& lookupIP(
+      const std::string& name,
+      std::unordered_map<std::string, std::vector<IPAddress>>* cache,
+      std::mutex* cacheMutex);
 
  private:
-  std::unordered_map<std::string, std::vector<IPAddress>> cache_;
-  std::mutex cacheMutex_;
+  std::unordered_map<std::string, std::vector<IPAddress>> ipv4_;
+  std::mutex ipv4Mutex_;
+
+  std::unordered_map<std::string, std::vector<IPAddress>> ipv6_;
+  std::mutex ipv6Mutex_;
 };
 
 }  // namespace xzero

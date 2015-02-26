@@ -6,22 +6,53 @@
 
 namespace xzero {
 
-std::vector<IPAddress> DnsClient::resolveAll(const std::string& name, int ipv) {
-  std::lock_guard<std::mutex> _lk(cacheMutex_);
-  auto i = cache_.find(name);
-  if (i != cache_.end()) {
-    if (ipv) {
-      return filter(i->second, ipv);
-    } else {
-      return i->second;
+const std::vector<IPAddress>& DnsClient::ipv4(const std::string& name) {
+  return lookupIP<sockaddr_in, AF_INET>(name, &ipv4_, &ipv4Mutex_);
+}
+
+const std::vector<IPAddress>& DnsClient::ipv6(const std::string& name) {
+  return lookupIP<sockaddr_in6, AF_INET6>(name, &ipv6_, &ipv6Mutex_);
+}
+
+std::vector<IPAddress> DnsClient::ip(const std::string& name) {
+  std::vector<IPAddress> result;
+  try {
+    const std::vector<IPAddress>& v4 = ipv4(name);
+    for (const IPAddress& ip: v4) {
+      result.push_back(ip);
     }
+  } catch (...) {
   }
+
+  try {
+    const std::vector<IPAddress>& v6 = ipv6(name);
+    for (const IPAddress& ip: v6) {
+      result.push_back(ip);
+    }
+  } catch (...) {
+  }
+
+  if (result.empty())
+    throw RUNTIME_ERROR("Could not resolve hostname " + name + ".");
+
+  return result;
+}
+
+template<typename InetType, const int AddressFamilty>
+const std::vector<IPAddress>& DnsClient::lookupIP(
+    const std::string& name,
+    std::unordered_map<std::string, std::vector<IPAddress>>* cache,
+    std::mutex* cacheMutex) {
+  std::lock_guard<decltype(*cacheMutex)> _lk(*cacheMutex);
+  auto i = cache->find(name);
+  if (i != cache->end())
+      return i->second;
 
   addrinfo* res = nullptr;
   addrinfo hints;
   memset(&hints, 0, sizeof(hints));
   hints.ai_flags = AI_NUMERICSERV;
-  hints.ai_family = AF_UNSPEC; // any
+  hints.ai_family = AddressFamilty;
   hints.ai_socktype = SOCK_STREAM; // any, actually
 
   int rc = getaddrinfo(name.c_str(), nullptr, &hints, &res);
@@ -30,67 +61,33 @@ std::vector<IPAddress> DnsClient::resolveAll(const std::string& name, int ipv) {
 
   std::vector<IPAddress> list;
 
-  for (addrinfo* ri = res; ri != nullptr; ri = ri->ai_next) {
-    switch (ri->ai_family) {
-      case AF_INET:
-        list.push_back(IPAddress((sockaddr_in*) ri->ai_addr));
-        break;
-      case AF_INET6:
-        list.push_back(IPAddress((sockaddr_in6*) ri->ai_addr));
-        break;
-      default:
-        break;
-    }
-  }
+  for (addrinfo* ri = res; ri != nullptr; ri = ri->ai_next)
+    list.emplace_back(reinterpret_cast<InetType*>(ri->ai_addr));
 
-  if (ipv) {
-    return filter(cache_[name] = list, ipv);
-  } else {
-    return cache_[name] = list;
-  }
+  return (*cache)[name] = list;
 }
 
-std::vector<IPAddress> DnsClient::resolveAll(const std::string& name) {
-  return resolveAll(name, 0);
+std::vector<std::string> DnsClient::txt(const std::string& name) {
+  throw RUNTIME_ERROR("Not Implemented");
 }
 
-IPAddress DnsClient::resolve(const std::string& name, int ipv) {
-  // TODO: optimize for speed
-  {
-    std::lock_guard<std::mutex> _lk(cacheMutex_);
-    auto i = cache_.find(name);
-    if (i != cache_.end()) {
-      if (ipv) {
-        return filter(i->second, ipv)[0];
-      } else {
-        return i->second[0];
-      }
-    }
-  }
-  return resolveAll(name, ipv)[0];
+std::vector<std::pair<int, std::string>> DnsClient::mx(const std::string& name) {
+  throw RUNTIME_ERROR("Not Implemented");
 }
 
-IPAddress DnsClient::resolve(const std::string& name) {
-  return resolve(name, 0);
+void DnsClient::clearIPv4() {
+  std::lock_guard<std::mutex> _lk(ipv4Mutex_);
+  ipv4_.clear();
 }
 
-void DnsClient::clearCache() {
-  std::lock_guard<std::mutex> _lk(cacheMutex_);
-  cache_.clear();
+void DnsClient::clearIPv6() {
+  std::lock_guard<std::mutex> _lk(ipv6Mutex_);
+  ipv6_.clear();
 }
 
-std::vector<IPAddress> DnsClient::filter(
-    const std::vector<IPAddress>& ips, int ipv) {
-  if (!ipv)
-    return ips;
-
-  std::vector<IPAddress> result;
-
-  for (const IPAddress& ip: ips)
-    if (ip.family() == ipv)
-      result.push_back(ip);
-
-  return result;
+void DnsClient::clearIP() {
+  clearIPv4();
+  clearIPv6();
 }
 
 }  // namespace xzero
