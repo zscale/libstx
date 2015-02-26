@@ -146,16 +146,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(XZERO_BASE_LIBRARIES pthread dl
     ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES} ${PCRE_LIBRARIES} ${RT_LIBRARIES})
 
-# libxzero-base.so
-add_library(xzero-base SHARED ${xzero_base_SRC})
+# libxzero-base.a
+add_library(xzero-base STATIC ${xzero_base_SRC})
 target_link_libraries(xzero-base ${XZERO_BASE_LIBRARIES})
-set_target_properties(xzero-base PROPERTIES VERSION ${XZERO_BASE_VERSION})
-set_target_properties(xzero-base PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO_BASE=1")
-install(TARGETS xzero-base DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-
-# libxzero_base.a
-add_library(xzero_base STATIC ${xzero_base_SRC})
-install(TARGETS xzero_base DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+#set_target_properties(xzero-base PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO_BASE=1")
+#install(TARGETS xzero-base DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 # headers
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
