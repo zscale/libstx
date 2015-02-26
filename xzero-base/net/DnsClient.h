@@ -51,11 +51,17 @@ class XZERO_API DnsClient {
    */
   std::vector<std::pair<int, std::string>> mx(const std::string& name);
 
+  /**
+   * Retrieves the Resource Record (DNS name) of an IP address.
+   */
+  std::string rr(const IPAddress& ip);
+
   void clearIPv4();
   void clearIPv6();
   void clearIP();
   void clearTXT();
   void clearMX();
+  void clearRR();
 
  private:
   template<typename InetType, const int AddressFamilty>
