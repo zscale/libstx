@@ -24,7 +24,7 @@ int main(int argc, const char* argv[]) {
 
   for (int i = 1; i < argc; ++i) {
     printf("resolving '%s'\n", argv[i]);
-    auto ips = dns.resolveAll(argv[i]);
+    auto ips = dns.ip(argv[i]);
     printf("  found IPs: %zu\n", ips.size());
 
     for (const IPAddress& ip: ips)
