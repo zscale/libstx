@@ -57,17 +57,13 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/sysconfig.h.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/sysconfig.h)
 
-# libxzero-http.so
-add_library(xzero-http SHARED ${xzero_http_SRC})
-target_link_libraries(xzero-http pthread dl xzero-base)
-set_target_properties(xzero-http PROPERTIES VERSION ${XZERO_HTTP_VERSION})
-set_target_properties(xzero-http PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO_HTTP=1")
-install(TARGETS xzero-http DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+set(XZERO_HTTP_LIBRARIES xzero-base)
 
-# libxzero_http.a
-add_library(xzero_http STATIC ${xzero_http_SRC})
-target_link_libraries(xzero-http pthread dl xzero_base)
-install(TARGETS xzero_http DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+# libxzero-http.a
+add_library(xzero-http STATIC ${xzero_http_SRC})
+#set_target_properties(xzero-http PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO_HTTP=1")
+target_link_libraries(xzero-http ${XZERO_HTTP_LIBRARIES})
+install(TARGETS xzero-http DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 # headers
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
