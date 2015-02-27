@@ -5,11 +5,11 @@
 
 ### converge
 
+- [ ] flagparser as posix/getopt compliant option parser
 - [ ] io: File, FileRef
 - [ ] io: FileRepository
 - [ ] Exception
 - [ ] ExceptionHandler
-- [ ] flagparser as posix/getopt compliant option parser
 - [ ] MappedFile
 - [ ] UDP networking
 - [ ] BufferUtil
@@ -63,3 +63,15 @@
 - reflection
 - rpc
 - json-rpc
+
+### MISC
+
+```
+namespace xzero {
+  class CLI {
+  };
+}
+
+xzero::CLI cli;
+
+```

@@ -5,7 +5,8 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <xzero-base/FlagParser.h>
+#include <xzero-base/cli/CLI.h>
+#include <xzero-base/cli/Flags.h>
 #include <xzero-base/net/IPAddress.h>
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/Tokenizer.h>
@@ -15,44 +16,14 @@
 
 namespace xzero {
 
-// {{{ Flags impl
-Flags::Flags() {
+CLI::CLI()
+    : flagDefs_(),
+      parametersEnabled_(false),
+      parametersPlaceholder_(),
+      parametersHelpText_() {
 }
 
-std::string Flags::getString(const std::string& flag) const {
-  auto i = set_.find(flag);
-  if (i == set_.end())
-    return "";
-
-  return i->second.second;
-}
-
-long int Flags::getNumber(const std::string& flag) const {
-  auto i = set_.find(flag);
-  if (i == set_.end())
-    return 0;
-
-  return std::stoi(i->second.second);
-}
-
-float Flags::getFloat(const std::string& flag) const {
-  auto i = set_.find(flag);
-  if (i == set_.end())
-    return 0.0f;
-
-  return std::stof(i->second.second);
-}
-
-bool Flags::getBool(const std::string& flag) const {
-  auto i = set_.find(flag);
-  if (i == set_.end())
-    return false;
-
-  return !i->second.second.empty();
-}
-// }}}
-
-FlagParser& FlagParser::define(
+CLI& CLI::define(
     const std::string& longOpt,
     char shortOpt,
     bool required,
@@ -77,7 +48,7 @@ FlagParser& FlagParser::define(
   return *this;
 }
 
-FlagParser& FlagParser::defineString(
+CLI& CLI::defineString(
     const std::string& longOpt,
     char shortOpt,
     bool required,
@@ -89,7 +60,7 @@ FlagParser& FlagParser::defineString(
                 "<string>", defaultValue, validator);
 }
 
-FlagParser& FlagParser::defineNumber(
+CLI& CLI::defineNumber(
     const std::string& longOpt,
     char shortOpt,
     bool required,
@@ -105,7 +76,7 @@ FlagParser& FlagParser::defineNumber(
       });
 }
 
-FlagParser& FlagParser::defineFloat(
+CLI& CLI::defineFloat(
     const std::string& longOpt,
     char shortOpt,
     bool required,
@@ -121,7 +92,7 @@ FlagParser& FlagParser::defineFloat(
       });
 }
 
-FlagParser& FlagParser::defineIPAddress(
+CLI& CLI::defineIPAddress(
     const std::string& longOpt,
     char shortOpt,
     bool required,
@@ -137,7 +108,7 @@ FlagParser& FlagParser::defineIPAddress(
       });
 }
 
-FlagParser& FlagParser::defineBool(
+CLI& CLI::defineBool(
     const std::string& longOpt,
     char shortOpt,
     const std::string& helpText) {
@@ -150,11 +121,22 @@ FlagParser& FlagParser::defineBool(
       });
 }
 
-void FlagParser::evaluate(const std::vector<std::string>& args, Flags* out) const {
+CLI& CLI::enableParameters(const std::string& valuePlaceholder,
+                                         const std::string& helpText) {
+  parametersEnabled_ = true;
+  parametersPlaceholder_ = valuePlaceholder;
+  parametersHelpText_ = helpText;
+
+  return *this;
+}
+
+void CLI::evaluate(const std::vector<std::string>& args, Flags* out) const {
+  // POSIX compatible flag parsing (ala getopt_long)
+
   throw RUNTIME_ERROR("Not Implemented"); // TODO
 }
 
-void FlagParser::evaluate(int argc, const char* argv[], Flags* out) const {
+void CLI::evaluate(int argc, const char* argv[], Flags* out) const {
   std::vector<std::string> args;
   for (int i = 1; i < argc; ++i)
     args.push_back(argv[i]);
@@ -162,26 +144,41 @@ void FlagParser::evaluate(int argc, const char* argv[], Flags* out) const {
   evaluate(args, out);
 }
 
-Flags FlagParser::evaluate(const std::vector<std::string>& args) const {
+Flags CLI::evaluate(const std::vector<std::string>& args) const {
   Flags flags;
   evaluate(args, &flags);
   return flags;
 }
 
-Flags FlagParser::evaluate(int argc, const char* argv[]) const {
+Flags CLI::evaluate(int argc, const char* argv[]) const {
   Flags flags;
   evaluate(argc, argv, &flags);
   return flags;
 }
 
-std::string FlagParser::helpText(size_t width,
-                                 size_t helpTextOffset) const {
-  std::stringstream help;
+std::string CLI::helpText(size_t width,
+                          size_t helpTextOffset) const {
+  std::stringstream sstr;
 
   for (const FlagDef& fd: flagDefs_)
-    help << fd.makeHelpText(width, helpTextOffset);
+    sstr << fd.makeHelpText(width, helpTextOffset);
 
-  return help.str();
+  if (parametersEnabled_) {
+    sstr << std::endl;
+
+    size_t p = sstr.tellp();
+    sstr << "    -- " << parametersPlaceholder_;
+    size_t column = static_cast<size_t>(sstr.tellp()) - p;
+
+    if (column < helpTextOffset)
+      sstr << std::setw(helpTextOffset - column) << ' ';
+    else
+      sstr << std::endl << std::setw(helpTextOffset) << ' ';
+
+    sstr << parametersHelpText_ << std::endl;
+  }
+
+  return sstr.str();
 }
 
 static std::string wordWrap(
@@ -209,8 +206,8 @@ static std::string wordWrap(
   return sstr.str();
 }
 
-std::string FlagParser::FlagDef::makeHelpText(size_t width,
-                                              size_t helpTextOffset) const {
+std::string CLI::FlagDef::makeHelpText(size_t width,
+                                       size_t helpTextOffset) const {
   std::stringstream sstr;
 
   sstr << ' ';
@@ -234,18 +231,20 @@ std::string FlagParser::FlagDef::makeHelpText(size_t width,
   }
 
   // spacer
-  if (sstr.tellp() < helpTextOffset)
+  size_t column = sstr.tellp();
+  if (column < helpTextOffset) {
     sstr << std::setw(helpTextOffset - sstr.tellp()) << ' ';
-  else
+  } else {
     sstr << std::endl << std::setw(helpTextOffset) << ' ';
+    column = helpTextOffset;
+  }
 
   // help output with default value hint.
-  sstr << wordWrap(helpText, sstr.tellp(), width, helpTextOffset);
   if (type != FlagType::Bool && !defaultValue.empty()) {
-    if (size_t(sstr.tellp()) + defaultValue.size() + 3 >= width)
-      sstr << std::endl << std::setw(helpTextOffset) << ' ';
-
-    sstr << " [" << defaultValue << "]";
+    sstr << wordWrap(helpText + " [" + defaultValue + "]",
+                     column, width, helpTextOffset);
+  } else {
+    sstr << wordWrap(helpText, column, width, helpTextOffset);
   }
 
   sstr << std::endl;
