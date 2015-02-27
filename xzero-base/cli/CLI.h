@@ -8,54 +8,22 @@
 
 #include <xzero-base/Api.h>
 #include <xzero-base/RuntimeError.h>
+#include <xzero-base/cli/FlagType.h>
 #include <functional>
 #include <list>
 #include <vector>
 #include <string>
-#include <unordered_map>
-#include <utility>
 
 namespace xzero {
 
 class IPAddress;
+class Flags;
 
-enum class FlagType {
-  String,
-  Number,
-  Float,
-  IP,
-  Bool,
-};
-
-typedef std::pair<FlagType, std::string> FlagValue;
-
-class FlagValidationError : public RuntimeError {
+class XZERO_API CLI {
  public:
-  FlagValidationError(
-      const std::string& what, const char* sourceFile, int sourceLine)
-      : RuntimeError(what, sourceFile, sourceLine) {}
-};
+  CLI();
 
-class XZERO_API Flags {
- public:
-  Flags();
-
-  std::string getString(const std::string& flag) const;
-  long int getNumber(const std::string& flag) const;
-  float getFloat(const std::string& flag) const;
-  bool getBool(const std::string& flag) const;
-
-  bool isSet(const std::string& flag) const;
-
- private:
-  friend class FlagParser;
-
-  std::unordered_map<std::string, FlagValue> set_;
-};
-
-class XZERO_API FlagParser {
- public:
-  FlagParser& defineString(
+  CLI& defineString(
       const std::string& longOpt,
       char shortOpt,
       bool required,
@@ -63,7 +31,7 @@ class XZERO_API FlagParser {
       const std::string& defaultValue,
       std::function<bool(const std::string&)> validator = nullptr);
 
-  FlagParser& defineNumber(
+  CLI& defineNumber(
       const std::string& longOpt,
       char shortOpt,
       bool required,
@@ -71,7 +39,7 @@ class XZERO_API FlagParser {
       long int defaultValue,
       std::function<bool(long int)> validator = nullptr);
 
-  FlagParser& defineFloat(
+  CLI& defineFloat(
       const std::string& longOpt,
       char shortOpt,
       bool required,
@@ -79,7 +47,7 @@ class XZERO_API FlagParser {
       float defaultValue,
       std::function<bool(float)> validator = nullptr);
 
-  FlagParser& defineIPAddress(
+  CLI& defineIPAddress(
       const std::string& longOpt,
       char shortOpt,
       bool required,
@@ -87,13 +55,17 @@ class XZERO_API FlagParser {
       const IPAddress& defaultValue,
       std::function<bool(const IPAddress&)> validator = nullptr);
 
-  FlagParser& defineBool(
+  CLI& defineBool(
       const std::string& longOpt,
       char shortOpt,
       const std::string& helpText);
 
+  CLI& enableParameters(
+      const std::string& valuePlaceholder,
+      const std::string& helpText);
+
  private:
-  FlagParser& define(
+  CLI& define(
       const std::string& longOpt,
       char shortOpt,
       bool required,
@@ -102,6 +74,8 @@ class XZERO_API FlagParser {
       const std::string& valuePlaceholder,
       const std::string& defaultValue,
       std::function<bool(const std::string&)> validator);
+
+  class ValidationError;
 
  public:
   void evaluate(const std::vector<std::string>& args, Flags* out) const;
@@ -114,9 +88,21 @@ class XZERO_API FlagParser {
  private:
   struct FlagDef;
   std::list<FlagDef> flagDefs_;
+
+  // non-option parameters
+  bool parametersEnabled_;
+  std::string parametersPlaceholder_;
+  std::string parametersHelpText_;
 };
 
-struct FlagParser::FlagDef {
+class XZERO_API CLI::ValidationError : public RuntimeError {
+ public:
+  ValidationError(
+      const std::string& what, const char* sourceFile, int sourceLine)
+      : RuntimeError(what, sourceFile, sourceLine) {}
+};
+
+struct XZERO_API CLI::FlagDef {
   FlagType type;
   std::string longOption;
   char shortOption;

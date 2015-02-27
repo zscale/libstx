@@ -100,6 +100,9 @@ set(xzero_base_SRC
   Tokenizer.cpp
   WallClock.cpp
 
+  cli/CLI.cpp
+  cli/Flags.cpp
+
   logging/LogAggregator.cpp
   logging/LogLevel.cpp
   logging/LogSource.cpp

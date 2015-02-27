@@ -13,6 +13,7 @@
 #include <xzero-base/net/InetConnector.h>
 #include <xzero-base/io/FileUtil.h>
 #include <xzero-base/MimeTypes.h>
+#include <xzero-base/cli/CLI.h>
 
 #include <xzero-http/HttpLocalFileRepository.h>
 #include <xzero-http/HttpRequest.h>
@@ -22,9 +23,39 @@
 #include <xzero-http/HttpFileHandler.h>
 #include <xzero-http/http1/Http1ConnectionFactory.h>
 
+#include <iostream>
+
 int main(int argc, const char* argv[]) {
   xzero::NativeScheduler scheduler;
   xzero::WallClock* clock = xzero::WallClock::monotonic();
+
+  xzero::CLI cli;
+  cli.defineBool("help", 'h', "Prints this help and terminates.")
+     .defineIPAddress("bind", 0, false, "Bind listener to given IP.",
+         xzero::IPAddress("0.0.0.0"))
+     .defineString("mimetypes-path", 0, false, "Path to mime.types file.",
+         "/etc/mime.types")
+     .defineNumber("port", 'p', false, "Port number to listen to.",
+         3000)
+     .defineNumber("backlog", 0, false, "Listener backlog.",
+         128)
+     .defineNumber("timeout", 't', false, "I/O timeout in seconds.",
+         30)
+     .defineString("very-long", 'L', false,
+         "A very very long help text for the rather short long option. "
+         "You can use it, but it will not produce or cause you anything "
+         "but a word-wrapped help text in the help output."
+         "Have fun reading.",
+         "rather long")
+     .defineBool("tcp-nodelay", 0, "Enables TCP_NODELAY.")
+     .defineBool("tcp-quickack", 0, "Enables TCP_QUICKACK.")
+     .enableParameters("<garbage>", "Defines a list of unparsed arguments.")
+     ;
+
+  std::cerr << "Parameters:" << std::endl
+            << cli.helpText() << std::endl;
+
+  return 0;
 
   std::string docroot = argc == 2 ? argv[1] : ".";
   docroot = xzero::FileUtil::realpath(docroot);
