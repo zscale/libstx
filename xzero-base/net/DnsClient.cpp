@@ -68,6 +68,7 @@ const std::vector<IPAddress>& DnsClient::lookupIP(
 }
 
 std::vector<std::string> DnsClient::txt(const std::string& name) {
+  // http://stackoverflow.com/questions/2315504/best-way-to-resolve-a-dns-txt-record-on-linux-unix-posix-bsd-type-systems
   throw RUNTIME_ERROR("Not Implemented");
 }
 
