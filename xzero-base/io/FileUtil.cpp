@@ -174,7 +174,7 @@ void FileUtil::write(const std::string& path, const Buffer& buffer) {
       throw RUNTIME_ERROR(strerror(errno));
     }
     nwritten += rv;
-  } while (nwritten < buffer.size());
+  } while (static_cast<size_t>(nwritten) < buffer.size());
 
   ::close(fd);
 }
