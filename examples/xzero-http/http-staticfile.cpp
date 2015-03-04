@@ -31,17 +31,17 @@ int main(int argc, const char* argv[]) {
 
   xzero::CLI cli;
   cli.defineBool("help", 'h', "Prints this help and terminates.")
-     .defineIPAddress("bind", 0, false, "Bind listener to given IP.",
+     .defineIPAddress("bind", 0, "Bind listener to given IP.",
          xzero::IPAddress("0.0.0.0"))
-     .defineString("mimetypes-path", 0, false, "Path to mime.types file.",
+     .defineString("mimetypes-path", 0, "Path to mime.types file.",
          "/etc/mime.types")
-     .defineNumber("port", 'p', false, "Port number to listen to.",
+     .defineNumber("port", 'p', "Port number to listen to.",
          3000)
-     .defineNumber("backlog", 0, false, "Listener backlog.",
+     .defineNumber("backlog", 0, "Listener backlog.",
          128)
-     .defineNumber("timeout", 't', false, "I/O timeout in seconds.",
+     .defineNumber("timeout", 't', "I/O timeout in seconds.",
          30)
-     .defineString("very-long", 'L', false,
+     .defineString("very-long", 'L',
          "A very very long help text for the rather short long option. "
          "You can use it, but it will not produce or cause you anything "
          "but a word-wrapped help text in the help output."

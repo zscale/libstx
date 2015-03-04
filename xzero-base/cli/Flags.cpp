@@ -6,12 +6,43 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero-base/cli/Flags.h>
+#include <xzero-base/cli/CLI.h>
 #include <xzero-base/net/IPAddress.h>
 #include <xzero-base/RuntimeError.h>
+#include <xzero-base/Buffer.h>
+#include <sstream>
+
+extern char** environ;
 
 namespace xzero {
 
+// {{{ Flag
+Flag::Flag(
+    const std::string& opt,
+    const std::string& val,
+    FlagStyle fs,
+    FlagType ft)
+    : type_(ft),
+      style_(fs),
+      name_(opt),
+      value_(val) {
+}
+// }}}
+
 Flags::Flags() {
+}
+
+void Flags::merge(const std::vector<Flag>& args) {
+  for (const Flag& arg: args)
+    merge(arg);
+}
+
+void Flags::merge(const Flag& flag) {
+  set_[flag.name()] = std::make_pair(flag.type(), flag.value());
+}
+
+bool Flags::isSet(const std::string& flag) const {
+  return set_.find(flag) != set_.end();
 }
 
 std::string Flags::getString(const std::string& flag) const {
@@ -43,11 +74,41 @@ bool Flags::getBool(const std::string& flag) const {
   if (i == set_.end())
     return false;
 
-  return !i->second.second.empty();
+  return true;
 }
 
 const std::vector<std::string>& Flags::getRawArgs() const {
   return raw_;
+}
+
+std::string Flags::to_s() const {
+  std::stringstream sstr;
+
+  int i = 0;
+  for (const auto& flag: set_) {
+    if (i)
+      sstr << ' ';
+
+    i++;
+
+    switch (flag.second.first) {
+      case FlagType::Bool:
+        sstr << "--" << flag.first;
+        break;
+      case FlagType::String:
+        sstr << "--" << flag.first << "=\"" << flag.second.second << "\"";
+        break;
+      default:
+        sstr << "--" << flag.first << "=" << flag.second.second;
+        break;
+    }
+  }
+
+  return sstr.str();
+}
+
+std::string inspect(const Flags& flags) {
+  return flags.to_s();
 }
 
 }  // namespace xzero
