@@ -117,6 +117,13 @@ void consoleLogger(const std::exception& e) {
           StackTrace::demangleSymbol(typeid(e).name()).c_str(), e.what());
 }
 
+RuntimeError::RuntimeError(const std::string& what)
+  : std::runtime_error(what),
+    sourceFile_(),
+    sourceLine_(0),
+    stackTrace_() {
+}
+
 RuntimeError::RuntimeError(const std::string& what,
                            const char* sourceFile,
                            int sourceLine)
@@ -127,6 +134,11 @@ RuntimeError::RuntimeError(const std::string& what,
 }
 
 RuntimeError::~RuntimeError() {
+}
+
+void RuntimeError::setSource(const char* file, int line) {
+  sourceFile_ = file;
+  sourceLine_ = line;
 }
 
 std::vector<std::string> RuntimeError::backtrace() const {

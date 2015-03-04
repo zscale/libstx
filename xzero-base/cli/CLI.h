@@ -145,6 +145,8 @@ class XZERO_API CLI {
 
 class XZERO_API CLI::ValidationError : public RuntimeError {
  public:
+  explicit ValidationError(const std::string& what) : RuntimeError(what) {}
+
   ValidationError(
       const std::string& what, const char* sourceFile, int sourceLine)
       : RuntimeError(what, sourceFile, sourceLine) {}
@@ -152,24 +154,36 @@ class XZERO_API CLI::ValidationError : public RuntimeError {
 
 class XZERO_API CLI::TypeMismatchError  : public ValidationError {
  public:
+  explicit TypeMismatchError(const std::string& name)
+      : ValidationError("Type mismatch in " + name) {}
+
   TypeMismatchError(const std::string& name, const char* sourceFile, int sourceLine)
       : ValidationError("Type mismatch in " + name, sourceFile, sourceLine) {}
 };
 
 class XZERO_API CLI::UnknownOptionError : public ValidationError {
  public:
+  explicit UnknownOptionError(const std::string& name)
+      : ValidationError("Unknown option " + name) {}
+
   UnknownOptionError(const std::string& name, const char* sourceFile, int sourceLine)
       : ValidationError("Unknown option " + name, sourceFile, sourceLine) {}
 };
 
 class XZERO_API CLI::MissingOptionError : public ValidationError {
  public:
+  explicit MissingOptionError(const std::string& name)
+      : ValidationError("Missing option " + name) {}
+
   MissingOptionError(const std::string& name, const char* sourceFile, int sourceLine)
       : ValidationError("Missing option " + name, sourceFile, sourceLine) {}
 };
 
 class XZERO_API CLI::MissingOptionValueError : public ValidationError {
  public:
+  explicit MissingOptionValueError(const std::string& name)
+      : ValidationError("Missing option value for " + name) {}
+
   MissingOptionValueError(const std::string& name, const char* sourceFile, int sourceLine)
       : ValidationError("Missing option value for " + name, sourceFile, sourceLine) {}
 };

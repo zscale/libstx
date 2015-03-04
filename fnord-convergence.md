@@ -5,11 +5,10 @@
 
 ### converge
 
-- [ ] flagparser as posix/getopt compliant option parser
-- [ ] io: File, FileRef
-- [ ] io: FileRepository
 - [ ] Exception
 - [ ] ExceptionHandler
+- [ ] io: File, FileRef
+- [ ] io: FileRepository
 - [ ] MappedFile
 - [ ] UDP networking
 - [ ] BufferUtil
@@ -31,6 +30,16 @@
 - [x] Random
 - [x] timeconstants: via already existing `TimeSpan`
 - [x] DnsCache: as DnsClient
+- [x] flagparser as posix/getopt compliant option parser
+
+### concerns during converge
+
+- Exception.ofType() macht strcmp, ist das wirklich besser als `dynamic_cast`?
+  wenn ja, why?
+- libfnord's `RAISE(E, ..)` wirft keine exception of type E, sondern faked den
+  typeNamen, ist das wirklich good[-will-attempt]?
+  * ich benutze E als eigenen typen, wie ValidationError
+- 
 
 ### concerns
 
