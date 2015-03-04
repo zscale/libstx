@@ -217,6 +217,21 @@ TEST(CLI, callbacks_on_defaults) {
   ASSERT_EQ(IPAddress("127.0.0.2"), bindIP);
 }
 
+TEST(CLI, callbacks_on_repeated_args) {
+  std::vector<IPAddress> hosts;
+  CLI cli;
+  cli.defineIPAddress(
+      "host", 't', "Host address to talk to.",
+      [&](const IPAddress& host) { hosts.emplace_back(host); });
+
+  cli.evaluate({"--host=127.0.0.1", "--host=192.168.0.1", "-t10.10.20.40"});
+
+  ASSERT_EQ(3, hosts.size());
+  ASSERT_EQ(IPAddress("127.0.0.1"), hosts[0]);
+  ASSERT_EQ(IPAddress("192.168.0.1"), hosts[1]);
+  ASSERT_EQ(IPAddress("10.10.20.40"), hosts[2]);
+}
+
 TEST(CLI, argc_argv_to_vector) {
   CLI cli;
   cli.defineBool("help", 'h', "Shows this help and terminates.");
