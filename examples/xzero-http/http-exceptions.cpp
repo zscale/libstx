@@ -42,7 +42,7 @@ int main() {
   http->setHandler([](xzero::HttpRequest* request,
                       xzero::HttpResponse* response) {
     if (request->path() == "/raise")
-      throw RUNTIME_ERROR("maybe raise");
+      RAISE(xzero::RuntimeError, "maybe raise");
 
     response->setStatus(xzero::HttpStatus::Ok);
     response->output()->write("Call me maybe /raise ;-)\n",

@@ -16,6 +16,7 @@
 #include <xzero-http/HttpResponse.h>
 #include <xzero-http/HttpOutput.h>
 #include <xzero-http/http1/Http1ConnectionFactory.h>
+#include <xzero-base/logging.h>
 
 std::unique_ptr<xzero::SslConnector> createSslConnector( // {{{
     const std::string& name, int port, xzero::Executor* executor,
@@ -24,7 +25,8 @@ std::unique_ptr<xzero::SslConnector> createSslConnector( // {{{
   std::unique_ptr<xzero::SslConnector> connector(
       new xzero::SslConnector(name, executor, scheduler, clock,
                               xzero::TimeSpan::fromSeconds(30),
-                              &xzero::consoleLogger,
+                              [](const std::exception& e) {
+                                  xzero::logDebug("hello", e); },
                               xzero::IPAddress("0.0.0.0"), port, 128,
                               true, true));
 

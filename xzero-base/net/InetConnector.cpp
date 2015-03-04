@@ -85,13 +85,13 @@ InetConnector::InetConnector(const std::string& name, Executor* executor,
 void InetConnector::open(const IPAddress& ipaddress, int port, int backlog,
                          bool reuseAddr, bool reusePort) {
   if (isOpen())
-    throw RUNTIME_ERROR("InetConnector already opened");
+    RAISE(RuntimeError, "InetConnector already opened");
 
   socket_ = ::socket(ipaddress.family(), SOCK_STREAM, 0);
   addressFamily_ = ipaddress.family();
 
   if (socket_ < 0)
-    throw std::system_error(errno, std::system_category());
+    RAISE_ERRNO(errno);
 
   if (reusePort)
     setReusePort(reusePort);
@@ -131,12 +131,12 @@ void InetConnector::bind(const IPAddress& ipaddr, int port) {
       memcpy(&((sockaddr_in6*)sa)->sin6_addr, ipaddr.data(), ipaddr.size());
       break;
     default:
-      throw std::system_error(EINVAL, std::system_category());
+      RAISE_ERRNO(EINVAL);
   }
 
   int rv = ::bind(socket_, (sockaddr*)sa, salen);
   if (rv < 0)
-    throw std::system_error(errno, std::system_category());
+    RAISE_ERRNO(errno);
 
   addressFamily_ = ipaddr.family();
 }
@@ -144,7 +144,7 @@ void InetConnector::bind(const IPAddress& ipaddr, int port) {
 void InetConnector::listen(int backlog) {
   int rv = ::listen(socket_, backlog);
   if (rv < 0)
-    throw std::system_error(errno, std::system_category());
+    RAISE_ERRNO(errno);
 }
 
 bool InetConnector::isOpen() const XZERO_NOEXCEPT {
@@ -176,7 +176,7 @@ size_t InetConnector::backlog() const XZERO_NOEXCEPT {
 
 void InetConnector::setBacklog(size_t value) {
   if (isStarted()) {
-    throw std::runtime_error("Cannot change backlog when already listening.");
+    RAISE(RuntimeError, "Cannot change backlog when already listening.");
   }
 
   backlog_ = value;
@@ -191,7 +191,7 @@ void InetConnector::setBlocking(bool enable) {
                           : fcntl(socket_, F_GETFL) | O_NONBLOCK;
 
   if (fcntl(socket_, F_SETFL, flags) < 0) {
-    throw std::system_error(errno, std::system_category());
+    RAISE_ERRNO(errno);
   }
 
 #if defined(HAVE_ACCEPT4) && defined(ENABLE_ACCEPT4)
@@ -219,7 +219,7 @@ void InetConnector::setCloseOnExec(bool enable) {
                           : fcntl(socket_, F_GETFD) & ~FD_CLOEXEC;
 
   if (fcntl(socket_, F_SETFD, flags) < 0) {
-    throw std::system_error(errno, std::system_category());
+    RAISE_ERRNO(errno);
   }
 
 #if defined(HAVE_ACCEPT4) && defined(ENABLE_ACCEPT4)
@@ -253,10 +253,10 @@ void InetConnector::setDeferAccept(bool enable) {
 #if defined(TCP_DEFER_ACCEPT)
   int rc = enable ? 1 : 0;
   if (::setsockopt(socket_, SOL_TCP, TCP_DEFER_ACCEPT, &rc, sizeof(rc)) < 0) {
-    throw std::system_error(errno, std::system_category());
+    RAISE_ERRNO(errno);
   }
 #else
-  throw std::system_error(ENOTSUP, std::system_category());
+  RAISE_ERRNO(ENOTSUP);
 #endif
 }
 
@@ -276,7 +276,7 @@ void InetConnector::setQuickAck(bool enable) {
 #if defined(TCP_QUICKACK)
   int rc = enable ? 1 : 0;
   if (::setsockopt(socket_, SOL_TCP, TCP_QUICKACK, &rc, sizeof(rc)) < 0) {
-    throw std::system_error(errno, std::system_category());
+    RAISE_ERRNO(errno);
   }
 #else
   // ignore
@@ -294,7 +294,7 @@ bool InetConnector::reusePort() const {
 void InetConnector::setReusePort(bool enable) {
   int rc = enable ? 1 : 0;
   if (::setsockopt(socket_, SOL_SOCKET, SO_REUSEPORT, &rc, sizeof(rc)) < 0) {
-    throw std::system_error(errno, std::system_category());
+    RAISE_ERRNO(errno);
   }
 }
 
@@ -309,7 +309,7 @@ bool InetConnector::reuseAddr() const {
 void InetConnector::setReuseAddr(bool enable) {
   int rc = enable ? 1 : 0;
   if (::setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, &rc, sizeof(rc)) < 0) {
-    throw std::system_error(errno, std::system_category());
+    RAISE_ERRNO(errno);
   }
 }
 
@@ -323,7 +323,7 @@ void InetConnector::setMultiAcceptCount(size_t value) XZERO_NOEXCEPT {
 
 void InetConnector::start() {
   if (!isOpen()) {
-    throw std::runtime_error("Connector must be open in order to be started.");
+    RAISE(RuntimeError, "Connector must be open in order to be started.");
   }
 
   if (isStarted()) {
@@ -403,14 +403,14 @@ int InetConnector::acceptOne() {
 #endif
         return -1;
       default:
-        throw std::system_error(errno, std::system_category());
+        RAISE_ERRNO(errno);
     }
   }
 
   if (!flagged && flags_ &&
-      fcntl(cfd, F_SETFL, fcntl(cfd, F_GETFL) | flags_) < 0) {
+        fcntl(cfd, F_SETFL, fcntl(cfd, F_GETFL) | flags_) < 0) {
     ::close(cfd);
-    throw std::system_error(errno, std::system_category());
+    RAISE_ERRNO(errno);
   }
 
   return cfd;

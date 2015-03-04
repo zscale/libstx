@@ -32,4 +32,6 @@ XZERO_API void logTrace(Component component, Fmt fmt, Args... args) {
   LogAggregator::get().getSource(component)->trace(fmt, args...);
 }
 
+XZERO_API void logDebug(const std::string& component, const std::exception& e);
+
 }  // namespace xzero

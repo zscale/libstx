@@ -33,7 +33,7 @@ namespace xzero {
 #define THROW_SSL_ERROR() { \
   char buf[256]; \
   ERR_error_string_n(ERR_get_error(), buf, sizeof(buf)); \
-  throw RUNTIME_ERROR(buf); \
+  RAISE(RuntimeError, buf); \
 }
 
 // {{{ helper
@@ -123,7 +123,7 @@ SslContext::SslContext(SslConnector* connector,
     THROW_SSL_ERROR();
 
   if (!SSL_CTX_check_private_key(ctx_))
-    throw RUNTIME_ERROR("Private key does not match the public certificate");
+    RAISE(RuntimeError, "Private key does not match the public certificate");
 
   SSL_CTX_set_tlsext_servername_callback(ctx_, &SslContext::onServerName);
   SSL_CTX_set_tlsext_servername_arg(ctx_, this);

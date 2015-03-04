@@ -27,7 +27,7 @@ PosixScheduler::PosixScheduler(
       onPreInvokePending_(preInvoke),
       onPostInvokePending_(postInvoke) {
   if (pipe(wakeupPipe_) < 0) {
-    throw SYSTEM_ERROR(errno);
+    RAISE_ERRNO(errno);
   }
   fcntl(wakeupPipe_[0], F_SETFL, O_NONBLOCK);
   fcntl(wakeupPipe_[1], F_SETFL, O_NONBLOCK);
@@ -255,7 +255,7 @@ void PosixScheduler::runLoopOnce() {
   while (rv < 0 && errno == EINTR);
 
   if (rv < 0)
-    throw SYSTEM_ERROR(errno);
+    RAISE_ERRNO(errno);
 
   if (FD_ISSET(wakeupPipe_[PIPE_READ_END], &input)) {
     bool consumeMore = true;

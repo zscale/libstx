@@ -8,6 +8,10 @@
 #include <xzero-base/logging/LogSource.h>
 #include <xzero-base/logging/LogTarget.h>
 #include <xzero-base/logging/LogAggregator.h>
+#include <xzero-base/RuntimeError.h>
+#include <xzero-base/StackTrace.h>
+#include <iostream>
+#include <sstream>
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -40,6 +44,30 @@ void LogSource::trace(const char* fmt, ...) {
 
 void LogSource::debug(const char* fmt, ...) {
   LOG_SOURCE_MSG(debug, fmt);
+}
+
+void LogSource::debug(const std::exception& e) {
+  if (LogTarget* target = LogAggregator::get().logTarget()) {
+    std::stringstream sstr;
+
+    if (auto rt = dynamic_cast<const RuntimeError*>(&e)) {
+      auto bt = rt->backtrace();
+
+      sstr << "Unhandled exception caught ["
+           << rt->sourceFile() << ':' << rt->sourceLine() << "] ("
+           << StackTrace::demangleSymbol(typeid(e).name()).c_str()
+           << "). " << rt->what() << std::endl;
+
+      for (size_t i = 0; i < bt.size(); ++i)
+        sstr << "  [" << i << "] " << bt[i] << std::endl;
+    } else {
+      sstr << "Unhandled exception caught in executor ("
+           << StackTrace::demangleSymbol(typeid(e).name())
+           << "): " << e.what();
+    }
+
+    target->debug(sstr.str());
+  }
 }
 
 void LogSource::info(const char* fmt, ...) {

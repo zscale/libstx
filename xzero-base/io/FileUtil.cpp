@@ -18,13 +18,13 @@ std::string FileUtil::currentWorkingDirectory() {
   if (getcwd(buf, sizeof(buf)))
     return buf;
 
-  throw RUNTIME_ERROR(strerror(errno));
+  RAISE_ERRNO(errno);
 }
 
 std::string FileUtil::realpath(const std::string& relpath) {
   char result[PATH_MAX];
   if (::realpath(relpath.c_str(), result) == nullptr)
-    throw RUNTIME_ERROR(strerror(errno));
+    RAISE_ERRNO(errno);
 
   return result;
 }
@@ -50,13 +50,13 @@ size_t FileUtil::size(const std::string& path) {
   if (stat(path.c_str(), &st) == 0)
     return st.st_size;
 
-  throw RUNTIME_ERROR(strerror(errno));
+  RAISE_ERRNO(errno);
 }
 
 size_t FileUtil::sizeRecursive(const std::string& path) {
   struct stat st;
   if (stat(path.c_str(), &st) < 0)
-    throw RUNTIME_ERROR(strerror(errno));
+    RAISE_ERRNO(errno);
 
   if (S_ISREG(st.st_mode))
     return st.st_size;
@@ -76,7 +76,7 @@ void FileUtil::ls(const std::string& path,
                   std::function<bool(const std::string&)> callback) {
   DIR* dir = opendir(path.c_str());
   if (!dir)
-    throw RUNTIME_ERROR(strerror(errno));
+    RAISE_ERRNO(errno);
 
   int len = offsetof(dirent, d_name) + pathconf(path.c_str(), _PC_NAME_MAX);
   dirent* dep = (dirent*) new unsigned char[len + 1];
@@ -141,17 +141,17 @@ Buffer FileUtil::read(const std::string& path) {
 
   int fd = open(path.c_str(), O_RDONLY);
   if (fd < 0)
-    throw RUNTIME_ERROR(strerror(errno));
+    RAISE_ERRNO(errno);
 
   struct stat st;
   if (fstat(fd, &st) < 0)
-    throw RUNTIME_ERROR(strerror(errno));
+    RAISE_ERRNO(errno);
 
   output.reserve(st.st_size + 1);
   ssize_t nread = ::read(fd, output.data(), st.st_size);
   if (nread < 0) {
     ::close(fd);
-    throw RUNTIME_ERROR(strerror(errno));
+    RAISE_ERRNO(errno);
   }
 
   output.data()[nread] = '\0';
@@ -164,14 +164,14 @@ Buffer FileUtil::read(const std::string& path) {
 void FileUtil::write(const std::string& path, const Buffer& buffer) {
   int fd = open(path.c_str(), O_WRONLY | O_CREAT);
   if (fd < 0)
-    throw RUNTIME_ERROR(strerror(errno));
+    RAISE_ERRNO(errno);
 
   ssize_t nwritten = 0;
   do {
     ssize_t rv = ::write(fd, buffer.data(), buffer.size());
     if (rv < 0) {
       ::close(fd);
-      throw RUNTIME_ERROR(strerror(errno));
+      RAISE_ERRNO(errno);
     }
     nwritten += rv;
   } while (static_cast<size_t>(nwritten) < buffer.size());
@@ -180,39 +180,39 @@ void FileUtil::write(const std::string& path, const Buffer& buffer) {
 }
 
 void FileUtil::copy(const std::string& from, const std::string& to) {
-  throw RUNTIME_ERROR("TODO");
+  RAISE(RuntimeError, "TODO");
 }
 
 void FileUtil::truncate(const std::string& path, size_t size) {
   if (::truncate(path.c_str(), size) < 0)
-    throw RUNTIME_ERROR(strerror(errno));
+    RAISE_ERRNO(errno);
 }
 
 void FileUtil::mkdir(const std::string& path, int mode) {
   if (::mkdir(path.c_str(), mode) < 0)
-    throw RUNTIME_ERROR(strerror(errno));
+    RAISE_ERRNO(errno);
 }
 
 void FileUtil::mkdir_p(const std::string& path, int mode) {
-  throw RUNTIME_ERROR("TODO");
+  RAISE(RuntimeError, "TODO");
 }
 
 void FileUtil::rm(const std::string& path) {
   if (::unlink(path.c_str()) < 0)
-    throw RUNTIME_ERROR(strerror(errno));
+    RAISE_ERRNO(errno);
 }
 
 void FileUtil::mv(const std::string& path, const std::string& target) {
   if (::rename(path.c_str(), target.c_str()) < 0)
-    throw RUNTIME_ERROR(strerror(errno));
+    RAISE_ERRNO(errno);
 }
 
 int FileUtil::createTempFile() {
-  throw RUNTIME_ERROR("TODO");
+  RAISE(RuntimeError, "TODO");
 }
 
 std::string FileUtil::createTempDir() {
-  throw RUNTIME_ERROR("TODO");
+  RAISE(RuntimeError, "TODO");
 }
 
 }  // namespace xzero

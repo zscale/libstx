@@ -40,7 +40,7 @@ void HttpResponse::recycle() {
 
 void HttpResponse::requireMutableInfo() {
   if (isCommitted())
-    throw RUNTIME_ERROR("Invalid State. Cannot be modified after commit.");
+    RAISE(RuntimeError, "Invalid State. Cannot be modified after commit.");
 
   requireNotSendingAlready();
 }
@@ -52,7 +52,7 @@ void HttpResponse::requireNotSendingAlready() {
       break;
     case HttpChannelState::SENDING:
     default:
-      throw RUNTIME_ERROR("Attempt to modify response while in wrong channel state.");
+      RAISE(RuntimeError, "Attempt to modify response while in wrong channel state.");
   }
 }
 
@@ -109,7 +109,7 @@ static const std::vector<std::string> connectionHeaderFields = {
 inline void requireValidHeader(const std::string& name) {
   for (const auto& test: connectionHeaderFields)
     if (iequals(name, test))
-      throw RUNTIME_ERROR("Invalid argument. Harmful response header.");
+      RAISE(RuntimeError, "Invalid argument. Harmful response header.");
 }
 
 void HttpResponse::addHeader(const std::string& name,
@@ -199,7 +199,7 @@ void HttpResponse::registerTrailer(const std::string& name) {
   requireValidHeader(name);
 
   if (trailers_.contains(name))
-    throw RUNTIME_ERROR("Trailer already registered.");
+    RAISE(RuntimeError, "Trailer already registered.");
 
   trailers_.push_back(name, "");
 }
@@ -211,7 +211,7 @@ void HttpResponse::appendTrailer(const std::string& name,
   requireValidHeader(name);
 
   if (!trailers_.contains(name))
-    throw RUNTIME_ERROR("Trailer not registered.");
+    RAISE(RuntimeError, "Trailer not registered.");
 
   trailers_.append(name, value, delim);
 }
@@ -221,7 +221,7 @@ void HttpResponse::setTrailer(const std::string& name, const std::string& value)
   requireValidHeader(name);
 
   if (!trailers_.contains(name))
-    throw RUNTIME_ERROR("Trailer not registered.");
+    RAISE(RuntimeError, "Trailer not registered.");
 
   trailers_.overwrite(name, value);
 }
