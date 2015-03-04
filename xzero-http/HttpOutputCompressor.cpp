@@ -86,7 +86,7 @@ void HttpOutputCompressor::postProcess(HttpRequest* request,
     return;  // do not double-encode content
 
   bool chunked = !response->hasContentLength();
-  long long size = chunked ? 0 : response->contentLength();
+  size_t size = chunked ? 0 : response->contentLength();
 
   if (!chunked && (size < minSize_ || size > maxSize_))
     return;
