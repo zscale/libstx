@@ -21,9 +21,11 @@ namespace xzero {
 
 class XZERO_API RuntimeError : public std::runtime_error {
  public:
+  explicit RuntimeError(const std::string& what);
   RuntimeError(const std::string& what, const char* sourceFile, int sourceLine);
   ~RuntimeError();
 
+  void setSource(const char* file, int line);
   const char* sourceFile() const { return sourceFile_; }
   int sourceLine() const XZERO_NOEXCEPT { return sourceLine_; }
 
@@ -39,6 +41,24 @@ XZERO_API void consoleLogger(const std::exception& e);
 
 } // namespace xzero
 
+#define RAISE_EXCEPTION(E, ...)                                               \
+    do {                                                                      \
+      E e(__VA_ARGS__);                                                       \
+      e.setSource(__FILE__, __LINE__);                                        \
+      throw e;                                                                \
+    } while (0)
+
+#define RAISE(E, ...) RAISE_EXCEPTION(E, __VA_ARGS__)
+
+#define RAISE_ERRNO() {                                                       \
+  char buf[256];                                                              \
+  strerror_r(errno, buf, sizeof(buf);                                         \
+  size_t n = strlen(buf);                                                     \
+  RAISE_EXCEPTION(RuntimeError, std::string(buf, n));                         \
+}
+
+// ----------------------------------------------------------------------------
+
 #define RUNTIME_ERROR(msg) (::xzero::RuntimeError((msg), __FILE__, __LINE__))
 
 #define SYSTEM_ERROR(errc) \
@@ -49,17 +69,6 @@ XZERO_API void consoleLogger(const std::exception& e);
     if (unlikely(cond)) {                                                   \
       throw ::xzero::RuntimeError("BUG_ON: (" #cond ")",                    \
                                   __FILE__, __LINE__);                      \
-    }                                                                       \
-  }
-#endif
-
-#if !defined(RAISE_IF_ERRNO)
-  #define RAISE_IF_ERRNO() {                                                \
-    if (errno != 0) {                                                       \
-      char buf[256];                                                        \
-      strerror_r(errno, buf, sizeof(buf);                                   \
-      size_t n = strlen(buf);                                               \
-      throw ::xzero::RuntimeError(std::string(buf, n), __FILE__, __LINE__); \
     }                                                                       \
   }
 #endif

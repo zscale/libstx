@@ -16,6 +16,10 @@ namespace xzero {
 class XZERO_API StackTrace {
  public:
   StackTrace();
+  StackTrace(StackTrace&&);
+  StackTrace& operator=(StackTrace&&);
+  StackTrace(const StackTrace&);
+  StackTrace& operator=(const StackTrace&);
   ~StackTrace();
 
   std::vector<std::string> symbols() const;

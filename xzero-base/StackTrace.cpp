@@ -43,6 +43,56 @@ StackTrace::StackTrace()
 {
 }
 
+StackTrace::StackTrace(StackTrace&& other)
+    : frames_(other.frames_),
+      frameCount_(other.frameCount_) {
+  other.frames_ = nullptr;
+  other.frameCount_ = 0;
+}
+
+StackTrace& StackTrace::operator=(StackTrace&& other) {
+  frames_ = other.frames_;
+  frameCount_ = other.frameCount_;
+
+  other.frames_ = nullptr;
+  other.frameCount_ = 0;
+
+  return *this;
+}
+
+StackTrace::StackTrace(const StackTrace& other)
+    :
+#if defined(HAVE_BACKTRACE)
+      frames_(MAX_FRAMES ? new void* [SKIP_FRAMES + MAX_FRAMES] : nullptr),
+      frameCount_(other.frameCount_)
+#else
+      frames_(nullptr),
+      frameCount_(0)
+#endif
+{
+  if (frames_ && frameCount_) {
+    memcpy(frames_, other.frames_, sizeof(void*) * frameCount_);
+  }
+}
+
+StackTrace& StackTrace::operator=(const StackTrace& other) {
+  delete[] frames_;
+
+#if defined(HAVE_BACKTRACE)
+  frames_ = MAX_FRAMES ? new void* [SKIP_FRAMES + MAX_FRAMES] : nullptr;
+  frameCount_ = other.frameCount_;
+
+  if (frames_ && frameCount_) {
+    memcpy(frames_, other.frames_, sizeof(void*) * frameCount_);
+  }
+#else
+  frames_ = nullptr;
+  frameCount_ = 0;
+#endif
+
+  return *this;
+}
+
 StackTrace::~StackTrace() {
   delete[] frames_;
 }

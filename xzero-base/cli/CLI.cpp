@@ -213,7 +213,7 @@ const CLI::FlagDef* CLI::require(const std::string& longOption) const {
   if (const FlagDef* fd = find(longOption))
     return fd;
 
-  throw CLI::UnknownOptionError("--" + longOption, __FILE__, __LINE__);
+  RAISE(CLI::UnknownOptionError, "--" + longOption);
 }
 
 const CLI::FlagDef* CLI::require(char shortOption) const {
@@ -221,7 +221,7 @@ const CLI::FlagDef* CLI::require(char shortOption) const {
     return fd;
 
   char option[3] = { '-', shortOption, '\0' };
-  throw CLI::UnknownOptionError(option, __FILE__, __LINE__);
+  RAISE(CLI::UnknownOptionError, option);
 }
 
 // -----------------------------------------------------------------------------
@@ -280,7 +280,7 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
           std::string name = arg;
 
           if (i >= args.size())
-            throw MissingOptionValueError("--" + name, __FILE__, __LINE__);
+            RAISE(CLI::MissingOptionValueError, "--" + name);
 
           std::string value = args[i];
           i++;
@@ -295,7 +295,7 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
       while (!arg.empty()) {
         const FlagDef* fd = find(arg[0]);
         if (fd == nullptr) { // option not found
-          throw CLI::UnknownOptionError("-" + arg.substr(0, 1), __FILE__, __LINE__);
+          RAISE(CLI::UnknownOptionError, "-" + arg.substr(0, 1));
         } else if (fd->type == FlagType::Bool) {
           flags.set(fd->longOption, "true",
                     FlagStyle::ShortSwitch, FlagType::Bool);
@@ -313,8 +313,8 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
           i++;
 
           if (i >= args.size()) {
-            char buf[3] = { '-', fd->shortOption, '\0' };
-            throw MissingOptionValueError(buf, __FILE__, __LINE__);
+            char option[3] = { '-', fd->shortOption, '\0' };
+            RAISE(CLI::MissingOptionValueError, option);
           }
 
           arg.clear();
@@ -322,8 +322,8 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
           i++;
 
           if (!value.empty() && value[0] == '-') {
-            char buf[3] = { '-', fd->shortOption, '\0' };
-            throw MissingOptionValueError(buf, __FILE__, __LINE__);
+            char option[3] = { '-', fd->shortOption, '\0' };
+            RAISE(MissingOptionValueError, option);
           }
 
           flags.set(name, value, FlagStyle::ShortSwitch, fd->type);
@@ -334,7 +334,7 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
       // oops
       char buf[128];
       snprintf(buf, sizeof(buf), "Option \"%s\" could not be parsed.", args[i].c_str());
-      throw ValidationError(buf, __FILE__, __LINE__);
+      RAISE(ValidationError, buf);
     }
   }
 
