@@ -236,6 +236,13 @@ Flags CLI::evaluate(int argc, const char* argv[]) const {
 Flags CLI::evaluate(const std::vector<std::string>& args) const {
   Flags flags;
 
+  auto call = [&](const std::string& name, const std::string& value) {
+    const FlagDef* fd = require(name);
+    if (fd->callback) {
+      fd->callback(value);
+    }
+  };
+
   enum class ParsingState {
     Options,
     Parameters,
@@ -260,11 +267,13 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
         std::string value = arg.substr(eq + 1);
         const FlagDef* fd = require(name);
         flags.set(name, value, FlagStyle::LongWithValue, fd->type);
+        call(name, value);
         i++;
       } else { // --name [VALUE]
         const FlagDef* fd = require(arg);
         if (fd->type == FlagType::Bool) { // --name
           flags.set(arg, "true", FlagStyle::LongSwitch, fd->type);
+          call(arg, "true");
           i++;
         } else { // --name VALUE
           i++;
@@ -277,6 +286,7 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
           i++;
 
           flags.set(name, value, FlagStyle::LongWithValue, fd->type);
+          call(name, value);
         }
       }
     } else if (arg.size() > 1 && arg[0] == '-') {
@@ -289,11 +299,13 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
         } else if (fd->type == FlagType::Bool) {
           flags.set(fd->longOption, "true",
                     FlagStyle::ShortSwitch, FlagType::Bool);
+          call(fd->longOption, "true");
           arg = arg.substr(1);
           i++;
         } else if (arg.size() > 1) { // -fVALUE
           flags.set(fd->longOption, arg.substr(1),
                     FlagStyle::ShortSwitch, fd->type);
+          call(fd->longOption, arg.substr(1));
           arg.clear();
           i++;
         } else { // -f VALUE
@@ -315,6 +327,7 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
           }
 
           flags.set(name, value, FlagStyle::ShortSwitch, fd->type);
+          call(name, value);
         }
       }
     } else {
@@ -331,22 +344,13 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
       if (!flags.isSet(fd.longOption)) {
         flags.set(fd.longOption, fd.defaultValue,
                   FlagStyle::LongWithValue, fd.type);
+        call(fd.longOption, fd.defaultValue);
       }
     } else if (fd.type == FlagType::Bool) {
       if (!flags.isSet(fd.longOption)) {
         flags.set(fd.longOption, "false",
                   FlagStyle::LongWithValue, FlagType::Bool);
-      }
-    }
-  }
-
-  // invoke callbacks
-  for (const FlagDef& fd: flagDefs_) {
-    if (fd.callback) {
-      try {
-        fd.callback(flags.asString(fd.longOption));
-      } catch (const std::exception& e) {
-        consoleLogger(e);
+        call(fd.longOption, "false");
       }
     }
   }
