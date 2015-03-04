@@ -291,15 +291,21 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
         } else { // -f VALUE
           std::string name = fd->longOption;
           i++;
-          printf("'-f VALUE' => i:%zu, arg:'%s', so:%c, lo='%s'\n",
-                 i, arg.c_str(), fd->shortOption, fd->longOption.c_str());
+
           if (i >= args.size()) {
             char buf[3] = { '-', fd->shortOption, '\0' };
             throw MissingOptionValueError(buf, __FILE__, __LINE__);
           }
+
           arg.clear();
           std::string value = args[i];
           i++;
+
+          if (!value.empty() && value[0] == '-') {
+            char buf[3] = { '-', fd->shortOption, '\0' };
+            throw MissingOptionValueError(buf, __FILE__, __LINE__);
+          }
+
           flags.set(name, value, FlagStyle::ShortSwitch, fd->type);
         }
       }
@@ -374,19 +380,6 @@ static std::string wordWrap(
   }
 
   return sstr.str();
-}
-
-std::vector<Flag> CLI::defaults() const {
-  std::vector<Flag> flags;
-
-  for (const FlagDef& fd: flagDefs_) {
-    if (!fd.defaultValue.empty()) {
-      flags.emplace_back(fd.longOption, fd.defaultValue,
-                         FlagStyle::LongWithValue, fd.type);
-    }
-  }
-
-  return flags;
 }
 
 // {{{ CLI::FlagDef

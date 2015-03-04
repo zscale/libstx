@@ -21,7 +21,6 @@ using namespace xzero;
  * - explicit short option, first in chain
  * - explicit short option, deep in chain
  * - defaulting long-option
- * - defaulting long-option
  * - required long-option with value
  * - required short-option with value
  * - errors
@@ -30,13 +29,10 @@ using namespace xzero;
  *   - raise on missing long-option value
  *   - raise on missing short-option value
  *   - raise on missing required option
+ *   - raise on invalid type (int)
+ *   - raise on invalid type (float)
+ *   - raise on invalid type (ip)
  */
-
-TEST(CLI, posix_cmdline) {
-  CLI cli;
-  cli.defineBool("some", 's', "Something");
-  Flags flags = cli.evaluate({"--some"});
-}
 
 TEST(CLI, defaults) {
   CLI cli;
@@ -94,5 +90,108 @@ TEST(CLI, short_option_values) {
 
   ASSERT_EQ(2, flags.size());
   ASSERT_EQ("thing", flags.getString("some"));
-  ASSERT_EQ("time", flags.getString("time"));
+  ASSERT_EQ("time", flags.getString("tea"));
+}
+
+TEST(CLI, short_option_single) {
+  CLI cli;
+  cli.defineBool("some", 's', "Something");
+
+  Flags flags = cli.evaluate({"-s"});
+
+  ASSERT_EQ(1, flags.size());
+  ASSERT_TRUE(flags.getBool("some"));
+}
+
+TEST(CLI, short_option_multi) {
+  CLI cli;
+  cli.defineBool("some", 's', "The Some");
+  cli.defineBool("thing", 't', "The Thing");
+  cli.defineBool("else", 'e', "The Else");
+
+  Flags flags = cli.evaluate({"-tes"});
+
+  ASSERT_EQ(3, flags.size());
+  ASSERT_TRUE(flags.getBool("some"));
+  ASSERT_TRUE(flags.getBool("thing"));
+  ASSERT_TRUE(flags.getBool("else"));
+}
+
+TEST(CLI, short_option_multi_mixed) {
+  CLI cli;
+  cli.defineBool("some", 's', "The Some");
+  cli.defineString("text", 't', "The Text");
+
+  Flags flags = cli.evaluate({"-sthello"});
+
+  ASSERT_EQ(2, flags.size());
+  ASSERT_TRUE(flags.getBool("some"));
+  ASSERT_EQ("hello", flags.getString("text"));
+}
+
+TEST(CLI, short_option_value_inline) {
+  CLI cli;
+  cli.defineString("text", 't', "The Text");
+
+  Flags flags = cli.evaluate({"-thello"});
+
+  ASSERT_EQ(1, flags.size());
+  ASSERT_EQ("hello", flags.getString("text"));
+}
+
+TEST(CLI, short_option_value_sep) {
+  CLI cli;
+  cli.defineString("text", 't', "The Text");
+
+  Flags flags = cli.evaluate({"-t", "hello"});
+
+  ASSERT_EQ(1, flags.size());
+  ASSERT_EQ("hello", flags.getString("text"));
+}
+
+TEST(CLI, long_option_with_value_inline) {
+  CLI cli;
+  cli.defineString("text", 't', "The Text");
+
+  Flags flags = cli.evaluate({"--text=hello"});
+
+  ASSERT_EQ(1, flags.size());
+  ASSERT_EQ("hello", flags.getString("text"));
+}
+
+TEST(CLI, long_option_with_value_sep) {
+  CLI cli;
+  cli.defineString("text", 't', "The Text");
+
+  Flags flags = cli.evaluate({"--text", "hello"});
+
+  ASSERT_EQ(1, flags.size());
+  ASSERT_EQ("hello", flags.getString("text"));
+}
+
+TEST(CLI, type_int) {
+  CLI cli;
+  cli.defineNumber("number", 'n', "The Number");
+
+  Flags flags = cli.evaluate({"-n42"});
+  ASSERT_EQ(1, flags.size());
+  ASSERT_EQ(42, flags.getNumber("number"));
+}
+
+TEST(CLI, type_float) {
+  CLI cli;
+  cli.defineFloat("float", 'f', "The Float");
+
+  Flags flags = cli.evaluate({"-f1.42"});
+  ASSERT_EQ(1, flags.size());
+  ASSERT_EQ(1.42f, flags.getFloat("float"));
+}
+
+TEST(CLI, type_ip) {
+  CLI cli;
+  cli.defineIPAddress("ip", 'a', "The IP");
+
+  Flags flags = cli.evaluate({"--ip=4.2.2.1"});
+  ASSERT_EQ(1, flags.size());
+  ASSERT_EQ(IPAddress("4.2.2.1"), flags.getIPAddress("ip"));
 }

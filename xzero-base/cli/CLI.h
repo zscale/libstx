@@ -112,8 +112,6 @@ class XZERO_API CLI {
       const std::string& valuePlaceholder,
       const std::string& helpText);
 
-  std::vector<Flag> defaults() const;
-
   const FlagDef* find(const std::string& longOption) const;
   const FlagDef* find(char shortOption) const;
 
