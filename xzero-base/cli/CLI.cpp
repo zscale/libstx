@@ -209,14 +209,22 @@ const CLI::FlagDef* CLI::find(char shortOption) const {
   return nullptr;
 }
 
-// -----------------------------------------------------------------------------
-static inline FlagType flagTypeOf(const std::string& longOption, const CLI* cli) {
-  if (const CLI::FlagDef* fd = cli->find(longOption))
-    return fd->type;
+const CLI::FlagDef* CLI::require(const std::string& longOption) const {
+  if (const FlagDef* fd = find(longOption))
+    return fd;
 
   throw CLI::UnknownOptionError("--" + longOption, __FILE__, __LINE__);
 }
 
+const CLI::FlagDef* CLI::require(char shortOption) const {
+  if (const FlagDef* fd = find(shortOption))
+    return fd;
+
+  char option[3] = { '-', shortOption, '\0' };
+  throw CLI::UnknownOptionError(option, __FILE__, __LINE__);
+}
+
+// -----------------------------------------------------------------------------
 Flags CLI::evaluate(int argc, const char* argv[]) const {
   std::vector<std::string> args;
   for (int i = 1; i < argc; ++i)
@@ -250,13 +258,13 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
       if (eq != arg.npos) { // --name=value
         std::string name = arg.substr(0, eq);
         std::string value = arg.substr(eq + 1);
-        FlagType ft = flagTypeOf(name, this);
-        flags.set(name, value, FlagStyle::LongWithValue, ft);
+        const FlagDef* fd = require(name);
+        flags.set(name, value, FlagStyle::LongWithValue, fd->type);
         i++;
       } else { // --name [VALUE]
-        FlagType ft = flagTypeOf(arg, this);
-        if (ft == FlagType::Bool) { // --name
-          flags.set(arg, "", FlagStyle::LongSwitch, ft);
+        const FlagDef* fd = require(arg);
+        if (fd->type == FlagType::Bool) { // --name
+          flags.set(arg, "true", FlagStyle::LongSwitch, fd->type);
           i++;
         } else { // --name VALUE
           i++;
@@ -268,7 +276,7 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
           std::string value = args[i];
           i++;
 
-          flags.set(name, value, FlagStyle::LongWithValue, ft);
+          flags.set(name, value, FlagStyle::LongWithValue, fd->type);
         }
       }
     } else if (arg.size() > 1 && arg[0] == '-') {
@@ -279,7 +287,7 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
         if (fd == nullptr) { // option not found
           throw CLI::UnknownOptionError("-" + arg.substr(0, 1), __FILE__, __LINE__);
         } else if (fd->type == FlagType::Bool) {
-          flags.set(fd->longOption, "",
+          flags.set(fd->longOption, "true",
                     FlagStyle::ShortSwitch, FlagType::Bool);
           arg = arg.substr(1);
           i++;
@@ -323,6 +331,22 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
       if (!flags.isSet(fd.longOption)) {
         flags.set(fd.longOption, fd.defaultValue,
                   FlagStyle::LongWithValue, fd.type);
+      }
+    } else if (fd.type == FlagType::Bool) {
+      if (!flags.isSet(fd.longOption)) {
+        flags.set(fd.longOption, "false",
+                  FlagStyle::LongWithValue, FlagType::Bool);
+      }
+    }
+  }
+
+  // invoke callbacks
+  for (const FlagDef& fd: flagDefs_) {
+    if (fd.callback) {
+      try {
+        fd.callback(flags.asString(fd.longOption));
+      } catch (const std::exception& e) {
+        consoleLogger(e);
       }
     }
   }

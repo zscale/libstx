@@ -115,6 +115,9 @@ class XZERO_API CLI {
   const FlagDef* find(const std::string& longOption) const;
   const FlagDef* find(char shortOption) const;
 
+  const FlagDef* require(const std::string& longOption) const;
+  const FlagDef* require(char shortOption) const;
+
   Flags evaluate(int argc, const char* argv[]) const;
   Flags evaluate(const std::vector<std::string>& args) const;
 

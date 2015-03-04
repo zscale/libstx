@@ -41,11 +41,9 @@ TEST(CLI, defaults) {
 
   Flags flags = cli.evaluate({});
 
-  ASSERT_EQ(1, flags.size());
-  ASSERT_TRUE(flags.isSet("some"));
+  ASSERT_EQ(2, flags.size());
   ASSERT_EQ("some value", flags.getString("some"));
-
-  ASSERT_FALSE(flags.isSet("bool"));
+  ASSERT_EQ(false, flags.getBool("bool"));
 }
 
 TEST(CLI, raise_on_unknown_long_option) {
@@ -58,13 +56,6 @@ TEST(CLI, raise_on_unknown_short_option) {
   CLI cli;
   cli.defineBool("some", 's', "Something");
   ASSERT_THROW(cli.evaluate({"-t"}), CLI::UnknownOptionError);
-}
-
-TEST(CLI, long_option_spaced_value) {
-  CLI cli;
-  cli.defineString("some", 's', "Something");
-  Flags f = cli.evaluate({"--some", "bugs"});
-  ASSERT_EQ("bugs", f.getString("some"));
 }
 
 TEST(CLI, raise_on_missing_long_option) {
@@ -194,6 +185,36 @@ TEST(CLI, type_ip) {
   Flags flags = cli.evaluate({"--ip=4.2.2.1"});
   ASSERT_EQ(1, flags.size());
   ASSERT_EQ(IPAddress("4.2.2.1"), flags.getIPAddress("ip"));
+}
+
+TEST(CLI, callbacks_on_explicit) {
+  IPAddress bindIP;
+
+  CLI cli;
+  cli.defineIPAddress("bind", 'a', "IP address to bind listener address to.",
+      [&](const IPAddress& ip) {
+        bindIP = ip;
+      });
+
+  cli.evaluate({"--bind", "127.0.0.2"});
+
+  ASSERT_EQ(IPAddress("127.0.0.2"), bindIP);
+}
+
+TEST(CLI, callbacks_on_defaults) {
+  IPAddress bindIP;
+
+  CLI cli;
+  cli.defineIPAddress(
+      "bind", 'a', "IP address to bind listener address to.",
+      IPAddress("127.0.0.2"),
+      [&](const IPAddress& ip) { bindIP = ip; });
+
+  cli.evaluate({"--bind", "127.0.0.3"});
+  ASSERT_EQ(IPAddress("127.0.0.3"), bindIP);
+
+  cli.evaluate({});
+  ASSERT_EQ(IPAddress("127.0.0.2"), bindIP);
 }
 
 TEST(CLI, argc_argv_to_vector) {
