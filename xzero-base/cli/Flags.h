@@ -66,6 +66,7 @@ class XZERO_API Flags {
 
   IPAddress getIPAddress(const std::string& flag) const;
   std::string getString(const std::string& flag) const;
+  std::string asString(const std::string& flag) const;
   long int getNumber(const std::string& flag) const;
   float getFloat(const std::string& flag) const;
   bool getBool(const std::string& flag) const;

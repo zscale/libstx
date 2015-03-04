@@ -48,7 +48,7 @@ bool Flags::isSet(const std::string& flag) const {
 IPAddress Flags::getIPAddress(const std::string& flag) const {
   auto i = set_.find(flag);
   if (i == set_.end())
-    throw RUNTIME_ERROR("Flag not found." + flag);
+    throw RUNTIME_ERROR("Flag not found. " + flag);
 
   if (i->second.first != FlagType::IP)
     throw CLI::TypeMismatchError(flag, __FILE__, __LINE__);
@@ -56,10 +56,18 @@ IPAddress Flags::getIPAddress(const std::string& flag) const {
   return IPAddress(i->second.second);
 }
 
+std::string Flags::asString(const std::string& flag) const {
+  auto i = set_.find(flag);
+  if (i == set_.end())
+    throw RUNTIME_ERROR("Flag not found. " + flag);
+
+  return i->second.second;
+}
+
 std::string Flags::getString(const std::string& flag) const {
   auto i = set_.find(flag);
   if (i == set_.end())
-    throw RUNTIME_ERROR("Flag not found." + flag);
+    throw RUNTIME_ERROR("Flag not found. " + flag);
 
   if (i->second.first != FlagType::String)
     throw CLI::TypeMismatchError(flag, __FILE__, __LINE__);
@@ -70,7 +78,7 @@ std::string Flags::getString(const std::string& flag) const {
 long int Flags::getNumber(const std::string& flag) const {
   auto i = set_.find(flag);
   if (i == set_.end())
-    throw RUNTIME_ERROR("Flag not found." + flag);
+    throw RUNTIME_ERROR("Flag not found. " + flag);
 
   if (i->second.first != FlagType::Number)
     throw CLI::TypeMismatchError(flag, __FILE__, __LINE__);
@@ -81,7 +89,7 @@ long int Flags::getNumber(const std::string& flag) const {
 float Flags::getFloat(const std::string& flag) const {
   auto i = set_.find(flag);
   if (i == set_.end())
-    throw RUNTIME_ERROR("Flag not found." + flag);
+    throw RUNTIME_ERROR("Flag not found. " + flag);
 
   if (i->second.first != FlagType::Float)
     throw CLI::TypeMismatchError(flag, __FILE__, __LINE__);
@@ -94,7 +102,7 @@ bool Flags::getBool(const std::string& flag) const {
   if (i == set_.end())
     return false;
 
-  return true;
+  return i->second.second == "true";
 }
 
 const std::vector<std::string>& Flags::getRawArgs() const {
@@ -113,7 +121,10 @@ std::string Flags::to_s() const {
 
     switch (flag.second.first) {
       case FlagType::Bool:
-        sstr << "--" << flag.first;
+        if (flag.second.second == "true")
+          sstr << "--" << flag.first;
+        else
+          sstr << "--" << flag.first << "=false";
         break;
       case FlagType::String:
         sstr << "--" << flag.first << "=\"" << flag.second.second << "\"";
