@@ -64,6 +64,7 @@ class XZERO_API Flags {
   void set(Args... args) { merge(Flag(args...)); }
   bool isSet(const std::string& flag) const;
 
+  IPAddress getIPAddress(const std::string& flag) const;
   std::string getString(const std::string& flag) const;
   long int getNumber(const std::string& flag) const;
   float getFloat(const std::string& flag) const;
