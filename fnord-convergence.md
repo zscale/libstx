@@ -64,14 +64,3 @@
 - rpc
 - json-rpc
 
-### MISC
-
-```
-namespace xzero {
-  class CLI {
-  };
-}
-
-xzero::CLI cli;
-
-```
