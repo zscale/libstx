@@ -195,3 +195,23 @@ TEST(CLI, type_ip) {
   ASSERT_EQ(1, flags.size());
   ASSERT_EQ(IPAddress("4.2.2.1"), flags.getIPAddress("ip"));
 }
+
+TEST(CLI, argc_argv_to_vector) {
+  CLI cli;
+  cli.defineBool("help", 'h', "Shows this help and terminates.");
+  cli.defineBool("bool", 'b', "some boolean");
+
+  const int argc = 3;
+  static const char* argv[] = {
+    "/proc/self/exe",
+    "--help",
+    "-b",
+    nullptr
+  };
+
+  Flags flags = cli.evaluate(argc, argv);
+
+  ASSERT_EQ(2, flags.size());
+  ASSERT_TRUE(flags.getBool("help"));
+  ASSERT_TRUE(flags.getBool("bool"));
+}
