@@ -11,6 +11,10 @@
 #include <xzero-base/sysconfig.h>
 #include <string>
 
+namespace std {
+  class exception;
+}
+
 namespace xzero {
 
 /**
@@ -31,6 +35,8 @@ class XZERO_API LogSource {
   void info(const char* fmt, ...);
   void warn(const char* fmt, ...);
   void error(const char* fmt, ...);
+
+  void debug(const std::exception& e);
 
   void enable();
   bool isEnabled() const XZERO_NOEXCEPT;

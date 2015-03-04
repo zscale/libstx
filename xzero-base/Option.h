@@ -77,12 +77,12 @@ class XZERO_API Option {
 
   void require() const {
     if (isNone())
-      throw RUNTIME_ERROR("Unchecked access to a Option<> instance.");
+      RAISE(RuntimeError, "Unchecked access to a Option<> instance.");
   }
 
   void requireNone() const {
     if (!isNone())
-      throw RUNTIME_ERROR("Unchecked access to a Option<> instance.");
+      RAISE(RuntimeError, "Unchecked access to a Option<> instance.");
   }
 
   void clear() {

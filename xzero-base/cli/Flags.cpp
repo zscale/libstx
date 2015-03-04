@@ -48,10 +48,10 @@ bool Flags::isSet(const std::string& flag) const {
 IPAddress Flags::getIPAddress(const std::string& flag) const {
   auto i = set_.find(flag);
   if (i == set_.end())
-    throw RUNTIME_ERROR("Flag not found. " + flag);
+    RAISE(RuntimeError, "Flag not found. " + flag);
 
   if (i->second.first != FlagType::IP)
-    throw CLI::TypeMismatchError(flag, __FILE__, __LINE__);
+    RAISE(CLI::TypeMismatchError, flag);
 
   return IPAddress(i->second.second);
 }
@@ -59,7 +59,7 @@ IPAddress Flags::getIPAddress(const std::string& flag) const {
 std::string Flags::asString(const std::string& flag) const {
   auto i = set_.find(flag);
   if (i == set_.end())
-    throw RUNTIME_ERROR("Flag not found. " + flag);
+    RAISE(RuntimeError, "Flag not found. " + flag);
 
   return i->second.second;
 }
@@ -67,10 +67,10 @@ std::string Flags::asString(const std::string& flag) const {
 std::string Flags::getString(const std::string& flag) const {
   auto i = set_.find(flag);
   if (i == set_.end())
-    throw RUNTIME_ERROR("Flag not found. " + flag);
+    RAISE(RuntimeError, "Flag not found. " + flag);
 
   if (i->second.first != FlagType::String)
-    throw CLI::TypeMismatchError(flag, __FILE__, __LINE__);
+    RAISE(CLI::TypeMismatchError, flag);
 
   return i->second.second;
 }
@@ -78,10 +78,10 @@ std::string Flags::getString(const std::string& flag) const {
 long int Flags::getNumber(const std::string& flag) const {
   auto i = set_.find(flag);
   if (i == set_.end())
-    throw RUNTIME_ERROR("Flag not found. " + flag);
+    RAISE(RuntimeError, "Flag not found. " + flag);
 
   if (i->second.first != FlagType::Number)
-    throw CLI::TypeMismatchError(flag, __FILE__, __LINE__);
+    RAISE(CLI::TypeMismatchError, flag);
 
   return std::stoi(i->second.second);
 }
@@ -89,10 +89,10 @@ long int Flags::getNumber(const std::string& flag) const {
 float Flags::getFloat(const std::string& flag) const {
   auto i = set_.find(flag);
   if (i == set_.end())
-    throw RUNTIME_ERROR("Flag not found. " + flag);
+    RAISE(RuntimeError, "Flag not found. " + flag);
 
   if (i->second.first != FlagType::Float)
-    throw CLI::TypeMismatchError(flag, __FILE__, __LINE__);
+    RAISE(CLI::TypeMismatchError, flag);
 
   return std::stof(i->second.second);
 }

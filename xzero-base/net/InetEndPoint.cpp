@@ -13,7 +13,6 @@
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/Buffer.h>
 #include <xzero-base/sysconfig.h>
-#include <xzero-base/RuntimeError.h>
 #include <xzero-base/RefPtr.h>
 #include <stdexcept>
 #include <netinet/tcp.h>
@@ -66,7 +65,7 @@ InetEndPoint::~InetEndPoint() {
 
 std::pair<IPAddress, int> InetEndPoint::remoteAddress() const {
   if (handle_ < 0)
-    throw RUNTIME_ERROR("Illegal State. Socket is closed.");
+    RAISE(RuntimeError, "Illegal State. Socket is closed.");
 
   std::pair<IPAddress, int> result;
   switch (connector_->addressFamily()) {
@@ -89,14 +88,14 @@ std::pair<IPAddress, int> InetEndPoint::remoteAddress() const {
       break;
     }
     default:
-      throw RUNTIME_ERROR("Illegal State. IPAddress.addressFamily?");
+      RAISE(RuntimeError, "Illegal State. IPAddress.addressFamily?");
   }
   return result;
 }
 
 std::pair<IPAddress, int> InetEndPoint::localAddress() const {
   if (handle_ < 0)
-    throw RUNTIME_ERROR("Illegal State. Socket is closed.");
+    RAISE(RuntimeError, "Illegal State. Socket is closed.");
 
   std::pair<IPAddress, int> result;
   switch (connector_->addressFamily()) {
@@ -158,7 +157,7 @@ void InetEndPoint::setBlocking(bool enable) {
 #endif
 
   if (fcntl(handle_, F_SETFL, flags) < 0) {
-    throw SYSTEM_ERROR(errno);
+    RAISE_ERRNO(errno);
   }
 }
 
@@ -171,7 +170,7 @@ void InetEndPoint::setCorking(bool enable) {
   if (isCorking_ != enable) {
     int flag = enable ? 1 : 0;
     if (setsockopt(handle_, IPPROTO_TCP, TCP_CORK, &flag, sizeof(flag)) < 0)
-      throw SYSTEM_ERROR(errno);
+      RAISE_ERRNO(errno);
 
     isCorking_ = enable;
   }
@@ -198,7 +197,7 @@ size_t InetEndPoint::fill(Buffer* result) {
 #endif
         break;
       default:
-        throw SYSTEM_ERROR(errno);
+        RAISE_ERRNO(errno);
     }
   } else {
     result->resize(result->size() + n);
@@ -211,7 +210,7 @@ size_t InetEndPoint::flush(const BufferRef& source) {
   ssize_t rv = write(handle(), source.data(), source.size());
 
   if (rv < 0)
-    throw SYSTEM_ERROR(errno);
+    RAISE_ERRNO(errno);
 
   // EOF exception?
 
@@ -223,13 +222,13 @@ size_t InetEndPoint::flush(int fd, off_t offset, size_t size) {
   off_t len = 0;
   int rv = sendfile(fd, handle(), offset, &len, nullptr, 0);
   if (rv < 0)
-    throw SYSTEM_ERROR(errno);
+    RAISE_ERRNO(errno);
 
   return len;
 #else
   ssize_t rv = sendfile(handle(), fd, &offset, size);
   if (rv < 0)
-    throw SYSTEM_ERROR(errno);
+    RAISE_ERRNO(errno);
 
   // EOF exception?
 
@@ -245,7 +244,7 @@ void InetEndPoint::onReadable() XZERO_NOEXCEPT {
   } catch (const std::exception& e) {
     connection()->onInterestFailure(e);
   } catch (...) {
-    connection()->onInterestFailure(RUNTIME_ERROR("Unhandled unknown exception caught."));
+    connection()->onInterestFailure(EXCEPTION(RuntimeError, "Unhandled unknown exception caught."));
   }
 }
 
@@ -257,7 +256,7 @@ void InetEndPoint::onWritable() XZERO_NOEXCEPT {
   } catch (const std::exception& e) {
     connection()->onInterestFailure(e);
   } catch (...) {
-    connection()->onInterestFailure(RUNTIME_ERROR("Unhandled unknown exception caught."));
+    connection()->onInterestFailure(EXCEPTION(RuntimeError, "Unhandled unknown exception caught."));
   }
 }
 
@@ -282,7 +281,7 @@ void InetEndPoint::fillable() {
   } catch (const std::exception& e) {
     connection()->onInterestFailure(e);
   } catch (...) {
-    connection()->onInterestFailure(RUNTIME_ERROR("Unhandled unknown exception caught."));
+    connection()->onInterestFailure(EXCEPTION(RuntimeError, "Unhandled unknown exception caught."));
   }
 }
 
@@ -306,7 +305,7 @@ void InetEndPoint::flushable() {
   } catch (const std::exception& e) {
     connection()->onInterestFailure(e);
   } catch (...) {
-    connection()->onInterestFailure(RUNTIME_ERROR("Unhandled unknown exception caught."));
+    connection()->onInterestFailure(EXCEPTION(RuntimeError, "Unhandled unknown exception caught."));
   }
 }
 

@@ -99,7 +99,7 @@ void SslEndPoint::shutdown() {
             std::bind(&SslEndPoint::shutdown, this));
         break;
       default:
-        throw RUNTIME_ERROR("SSL shutdown error. " + sslErrorString());
+        RAISE(RuntimeError, "SSL shutdown error. " + sslErrorString());
     }
   }
 }
@@ -145,7 +145,7 @@ size_t SslEndPoint::fill(Buffer* sink) {
     default:
       TRACE("%p fill(Buffer:%d): SSL_read() -> %d",
           this, space, SSL_get_error(ssl_, rv));
-      throw RUNTIME_ERROR("SSL read error. " + sslErrorString());
+      RAISE(RuntimeError, "SSL read error. " + sslErrorString());
   }
   errno = EAGAIN;
   return 0;
@@ -176,7 +176,7 @@ size_t SslEndPoint::flush(const BufferRef& source) {
       break;
     default:
       TRACE("%p flush(BufferRef, @%p, %zu bytes) failed. error.", this, source.data(), source.size());
-      throw RUNTIME_ERROR("SSL write error. " + sslErrorString());
+      RAISE(RuntimeError, "SSL write error. " + sslErrorString());
   }
   errno = EAGAIN;
   return 0;
@@ -195,7 +195,7 @@ size_t SslEndPoint::flush(int fd, off_t offset, size_t size) {
 #endif
         return 0;
       default:
-        throw SYSTEM_ERROR(errno);
+        RAISE_ERRNO(errno);
     }
   }
 
@@ -237,7 +237,7 @@ void SslEndPoint::fillable() {
     connection()->onInterestFailure(e);
   } catch (...) {
     connection()->onInterestFailure(
-        RUNTIME_ERROR("Unhandled unknown exception caught."));
+        EXCEPTION(RuntimeError, "Unhandled unknown exception caught."));
   }
 }
 
@@ -288,7 +288,7 @@ void SslEndPoint::setBlocking(bool enable) {
 #endif
 
   if (fcntl(handle(), F_SETFL, flags) < 0) {
-    throw SYSTEM_ERROR(errno);
+    RAISE_ERRNO(errno);
   }
 }
 
@@ -301,7 +301,7 @@ void SslEndPoint::setCorking(bool enable) {
   if (isCorking_ != enable) {
     int flag = enable ? 1 : 0;
     if (setsockopt(handle(), IPPROTO_TCP, TCP_CORK, &flag, sizeof(flag)) < 0)
-      throw SYSTEM_ERROR(errno);
+      RAISE_ERRNO(errno);
 
     isCorking_ = enable;
   }
@@ -333,7 +333,7 @@ void SslEndPoint::onHandshake() {
         TRACE("%p onHandshake (error)", this);
         char buf[256];
         ERR_error_string_n(ERR_get_error(), buf, sizeof(buf));
-        throw RUNTIME_ERROR(buf);
+        RAISE_ERRNO(errno);
       }
     }
   } else {
@@ -367,7 +367,7 @@ void SslEndPoint::flushable() {
     connection()->onInterestFailure(e);
   } catch (...) {
     connection()->onInterestFailure(
-        RUNTIME_ERROR("Unhandled unknown exception caught."));
+        EXCEPTION(RuntimeError, "Unhandled unknown exception caught."));
   }
 }
 

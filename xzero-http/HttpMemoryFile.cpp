@@ -41,7 +41,7 @@ HttpMemoryFile::HttpMemoryFile(
       memfd_(-1) {
 
   if (shm_path_.size() >= NAME_MAX)
-    throw RUNTIME_ERROR("HttpMemoryFile's path must not exceed NAME_MAX.");
+    RAISE(RuntimeError, "HttpMemoryFile's path must not exceed NAME_MAX.");
 
   data_.push_back(data, length);
 }

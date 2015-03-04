@@ -33,7 +33,7 @@ std::vector<IPAddress> DnsClient::ip(const std::string& name) {
   }
 
   if (result.empty())
-    throw RUNTIME_ERROR("Could not resolve hostname " + name + ".");
+    RAISE(RuntimeError, "Could not resolve hostname " + name + ".");
 
   return result;
 }
@@ -57,7 +57,7 @@ const std::vector<IPAddress>& DnsClient::lookupIP(
 
   int rc = getaddrinfo(name.c_str(), nullptr, &hints, &res);
   if (rc != 0)
-    throw RUNTIME_ERROR(gai_strerror(rc));
+    RAISE(RuntimeError, gai_strerror(rc));
 
   std::vector<IPAddress> list;
 
@@ -69,11 +69,11 @@ const std::vector<IPAddress>& DnsClient::lookupIP(
 
 std::vector<std::string> DnsClient::txt(const std::string& name) {
   // http://stackoverflow.com/questions/2315504/best-way-to-resolve-a-dns-txt-record-on-linux-unix-posix-bsd-type-systems
-  throw RUNTIME_ERROR("Not Implemented");
+  RAISE(RuntimeError, "TODO");
 }
 
 std::vector<std::pair<int, std::string>> DnsClient::mx(const std::string& name) {
-  throw RUNTIME_ERROR("Not Implemented");
+  RAISE(RuntimeError, "TODO");
 }
 
 void DnsClient::clearIPv4() {

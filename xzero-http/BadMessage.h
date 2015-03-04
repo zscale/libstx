@@ -7,6 +7,7 @@
 
 #include <xzero-http/Api.h>
 #include <xzero-base/sysconfig.h>
+#include <xzero-base/RuntimeError.h>
 #include <stdexcept>
 
 namespace xzero {
@@ -14,13 +15,13 @@ namespace xzero {
 /**
  * Helper exception that is thrown on semantic message errors by HttpChannel.
  */
-class XZERO_HTTP_API BadMessage : public std::runtime_error {
+class XZERO_HTTP_API BadMessage : public RuntimeError {
  public:
   explicit BadMessage(HttpStatus code)
       : BadMessage(code, to_string(code)) {}
 
-  explicit BadMessage(HttpStatus code, const std::string& reason)
-      : std::runtime_error(reason),
+  BadMessage(HttpStatus code, const std::string& reason)
+      : RuntimeError(reason),
         code_(code) {}
 
   HttpStatus code() const XZERO_NOEXCEPT { return code_; }

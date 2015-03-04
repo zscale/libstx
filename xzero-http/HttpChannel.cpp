@@ -89,14 +89,14 @@ std::unique_ptr<HttpOutput> HttpChannel::createOutput() {
 
 void HttpChannel::addOutputFilter(std::shared_ptr<Filter> filter) {
   if (response()->isCommitted())
-    throw RUNTIME_ERROR("Invalid State. Cannot add output filters after commit.");
+    RAISE(RuntimeError, "Invalid State. Cannot add output filters after commit.");
 
   outputFilters_.push_back(filter);
 }
 
 void HttpChannel::removeAllOutputFilters() {
   if (response()->isCommitted())
-    throw RUNTIME_ERROR("Invalid State. Cannot clear output filters after commit.");
+    RAISE(RuntimeError, "Invalid State. Cannot clear output filters after commit.");
 
   outputFilters_.clear();
 }
@@ -173,8 +173,7 @@ void HttpChannel::onBeforeSend() {
 
   if (state() != HttpChannelState::HANDLING &&
       state() != HttpChannelState::READING) {
-    throw RUNTIME_ERROR("Invalid state (" +
-        to_string(state()) + ". Creating a new send object not allowed.");
+    RAISE(RuntimeError, "Invalid state (" + to_string(state()) + ". Creating a new send object not allowed.");
   }
 
   //XXX setState(HttpChannelState::SENDING);
@@ -193,7 +192,7 @@ void HttpChannel::onBeforeSend() {
 
 HttpResponseInfo HttpChannel::commitInline() {
   if (!response_->status())
-    throw RUNTIME_ERROR("No HTTP response status set yet.");
+    RAISE(RuntimeError, "No HTTP response status set yet.");
 
   if (request_->expect100Continue())
     response_->send100Continue(nullptr /* FIXME */);
@@ -220,7 +219,7 @@ void HttpChannel::commit(CompletionHandler onComplete) {
 
 void HttpChannel::send100Continue(CompletionHandler onComplete) {
   if (!request()->expect100Continue())
-    throw RUNTIME_ERROR("Illegal State. no 100-continue expected.");
+    RAISE(RuntimeError, "Illegal State. no 100-continue expected.");
 
   request()->setExpect100Continue(false);
 
@@ -262,7 +261,7 @@ bool HttpChannel::onMessageHeader(const BufferRef& name,
       request_->setHost(value.str());
     else {
       setState(HttpChannelState::HANDLING);
-      throw BadMessage(HttpStatus::BadRequest, "Multiple host headers are illegal.");
+      RAISE(BadMessage, HttpStatus::BadRequest, "Multiple host headers are illegal.");
     }
   }
 
@@ -276,7 +275,7 @@ bool HttpChannel::onMessageHeaderEnd() {
     // rfc7230, Section 5.4, p2
     if (request_->version() == HttpVersion::VERSION_1_1) {
       if (!request_->headers().contains("Host")) {
-        throw BadMessage(HttpStatus::BadRequest, "No Host header given.");
+        RAISE(BadMessage, HttpStatus::BadRequest, "No Host header given.");
       }
     }
 
@@ -306,7 +305,7 @@ bool HttpChannel::onMessageContent(const BufferRef& chunk) {
 
 bool HttpChannel::onMessageEnd() {
   if (!request_->input())
-    throw RUNTIME_ERROR("Internal Error. No HttpInput available?");
+    RAISE(RuntimeError, "Internal Error. No HttpInput available?");
 
   if (request_->input()->listener())
     request_->input()->listener()->onAllDataRead();
@@ -330,7 +329,7 @@ void HttpChannel::completed() {
   }
 
   if (state() != HttpChannelState::HANDLING) {
-    throw RUNTIME_ERROR("Invalid HTTP channel state " +
+    RAISE(RuntimeError, "Invalid HTTP channel state " +
         to_string(state()) + ". Expected " +
         to_string(HttpChannelState::HANDLING) + ".");
   }

@@ -59,7 +59,7 @@ Pipe::Pipe() {
   int rv = pipe(pfd_);
 #endif
   if (rv < 0) {
-    throw RUNTIME_ERROR(strerror(errno)); // FIXME: not thread safe
+    RAISE_ERRNO(errno);
   }
 }
 
@@ -119,26 +119,19 @@ void consoleLogger(const std::exception& e) {
 
 RuntimeError::RuntimeError(const std::string& what)
   : std::runtime_error(what),
-    sourceFile_(),
+    sourceFile_(""),
     sourceLine_(0),
-    stackTrace_() {
-}
-
-RuntimeError::RuntimeError(const std::string& what,
-                           const char* sourceFile,
-                           int sourceLine)
-  : std::runtime_error(what),
-    sourceFile_(sourceFile),
-    sourceLine_(sourceLine),
+    functionName_(""),
     stackTrace_() {
 }
 
 RuntimeError::~RuntimeError() {
 }
 
-void RuntimeError::setSource(const char* file, int line) {
+void RuntimeError::setSource(const char* file, int line, const char* fn) {
   sourceFile_ = file;
   sourceLine_ = line;
+  functionName_ = fn;
 }
 
 std::vector<std::string> RuntimeError::backtrace() const {
