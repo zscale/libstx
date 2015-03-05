@@ -29,8 +29,11 @@ int main(int argc, const char* argv[]) {
       return 0;
     }
 
-    std::vector<std::string> hosts = flags.getRawArgs();
-    hosts = { "www.google.com", "www.kde.org" };
+    std::vector<std::string> hosts = flags.parameters();
+    if (hosts.empty()) {
+      std::cerr << "No hosts given." << std::endl;
+      return 1;
+    }
 
     for (const std::string& host: hosts) {
       printf("resolving '%s'\n", host.c_str());
