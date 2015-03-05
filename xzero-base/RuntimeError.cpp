@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 
@@ -30,78 +31,7 @@ namespace xzero {
 #define MAX_FRAMES 64
 #define SKIP_FRAMES 2
 
-class Pipe { // {{{
- private:
-  Pipe(const Pipe&) = delete;
-  Pipe& operator=(Pipe&) = delete;
-
- public:
-  Pipe();
-  Pipe(Pipe&& other);
-  Pipe& operator=(Pipe&& other);
-  ~Pipe();
-
-  int readFd() const noexcept { return pfd_[0]; }
-  int writeFd() const noexcept { return pfd_[1]; }
-
-  void close();
-  void closeRead();
-  void closeWrite();
-
- private:
-  int pfd_[2];
-};
-
-Pipe::Pipe() {
-#if defined(HAVE_PIPE2)
-  int rv = pipe2(pfd_, O_CLOEXEC);
-#else
-  int rv = pipe(pfd_);
-#endif
-  if (rv < 0) {
-    RAISE_ERRNO(errno);
-  }
-}
-
-Pipe::Pipe(Pipe&& other) {
-  pfd_[0] = other.pfd_[0];
-  pfd_[1] = other.pfd_[1];
-
-  other.pfd_[0] = -1;
-  other.pfd_[1] = -1;
-}
-
-Pipe& Pipe::operator=(Pipe&& other) {
-  pfd_[0] = other.pfd_[0];
-  pfd_[1] = other.pfd_[1];
-
-  other.pfd_[0] = -1;
-  other.pfd_[1] = -1;
-
-  return *this;
-}
-
-Pipe::~Pipe() {
-  close();
-}
-
-void Pipe::close() {
-  closeRead();
-  closeWrite();
-}
-
-void Pipe::closeRead() {
-  if (readFd() >= 0)
-    ::close(readFd());
-}
-
-void Pipe::closeWrite() {
-  if (writeFd() >= 0)
-    ::close(writeFd());
-}
-// }}}
-
-void consoleLogger(const std::exception& e) {
+void consoleLogger(const std::exception& e) { // {{{
   if (auto rt = dynamic_cast<const RuntimeError*>(&e)) {
     fprintf(stderr, "Unhandled exception caught [%s:%d] (%s). %s\n",
             rt->sourceFile(), rt->sourceLine(),
@@ -115,13 +45,14 @@ void consoleLogger(const std::exception& e) {
 
   fprintf(stderr, "Unhandled exception caught in executor (%s): %s\n",
           StackTrace::demangleSymbol(typeid(e).name()).c_str(), e.what());
-}
+} // }}}
 
 RuntimeError::RuntimeError(const std::string& what)
   : std::runtime_error(what),
     sourceFile_(""),
     sourceLine_(0),
     functionName_(""),
+    typeName_(nullptr),
     stackTrace_() {
 }
 
@@ -136,6 +67,21 @@ void RuntimeError::setSource(const char* file, int line, const char* fn) {
 
 std::vector<std::string> RuntimeError::backtrace() const {
   return stackTrace_.symbols();
+}
+
+const char* RuntimeError::typeName() const {
+  if (!typeName_) {
+    typeName_ = typeid(*this).name();
+  }
+  return typeName_;
+}
+
+void RuntimeError::setTypeName(const char* n) {
+  typeName_ = n;
+}
+
+bool RuntimeError::ofType(const char* s) const {
+  return strcmp(typeName(), s) == 0;
 }
 
 } // namespace xzero
