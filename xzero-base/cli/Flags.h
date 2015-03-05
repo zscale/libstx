@@ -71,7 +71,8 @@ class XZERO_API Flags {
   float getFloat(const std::string& flag) const;
   bool getBool(const std::string& flag) const;
 
-  const std::vector<std::string>& getRawArgs() const;
+  const std::vector<std::string>& parameters() const;
+  void setParameters(const std::vector<std::string>& v);
 
   size_t size() const { return set_.size(); }
 
