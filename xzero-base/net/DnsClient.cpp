@@ -1,6 +1,7 @@
 #include <xzero-base/net/DnsClient.h>
 #include <xzero-base/net/IPAddress.h>
 #include <xzero-base/RuntimeError.h>
+#include <xzero-base/logging.h>
 #include <vector>
 #include <netdb.h>
 
@@ -51,7 +52,7 @@ const std::vector<IPAddress>& DnsClient::lookupIP(
   addrinfo* res = nullptr;
   addrinfo hints;
   memset(&hints, 0, sizeof(hints));
-  hints.ai_flags = AI_NUMERICSERV;
+  hints.ai_flags = 0;
   hints.ai_family = AddressFamilty;
   hints.ai_socktype = SOCK_STREAM; // any, actually
 
