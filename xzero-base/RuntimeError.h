@@ -29,12 +29,17 @@ class XZERO_API RuntimeError : public std::runtime_error {
   int sourceLine() const XZERO_NOEXCEPT { return sourceLine_; }
   const char* functionName() const { return functionName_; }
 
+  const char* typeName() const;
+  void setTypeName(const char* n);
+  bool ofType(const char* s) const;
+
   std::vector<std::string> backtrace() const;
 
  private:
   const char* sourceFile_;
   int sourceLine_;
   const char* functionName_;
+  mutable const char* typeName_;
   StackTrace stackTrace_;
 };
 
@@ -66,21 +71,37 @@ inline E make_error(const char* file, int line, const char* fn, Args... args) {
  * The exception must derive from RuntimeError, whose additional
  * source information will be initialized after.
  */
-#define RAISE_EXCEPTION(E, ...)                                               \
-    do {                                                                      \
-      E e(__VA_ARGS__);                                                       \
-      e.setSource(__FILE__, __LINE__, __PRETTY_FUNCTION__);                   \
-      throw e;                                                                \
-    } while (0)
+#define RAISE_EXCEPTION(E, ...) {                                             \
+  E e(__VA_ARGS__);                                                           \
+  e.setSource(__FILE__, __LINE__, __PRETTY_FUNCTION__);                       \
+  throw e;                                                                    \
+}
 
-#define RAISE(E, ...) RAISE_EXCEPTION(E, __VA_ARGS__)
+/**
+ * Raises a fake-typed RuntimeError exception.
+ *
+ * A RuntimeError exception is created and raised but its typeName
+ * is customly set to the FakeType argument.
+ */
+#define RAISE_FAKE(FakeType, ...) {                                           \
+  auto e = EXCEPTION(RuntimeError, __VA_ARGS__);                              \
+  e.setTypeName(FakeType);                                                    \
+  throw e;                                                                    \
+}
 
+/**
+ * Raises an exception of given operating system error code.
+ *
+ * @see RAISE_EXCEPTION(E, ...)
+ */
 #define RAISE_ERRNO(errno) {                                                  \
   char buf[256];                                                              \
   strerror_r((errno), buf, sizeof(buf));                                      \
   size_t n = strlen(buf);                                                     \
   RAISE_EXCEPTION(RuntimeError, std::string(buf, n));                         \
 }
+
+#define RAISE(E, ...) RAISE_EXCEPTION(E, __VA_ARGS__)
 
 // ----------------------------------------------------------------------------
 
@@ -92,8 +113,7 @@ inline E make_error(const char* file, int line, const char* fn, Args... args) {
 #if !defined(BUG_ON)
   #define BUG_ON(cond) {                                                    \
     if (unlikely(cond)) {                                                   \
-      throw ::xzero::RuntimeError("BUG_ON: (" #cond ")",                    \
-                                  __FILE__, __LINE__);                      \
+      RAISE_EXCEPTION(RuntimeError, "BUG ON: (" #cond ")");                 \
     }                                                                       \
   }
 #endif
