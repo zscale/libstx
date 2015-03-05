@@ -6,29 +6,47 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero-base/net/DnsClient.h>
+#include <xzero-base/cli/CLI.h>
+#include <xzero-base/cli/Flags.h>
+#include <xzero-base/logging.h>
+#include <iostream>
 
 using namespace xzero;
 
 int main(int argc, const char* argv[]) {
-  DnsClient dns;
+  try {
+    DnsClient dns;
+    CLI cli;
+    cli.defineBool("ipv6", '6', "Enable resolving IPv6.");
+    cli.defineBool("help", 'h', "Shows this help and terminates.");
+    cli.enableParameters("<hostnames>", "Hostnames to resolve.");
 
-  if (argc == 1) {
-    static const char* debuggingArgs[] = {
-      argv[0],
-      "ipv6.google.com",
-      nullptr,
-    };
-    argc = 2;
-    argv = debuggingArgs;
-  }
+    Flags flags = cli.evaluate(argc, argv);
 
-  for (int i = 1; i < argc; ++i) {
-    printf("resolving '%s'\n", argv[i]);
-    auto ips = dns.ip(argv[i]);
-    printf("  found IPs: %zu\n", ips.size());
+    if (flags.getBool("help")) {
+      std::cout << "CLI:" << std::endl
+                << cli.helpText() << std::endl;
+      return 0;
+    }
 
-    for (const IPAddress& ip: ips)
-      printf("    ip: %s\n", ip.c_str());
+    std::vector<std::string> hosts = flags.getRawArgs();
+    hosts = { "www.google.com", "www.kde.org" };
+
+    for (const std::string& host: hosts) {
+      printf("resolving '%s'\n", host.c_str());
+      std::vector<IPAddress> ips;
+      if (flags.getBool("ipv6")) {
+        ips = dns.ipv6(host);
+      } else {
+        ips = dns.ipv4(host);
+      }
+      printf("  found IPs: %zu\n", ips.size());
+      for (const IPAddress& ip: ips) {
+        printf("    ip: %s\n", ip.c_str());
+      }
+    }
+  } catch (const std::exception& e) {
+    logDebug("example", e);
   }
 
   return 0;
