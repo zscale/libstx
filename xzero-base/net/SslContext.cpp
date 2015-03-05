@@ -112,7 +112,14 @@ SslContext::SslContext(SslConnector* connector,
 
   initializeSslLibrary();
 
+#if defined(SSL_TXT_TLSV1_2)
   ctx_ = SSL_CTX_new(TLSv1_2_server_method());
+#elif defined(SSL_TXT_TLSV1_1)
+  ctx_ = SSL_CTX_new(TLSv1_1_server_method());
+#else
+  ctx_ = SSL_CTX_new(TLSv1_server_method());
+#endif
+
   if (!ctx_)
     THROW_SSL_ERROR();
 

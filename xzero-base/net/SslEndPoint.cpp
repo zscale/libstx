@@ -411,16 +411,32 @@ static inline std::string tlsext_type_to_string(int type) {
     case TLSEXT_TYPE_trusted_ca_keys: return "trusted ca keys";
     case TLSEXT_TYPE_truncated_hmac: return "truncated hmac";
     case TLSEXT_TYPE_status_request: return "status request";
+#if defined(TLSEXT_TYPE_user_mapping)
     case TLSEXT_TYPE_user_mapping: return "user mapping";
+#endif
+#if defined(TLSEXT_TYPE_client_authz)
     case TLSEXT_TYPE_client_authz: return "client authz";
+#endif
+#if defined(TLSEXT_TYPE_server_authz)
     case TLSEXT_TYPE_server_authz: return "server authz";
+#endif
+#if defined(TLSEXT_TYPE_cert_type)
     case TLSEXT_TYPE_cert_type: return "cert type";
+#endif
     case TLSEXT_TYPE_elliptic_curves: return "elliptic curves";
     case TLSEXT_TYPE_ec_point_formats: return "EC point formats";
+#if defined(TLSEXT_TYPE_srp)
     case TLSEXT_TYPE_srp: return "SRP";
+#endif
+#if defined(TLSEXT_TYPE_signature_algorithms)
     case TLSEXT_TYPE_signature_algorithms: return "signature algorithms";
+#endif
+#if defined(TLSEXT_TYPE_use_srtp)
     case TLSEXT_TYPE_use_srtp: return "use SRTP";
+#endif
+#if defined(TLSEXT_TYPE_heartbeat)
     case TLSEXT_TYPE_heartbeat: return "heartbeat";
+#endif
     case TLSEXT_TYPE_session_ticket: return "session ticket";
     case TLSEXT_TYPE_renegotiate: return "renegotiate";
 #if defined(TLSEXT_TYPE_opaque_prf_input)
