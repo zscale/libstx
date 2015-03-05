@@ -105,8 +105,12 @@ bool Flags::getBool(const std::string& flag) const {
   return i->second.second == "true";
 }
 
-const std::vector<std::string>& Flags::getRawArgs() const {
+const std::vector<std::string>& Flags::parameters() const {
   return raw_;
+}
+
+void Flags::setParameters(const std::vector<std::string>& v) {
+  raw_ = v;
 }
 
 std::string Flags::to_s() const {

@@ -248,12 +248,14 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
     Parameters,
   };
 
+  std::vector<std::string> params;
   ParsingState pstate = ParsingState::Options;
   size_t i = 0;
+
   while (i < args.size()) {
     std::string arg = args[i];
     if (pstate == ParsingState::Parameters) {
-      flags.set("", arg, FlagStyle::UnnamedParameter, FlagType::String);
+      params.push_back(arg);
       i++;
     } else if (arg == "--") {
       pstate = ParsingState::Parameters;
@@ -330,6 +332,9 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
           call(name, value);
         }
       }
+    } else if (parametersEnabled_) {
+      params.push_back(arg);
+      i++;
     } else {
       // oops
       char buf[128];
@@ -337,6 +342,8 @@ Flags CLI::evaluate(const std::vector<std::string>& args) const {
       RAISE(ValidationError, buf);
     }
   }
+
+  flags.setParameters(params);
 
   // fill any missing default flags
   for (const FlagDef& fd: flagDefs_) {
@@ -371,7 +378,7 @@ std::string CLI::helpText(size_t width,
     sstr << std::endl;
 
     size_t p = sstr.tellp();
-    sstr << "    -- " << parametersPlaceholder_;
+    sstr << "    [--] " << parametersPlaceholder_;
     size_t column = static_cast<size_t>(sstr.tellp()) - p;
 
     if (column < helpTextOffset)
