@@ -74,7 +74,11 @@ else()
 endif()
 
 # required for shm_open/shm_unlink
-set(RT_LIBRARIES rt)
+if(APPLE)
+  set(RT_LIBRARIES)
+else()
+  set(RT_LIBRARIES rt)
+endif()
 
 if(NOT OPENSSL_FOUND)
   message(FATAL_ERROR "OpenSSL not found ;-(")
