@@ -72,7 +72,7 @@ RefPtr<LocalEndPoint> LocalConnector::createClient(
   RefPtr<LocalEndPoint> endpoint = pendingConnects_.back();
   endpoint->setInput(rawRequestMessage);
 
-  executor()->execute(std::bind(&LocalConnector::acceptOne, this));
+  executor()->execute(std::bind((void (LocalConnector::*)()) &LocalConnector::acceptOne, this));
 
   return endpoint;
 }
