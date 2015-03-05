@@ -67,7 +67,6 @@ int main() {
     printf("request\n");
     scheduler.execute(std::bind(&runJob, request, response, &scheduler));
     //threaded.execute(std::bind(&runJob, request, response, &scheduler));
-    return true;
   });
 
   server.start();
