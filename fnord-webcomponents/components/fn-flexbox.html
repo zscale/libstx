@@ -39,17 +39,20 @@
     }
 
     this.setItemSizes = function() {
-      var height = this.offsetHeight;
+      var fixed_height = 0;
       var fixed_height_items =
         this.querySelectorAll("fn-flexbox-item[data-height='fixed']");
 
       for (var i = 0; i < fixed_height_items.length; i++) {
-        var height = height - fixed_height_items[i].offsetHeight;
+        fixed_height += fixed_height_items[i].offsetHeight;
       }
 
-      var growing_item = this.querySelector("fn-flexbox-item[data-height='full']");
-      growing_item.style.height = (height -1) + "px";
+      var full_height_item = this.querySelector("fn-flexbox-item[data-height='full']");
+      full_height_item.style.height = "calc(100% - " + fixed_height + "px)";
+    };
 
+    this.onResize = function() {
+      this.setItemSizes();
     }
   }
   window.addEventListener('fn-ready', function() {
