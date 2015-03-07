@@ -329,6 +329,10 @@ void InetConnector::setMultiAcceptCount(size_t value) XZERO_NOEXCEPT {
   multiAcceptCount_ = value;
 }
 
+void InetConnector::setIdleTimeout(TimeSpan value) {
+  idleTimeout_ = value;
+}
+
 void InetConnector::setTcpFinTimeout(TimeSpan value) {
   tcpFinTimeout_ = value;
 }
