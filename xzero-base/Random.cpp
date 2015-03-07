@@ -8,6 +8,7 @@
 
 #include <xzero-base/Random.h>
 #include <sstream>
+#include <inttypes.h>
 
 namespace xzero {
 
@@ -25,10 +26,12 @@ uint64_t Random::random64() {
   }
 }
 
+#define UX64 "%08" PRIx64
+
 std::string Random::hex64() {
   uint64_t val = random64();
   char buf[9];
-  int n = snprintf(buf, sizeof(buf), "%08lx", val);
+  int n = snprintf(buf, sizeof(buf), UX64, val);
   return std::string(buf, n);
 }
 
@@ -38,7 +41,7 @@ std::string Random::hex128() {
   val[1] = random64();
 
   char buf[17];
-  int n = snprintf(buf, sizeof(buf), "%08lx%08lx", val[0], val[1]);
+  int n = snprintf(buf, sizeof(buf), UX64 UX64, val[0], val[1]);
   return std::string(buf, n);
 }
 
@@ -50,7 +53,7 @@ std::string Random::hex256() {
   val[3] = random64();
 
   char buf[33];
-  int n = snprintf(buf, sizeof(buf), "%08lx%08lx%08lx%08lx",
+  int n = snprintf(buf, sizeof(buf), UX64 UX64 UX64 UX64,
                    val[0], val[1], val[2], val[3]);
   return std::string(buf, n);
 }
@@ -68,9 +71,9 @@ std::string Random::hex512() {
 
   char buf[65];
   int n = snprintf(buf, sizeof(buf),
-                   "%08lx%08lx%08lx%08lx%08lx%08lx%08lx%08lx",
-                   val[0], val[1], val[2], val[3],
-                   val[4], val[5], val[6], val[7]);
+                  UX64 UX64 UX64 UX64 UX64 UX64 UX64 UX64,
+                  val[0], val[1], val[2], val[3],
+                  val[4], val[5], val[6], val[7]);
   return std::string(buf, n);
 }
 
