@@ -8,25 +8,45 @@
 #include <xzero-base/WallClock.h>
 #include <xzero-base/DateTime.h>
 #include <xzero-base/sysconfig.h>
+#include <xzero-base/RuntimeError.h>
+#include <sys/time.h>
 #include <ctime>
 
 namespace xzero {
 
-class SystemClock : public WallClock {
+class SimpleClock : public WallClock {
  public:
-  explicit SystemClock(int clkid);
+  DateTime get() const override;
+};
+
+DateTime SimpleClock::get() const {
+  struct timeval tv;
+  struct timezone tz;
+
+  int rc = gettimeofday(&tv, &tz);
+  if (rc < 0)
+    RAISE_ERRNO(errno);
+
+  return DateTime(
+      static_cast<double>(tv.tv_sec) +
+      TimeSpan::fromMicroseconds(tv.tv_usec).value());
+}
+
+#ifdef HAVE_CLOCK_GETTIME
+class HighPrecisionClock : public WallClock {
+ public:
+  explicit HighPrecisionClock(int clkid);
   DateTime get() const override;
 
  private:
   int clkid_;
 };
 
-SystemClock::SystemClock(int clkid)
+HighPrecisionClock::HighPrecisionClock(int clkid)
     : clkid_(clkid) {
 }
 
-DateTime SystemClock::get() const {
-#ifdef HAVE_CLOCK_GETTIME
+DateTime HighPrecisionClock::get() const {
   timespec ts;
   memset(&ts, 0, sizeof(ts));
   if (clock_gettime(clkid_, &ts) < 0)
@@ -35,27 +55,27 @@ DateTime SystemClock::get() const {
   return DateTime(
       static_cast<double>(ts.tv_sec) +
       TimeSpan::fromNanoseconds(ts.tv_nsec).value());
-#else
-  return DateTime(std::time(nullptr));
-#endif
 }
-
-#ifndef CLOCK_REALTIME
-#define CLOCK_REALTIME 0
-#endif
-
-#ifndef CLOCK_MONOTONIC
-#define CLOCK_MONOTONIC 0
 #endif
 
 WallClock* WallClock::system() {
-  static SystemClock clock(CLOCK_REALTIME);
+#ifdef HAVE_CLOCK_GETTIME
+  static HighPrecisionClock clock(CLOCK_REALTIME);
   return &clock;
+#else
+  static SimpleClock bc;
+  return &bc;
+#endif
 }
 
 WallClock* WallClock::monotonic() {
-  static SystemClock clock(CLOCK_MONOTONIC);
+#ifdef HAVE_CLOCK_GETTIME
+  static HighPrecisionClock clock(CLOCK_MONOTONIC);
   return &clock;
+#else
+  static SimpleClock bc;
+  return &bc;
+#endif
 }
 
 } // namespace xzero
