@@ -388,6 +388,8 @@ void InetConnector::onConnect() {
         connectedEndPoints_.push_back(endpoint);
       }
 
+      endpoint->setIdleTimeout(idleTimeout_);
+
       onEndPointCreated(endpoint);
     }
   });
