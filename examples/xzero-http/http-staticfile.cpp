@@ -64,6 +64,7 @@ int main(int argc, const char* argv[]) {
   auto inet = server.addConnector<xzero::InetConnector>(
       "http", &scheduler, &scheduler, clock,
       xzero::TimeSpan::fromSeconds(30),
+      xzero::TimeSpan::Zero,
       &xzero::consoleLogger,
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(

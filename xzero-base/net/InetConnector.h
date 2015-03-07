@@ -40,6 +40,8 @@ class XZERO_API InetConnector : public Connector {
    * @param scheduler Scheduler service to use for scheduling tasks
    * @param clock Wall clock used for timeout management.
    * @param idleTimeout timespan indicating how long a connection may be idle.
+   * @param tcpFinTimeout Timespan to leave client sockets in FIN_WAIT2 state.
+   *                      A value of 0 means to leave it at system default.
    * @param eh exception handler for errors in hooks or during events.
    * @param ipaddress TCP/IP address to listen on
    * @param port TCP/IP port number to listen on
@@ -50,7 +52,8 @@ class XZERO_API InetConnector : public Connector {
    * @throw std::runtime_error on any kind of runtime error.
    */
   InetConnector(const std::string& name, Executor* executor,
-                Scheduler* scheduler, WallClock* clock, TimeSpan idleTimeout,
+                Scheduler* scheduler, WallClock* clock,
+                TimeSpan idleTimeout, TimeSpan tcpFinTimeout,
                 std::function<void(const std::exception&)> eh,
                 const IPAddress& ipaddress, int port, int backlog,
                 bool reuseAddr, bool reusePort);
@@ -63,10 +66,13 @@ class XZERO_API InetConnector : public Connector {
    * @param scheduler Scheduler service to use for timeout management
    * @param clock Wall clock used for timeout management.
    * @param idleTimeout timespan indicating how long a connection may be idle.
+   * @param tcpFinTimeout Timespan to leave client sockets in FIN_WAIT2 state.
+   *                      A value of 0 means to leave it at system default.
    * @param eh exception handler for errors in hooks or during events.
    */
   InetConnector(const std::string& name, Executor* executor,
-                Scheduler* scheduler, WallClock* clock, TimeSpan idleTimeout,
+                Scheduler* scheduler, WallClock* clock,
+                TimeSpan idleTimeout, TimeSpan tcpFinTimeout,
                 std::function<void(const std::exception&)> eh);
 
   ~InetConnector();
@@ -190,6 +196,20 @@ class XZERO_API InetConnector : public Connector {
    */
   void setIdleTimeout(TimeSpan value);
 
+  /**
+   * Timespan for FIN_WAIT2 states of the client sockets.
+   *
+   * A value of 0 means to use the system default.
+   */
+  TimeSpan tcpFinTimeout() const XZERO_NOEXCEPT;
+
+  /**
+   * Sets the timespan to leave a closing client connection in FIN_WAIT2 state.
+   *
+   * A value of 0 means to use the system-wide default.
+   */
+  void setTcpFinTimeout(TimeSpan value);
+
   void start() override;
   bool isStarted() const XZERO_NOEXCEPT override;
   void stop() override;
@@ -262,6 +282,7 @@ class XZERO_API InetConnector : public Connector {
   size_t backlog_;
   size_t multiAcceptCount_;
   TimeSpan idleTimeout_;
+  TimeSpan tcpFinTimeout_;
   bool isStarted_;
 };
 
@@ -270,6 +291,10 @@ inline Scheduler* InetConnector::scheduler() const XZERO_NOEXCEPT {
 }
 
 inline TimeSpan InetConnector::idleTimeout() const XZERO_NOEXCEPT {
+  return idleTimeout_;
+}
+
+inline TimeSpan InetConnector::tcpFinTimeout() const XZERO_NOEXCEPT {
   return idleTimeout_;
 }
 

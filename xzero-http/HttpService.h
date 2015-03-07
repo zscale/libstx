@@ -49,13 +49,16 @@ class XZERO_HTTP_API HttpService {
    * @param scheduler where to schedule timed tasks on.
    * @param clock The wall clock that may be used for timeout management.
    * @param idleTimeout timespan indicating how long a connection may be idle.
+   * @param tcpFinTimeout Timespan to leave client sockets in FIN_WAIT2 state.
+   *                      A value of 0 means to leave it at system default.
    * @param ipaddress the TCP/IP bind address.
    * @param port the TCP/IP port to listen on.
    * @param backlog the number of connections allowed to be queued in kernel.
    *
    */
   InetConnector* configureInet(Executor* executor, Scheduler* scheduler,
-                               WallClock* clock, TimeSpan idleTimeout,
+                               WallClock* clock,
+                               TimeSpan idleTimeout, TimeSpan tcpFinTimeout,
                                const IPAddress& ipaddress,
                                int port, int backlog = 128);
 

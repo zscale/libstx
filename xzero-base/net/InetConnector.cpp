@@ -54,6 +54,7 @@ namespace xzero {
 InetConnector::InetConnector(const std::string& name, Executor* executor,
                              Scheduler* scheduler, WallClock* clock,
                              TimeSpan idleTimeout,
+                             TimeSpan tcpFinTimeout,
                              std::function<void(const std::exception&)> eh)
     : Connector(name, executor, clock),
       scheduler_(scheduler),
@@ -69,16 +70,19 @@ InetConnector::InetConnector(const std::string& name, Executor* executor,
       backlog_(256),
       multiAcceptCount_(1),
       idleTimeout_(idleTimeout),
+      tcpFinTimeout_(tcpFinTimeout),
       isStarted_(false) {
 }
 
 InetConnector::InetConnector(const std::string& name, Executor* executor,
                              Scheduler* scheduler, WallClock* clock,
                              TimeSpan idleTimeout,
+                             TimeSpan tcpFinTimeout,
                              std::function<void(const std::exception&)> eh,
                              const IPAddress& ipaddress, int port, int backlog,
                              bool reuseAddr, bool reusePort)
-    : InetConnector(name, executor, scheduler, clock, idleTimeout, eh) {
+    : InetConnector(name, executor, scheduler, clock,
+                    idleTimeout, tcpFinTimeout, eh) {
 
   open(ipaddress, port, backlog, reuseAddr, reusePort);
 }
@@ -311,8 +315,8 @@ bool InetConnector::reuseAddr() const {
 }
 
 void InetConnector::setReuseAddr(bool enable) {
-  int rc = enable ? 1 : 0;
-  if (::setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, &rc, sizeof(rc)) < 0) {
+  int secs = enable ? 1 : 0;
+  if (::setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, &secs, sizeof(secs)) < 0) {
     RAISE_ERRNO(errno);
   }
 }
@@ -323,6 +327,10 @@ size_t InetConnector::multiAcceptCount() const XZERO_NOEXCEPT {
 
 void InetConnector::setMultiAcceptCount(size_t value) XZERO_NOEXCEPT {
   multiAcceptCount_ = value;
+}
+
+void InetConnector::setTcpFinTimeout(TimeSpan value) {
+  tcpFinTimeout_ = value;
 }
 
 void InetConnector::start() {
@@ -416,6 +424,17 @@ int InetConnector::acceptOne() {
     ::close(cfd);
     RAISE_ERRNO(errno);
   }
+
+#if defined(TCP_LINGER2)
+  if (tcpFinTimeout_ != TimeSpan::Zero) {
+    int waitTime = tcpFinTimeout_.totalSeconds();
+    int rv = setsockopt(cfd, SOL_TCP, TCP_LINGER2, &waitTime, sizeof(waitTime));
+    if (rv < 0) {
+      ::close(cfd);
+      RAISE_ERRNO(errno);
+    }
+  }
+#endif
 
   return cfd;
 }
