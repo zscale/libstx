@@ -25,6 +25,7 @@ std::unique_ptr<xzero::SslConnector> createSslConnector( // {{{
   std::unique_ptr<xzero::SslConnector> connector(
       new xzero::SslConnector(name, executor, scheduler, clock,
                               xzero::TimeSpan::fromSeconds(30),
+                              xzero::TimeSpan::Zero,
                               [](const std::exception& e) {
                                   xzero::logDebug("hello", e); },
                               xzero::IPAddress("0.0.0.0"), port, 128,
@@ -44,6 +45,7 @@ int main() {
   auto inet = server.addConnector<xzero::InetConnector>(
       "http", &scheduler, &scheduler,  clock,
       xzero::TimeSpan::fromSeconds(60),
+      xzero::TimeSpan::Zero,
       &xzero::consoleLogger,
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   inet->setBlocking(false);

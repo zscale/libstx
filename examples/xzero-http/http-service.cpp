@@ -141,6 +141,7 @@ int main(int argc, const char* argv[]) {
 
   httpService.configureInet(&scheduler, &scheduler, clock,
                             xzero::TimeSpan::fromSeconds(10),
+                            xzero::TimeSpan::Zero,
                             xzero::IPAddress("0.0.0.0"), 3000);
   httpService.addHandler(&myHandler);
   httpService.addHandler(&builtinAssets);

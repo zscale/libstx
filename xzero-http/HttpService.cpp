@@ -81,13 +81,14 @@ InetConnector* HttpService::configureInet(Executor* executor,
                                           Scheduler* scheduler,
                                           WallClock* clock,
                                           TimeSpan idleTimeout,
+                                          TimeSpan tcpFinTimeout,
                                           const IPAddress& ipaddress,
                                           int port, int backlog) {
   if (inetConnector_ != nullptr)
     throw std::runtime_error("Multiple inet connectors not yet supported.");
 
   inetConnector_ = server_->addConnector<InetConnector>(
-      "http", executor, scheduler, clock, idleTimeout, nullptr,
+      "http", executor, scheduler, clock, idleTimeout, tcpFinTimeout, nullptr,
       ipaddress, port, backlog, true, false);
 
   enableHttp1(inetConnector_);
