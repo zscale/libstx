@@ -17,6 +17,7 @@
 #include <xzero-base/executor/DirectExecutor.h>
 #include <xzero-base/executor/NativeScheduler.h>
 #include <xzero-base/RuntimeError.h>
+#include <xzero-base/logging.h>
 
 using xzero::Buffer;
 using xzero::IPAddress;
@@ -102,32 +103,37 @@ std::unique_ptr<xzero::SslConnector> createSslConnector( // {{{
 
 
 int main(int argc, const char* argv[]) {
-  xzero::DirectExecutor executor(false);
-  xzero::NativeScheduler scheduler;
-  xzero::WallClock* clock = xzero::WallClock::monotonic();
-  xzero::Server server;
+  try {
+    xzero::DirectExecutor executor(false);
+    xzero::NativeScheduler scheduler;
+    xzero::WallClock* clock = xzero::WallClock::monotonic();
+    xzero::Server server;
 
-  auto localConnector = server.addConnector<xzero::LocalConnector>(&executor);
-  localConnector->addConnectionFactory<EchoFactory>();
+    auto localConnector = server.addConnector<xzero::LocalConnector>(&executor);
+    localConnector->addConnectionFactory<EchoFactory>();
 
-  auto inetConnector = createInetConnector("inet", 3000, &executor, &scheduler,
+    auto inetConnector = createInetConnector("inet", 3000, &executor, &scheduler,
+                                             clock);
+    inetConnector->addConnectionFactory<EchoFactory>();
+    server.addConnector(std::move(inetConnector));
+
+    auto sslConnector = createSslConnector("ssl", 3443, &executor, &scheduler,
                                            clock);
-  inetConnector->addConnectionFactory<EchoFactory>();
-  server.addConnector(std::move(inetConnector));
+    sslConnector->addConnectionFactory<EchoFactory>();
+    server.addConnector(std::move(sslConnector));
 
-  auto sslConnector = createSslConnector("ssl", 3443, &executor, &scheduler,
-                                         clock);
-  sslConnector->addConnectionFactory<EchoFactory>();
-  server.addConnector(std::move(sslConnector));
+    server.start();
 
-  server.start();
+    auto ep = localConnector->createClient("Hello, World!\n");
+    printf("local result: %s", ep->output().c_str());
 
-  auto ep = localConnector->createClient("Hello, World!\n");
-  printf("local result: %s", ep->output().c_str());
+    scheduler.runLoop();
 
-  scheduler.runLoop();
-
-  server.stop();
+    server.stop();
+  } catch (const std::exception& e) {
+    //xzero::logError("main", e);
+    xzero::consoleLogger(e);
+  }
 
   return 0;
 }
