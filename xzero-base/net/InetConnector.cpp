@@ -12,6 +12,7 @@
 #include <xzero-base/net/Connection.h>
 #include <xzero-base/net/IPAddress.h>
 #include <xzero-base/RuntimeError.h>
+#include <xzero-base/logging.h>
 #include <xzero-base/sysconfig.h>
 #include <algorithm>
 #include <mutex>
@@ -256,7 +257,10 @@ void InetConnector::setDeferAccept(bool enable) {
     RAISE_ERRNO(errno);
   }
 #else
-  RAISE_ERRNO(ENOTSUP);
+  if (enable) {
+    logWarning("InetConnector",
+               "Ignoring setting TCP_DEFER_ACCEPT. Not supported.");
+  }
 #endif
 }
 
