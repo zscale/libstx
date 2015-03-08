@@ -17,6 +17,7 @@
 #include <cassert>
 #include <string>
 #include <stdexcept>
+#include <new>
 
 namespace xzero {
 
@@ -25,7 +26,7 @@ namespace xzero {
 
 template <typename>
 class BufferBase;
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 class MutableBuffer;
 class BufferRef;
 class BufferSlice;
@@ -361,8 +362,8 @@ class XZERO_API BufferRef : public BufferBase<char*> {
 // }}}
 // {{{ MutableBuffer
 
-inline bool immutableEnsure(void* self, size_t size);
-inline bool mutableEnsure(void* self, size_t size);
+inline void immutableEnsure(void* self, size_t size);
+inline void mutableEnsure(void* self, size_t size);
 
 /**
  * \brief Fixed size unmanaged mutable buffer.
@@ -370,7 +371,7 @@ inline bool mutableEnsure(void* self, size_t size);
  * @param ensure function invoked to ensure that enough space is available to
  *write to.
  */
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 class XZERO_API MutableBuffer : public BufferRef {
  protected:
   size_t capacity_;
@@ -386,7 +387,7 @@ class XZERO_API MutableBuffer : public BufferRef {
   size_t capacity() const;
   bool operator!() const;
 
-  bool reserve(size_t value);
+  void reserve(size_t value);
 
   // buffer builders
   void push_back(value_type value);
@@ -485,7 +486,7 @@ class XZERO_API Buffer : public MutableBuffer<mutableEnsure> {
   BufferSlice slice(size_t offset = 0) const;
   BufferSlice slice(size_t offset, size_t size) const;
 
-  bool setCapacity(size_t value);
+  void setCapacity(size_t value);
 
   //	operator bool () const;
   //	bool operator!() const;
@@ -1128,16 +1129,19 @@ inline bool operator==(PodType (&a)[N], const BufferBase<T>& b) {
   return equals<T, PodType, N>(b, a);
 }
 
-inline bool immutableEnsure(void* self, size_t size) {
+inline void immutableEnsure(void* self, size_t size) {
   MutableBuffer<immutableEnsure>* buffer =
       (MutableBuffer<immutableEnsure>*)self;
-  return size <= buffer->capacity();
+  if (size > buffer->capacity()) {
+    throw std::bad_alloc();
+  }
 }
 
-inline bool mutableEnsure(void* self, size_t size) {
+inline void mutableEnsure(void* self, size_t size) {
   Buffer* buffer = (Buffer*)self;
-  return size > buffer->capacity() || size == 0 ? buffer->setCapacity(size)
-                                                : true;
+  if (size > buffer->capacity() || size == 0) {
+    buffer->setCapacity(size);
+  }
 }
 // }}}
 // {{{ BufferRef impl
@@ -1172,15 +1176,15 @@ inline void BufferRef::shr(ssize_t value) {
 }
 // }}}
 // {{{ MutableBuffer<ensure> impl
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline MutableBuffer<ensure>::MutableBuffer()
     : BufferRef(), capacity_(0) {}
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline MutableBuffer<ensure>::MutableBuffer(const MutableBuffer& v)
     : BufferRef(v), capacity_(v.capacity_) {}
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline MutableBuffer<ensure>::MutableBuffer(MutableBuffer&& v)
     : BufferRef(std::move(v)), capacity_(std::move(v.capacity_)) {
   v.data_ = nullptr;
@@ -1188,12 +1192,12 @@ inline MutableBuffer<ensure>::MutableBuffer(MutableBuffer&& v)
   v.capacity_ = 0;
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline MutableBuffer<ensure>::MutableBuffer(char* value, size_t capacity,
                                             size_t size)
     : BufferRef(value, size), capacity_(capacity) {}
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline bool MutableBuffer<ensure>::resize(size_t value) {
   if (value > capacity_) return false;
 
@@ -1201,14 +1205,14 @@ inline bool MutableBuffer<ensure>::resize(size_t value) {
   return true;
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline size_t MutableBuffer<ensure>::capacity() const {
   return capacity_;
 }
 
-template <bool (*ensure)(void*, size_t)>
-inline bool MutableBuffer<ensure>::reserve(size_t value) {
-  return ensure(this, value);
+template <void (*ensure)(void*, size_t)>
+inline void MutableBuffer<ensure>::reserve(size_t value) {
+  ensure(this, value);
 }
 
 // TODO: implement operator bool() and verify it's working for:
@@ -1216,100 +1220,98 @@ inline bool MutableBuffer<ensure>::reserve(size_t value) {
 //     if (foo()) {}
 //     if (someBufferRef) {}
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline bool MutableBuffer<ensure>::operator!() const {
   return empty();
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline void MutableBuffer<ensure>::push_back(value_type value) {
-  if (reserve(size() + sizeof(value))) {
-    data_[size_++] = value;
-  }
+  reserve(size() + sizeof(value));
+  data_[size_++] = value;
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline void MutableBuffer<ensure>::push_back(int value) {
   char buf[32];
   int n = std::snprintf(buf, sizeof(buf), "%d", value);
   push_back(buf, n);
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline void MutableBuffer<ensure>::push_back(long value) {
   char buf[32];
   int n = std::snprintf(buf, sizeof(buf), "%ld", value);
   push_back(buf, n);
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline void MutableBuffer<ensure>::push_back(long long value) {
   char buf[32];
   int n = std::snprintf(buf, sizeof(buf), "%lld", value);
   push_back(buf, n);
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline void MutableBuffer<ensure>::push_back(unsigned value) {
   char buf[32];
   int n = std::snprintf(buf, sizeof(buf), "%u", value);
   push_back(buf, n);
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline void MutableBuffer<ensure>::push_back(unsigned long value) {
   char buf[32];
   int n = std::snprintf(buf, sizeof(buf), "%lu", value);
   push_back(buf, n);
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline void MutableBuffer<ensure>::push_back(unsigned long long value) {
   char buf[32];
   int n = std::snprintf(buf, sizeof(buf), "%llu", value);
   push_back(buf, n);
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline void MutableBuffer<ensure>::push_back(const BufferRef& value) {
   if (size_t len = value.size()) {
-    if (reserve(size_ + len)) {
-      std::memcpy(end(), value.cbegin(), len);
-      size_ += len;
-    }
+    reserve(size_ + len);
+    std::memcpy(end(), value.cbegin(), len);
+    size_ += len;
   }
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline void MutableBuffer<ensure>::push_back(const BufferRef& value,
                                              size_t offset, size_t length) {
   assert(value.size() <= offset + length);
 
-  if (!length) return;
+  if (!length)
+    return;
 
-  if (reserve(size_ + length)) {
-    memcpy(end(), value.cbegin() + offset, length);
-    size_ += length;
-  }
+  reserve(size_ + length);
+
+  memcpy(end(), value.cbegin() + offset, length);
+  size_ += length;
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline void MutableBuffer<ensure>::push_back(const std::string& value) {
   if (size_t len = value.size()) {
-    if (reserve(size_ + len)) {
-      std::memcpy(end(), value.data(), len);
-      size_ += len;
-    }
+    reserve(size_ + len);
+    std::memcpy(end(), value.data(), len);
+    size_ += len;
   }
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 template <typename PodType, size_t N>
 inline void MutableBuffer<ensure>::push_back(PodType (&value)[N]) {
   push_back(reinterpret_cast<const void*>(value), N - 1);
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline void MutableBuffer<ensure>::push_back(const void* value, size_t size) {
   if (size) {
     reserve(size_ + size);
@@ -1319,7 +1321,7 @@ inline void MutableBuffer<ensure>::push_back(const void* value, size_t size) {
   }
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline size_t MutableBuffer<ensure>::vprintf(const char* fmt, va_list args) {
   size_t initialLength = size();
   reserve(size() + strlen(fmt) + 1);
@@ -1338,24 +1340,20 @@ inline size_t MutableBuffer<ensure>::vprintf(const char* fmt, va_list args) {
     buflen = buflen > -1 ? buflen + 1      // glibc >= 2.1
                          : capacity_ * 2;  // glibc <= 2.0
 
-    if (!reserve(capacity_ + buflen)) {
-      // increasing capacity failed
-      data_[capacity_ - 1] = '\0';
-      break;  // alloc failure
-    }
+    reserve(capacity_ + buflen);
   }
 
   return size() - initialLength;
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline size_t MutableBuffer<ensure>::printf(const char* fmt) {
   const size_t initialLength = size();
   push_back(fmt);
   return size() - initialLength;
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 template <typename... Args>
 inline size_t MutableBuffer<ensure>::printf(const char* fmt, Args... args) {
   const size_t initialLength = size();
@@ -1372,17 +1370,13 @@ inline size_t MutableBuffer<ensure>::printf(const char* fmt, Args... args) {
     buflen = buflen > -1 ? buflen + 1      // glibc >= 2.1
                          : capacity_ * 2;  // glibc <= 2.0
 
-    if (!reserve(capacity_ + buflen)) {
-      // increasing capacity failed
-      data_[capacity_ - 1] = '\0';
-      break;  // alloc failure
-    }
+    reserve(capacity_ + buflen);
   }
 
   return size() - initialLength;
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline typename MutableBuffer<ensure>::reference_type MutableBuffer<ensure>::
 operator[](size_t index) {
   assert(index < size_);
@@ -1390,7 +1384,7 @@ operator[](size_t index) {
   return data_[index];
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline typename MutableBuffer<ensure>::const_reference_type
 MutableBuffer<ensure>::
 operator[](size_t index) const {
@@ -1399,14 +1393,12 @@ operator[](size_t index) const {
   return data_[index];
 }
 
-template <bool (*ensure)(void*, size_t)>
+template <void (*ensure)(void*, size_t)>
 inline const Buffer::value_type* MutableBuffer<ensure>::c_str() const {
-  if (const_cast<MutableBuffer<ensure>*>(this)->reserve(size_ + 1)) {
-    const_cast<MutableBuffer<ensure>*>(this)->data_[size_] = '\0';
-    return data_;
-  } else {
-    return nullptr;
-  }
+  const_cast<MutableBuffer<ensure>*>(this)->reserve(size_ + 1);
+  const_cast<MutableBuffer<ensure>*>(this)->data_[size_] = '\0';
+
+  return data_;
 }
 // }}}
 // {{{ free functions impl

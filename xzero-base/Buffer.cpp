@@ -7,6 +7,7 @@
 
 #include <xzero-base/Buffer.h>
 #include <sstream>
+#include <cstdlib>
 #include <new>
 
 namespace xzero {
@@ -32,11 +33,11 @@ namespace xzero {
  * \retval true the requested capacity is available. go ahead.
  * \retval false could not change capacity. take caution!
  */
-bool Buffer::setCapacity(std::size_t value) {
+void Buffer::setCapacity(std::size_t value) {
   if (value == 0 && capacity_) {
     free(data_);
     capacity_ = 0;
-    return true;
+    return;
   }
 
   if (value > capacity_) {
@@ -47,24 +48,24 @@ bool Buffer::setCapacity(std::size_t value) {
     }
   } else if (value < capacity_) {
     // possibly adjust the actual used size
-    if (value < size_) size_ = value;
-  } else
+    if (value < size_) {
+      size_ = value;
+    }
+  } else {
     // nothing changed
-    return true;
+    return;
+  }
 
   if (char *rp = static_cast<value_type *>(std::realloc(data_, value))) {
     // setting capacity succeed.
     data_ = rp;
     capacity_ = value;
-    return true;
   } else if (value == 0) {
     // freeing all Memory succeed.
     capacity_ = value;
-    return true;
   } else {
     // setting capacity failed, do not change anything.
     throw std::bad_alloc();
-    //return false;
   }
 }
 
