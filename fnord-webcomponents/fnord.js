@@ -47,6 +47,18 @@ Fnord.ready = function() {
   document.body.removeAttribute("data-unresolved");
 };
 
+Fnord.onWindowResize = function() {
+  var items = document.body.querySelectorAll(".resizable");
+
+  for (var i = 0; i < items.length; i++) {
+    try {
+      items[i].onResize();
+    } catch (e) {
+      console.log("function doesn't exists");
+    }
+  }
+}
+
 Fnord.httpGet = function(url, callback) {
   var http = new XMLHttpRequest();
   http.open("GET", url, true);
@@ -115,163 +127,98 @@ Fnord.setAttributes = function(attrs, elem) {
   }
 }
 
-Fnord.parseQueryString = function(qstr) {
-  var path;
-  var query_params = {};
-
-  if (qstr.indexOf("?") >= 0) {
-    path = qstr.substr(0, qstr.indexOf("?"));
-
-    var params = qstr.substr(qstr.indexOf("?") + 1).split('&');
-    for (var i = 0; i < params.length; ++i) {
-      var param = params[i].split('=');
-      query_params[decodeURIComponent(param[0])] = decodeURIComponent(param[1]);
-    }
-  } else {
-    path = qstr;
+Fnord.appendLeadingZero = function (num) {
+  var num = num;
+  if (typeof num == 'string') {
+    return (num.length > 1)? num : "0" + num;
   }
-
-  return {
-    "path": path,
-    "params": query_params
-  };
-}
-
-Fnord.parseUrlQueryString = function(qstr) {
-  if (qstr == null) {return;}
-  var path;
-  var query_params = {};
-
-  if (qstr.indexOf("?") >= 0) {
-    path = qstr.substr(0, qstr.indexOf("?"));
-    path = path.replace("#", "");
-
-    var params_str = qstr.substr(qstr.indexOf("?") + 1);
-    var raw_params = params_str.split('&');
-
-    /* set first param which defines view's view (metric, search ...) */
-    var param = raw_params[0].split('=');
-    query_params.innerView = decodeURIComponent(param[0]);
-    query_params.innerViewValue = decodeURIComponent(param[1]);
-
-    for (var i = 1; i < raw_params.length; i++) {
-      var param = (raw_params[i].split('=') != "undefined") ? 
-        raw_params[i].split('=') : "";
-      if (param[0] != "undefined") {
-        query_params[decodeURIComponent(param[0])] =
-           (param[1] != "undefined") ? 
-           decodeURIComponent(param[1]) : "";
-      }
-    }
-
-  } else {
-    path = qstr != "undefined" ? qstr : "";
-  }
-
-  return {
-    "path": path,
-    "query_params": query_params
-  }
+  return (num > 9)? num : "0" + num;
 };
 
-Fnord.parseMetricQueryUrl = function(qstr) {
-  if (qstr == null) {return;}
-  var path;
-  var params = {};
-  var metricCollector = {};
-  var metricIndex = 0;
+/**
+  * @param offset in seconds
+  */
+Fnord.parseTimeOffset = function(offset) {
+  if (offset < 60) {
+    var label = (offset == 1)? " second ago" : " seconds ago";
+    return offset + label;
+  } else if (offset < 3600) {
+    var time = Math.floor(offset / 60);
+    var label = (time == 1)? " minute ago" : " minutes ago";
+    return time + label;
+  } else if (offset < 86400) {
+    var time =  Math.floor(offset / 3600);
+    var label = (time == 1)? " hour ago" : " hours ago";
+    return time + label;
+  } else {
+    var time = Math.floor(offset / 86400);
+    var label = (time == 1)? " day ago" : " days ago";
+    return time + label;
+  }
+}
 
-  if (qstr.indexOf("?") >= 0) {
-    path = qstr.substr(0, qstr.indexOf("?"));
-    path = path.replace("#", "");
+/**
+  * creates a time description like 
+  * '2 hours ago - Nov 8 2014 11:33:11
+  * @param timestamp unix ts in seconds, milli or microseconds
+  */
+Fnord.parseTimestamp = function(timestamp) {
+  if (timestamp == 0) {
+    return "0";
+  }
 
-    var params_str = qstr.substr(qstr.indexOf("?") + 1);
-    var raw_params = params_str.split('&');
+  var months = [
+    "Jan","Feb", "Mar","Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct","Nov", "Dec"];
 
-    /*set main metric */
-    var metric = raw_params[0].split('=');
-    if (metric[0] != "metric") {return;}
+  var timestamp = Math.floor(timestamp / 1000);
 
-    metricCollector.name = decodeURIComponent(metric[1]);
+  var now = Date.now();
+  var date = new Date(timestamp);
 
-    for (var i = 1; i < raw_params.length; i++) {
-      var param = raw_params[i].split("=");
-      if (!param[0]) {continue;}
+  var offset =  Math.floor(
+    (now - timestamp) / 1000);
 
-      var key = decodeURIComponent(param[0]);
-      var value = decodeURIComponent(param[1]);
+  var time_str = Fnord.parseTimeOffset(offset);
 
-      if (Fnord.isMetricParam(key)) {
-        metricCollector[key] = value;
-      } else if (key == "metric") {
-        //new submetric
-        params["metric" + metricIndex] = metricCollector;
-        metricIndex++;
-        mainMetric = false;
-        metricCollector = {};
-        metricCollector.name = value;
-      } else if (Fnord.isGenericParam(key)) {
-        params[key] = value;
-      }
+
+  var minutes = date.getMinutes();
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+
+  var seconds = date.getSeconds();
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  }
+
+  time_str +=
+    " - " + 
+    months[date.getMonth()] + 
+    " " + date.getDate() +
+    " " + date.getFullYear() +
+    " " + date.getHours() +
+    ":" + minutes +
+    ":" + seconds
+
+  return time_str;
+}
+
+Fnord.closeOpenDropdowns = function() {
+  var active_items = document.body.querySelectorAll("[data-active]");
+
+  for (var i = 0; i < active_items.length; i++) {
+    if (typeof active_items[i].onDocumentClick == 'function') {
+      active_items[i].onDocumentClick();
     }
-
-    params["metric" + metricIndex] = metricCollector;
-    params.metrics = metricIndex + 1;
   }
-
-  return params;
-};
-
-Fnord.setUrlFromQueryString = function(hash, query_params, push_state) {
-  if (hash === undefined || hash === "undefined") {
-    window.location.hash = "";
-    return;
-  }
-  var path = "#" + hash;
-
-  if ("innerView" in query_params && query_params.innerView != undefined) {
-    path += "?" + encodeURIComponent(query_params.innerView) + "=";
-    path +=
-      encodeURIComponent(query_params.innerViewValue);
-
-    for (var param in query_params) {
-      if (param != "innerView" && 
-          param != "innerViewValue" &&
-          query_params[param] != undefined &&
-          query_params[param].length > 0) {
-
-        path += 
-          "&" + encodeURIComponent(param) +
-          "=" + encodeURIComponent(query_params[param]);
-      }
-    }
-  }
-
-  if (push_state) {
-    window.history.pushState({url:path}, "#", path);
-  }
-  window.location.hash = path;
-  return path;
 }
 
-Fnord.isMetricParam = function(key) {
-  var metricParamKeys = ["aggr_fn", "aggr_window", "aggr_step", "scale", "group_by"];
-  return (metricParamKeys.indexOf(key) > -1);
-}
-
-Fnord.isGenericParam = function(key) {
-  //params that can be changed
-  var genericParamKeys = ["from", "until", "logarithmic", "inverted", "metrics", "format"];
-  return (genericParamKeys.indexOf(key) > -1);
-}
-
-Fnord.openUrl = function(url) {
-  alert("openurl is not defined!");
-}
-
-Fnord.setUrlHash = function(url_hash) {
-  window.history.pushState({url: url_hash}, "#", url_hash);
-  window.location.hash = url_hash;
-}
 
 Fnord.ready();
+
+window.onresize = function() {
+  Fnord.onWindowResize();
+}
+
+document.body.addEventListener('click', Fnord.closeOpenDropdowns, false);
