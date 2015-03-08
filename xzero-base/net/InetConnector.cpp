@@ -260,6 +260,15 @@ void InetConnector::setDeferAccept(bool enable) {
   if (::setsockopt(socket_, SOL_TCP, TCP_DEFER_ACCEPT, &rc, sizeof(rc)) < 0) {
     RAISE_ERRNO(errno);
   }
+#elif defined(SO_ACCEPTFILTER)
+  // XXX this compiles on FreeBSD but not on OSX (why don't they support it?)
+  accept_filter_arg afa;
+  strcpy(afa.af_name, "dataready");
+  afa.af_arg[0] = 0;
+
+  if (setsockopt(serverfd, SOL_SOCKET, SO_ACCEPTFILTER, &afa, sizeof(afa)) < 0) {
+    RAISE_ERRNO(errno);
+  }
 #else
   if (enable) {
     logWarning("InetConnector",
