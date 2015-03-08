@@ -7,6 +7,7 @@
 
 #include <xzero-http/http1/HttpParser.h>
 #include <xzero-http/HttpListener.h>
+#include <xzero-base/logging.h>
 
 namespace xzero {
 namespace http1 {
@@ -987,8 +988,7 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
           TRACE(1, "parse: internal error at nparsed: %ld, character: 0x%02X",
                 *nparsed, *i);
         }
-        Buffer::dump(chunk.data(), chunk.size(),
-                     "request chunk (at unknown state)");
+        logDebug("HttpParser", "%s", chunk.hexdump().c_str());
 #endif
         goto done;
     }
