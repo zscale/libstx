@@ -90,6 +90,12 @@ struct BufferTraits<Buffer> {
 };
 // }}}
 // {{{ BufferBase<T>
+enum class HexDumpMode {
+  Simple,
+  SimpleSpaced,
+  PrettyAscii
+};
+
 template <typename T>
 class XZERO_API BufferBase {
  public:
@@ -205,7 +211,7 @@ class XZERO_API BufferBase {
   double toDouble() const;
   float toFloat() const;
 
-  void dump(const char* description = nullptr) const;
+  std::string hexdump(HexDumpMode mode = HexDumpMode::Simple) const;
 };
 
 template <typename T>
@@ -314,9 +320,10 @@ class XZERO_API BufferRef : public BufferBase<char*> {
    */
   void shr(ssize_t offset = 1);
 
-  using BufferBase<char*>::dump;
-  static void dump(const void* bytes, std::size_t length,
-                   const char* description);
+  using BufferBase<char*>::hexdump;
+  static std::string hexdump(
+      const void* bytes, std::size_t length,
+      HexDumpMode mode);
 
   class XZERO_API reverse_iterator {  // {{{
    private:
@@ -1031,8 +1038,8 @@ inline float BufferBase<T>::toFloat() const {
 }
 
 template <typename T>
-inline void BufferBase<T>::dump(const char* description) const {
-  BufferRef::dump(data(), size(), description);
+inline std::string BufferBase<T>::hexdump(HexDumpMode mode) const {
+  return BufferRef::hexdump(data(), size(), mode);
 }
 
 // --------------------------------------------------------------------------

@@ -6,8 +6,8 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero-base/Buffer.h>
+#include <sstream>
 #include <new>
-#include <cstdio>
 
 namespace xzero {
 
@@ -68,9 +68,11 @@ bool Buffer::setCapacity(std::size_t value) {
   }
 }
 
-void BufferRef::dump(const void *bytes, std::size_t length,
-                     const char *description) {
-  static char hex[] = "0123456789ABCDEF";
+std::string BufferRef::hexdump(
+    const void *bytes,
+    std::size_t length,
+    HexDumpMode mode) {
+  static const char hex[] = "0123456789ABCDEF";
   const int BLOCK_SIZE = 8;
   const int BLOCK_COUNT = 2;  // 4;
 
@@ -79,12 +81,9 @@ void BufferRef::dump(const void *bytes, std::size_t length,
   const int PLAIN_WIDTH = BLOCK_SIZE * BLOCK_COUNT;
   char line[HEX_WIDTH + PLAIN_WIDTH + 1];
 
-  const char *p = (const char *)bytes;
+  std::stringstream sstr;
 
-  if (description && *description)
-    std::printf("%s (%zu bytes):\n", description, length);
-  else
-    std::printf("Memory dump (%zu bytes):\n", length);
+  const char *p = (const char *)bytes;
 
   while (length > 0) {
     char *u = line;
@@ -133,8 +132,10 @@ void BufferRef::dump(const void *bytes, std::size_t length,
     // EOS
     *v = '\0';
 
-    std::printf("%s\n", line);
+    sstr << line << std::endl;
   }
+
+  return sstr.str();
 }
 
 }  // namespace xzero
