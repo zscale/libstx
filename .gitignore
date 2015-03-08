@@ -18,3 +18,5 @@
 
 # some developer-local sandbox
 /sandbox
+
+.DS_Store
