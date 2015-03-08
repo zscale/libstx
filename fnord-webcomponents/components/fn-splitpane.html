@@ -8,65 +8,13 @@
   copy of the GNU General Public License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 -->
-<style type='text/css'>
-  fn-splitpane {
-    display: block;
-  }
 
-</style>
 <template id="fn-splitpane-base-tpl">
-  <style>
-    #splitter {
-      box-sizing: content-box;
-      overflow: hidden;
-      position: relative;
-      display:block;
-      height: 100%;
-      width: 100%;
-    }
-
-    #splitter .pane {
-      position: absolute;
-      box-sizing: border-box;
-      color: #959595;
-      box-sizing: content-box;
-      overflow: hidden;
-      outline: none;
-      display:block;
-      height: 100%;
-    }
-
-    .resizer_tooltip {
-      display:block;
-      z-index: 100;
-      background: #d7e4f2;
-      position:absolute;
-
-    }
-
-    .resizer_tooltip:hover {
-      background: #d7e4f2;
-    }
-
-
-  </style>
-  <div id="splitter">
-    <div class="pane left">
-      <content select="fn-splitpane-left"></content>
-    </div>
-    <div class="resizer_tooltip"></div>
-    <div class="pane right">
-      <content select="fn-splitpane-right"></content>
-    </div>
-  </div>
 </template>
 
 <script type="text/javascript">
   var SplitPaneComponent = function() {
     this.createdCallback = function() {
-      var shadow = this.createShadowRoot();
-      var tpl = Fnord.getTemplate("fn-splitpane", "base");
-      shadow.appendChild(tpl);
       this.renderView();
       this.initResizerTooltip();
     };
@@ -88,13 +36,11 @@
         this.setAttribute('data-split-direction', 'vertical');
         this.renderVerticalView();
       }
-    }
-
-
+    };
 
     this.initResizerTooltip = function() {
       var base = this;
-      var resizer_tooltip = this.shadowRoot.querySelector(".resizer_tooltip");
+      var resizer_tooltip = this.querySelector("fn-splitpane-resizer");
       resizer_tooltip.setAttribute("draggable", "true");
 
       var benchmark_x;
@@ -120,18 +66,18 @@
       }, false);
     };
 
-
     this.resizeVerticalView = function(offset) {
-      var min_width = this.getAttribute('data-min-position-vertical');
+      var min_width = this.getAttribute('data-width');
+
       if (min_width != null) {
         min_width = parseInt(min_width, 10);
       } else {
         min_width = 0;
       }
 
-      var left_pane = this.shadowRoot.querySelector(".left");
-      var right_pane = this.shadowRoot.querySelector(".right");
-      var resizer_tooltip = this.shadowRoot.querySelector(".resizer_tooltip");
+      var left_pane = this.querySelector("fn-splitpane-left");
+      var right_pane = this.querySelector("fn-splitpane-right");
+      var resizer_tooltip = this.querySelector("fn-splitpane-resizer");
 
       var left_pane_width = left_pane.offsetWidth - offset;
       var right_pane_width = this.offsetWidth - left_pane_width;
@@ -145,16 +91,16 @@
     };
 
     this.resizeHorizontalView = function(offset) {
-      var min_height = this.getAttribute('data-min-position-horizontal');
+      var min_height = this.getAttribute('data-height');
       if (min_height != null) {
         min_height = parseInt(min_height, 10);
       } else {
         min_height = 0;
       }
 
-      var left_pane = this.shadowRoot.querySelector(".left");
-      var right_pane = this.shadowRoot.querySelector(".right");
-      var resizer_tooltip = this.shadowRoot.querySelector(".resizer_tooltip");
+      var left_pane = this.querySelector("fn-splitpane-left");
+      var right_pane = this.querySelector("fn-splitpane-right");
+      var resizer_tooltip = this.querySelector("fn-splitpane-resizer");
 
       var left_pane_height = left_pane.offsetHeight - offset;
       var right_pane_height = this.offsetHeight- left_pane_height;
@@ -180,12 +126,12 @@
         left : "50%",
         right : "50%"
       };
-    }
+    };
 
     this.renderVerticalView = function() {
-      var left_pane = this.shadowRoot.querySelector(".left");
-      var right_pane = this.shadowRoot.querySelector(".right");
-      var resizer_tooltip = this.shadowRoot.querySelector(".resizer_tooltip");
+      var left_pane = this.querySelector("fn-splitpane-left");
+      var right_pane = this.querySelector("fn-splitpane-right");
+      var resizer_tooltip = this.querySelector("fn-splitpane-resizer");
 
       var widths = this.getPaneWidths();
       var left_pane_height = "100%";
@@ -207,9 +153,9 @@
     };
 
     this.renderHorizontalView = function() {
-      var left_pane = this.shadowRoot.querySelector(".left");
-      var right_pane = this.shadowRoot.querySelector(".right");
-      var resizer_tooltip = this.shadowRoot.querySelector(".resizer_tooltip");
+      var left_pane = this.querySelector("fn-splitpane-left");
+      var right_pane = this.querySelector("fn-splitpane-right");
+      var resizer_tooltip = this.querySelector("fn-splitpane-resizer");
 
       var height = this.offsetHeight / 2;
       var width = this.offsetWidth;
