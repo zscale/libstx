@@ -387,11 +387,13 @@ TEST(FixedBuffer, mutateOverflow) {
   char buf[8];
   FixedBuffer obj(buf, sizeof(buf), 0);
 
-  obj.push_back("0123456789");
+  ASSERT_THROW(obj.push_back("0123456789"), std::bad_alloc);
 
-  ASSERT_EQ(8, obj.size());
-  ASSERT_EQ("01234567", obj);
-  ASSERT_EQ(nullptr, obj.c_str());
+  obj.push_back("0123456");
+
+  ASSERT_EQ(7, obj.size());
+  ASSERT_EQ("0123456", obj);
+  ASSERT_EQ(buf, obj.c_str());
 }
 // }}}
 #if 0   // {{{ legacy tests not yet ported to gtest
