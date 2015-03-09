@@ -12,10 +12,6 @@
 - [ ] MappedFile
 - [ ] UDP networking
 - [ ] BufferUtil
-- [ ] string formatting: `StringUtil::format()` as `std::string formatString(fmt, ...)`
-- [ ] string formatting: `StringUtil::hexPrint()` as `formatHex(...)` or `hexdump()`
-- [ ] string formatting: `StringUtil::join()`
-- [ ] string formatting: `StringUtil::split()`
 - [ ] introspection: `std::string inspect(const TYPE&)`
 - [ ] URI as Uri
 - [ ] Application
@@ -31,6 +27,9 @@
 - [x] timeconstants: via already existing `TimeSpan`
 - [x] DnsCache: as DnsClient
 - [x] flagparser as posix/getopt compliant option parser
+- [x] string formatting: `StringUtil::hexPrint()` as `Buffer*::hexdump()`
+- [x] WallClock to provide high resolution timings.
+- [x] StringUtil (except hexPrint, b/c it's in BufferRef already)
 
 ### concerns during converge
 
