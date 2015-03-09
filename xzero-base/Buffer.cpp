@@ -7,6 +7,7 @@
 
 #include <xzero-base/Buffer.h>
 #include <sstream>
+#include <iomanip>
 #include <cstdlib>
 #include <new>
 
@@ -73,18 +74,59 @@ std::string BufferRef::hexdump(
     const void *bytes,
     std::size_t length,
     HexDumpMode mode) {
-  static const char hex[] = "0123456789ABCDEF";
+
+  switch (mode) {
+    case HexDumpMode::InlineNarrow:
+      return hexdumpInlineNarrow(bytes, length);
+    case HexDumpMode::InlineWide:
+      return hexdumpInlineWide(bytes, length);
+    case HexDumpMode::PrettyAscii:
+      return hexdumpPrettyAscii(bytes, length);
+  }
+}
+
+const char BufferRef::hex[16] = {
+  '0', '1', '2', '3', '4', '5', '6', '7',
+  '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+};
+
+std::string BufferRef::hexdumpInlineNarrow(const void* bytes, size_t length) {
+  std::stringstream sstr;
+  const unsigned char* p = (const unsigned char*) bytes;
+
+  for (size_t i = 0; i < length; ++i) {
+    sstr << hex[(*p >> 4) & 0x0F];
+    sstr << hex[*p & 0x0F];
+    ++p;
+  }
+
+  return sstr.str();
+}
+
+std::string BufferRef::hexdumpInlineWide(const void* bytes, size_t length) {
+  std::stringstream sstr;
+  const unsigned char* p = (const unsigned char*) bytes;
+
+  for (size_t i = 0; i < length; ++i) {
+    if (i) sstr << ' ';
+    sstr << hex[(*p >> 4) & 0x0F];
+    sstr << hex[*p & 0x0F];
+    ++p;
+  }
+
+  return sstr.str();
+}
+
+std::string BufferRef::hexdumpPrettyAscii(const void* bytes, size_t length) {
+  // 12 34 56 78   12 34 56 78   12 34 56 78   12 34 56 78   12345678abcdef
   const int BLOCK_SIZE = 8;
   const int BLOCK_COUNT = 2;  // 4;
-
-  // 12 34 56 78   12 34 56 78   12 34 56 78   12 34 56 78   12345678abcdef
-  const int HEX_WIDTH = (BLOCK_SIZE + 1) * 3 * BLOCK_COUNT;
   const int PLAIN_WIDTH = BLOCK_SIZE * BLOCK_COUNT;
-  char line[HEX_WIDTH + PLAIN_WIDTH + 1];
+  const int HEX_WIDTH = (BLOCK_SIZE + 1) * 3 * BLOCK_COUNT;
 
   std::stringstream sstr;
-
-  const char *p = (const char *)bytes;
+  char line[HEX_WIDTH + PLAIN_WIDTH + 1];
+  const unsigned char* p = (const unsigned char*) bytes;
 
   while (length > 0) {
     char *u = line;
