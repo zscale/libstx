@@ -92,8 +92,8 @@ struct BufferTraits<Buffer> {
 // }}}
 // {{{ BufferBase<T>
 enum class HexDumpMode {
-  Simple,
-  SimpleSpaced,
+  InlineWide,
+  InlineNarrow,
   PrettyAscii
 };
 
@@ -212,7 +212,7 @@ class XZERO_API BufferBase {
   double toDouble() const;
   float toFloat() const;
 
-  std::string hexdump(HexDumpMode mode = HexDumpMode::Simple) const;
+  std::string hexdump(HexDumpMode mode = HexDumpMode::InlineWide) const;
 };
 
 template <typename T>
@@ -324,7 +324,7 @@ class XZERO_API BufferRef : public BufferBase<char*> {
   using BufferBase<char*>::hexdump;
   static std::string hexdump(
       const void* bytes, std::size_t length,
-      HexDumpMode mode);
+      HexDumpMode mode = HexDumpMode::InlineWide);
 
   class XZERO_API reverse_iterator {  // {{{
    private:
@@ -358,6 +358,13 @@ class XZERO_API BufferRef : public BufferBase<char*> {
   reverse_iterator rend() const {
     return reverse_iterator((BufferRef*)this, -1);
   }
+
+ private:
+  static std::string hexdumpInlineNarrow(const void* bytes, size_t length);
+  static std::string hexdumpInlineWide(const void* bytes, size_t length);
+  static std::string hexdumpPrettyAscii(const void* bytes, size_t length);
+
+  static const char hex[16];
 };
 // }}}
 // {{{ MutableBuffer

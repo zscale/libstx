@@ -256,6 +256,23 @@ TEST(BufferRef, reverse_iterator) {
   ++i;
   ASSERT_TRUE(i == e);
 }
+
+TEST(BufferRef, hexdumpInlineNarrow) {
+  EXPECT_EQ("48656c6c6f2c20576f726c64",
+      BufferRef("Hello, World").hexdump(HexDumpMode::InlineNarrow));
+}
+
+TEST(BufferRef, hexdumpInlineWide) {
+  EXPECT_EQ("48 65 6c 6c 6f 2c 20 57 6f 72 6c 64",
+      BufferRef("Hello, World").hexdump(HexDumpMode::InlineWide));
+}
+
+TEST(BufferRef, hexdumpPrettyAscii) {
+  EXPECT_EQ(
+//    " H  e  l  l  o  ,     W     o  r  l  d  *  *  *  *    Hello, World"
+      "48 65 6c 6c 6f 2c 20 57    6f 72 6c 64                Hello, World\n",
+      BufferRef("Hello, World").hexdump(HexDumpMode::PrettyAscii));
+}
 // }}}
 // {{{ MutableBuffer<>
 TEST(MutableBuffer, resize) {
