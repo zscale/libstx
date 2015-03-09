@@ -100,6 +100,7 @@ set(xzero_base_SRC
   RegExp.cpp
   RuntimeError.cpp
   StackTrace.cpp
+  StringUtil.cpp
   TimeSpan.cpp
   Tokenizer.cpp
   WallClock.cpp
