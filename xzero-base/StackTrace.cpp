@@ -99,7 +99,7 @@ StackTrace::~StackTrace() {
 
 std::string StackTrace::demangleSymbol(const char* symbol) {
   int status = 0;
-  size_t len = 256;
+  size_t len = 512;
   char* buf = (char*) malloc(len);
 
   try {
@@ -135,6 +135,10 @@ std::vector<std::string> StackTrace::symbols() const {
               frames_[i]);
           output.push_back(std::string(buf, n));
         }
+      } else {
+        char buf[512];
+        int n = snprintf(buf, sizeof(buf), "%p", frames_[i]);
+        output.push_back(std::string(buf, n));
       }
     }
 
