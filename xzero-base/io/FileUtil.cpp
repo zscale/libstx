@@ -13,6 +13,13 @@
 
 namespace xzero {
 
+void FileDescriptor::close() {
+  if (fd_ >= 0) {
+    ::close(fd_);
+    fd_ = -1;
+  }
+}
+
 std::string FileUtil::currentWorkingDirectory() {
   char buf[PATH_MAX];
   if (getcwd(buf, sizeof(buf)))
@@ -136,19 +143,15 @@ std::string FileUtil::joinPaths(const std::string& base,
   }
 }
 
-Buffer FileUtil::read(const std::string& path) {
+Buffer FileUtil::read(int fd) {
   Buffer output;
-
-  int fd = open(path.c_str(), O_RDONLY);
-  if (fd < 0)
-    RAISE_ERRNO(errno);
 
   struct stat st;
   if (fstat(fd, &st) < 0)
     RAISE_ERRNO(errno);
 
   output.reserve(st.st_size + 1);
-  ssize_t nread = ::read(fd, output.data(), st.st_size);
+  ssize_t nread = ::pread(fd, output.data(), st.st_size, 0);
   if (nread < 0) {
     ::close(fd);
     RAISE_ERRNO(errno);
@@ -156,9 +159,16 @@ Buffer FileUtil::read(const std::string& path) {
 
   output.data()[nread] = '\0';
   output.resize(nread);
-  ::close(fd);
 
   return output;
+}
+
+Buffer FileUtil::read(const std::string& path) {
+  FileDescriptor fd = open(path.c_str(), O_RDONLY);
+  if (fd < 0)
+    RAISE_ERRNO(errno);
+
+  return read(fd);
 }
 
 void FileUtil::write(const std::string& path, const Buffer& buffer) {
