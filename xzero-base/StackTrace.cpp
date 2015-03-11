@@ -123,7 +123,6 @@ std::vector<std::string> StackTrace::symbols() const {
     for (int i = SKIP_FRAMES; i <= frameCount_; ++i) {
       Dl_info info;
       if (dladdr(frames_[i], &info)) {
-
         if (info.dli_sname) {
           output.push_back(demangleSymbol(info.dli_sname));
         } else {
