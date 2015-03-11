@@ -9,6 +9,36 @@ namespace xzero {
 
 class Buffer;
 
+class XZERO_API FileDescriptor {
+ public:
+  FileDescriptor(int fd) : fd_(fd) {}
+
+  FileDescriptor(FileDescriptor&& fd) : fd_(fd.fd_) {
+    fd.fd_ = -1;
+  }
+
+  ~FileDescriptor() {
+    close();
+  }
+
+  FileDescriptor& operator=(FileDescriptor&& fd) {
+    close();
+
+    fd_ = fd.fd_;
+    fd.fd_ = -1;
+
+    return *this;
+  }
+
+  void close();
+
+  int get() const noexcept { return fd_; }
+  operator int() const noexcept { return fd_; }
+
+ private:
+  int fd_;
+};
+
 class XZERO_API FileUtil {
  public:
   static std::string currentWorkingDirectory();
@@ -24,6 +54,7 @@ class XZERO_API FileUtil {
 
   static std::string joinPaths(const std::string& base, const std::string& append);
 
+  static Buffer read(int fd);
   static Buffer read(const std::string& path);
   static void write(const std::string& path, const Buffer& buffer);
   static void copy(const std::string& from, const std::string& to);

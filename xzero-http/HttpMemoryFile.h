@@ -9,7 +9,6 @@
 
 #include <xzero-http/Api.h>
 #include <xzero-http/HttpFile.h>
-#include <xzero-base/Buffer.h>
 #include <string>
 
 namespace xzero {
@@ -32,11 +31,10 @@ class HttpMemoryFile : public HttpFile {
   int tryCreateChannel() override;
 
  private:
-  Buffer data_;
   time_t mtime_;
+  size_t size_;
   std::string etag_;
   std::string shm_path_;
-  int memfd_;
 };
 
 } // namespace xzero
