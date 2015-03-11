@@ -5,7 +5,7 @@
 namespace xzero {
 
 SafeCall::SafeCall()
-    : SafeCall(std::bind(&consoleLogger, std::placeholders::_1)) {
+    : SafeCall(std::bind(&logAndPass, std::placeholders::_1)) {
 }
 
 SafeCall::SafeCall(std::function<void(const std::exception&)> eh)

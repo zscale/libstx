@@ -5,13 +5,14 @@
 
 ### converge
 
-- [ ] Exception
-- [ ] ExceptionHandler
+- [ ] EH: global exception handlers
+- [ ] Assets (HtpMemoryFile) example
+- [ ] HttpMemoryFile unit test
 - [ ] io: File, FileRef
 - [ ] io: FileRepository
 - [ ] MappedFile
 - [ ] UDP networking
-- [ ] BufferUtil
+- [ ] StatsServer as seperate xzero-stats module
 - [ ] introspection: `std::string inspect(const TYPE&)`
 - [ ] URI as Uri
 - [ ] Application
@@ -30,15 +31,14 @@
 - [x] string formatting: `StringUtil::hexPrint()` as `Buffer*::hexdump()`
 - [x] WallClock to provide high resolution timings.
 - [x] StringUtil (except hexPrint, b/c it's in BufferRef already)
+- [x] Exception
+- [x] BufferUtil
+- [x] EH: log-and-pass (logAndPass)
+- [x] EH: log-and-abort (logAndAbort)
 
 ### concerns during converge
 
-- Exception.ofType() macht strcmp, ist das wirklich besser als `dynamic_cast`?
-  wenn ja, why?
-- libfnord's `RAISE(E, ..)` wirft keine exception of type E, sondern faked den
-  typeNamen, ist das wirklich good[-will-attempt]?
-  * ich benutze E als eigenen typen, wie ValidationError
-- 
+- ...
 
 ### concerns
 
@@ -47,8 +47,7 @@
     blindingly migrating)
 - why those stdtypes?
 - Buffer: mark/setMark, why?
-- ExceptionHandler as functions, not as classes?
-- fnord::hash<> why?
+- `fnord::hash<>` why?
 - InputStream, RewindableInputStream, FileInputStream, StringInputStream,
   BufferInputStream - why not std::istream?
 - OutputStream, FileOutputStream, StringOutputStream, BufferOutputStream

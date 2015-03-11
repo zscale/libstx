@@ -49,7 +49,7 @@ int main(int argc, const char* argv[]) {
       }
     }
   } catch (const std::exception& e) {
-    logDebug("example", e);
+    logError("example", e);
   }
 
   return 0;

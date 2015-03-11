@@ -73,7 +73,7 @@ std::unique_ptr<xzero::InetConnector> createInetConnector( // {{{
   std::unique_ptr<xzero::InetConnector> inetConnector(
       new xzero::InetConnector(name, executor, scheduler, clock,
         xzero::TimeSpan::fromSeconds(30), xzero::TimeSpan::Zero,
-        &xzero::consoleLogger));
+        &xzero::logAndPass));
 
   inetConnector->open(IPAddress("0.0.0.0"), port, 128, true, true);
   inetConnector->setBlocking(false);
@@ -93,7 +93,7 @@ std::unique_ptr<xzero::SslConnector> createSslConnector( // {{{
       new xzero::SslConnector(name, executor, scheduler, clock,
                               xzero::TimeSpan::fromSeconds(30),
                               xzero::TimeSpan::Zero,
-                              &xzero::consoleLogger,
+                              &xzero::logAndPass,
                               IPAddress("0.0.0.0"), port, 128, true, true));
 
   connector->addContext("../../server.crt", "../../server.key");
@@ -132,8 +132,7 @@ int main(int argc, const char* argv[]) {
 
     server.stop();
   } catch (const std::exception& e) {
-    //xzero::logError("main", e);
-    xzero::consoleLogger(e);
+    xzero::logAndPass(e);
   }
 
   return 0;

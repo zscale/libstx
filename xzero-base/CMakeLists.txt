@@ -112,6 +112,7 @@ set(xzero_base_SRC
   logging/LogLevel.cpp
   logging/LogSource.cpp
   logging/LogTarget.cpp
+  logging.cpp
 
   executor/SafeCall.cpp
   executor/Executor.cpp

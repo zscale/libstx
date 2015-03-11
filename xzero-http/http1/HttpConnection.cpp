@@ -316,7 +316,7 @@ void HttpConnection::onInterestFailure(const std::exception& error) {
 
   // TODO: improve logging here, as this eats our exception here.
   // e.g. via (factory or connector)->error(error);
-  consoleLogger(error);
+  logError("HttpConnection", error);
 
   auto callback = std::move(onComplete_);
 

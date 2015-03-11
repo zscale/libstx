@@ -22,7 +22,7 @@
 
 int main() {
   auto errorHandler = [](const std::exception& e) {
-    xzero::consoleLogger(e);
+    xzero::logAndPass(e);
   };
 
   xzero::WallClock* clock = xzero::WallClock::monotonic();
@@ -35,15 +35,17 @@ int main() {
       "http", &scheduler, &scheduler, clock,
       xzero::TimeSpan::fromSeconds(30),
       xzero::TimeSpan::Zero,
-      &xzero::consoleLogger,
+      &xzero::logAndPass,
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   auto http = inet->addConnectionFactory<xzero::http1::Http1ConnectionFactory>(
       clock, 100, 512, 5, xzero::TimeSpan::fromMinutes(3));
 
   http->setHandler([](xzero::HttpRequest* request,
                       xzero::HttpResponse* response) {
-    if (request->path() == "/raise")
+    if (request->path() == "/raise") {
+      printf("blah\n");
       RAISE(xzero::RuntimeError, "maybe raise");
+    }
 
     response->setStatus(xzero::HttpStatus::Ok);
     response->output()->write("Call me maybe /raise ;-)\n",
