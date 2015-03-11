@@ -105,7 +105,7 @@ std::string StackTrace::demangleSymbol(const char* symbol) {
   try {
     char* demangled = abi::__cxa_demangle(symbol, buf, &len, &status);
     if (demangled) {
-      std::string result(demangled, len);
+      std::string result(demangled, strlen(demangled));
       free(buf);
       return result;
     }
