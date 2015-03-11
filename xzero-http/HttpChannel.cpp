@@ -289,7 +289,7 @@ void HttpChannel::handleRequest() {
     handler_(request(), response());
   } catch (std::exception& e) {
     // TODO: reportException(e);
-    consoleLogger(e);
+    logError("HttpChannel", e);
     response()->sendError(HttpStatus::InternalServerError, e.what());
   } catch (...) {
     // TODO: reportException(RUNTIME_ERROR("Unhandled unknown exception caught");

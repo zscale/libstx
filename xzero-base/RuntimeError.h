@@ -4,7 +4,6 @@
 // Licensed under the MIT License (the "License"); you may not use this
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
-
 #pragma once
 
 #include <xzero-base/Api.h>
@@ -43,7 +42,8 @@ class XZERO_API RuntimeError : public std::runtime_error {
   StackTrace stackTrace_;
 };
 
-XZERO_API void consoleLogger(const std::exception& e); // TODO: deprecate
+XZERO_API void logAndPass(const std::exception& e);
+XZERO_API void logAndAbort(const std::exception& e);
 
 /**
  * Helper function for the EXCEPTION(E, ...) macro.
@@ -78,6 +78,13 @@ inline E make_error(const char* file, int line, const char* fn, Args... args) {
 }
 
 /**
+ * Raises an exception of given exception type.
+ *
+ * Alias to RAISE_EXCEPTION.
+ */
+#define RAISE(E, ...) RAISE_EXCEPTION(E, __VA_ARGS__)
+
+/**
  * Raises a fake-typed RuntimeError exception.
  *
  * A RuntimeError exception is created and raised but its typeName
@@ -101,19 +108,11 @@ inline E make_error(const char* file, int line, const char* fn, Args... args) {
   RAISE_EXCEPTION(RuntimeError, std::string(buf, n));                         \
 }
 
-#define RAISE(E, ...) RAISE_EXCEPTION(E, __VA_ARGS__)
-
-// ----------------------------------------------------------------------------
-
-#define RUNTIME_ERROR(msg) (::xzero::RuntimeError((msg), __FILE__, __LINE__))
-
-#define SYSTEM_ERROR(errc) \
-  (RUNTIME_ERROR(std::system_error(errc, std::system_category()).what()))
-
-#if !defined(BUG_ON)
-  #define BUG_ON(cond) {                                                    \
-    if (unlikely(cond)) {                                                   \
-      RAISE_EXCEPTION(RuntimeError, "BUG ON: (" #cond ")");                 \
-    }                                                                       \
-  }
-#endif
+/**
+ * Raises an exception on given evaluated expression conditional.
+ */
+#define BUG_ON(cond) {                                                    \
+  if (unlikely(cond)) {                                                   \
+    RAISE_EXCEPTION(RuntimeError, "BUG ON: (" #cond ")");                 \
+  }                                                                       \
+}

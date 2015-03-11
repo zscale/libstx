@@ -27,7 +27,7 @@ std::unique_ptr<xzero::SslConnector> createSslConnector( // {{{
                               xzero::TimeSpan::fromSeconds(30),
                               xzero::TimeSpan::Zero,
                               [](const std::exception& e) {
-                                  xzero::logDebug("hello", e); },
+                                  xzero::logError("hello", e); },
                               xzero::IPAddress("0.0.0.0"), port, 128,
                               true, true));
 
@@ -46,7 +46,7 @@ int main() {
       "http", &scheduler, &scheduler,  clock,
       xzero::TimeSpan::fromSeconds(60),
       xzero::TimeSpan::Zero,
-      &xzero::consoleLogger,
+      &xzero::logAndPass,
       xzero::IPAddress("0.0.0.0"), 3000, 128, true, false);
   inet->setBlocking(false);
 

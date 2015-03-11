@@ -9,6 +9,7 @@
 #include <xzero-base/StackTrace.h>
 #include <xzero-base/Tokenizer.h>
 #include <xzero-base/Buffer.h>
+#include <xzero-base/logging.h>
 #include <xzero-base/sysconfig.h>
 #include <typeinfo>
 #include <stdlib.h>
@@ -31,21 +32,14 @@ namespace xzero {
 #define MAX_FRAMES 64
 #define SKIP_FRAMES 2
 
-void consoleLogger(const std::exception& e) { // {{{
-  if (auto rt = dynamic_cast<const RuntimeError*>(&e)) {
-    fprintf(stderr, "Unhandled exception caught [%s:%d] (%s). %s\n",
-            rt->sourceFile(), rt->sourceLine(),
-            StackTrace::demangleSymbol(typeid(e).name()).c_str(),
-            rt->what());
-    auto bt = rt->backtrace();
-    for (size_t i = 0; i < bt.size(); ++i)
-      fprintf(stderr, "  [%zu] %s\n", i, bt[i].c_str());
-    return;
-  }
+void logAndPass(const std::exception& e) {
+  logError("unknown", e);
+}
 
-  fprintf(stderr, "Unhandled exception caught in executor (%s): %s\n",
-          StackTrace::demangleSymbol(typeid(e).name()).c_str(), e.what());
-} // }}}
+void logAndAbort(const std::exception& e) {
+  logAndPass(e);
+  abort();
+}
 
 RuntimeError::RuntimeError(const std::string& what)
   : std::runtime_error(what),
