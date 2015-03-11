@@ -97,7 +97,7 @@ StackTrace::~StackTrace() {
   delete[] frames_;
 }
 
-inline std::string StackTrace::demangleSymbol(const char* symbol) {
+std::string StackTrace::demangleSymbol(const char* symbol) {
   int status = 0;
   size_t len = 256;
   char* buf = (char*) malloc(len);
