@@ -14,13 +14,16 @@ include_directories(${Boost_INCLUDE_DIR})
 include_directories(../)
 
 file(GLOB_RECURSE FNORD_FTS_SOURCES
-  search/*.cc
-  analysis/*.cc
-  document/*.cc
-  index/*.cc
-  queryparser/*.cc
-  store/*.cc
-  util/*.c*)
+  QueryAnalyzer.cc
+  StopwordDictionary.cc)
+
+  #search/*.cc
+  #analysis/*.cc
+  #document/*.cc
+  #index/*.cc
+  #queryparser/*.cc
+  #store/*.cc
+  #util/*.c*)
 
 set(FNORD_FTS_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
