@@ -31,6 +31,9 @@ class XZERO_API MemoryFileRepository : public FileRepository {
       const std::string& requestPath,
       const std::string& docroot) override;
 
+  void listFiles(std::function<bool(const std::string&)> callback) override;
+  void deleteAllFiles() override;
+
   void insert(const std::string& path, const BufferRef& data, DateTime mtime);
 
   void insert(const std::string& path, const BufferRef& data);
