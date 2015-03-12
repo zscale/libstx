@@ -33,6 +33,7 @@ class XZERO_API MemoryFileRepository : public FileRepository {
 
   void listFiles(std::function<bool(const std::string&)> callback) override;
   void deleteAllFiles() override;
+  int createTempFile(std::string* filename = nullptr) override;
 
   void insert(const std::string& path, const BufferRef& data, DateTime mtime);
 

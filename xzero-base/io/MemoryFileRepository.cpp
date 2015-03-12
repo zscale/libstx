@@ -1,4 +1,5 @@
 #include <xzero-base/io/MemoryFileRepository.h>
+#include <xzero-base/RuntimeError.h>
 #include <xzero-base/MimeTypes.h>
 
 namespace xzero {
@@ -30,6 +31,10 @@ void MemoryFileRepository::listFiles(
 
 void MemoryFileRepository::deleteAllFiles() {
   files_.clear();
+}
+
+int MemoryFileRepository::createTempFile(std::string* filename) {
+  RAISE(RuntimeError, "TODO");
 }
 
 void MemoryFileRepository::insert(
