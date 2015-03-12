@@ -27,7 +27,10 @@ namespace xzero {
 #if XZERO_OS_DARWIN
 #  define XZERO_MEMORYFILE_USE_TMPFILE
 #else
-#  define XZERO_MEMORYFILE_USE_SHM
+// Use TMPFILE here, too (for now), because create*Channel would fail otherwise.
+// So let's create a posix_filebuf
+//#  define XZERO_MEMORYFILE_USE_SHM
+#  define XZERO_MEMORYFILE_USE_TMPFILE
 #endif
 
 MemoryFile::MemoryFile()
