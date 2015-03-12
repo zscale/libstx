@@ -53,9 +53,9 @@ void QueryAnalyzer::tokenize(
   String buf;
 
   auto cur = query.c_str();
-  auto end = cur + query.size();
-  char32_t chr;
-  while ((chr = UTF8::nextCodepoint(&cur, end)) != 0) {
+  auto end = cur + query.size() + 1;
+  while (cur < end) {
+    auto chr = UTF8::nextCodepoint(&cur, end);
     switch (chr) {
 
       /* token boundaries */
@@ -95,6 +95,7 @@ void QueryAnalyzer::tokenize(
       case '\t':
       case '\r':
       case '\n':
+      case 0:
         break;
 
       /* ignore chars */
