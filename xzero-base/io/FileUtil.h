@@ -42,6 +42,8 @@ class XZERO_API FileDescriptor {
 
 class XZERO_API FileUtil {
  public:
+  static char pathSeperator() noexcept;
+
   static std::string currentWorkingDirectory();
 
   static std::string realpath(const std::string& relpath);
