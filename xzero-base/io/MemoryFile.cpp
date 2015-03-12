@@ -128,11 +128,6 @@ int MemoryFile::tryCreateChannel() {
 
   return dup(fd_);
 #else
-  if (fspath_.empty()) {
-    setErrorCode(ENOENT);
-    return -1;
-  }
-
   return shm_open(fspath_.c_str(), O_RDONLY, 0600);
 #endif
 }
