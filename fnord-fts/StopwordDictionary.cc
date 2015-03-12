@@ -14,7 +14,13 @@ namespace fts {
 
 StopwordDictionary::StopwordDictionary() {}
 
-//const Set<String> stopwordsFor(Language lang) const;
+bool StopwordDictionary::isStopword(Language lang, const String& term) const {
+  return stopwords_.count(stopwordKey(lang, term)) != 0;
+}
+
+void StopwordDictionary::addStopword(Language lang, const String& term) {
+  stopwords_.emplace(stopwordKey(lang, term));
+}
 
 } // namespace fts
 } // namespace fnord
