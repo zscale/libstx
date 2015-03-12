@@ -7,21 +7,23 @@
 
 #pragma once
 
-#include <xzero-http/Api.h>
-#include <xzero-http/HttpFile.h>
+#include <xzero-base/Api.h>
+#include <xzero-base/io/File.h>
 #include <string>
+#include <functional>
+#include <unordered_map>
+#include <sys/stat.h>
 
 namespace xzero {
 
-class HttpMemoryFile : public HttpFile {
- public:
-  /** Initializes a "not found" file. */
-  HttpMemoryFile();
+class LocalFileRepository;
 
-  /** Initializes a memory backed file. */
-  HttpMemoryFile(const std::string& path, const char* data, size_t length,
-                 const std::string& mimetype);
-  ~HttpMemoryFile();
+class XZERO_API LocalFile : public File {
+ public:
+  LocalFile(LocalFileRepository& repo,
+            const std::string& path,
+            const std::string& mimetype);
+  ~LocalFile();
 
   const std::string& etag() const override;
   size_t size() const XZERO_NOEXCEPT override;
@@ -30,11 +32,12 @@ class HttpMemoryFile : public HttpFile {
   bool isRegular() const XZERO_NOEXCEPT override;
   int tryCreateChannel() override;
 
+  void update();
+
  private:
-  time_t mtime_;
-  size_t size_;
-  std::string etag_;
-  std::string shm_path_;
+  LocalFileRepository& repo_;
+  struct stat stat_;
+  mutable std::string etag_;
 };
 
 } // namespace xzero

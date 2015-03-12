@@ -6,20 +6,20 @@
 // the License at: http://opensource.org/licenses/MIT
 #pragma once
 
-#include <xzero-http/Api.h>
+#include <xzero-base/Api.h>
 #include <memory>
 
 namespace xzero {
 
-class HttpFile;
-typedef std::shared_ptr<HttpFile> HttpFileRef;
+class File;
 
-class XZERO_HTTP_API HttpFileRepository {
+class XZERO_API FileRepository {
  public:
-  virtual ~HttpFileRepository() {}
+  virtual ~FileRepository();
 
-  virtual HttpFileRef getFile(const std::string& requestPath,
-                              const std::string& docroot) = 0;
+  virtual std::shared_ptr<File> getFile(
+      const std::string& requestPath,
+      const std::string& docroot) = 0;
 };
 
 }  // namespace xzero

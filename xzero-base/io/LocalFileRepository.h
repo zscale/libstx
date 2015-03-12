@@ -6,16 +6,16 @@
 // the License at: http://opensource.org/licenses/MIT
 #pragma once
 
-#include <xzero-http/Api.h>
-#include <xzero-http/HttpFileRepository.h>
+#include <xzero-base/Api.h>
+#include <xzero-base/io/FileRepository.h>
 #include <string>
 
 namespace xzero {
 
 class MimeTypes;
-class HttpLocalFile;
+class LocalFile;
 
-class XZERO_HTTP_API HttpLocalFileRepository : public HttpFileRepository {
+class XZERO_API LocalFileRepository : public FileRepository {
  public:
   /**
    * Initializes local file repository.
@@ -26,15 +26,16 @@ class XZERO_HTTP_API HttpLocalFileRepository : public HttpFileRepository {
    * @param etagSize whether or not to include file size in etag.
    * @param etagInode whether or not to include file's system inode in etag.
    */
-  HttpLocalFileRepository(
+  LocalFileRepository(
       MimeTypes& mimetypes,
       const std::string& basedir,
       bool etagMtime, bool etagSize, bool etagInode);
 
   const std::string baseDirectory() const { return basedir_; }
 
-  HttpFileRef getFile(const std::string& requestPath,
-                      const std::string& docroot) override;
+  std::shared_ptr<File> getFile(
+      const std::string& requestPath,
+      const std::string& docroot) override;
 
   /**
    * Configures ETag generation.
@@ -46,7 +47,7 @@ class XZERO_HTTP_API HttpLocalFileRepository : public HttpFileRepository {
   void configureETag(bool mtime, bool size, bool inode);
 
  private:
-  friend class HttpLocalFile;
+  friend class LocalFile;
 
   MimeTypes& mimetypes_;
   std::string basedir_;

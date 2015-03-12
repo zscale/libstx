@@ -5,7 +5,7 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <xzero-http/HttpMemoryFile.h>
+#include <xzero-base/io/MemoryFile.h>
 #include <xzero-base/Buffer.h>
 #include <xzero-base/hash/FNV.h>
 #include <xzero-base/io/FileUtil.h>
@@ -23,67 +23,82 @@
 
 namespace xzero {
 
-HttpMemoryFile::HttpMemoryFile()
-    : HttpFile("", ""),
+// TODO: use O_TMPFILE if available, otherwise shm_open if ok, otherwise mktemp
+
+MemoryFile::MemoryFile()
+    : File("", ""),
       mtime_(0),
       etag_(),
       shm_path_() {
 }
 
-HttpMemoryFile::HttpMemoryFile(
-    const std::string& path, const char* data, size_t length,
-    const std::string& mimetype)
-    : HttpFile(path, mimetype),
-      mtime_(time(nullptr)), // TODO: pass time
-      size_(length),
-      etag_(std::to_string(hash::FNV<uint64_t>().hash(data, length))),
+MemoryFile::MemoryFile(
+    const std::string& path,
+    const std::string& mimetype,
+    const BufferRef& data,
+    DateTime mtime)
+    : File(path, mimetype),
+      mtime_(mtime.unixtime()),
+      size_(data.size()),
+      etag_(std::to_string(hash::FNV<uint64_t>().hash(data.data(), data.size()))),
       shm_path_(path) {
 
   StringUtil::replaceAll(&shm_path_, "/", "\%2f"); // TODO: URL-escape instead
 
   if (shm_path_.size() >= NAME_MAX)
-    RAISE(RuntimeError, "HttpMemoryFile's path must not exceed NAME_MAX.");
+    RAISE(RuntimeError, "MemoryFile's path must not exceed NAME_MAX.");
 
   FileDescriptor fd = shm_open(shm_path_.c_str(), O_RDWR | O_CREAT, 0600);
   if (fd < 0)
     RAISE_ERRNO(errno);
-
-  if (ftruncate(fd, size()) < 0)
-    RAISE_ERRNO(errno);
-
-  ssize_t n = pwrite(fd, data, length, 0);
+#if XZERO_OS_DARWIN
+  printf("1\n");
+  ssize_t n = write(fd, data.data(), data.size());
   if (n < 0)
     RAISE_ERRNO(errno);
 
-  if (static_cast<size_t>(n) != length)
+  printf("2\n");
+  if (lseek(fd, 0, SEEK_SET) < 0)
+    RAISE_ERRNO(errno);
+  printf("3\n");
+#else
+  if (ftruncate(fd, size()) < 0)
+    RAISE_ERRNO(errno);
+
+  ssize_t n = pwrite(fd, data.data(), data.size(), 0);
+  if (n < 0)
+    RAISE_ERRNO(errno);
+#endif
+
+  if (static_cast<size_t>(n) != data.size())
     RAISE(RuntimeError, "Couldn't write it all.");
 }
 
-HttpMemoryFile::~HttpMemoryFile() {
+MemoryFile::~MemoryFile() {
   //shm_unlink(shm_path_.c_str());
 }
 
-const std::string& HttpMemoryFile::etag() const {
+const std::string& MemoryFile::etag() const {
   return etag_;
 }
 
-size_t HttpMemoryFile::size() const XZERO_NOEXCEPT {
+size_t MemoryFile::size() const XZERO_NOEXCEPT {
   return size_;
 }
 
-time_t HttpMemoryFile::mtime() const XZERO_NOEXCEPT {
+time_t MemoryFile::mtime() const XZERO_NOEXCEPT {
   return mtime_;
 }
 
-size_t HttpMemoryFile::inode() const XZERO_NOEXCEPT {
+size_t MemoryFile::inode() const XZERO_NOEXCEPT {
   return getpid();
 }
 
-bool HttpMemoryFile::isRegular() const XZERO_NOEXCEPT {
+bool MemoryFile::isRegular() const XZERO_NOEXCEPT {
   return true;
 }
 
-int HttpMemoryFile::tryCreateChannel() {
+int MemoryFile::tryCreateChannel() {
   if (shm_path_.empty()) {
     setErrorCode(ENOENT);
     return -1;

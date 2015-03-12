@@ -5,8 +5,9 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <xzero-http/HttpFile.h>
+#include <xzero-base/io/File.h>
 #include <xzero-base/Buffer.h>
+#include <xzero-base/logging.h>
 #include <xzero-base/sysconfig.h>
 
 #include <ctime>
@@ -17,19 +18,15 @@
 #include <unistd.h>
 #include <errno.h>
 
-#if 0
-#define TRACE(level, msg...) do { \
-  printf("HttpFile/%d: ", (level)); \
-  printf(msg); \
-  printf("\n"); \
-} while (0)
+#if 1
+#define TRACE(level, msg...) logTrace("File", msg)
 #else
 #define TRACE(level, msg...) do {} while (0)
 #endif
 
 namespace xzero {
 
-HttpFile::HttpFile(const std::string& path, const std::string& mimetype)
+File::File(const std::string& path, const std::string& mimetype)
     : path_(path),
       mimetype_(mimetype),
       errno_(0),
@@ -37,16 +34,16 @@ HttpFile::HttpFile(const std::string& path, const std::string& mimetype)
   TRACE(2, "(%s).ctor", path_.c_str());
 }
 
-HttpFile::~HttpFile() {
+File::~File() {
   TRACE(2, "(%s).dtor", path_.c_str());
 }
 
-std::string HttpFile::filename() const {
+std::string File::filename() const {
   size_t n = path_.rfind('/');
   return n != std::string::npos ? path_.substr(n + 1) : path_;
 }
 
-const std::string& HttpFile::lastModified() const {
+const std::string& File::lastModified() const {
   // build Last-Modified response header value on-demand
   if (lastModified_.empty()) {
     time_t modificationTime = mtime();

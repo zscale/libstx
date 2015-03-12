@@ -1,11 +1,11 @@
-#include <xzero-http/HttpLocalFileRepository.h>
-#include <xzero-http/HttpLocalFile.h>
-#include <xzero-base/MimeTypes.h>
+#include <xzero-base/io/LocalFileRepository.h>
+#include <xzero-base/io/LocalFile.h>
 #include <xzero-base/io/FileUtil.h>
+#include <xzero-base/MimeTypes.h>
 
 namespace xzero {
 
-HttpLocalFileRepository::HttpLocalFileRepository(MimeTypes& mt,
+LocalFileRepository::LocalFileRepository(MimeTypes& mt,
                                                  const std::string& basedir,
                                                  bool etagMtime,
                                                  bool etagSize,
@@ -17,15 +17,17 @@ HttpLocalFileRepository::HttpLocalFileRepository(MimeTypes& mt,
       etagConsiderINode_(etagInode) {
 }
 
-HttpFileRef HttpLocalFileRepository::getFile(const std::string& requestPath,
-                      const std::string& docroot) {
+std::shared_ptr<File> LocalFileRepository::getFile(
+    const std::string& requestPath,
+    const std::string& docroot) {
+
   std::string path = basedir_ + docroot + requestPath;
 
-  return HttpFileRef(new HttpLocalFile(
+  return std::shared_ptr<File>(new LocalFile(
         *this, path, mimetypes_.getMimeType(requestPath)));
 }
 
-void HttpLocalFileRepository::configureETag(bool mtime, bool size, bool inode) {
+void LocalFileRepository::configureETag(bool mtime, bool size, bool inode) {
   etagConsiderMTime_ = mtime;
   etagConsiderSize_ = size;
   etagConsiderINode_ = inode;

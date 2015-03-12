@@ -6,13 +6,13 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero-http/HttpFileHandler.h>
-#include <xzero-http/HttpFileRepository.h>
-#include <xzero-http/HttpFile.h>
 #include <xzero-http/HttpRequest.h>
 #include <xzero-http/HttpResponse.h>
 #include <xzero-http/HttpOutput.h>
 #include <xzero-http/HttpRangeDef.h>
 #include <xzero-http/HeaderFieldList.h>
+#include <xzero-base/io/File.h>
+#include <xzero-base/io/FileRepository.h>
 #include <xzero-base/io/FileRef.h>
 #include <xzero-base/DateTime.h>
 #include <xzero-base/Tokenizer.h>
@@ -25,7 +25,7 @@
 
 #if 0
 #define TRACE(level, msg...) do { \
-  printf("HttpFileHandler/%d: ", (level)); \
+  printf("FileHandler/%d: ", (level)); \
   printf(msg); \
   printf("\n"); \
 } while (0)
@@ -71,12 +71,12 @@ static std::string generateDefaultBoundaryID() {
 }
 // }}}
 
-HttpFileHandler::HttpFileHandler(HttpFileRepository& repo)
+HttpFileHandler::HttpFileHandler(FileRepository& repo)
     : HttpFileHandler(repo, std::bind(&generateDefaultBoundaryID)) {
 }
 
 HttpFileHandler::HttpFileHandler(
-    HttpFileRepository& repo,
+    FileRepository& repo,
     std::function<std::string()> generateBoundaryID)
     : fileRepository_(repo),
       generateBoundaryID_(generateBoundaryID) {
@@ -88,10 +88,6 @@ HttpFileHandler::~HttpFileHandler() {
 bool HttpFileHandler::handle(HttpRequest* request, HttpResponse* response,
                              const std::string& docroot) {
   auto transferFile = fileRepository_.getFile(request->path(), docroot);
-
-  // HttpFileRef transferFile(new HttpLocalFile(
-  //       path, mimetype, etagConsiderMTime_, etagConsiderSize_,
-  //       etagConsiderINode_));
 
   if (!transferFile->isRegular())
     return false;
@@ -158,7 +154,7 @@ bool HttpFileHandler::handle(HttpRequest* request, HttpResponse* response,
   return true;
 }
 
-bool HttpFileHandler::handleClientCache(const HttpFile& transferFile,
+bool HttpFileHandler::handleClientCache(const File& transferFile,
                                         HttpRequest* request,
                                         HttpResponse* response) {
   // If-None-Match
@@ -236,7 +232,7 @@ static size_t numdigits(size_t number) {
   return result;
 }
 
-bool HttpFileHandler::handleRangeRequest(const HttpFile& transferFile, int fd,
+bool HttpFileHandler::handleRangeRequest(const File& transferFile, int fd,
                                          HttpRequest* request,
                                          HttpResponse* response) {
   const bool isHeadReq = fd < 0;

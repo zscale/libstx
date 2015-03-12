@@ -7,28 +7,28 @@
 
 #pragma once
 
-#include <xzero-http/Api.h>
+#include <xzero-base/Api.h>
 #include <xzero-base/Buffer.h>
-#include <string>
 #include <functional>
+#include <string>
 
 namespace xzero {
 
 /**
  * HTTP servable file.
  *
- * @see HttpFileHandler
- * @see HttpLocalFile, HttpMemoryFile
- * @see HttpFileRepository
+ * @see FileHandler
+ * @see LocalFile, MemoryFile
+ * @see FileRepository
  */
-class XZERO_HTTP_API HttpFile {
+class XZERO_API File {
  public:
-  HttpFile(const HttpFile&) = delete;
-  HttpFile& operator=(const HttpFile&) = delete;
+  File(const File&) = delete;
+  File& operator=(const File&) = delete;
 
-  HttpFile(const std::string& path, const std::string& mimetype);
+  File(const std::string& path, const std::string& mimetype);
 
-  virtual ~HttpFile();
+  virtual ~File();
 
   std::string filename() const;
   const std::string& path() const { return path_; }
@@ -53,6 +53,8 @@ class XZERO_HTTP_API HttpFile {
   std::string mimetype_;
 
   int errno_;
+
+ protected:
   mutable std::string lastModified_;
 };
 

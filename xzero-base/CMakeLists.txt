@@ -125,9 +125,15 @@ set(xzero_base_SRC
   hash/FNV.cpp
 
   io/GzipFilter.cpp
+  io/File.cpp
   io/FileRef.cpp
+  io/FileRepository.cpp
   io/Filter.cpp
   io/FileUtil.cpp
+  io/LocalFile.cpp
+  io/LocalFileRepository.cpp
+  io/MemoryFile.cpp
+  io/MemoryFileRepository.cpp
 
   net/ByteArrayEndPoint.cpp
   net/Cidr.cpp
