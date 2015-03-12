@@ -67,7 +67,8 @@ class XZERO_API FileUtil {
   static void mv(const std::string& path, const std::string& target);
 
   static int createTempFile();
-  static std::string createTempDir();
+  static std::string createTempDirectory();
+  static std::string tempDirectory();
 };
 
 }  // namespace xzero
