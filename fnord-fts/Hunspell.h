@@ -12,6 +12,7 @@
 #include "fnord-base/stdtypes.h"
 #include "fnord-base/option.h"
 #include "hunspell/hunspell.h"
+#include "3rdparty/hunspell/hyphen.h"
 
 namespace fnord {
 namespace fts {
@@ -19,13 +20,18 @@ namespace fts {
 class Hunspell {
 public:
 
-  Hunspell(const String& aff_file, const String& dict_file);
+  Hunspell(
+      const String& aff_file,
+      const String& dict_file,
+      const String& hyphen_file);
+
   ~Hunspell();
 
   Option<String> stem(const String& term);
 
 protected:
   Hunhandle* handle_;
+  HyphenDict* hyphen_dict_;
 };
 
 } // namespace fts

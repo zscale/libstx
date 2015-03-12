@@ -13,12 +13,21 @@
 namespace fnord {
 namespace fts {
 
-Hunspell::Hunspell(const String& aff_file, const String& dict_file) {
+Hunspell::Hunspell(
+    const String& aff_file,
+    const String& dict_file,
+    const String& hyphen_file) {
   handle_ = Hunspell_create(aff_file.c_str(), dict_file.c_str());
+  hyphen_dict_ = hnj_hyphen_load(hyphen_file.c_str());
+
+  if (handle_ == nullptr || hyphen_dict_ == nullptr) {
+    RAISE(kRuntimeError, "error initializing libhunspell");
+  }
 }
 
 Hunspell::~Hunspell () {
   Hunspell_destroy(handle_);
+  hnj_hyphen_free(hyphen_dict_);
 }
 
 Option<String> Hunspell::stem(const String& term) {

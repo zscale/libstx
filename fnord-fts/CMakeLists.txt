@@ -21,7 +21,9 @@ file(GLOB_RECURSE FNORD_FTS_SOURCES
   GermanStemmer.cc
   Hunspell.cc
   StopwordDictionary.cc
-  SynonymDictionary.cc)
+  SynonymDictionary.cc
+  ../3rdparty/hunspell/hnjalloc.c
+  ../3rdparty/hunspell/hyphen.c)
 
   #search/*.cc
   #analysis/*.cc
