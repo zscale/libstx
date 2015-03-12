@@ -27,6 +27,22 @@ std::shared_ptr<File> LocalFileRepository::getFile(
         *this, path, mimetypes_.getMimeType(requestPath)));
 }
 
+void LocalFileRepository::listFiles(
+    std::function<bool(const std::string&)> callback) {
+  FileUtil::ls(basedir_,
+               [&](const std::string& filename) -> bool {
+                  return callback(FileUtil::joinPaths(basedir_, filename));
+               });
+}
+
+void LocalFileRepository::deleteAllFiles() {
+  FileUtil::ls(basedir_,
+               [&](const std::string& filename) -> bool {
+                  FileUtil::rm(FileUtil::joinPaths(basedir_, filename));
+                  return true;
+               });
+}
+
 void LocalFileRepository::configureETag(bool mtime, bool size, bool inode) {
   etagConsiderMTime_ = mtime;
   etagConsiderSize_ = size;

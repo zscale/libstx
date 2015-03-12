@@ -19,6 +19,19 @@ std::shared_ptr<File> MemoryFileRepository::getFile(
   return notFound_;
 }
 
+void MemoryFileRepository::listFiles(
+    std::function<bool(const std::string&)> callback) {
+  for (auto& file: files_) {
+    if (!callback(file.first)) {
+      break;
+    }
+  }
+}
+
+void MemoryFileRepository::deleteAllFiles() {
+  files_.clear();
+}
+
 void MemoryFileRepository::insert(
     const std::string& path, const BufferRef& data, DateTime mtime) {
   files_[path].reset(new MemoryFile(path,

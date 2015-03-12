@@ -108,7 +108,8 @@ void FileUtil::ls(const std::string& path,
     filename += static_cast<char*>(dep->d_name);
 
     // callback
-    callback(filename);
+    if (!callback(filename))
+      break;
 
     // reset filename to its base-length
     filename.resize(baseFileNameLength);
