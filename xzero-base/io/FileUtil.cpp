@@ -21,6 +21,8 @@ void FileDescriptor::close() {
   }
 }
 
+static const char PathSeperator = '/';
+
 std::string FileUtil::currentWorkingDirectory() {
   char buf[PATH_MAX];
   if (getcwd(buf, sizeof(buf)))
@@ -127,8 +129,6 @@ std::string FileUtil::joinPaths(const std::string& base,
   if (append.empty())
     return base;
 
-  static const char PathSeperator = '/';
-
   if (base.back() == PathSeperator) {
     if (append.front() == PathSeperator) {
       return base + append.substr(1);
@@ -227,8 +227,29 @@ int FileUtil::createTempFile() {
   RAISE(RuntimeError, "TODO");
 }
 
-std::string FileUtil::createTempDir() {
-  RAISE(RuntimeError, "TODO");
+std::string FileUtil::createTempDirectory() {
+  std::string path;
+  path += tempDirectory();
+  path += PathSeperator;
+  path += "xzero.XXXXXXXX";
+
+  if (!mkdtemp(const_cast<char*>(path.c_str())))
+    RAISE_ERRNO(errno);
+
+  return path;
+}
+
+std::string FileUtil::tempDirectory() {
+  if (const char* s = getenv("TMPDIR"))
+    return s;
+
+  if (const char* s = getenv("TEMPDIR"))
+    return s;
+
+  if (const char* s = getenv("TEMP"))
+    return s;
+
+  return "/tmp";
 }
 
 }  // namespace xzero
