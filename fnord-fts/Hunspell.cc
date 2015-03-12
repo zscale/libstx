@@ -43,5 +43,38 @@ Option<String> Hunspell::stem(const String& term) {
   return opt;
 }
 
+Vector<size_t> Hunspell::hyphenate(const String& term) {
+  Vector<size_t> positions;
+
+  Buffer buf(term.size() + 5); // libhunspell needs a fixed 5 bytes + strsize
+  char* hyphens = (char*) buf.data();
+
+  char** rep = NULL;
+  int* pos = NULL;
+  int* cut = NULL;
+  auto res = hnj_hyphen_hyphenate2(
+      hyphen_dict_,
+      term.data(),
+      term.size(),
+      hyphens,
+      NULL,
+      &rep,
+      &pos,
+      &cut);
+
+  if (res != 0) {
+    return positions;
+  }
+
+  for (int i = 0; i < term.length(); ++i) {
+    if (hyphens[i] & 1) {
+      positions.emplace_back(i);
+    }
+  }
+
+  return positions;
+}
+
+
 } // namespace fts
 } // namespace fnord
