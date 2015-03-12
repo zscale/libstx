@@ -7,26 +7,18 @@
  * copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _FNORD_FTS_GERMANSTEMMER_H
-#define _FNORD_FTS_GERMANSTEMMER_H
+#ifndef _FNORD_FTS_STEMMER_H
+#define _FNORD_FTS_STEMMER_H
 #include "fnord-base/stdtypes.h"
-#include "fnord-fts/Stemmer.h"
-#include "fnord-fts/Hunspell.h"
+#include "fnord-base/Language.h"
 
 namespace fnord {
 namespace fts {
 
-class GermanStemmer : public Stemmer {
+class Stemmer {
 public:
-
-  GermanStemmer(
-      const String& hunspell_aff_file,
-      const String& hunspell_dict_file);
-
-  void stem(Language lang, String* term) override;
-
-protected:
-  Hunspell hunspell_;
+  virtual ~Stemmer() {}
+  virtual void stem(Language lang, String* term) = 0;
 };
 
 } // namespace fts

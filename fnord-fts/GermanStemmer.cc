@@ -17,6 +17,14 @@ GermanStemmer::GermanStemmer(
       const String& hunspell_dict_file) :
       hunspell_(hunspell_aff_file, hunspell_dict_file) {}
 
+void GermanStemmer::stem(Language lang, String* term) {
+  // synonym lookup
+
+  auto stem = hunspell_.stem(*term);
+  if (!stem.isEmpty()) {
+    term->assign(stem.get());
+  }
+}
 
 } // namespace fts
 } // namespace fnord

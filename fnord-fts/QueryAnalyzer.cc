@@ -14,8 +14,10 @@ namespace fnord {
 namespace fts {
 
 QueryAnalyzer::QueryAnalyzer(
-    StopwordDictionary* stopwords) :
-    stopwords_(stopwords) {}
+    StopwordDictionary* stopwords,
+    Stemmer* stemmer) :
+    stopwords_(stopwords),
+    stemmer_(stemmer) {}
 
 //String QueryAnalyzer::normalize(Language lang, const String& query) {}
 
@@ -38,13 +40,10 @@ void QueryAnalyzer::analyze(
     }
 
     String term(t);
-    stem(lang, &term);
+    stemmer_->stem(lang, &term);
 
     term_callback(term);
   });
-}
-
-void QueryAnalyzer::stem(Language lang, String* term) const {
 }
 
 void QueryAnalyzer::tokenize(
