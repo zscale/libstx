@@ -14,15 +14,22 @@ namespace fts {
 
 GermanStemmer::GermanStemmer(
       const String& hunspell_aff_file,
-      const String& hunspell_dict_file) :
-      hunspell_(hunspell_aff_file, hunspell_dict_file) {}
+      const String& hunspell_dict_file,
+      SynonymDictionary* synonyms) :
+      hunspell_(hunspell_aff_file, hunspell_dict_file),
+      synonyms_(synonyms) {}
 
 void GermanStemmer::stem(Language lang, String* term) {
-  // synonym lookup
+  auto synonym =  synonyms_->lookup(lang, *term);
+  if (!synonym.isEmpty()) {
+    term->assign(synonym.get());
+    return;
+  }
 
   auto stem = hunspell_.stem(*term);
   if (!stem.isEmpty()) {
     term->assign(stem.get());
+    return;
   }
 }
 
