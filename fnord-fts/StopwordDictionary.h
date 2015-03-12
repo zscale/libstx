@@ -21,7 +21,9 @@ public:
   StopwordDictionary();
 
   bool isStopword(Language lang, const String& term) const;
+
   void addStopword(Language lang, const String& term);
+  void loadStopwordFile(const String& filename);
 
 protected:
 
