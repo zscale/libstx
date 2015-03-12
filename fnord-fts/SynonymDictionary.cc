@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the "libfnord" project
  *   Copyright (c) 2015 Paul Asmuth
  *
@@ -7,32 +7,29 @@
  * copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _FNORD_FTS_GERMANSTEMMER_H
-#define _FNORD_FTS_GERMANSTEMMER_H
-#include "fnord-base/stdtypes.h"
-#include "fnord-fts/Stemmer.h"
-#include "fnord-fts/Hunspell.h"
 #include "fnord-fts/SynonymDictionary.h"
 
 namespace fnord {
 namespace fts {
 
-class GermanStemmer : public Stemmer {
-public:
+Option<String> SynonymDictionary::lookup(Language lang, const String& term) {
+  auto iter = synonyms_.find(synonymKey(lang, term));
+  if (iter == synonyms_.end()) {
+    return None<String>();
+  } else {
+    return Some(iter->second);
+  }
+}
 
-  GermanStemmer(
-      const String& hunspell_aff_file,
-      const String& hunspell_dict_file,
-      SynonymDictionary* synonyms);
+void SynonymDictionary::addSynonym(
+    Language lang,
+    const String& term,
+    const String& canonical_term) {
+  synonyms_[synonymKey(lang, term)] = canonical_term;
+}
 
-  void stem(Language lang, String* term) override;
-
-protected:
-  Hunspell hunspell_;
-  SynonymDictionary* synonyms_;
-};
+void SynonymDictionary::loadSynonmFile(const String& filename) {
+}
 
 } // namespace fts
 } // namespace fnord
-
-#endif

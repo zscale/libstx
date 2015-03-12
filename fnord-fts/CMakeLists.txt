@@ -20,7 +20,8 @@ file(GLOB_RECURSE FNORD_FTS_SOURCES
   QueryAnalyzer.cc
   GermanStemmer.cc
   Hunspell.cc
-  StopwordDictionary.cc)
+  StopwordDictionary.cc
+  SynonymDictionary.cc)
 
   #search/*.cc
   #analysis/*.cc
