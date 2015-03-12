@@ -359,6 +359,10 @@ class XZERO_API BufferRef : public BufferBase<char*> {
     return reverse_iterator((BufferRef*)this, -1);
   }
 
+  uint32_t hash32() const;
+  uint64_t hash64() const;
+  uint64_t hash() const { return hash64(); }
+
  private:
   static std::string hexdumpInlineNarrow(const void* bytes, size_t length);
   static std::string hexdumpInlineWide(const void* bytes, size_t length);

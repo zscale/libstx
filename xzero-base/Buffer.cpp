@@ -6,6 +6,7 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero-base/Buffer.h>
+#include <xzero-base/hash/FNV.h>
 #include <sstream>
 #include <iomanip>
 #include <cstdlib>
@@ -68,6 +69,14 @@ void Buffer::setCapacity(std::size_t value) {
     // setting capacity failed, do not change anything.
     throw std::bad_alloc();
   }
+}
+
+uint32_t BufferRef::hash32() const {
+  return xzero::hash::FNV<uint32_t>().hash(data(), size());
+}
+
+uint64_t BufferRef::hash64() const {
+  return xzero::hash::FNV<uint64_t>().hash(data(), size());
 }
 
 std::string BufferRef::hexdump(
