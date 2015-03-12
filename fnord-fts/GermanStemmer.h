@@ -28,6 +28,10 @@ public:
   void stem(Language lang, String* term) override;
 
 protected:
+
+  void removeUmlauts(String* term);
+  void stemWithUmlauts(Language lang, String* term);
+
   Hunspell hunspell_;
   SynonymDictionary* synonyms_;
 };
