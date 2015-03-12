@@ -17,33 +17,12 @@
 namespace fnord {
 namespace fts {
 
-class QueryAnalyzer {
+class SimpleTokenizer {
 public:
-
-  QueryAnalyzer(
-      StopwordDictionary* stopwords,
-      Stemmer* stemmer);
-
-  String normalize(Language lang, const String& query);
-
-  void analyze(
-      Language lang,
-      const String& query,
-      Set<String>* terms);
-
-  void analyze(
-      Language lang,
-      const String& query,
-      Function<void (const String& term)> term_callback);
-
-protected:
 
   void tokenize(
       const String& query,
       Function<void (const String& term)> term_callback) const;
-
-  StopwordDictionary* stopwords_;
-  Stemmer* stemmer_;
 };
 
 } // namespace fts

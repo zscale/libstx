@@ -17,7 +17,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 find_package(hunspell)
 
 file(GLOB_RECURSE FNORD_FTS_SOURCES
-  QueryAnalyzer.cc
+  SimpleTokenizer.cc
   GermanStemmer.cc
   Hunspell.cc
   StopwordDictionary.cc

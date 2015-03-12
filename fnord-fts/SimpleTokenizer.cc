@@ -8,45 +8,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include "fnord-base/UTF8.h"
-#include "fnord-fts/QueryAnalyzer.h"
+#include "fnord-fts/SimpleTokenizer.h"
 
 namespace fnord {
 namespace fts {
 
-QueryAnalyzer::QueryAnalyzer(
-    StopwordDictionary* stopwords,
-    Stemmer* stemmer) :
-    stopwords_(stopwords),
-    stemmer_(stemmer) {}
-
-//String QueryAnalyzer::normalize(Language lang, const String& query) {}
-
-void QueryAnalyzer::analyze(
-    Language lang,
-    const String& query,
-    Set<String>* terms) {
-  analyze(lang, query, [terms] (const String& term) {
-    terms->emplace(term);
-  });
-}
-
-void QueryAnalyzer::analyze(
-    Language lang,
-    const String& query,
-    Function<void (const String& term)> term_callback) {
-  tokenize(query, [this, lang, term_callback] (const String& t) {
-    if (stopwords_->isStopword(lang, t)) {
-      return;
-    }
-
-    String term(t);
-    stemmer_->stem(lang, &term);
-
-    term_callback(term);
-  });
-}
-
-void QueryAnalyzer::tokenize(
+void SimpleTokenizer::tokenize(
     const String& query,
     Function<void (const String& term)> term_callback) const {
   String buf;
