@@ -10,6 +10,7 @@
 #ifndef _FNORD_FTS_HUNSPELL_H
 #define _FNORD_FTS_HUNSPELL_H
 #include "fnord-base/stdtypes.h"
+#include "fnord-base/option.h"
 #include "hunspell/hunspell.h"
 
 namespace fnord {
@@ -19,6 +20,9 @@ class Hunspell {
 public:
 
   Hunspell(const String& aff_file, const String& dict_file);
+  ~Hunspell();
+
+  Option<String> stem(const String& term);
 
 protected:
   Hunhandle* handle_;

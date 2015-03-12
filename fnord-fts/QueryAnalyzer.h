@@ -11,6 +11,7 @@
 #define _FNORD_FTS_QUERYANALYZER_H
 #include "fnord-base/stdtypes.h"
 #include "fnord-base/Language.h"
+#include "fnord-fts/Stemmer.h"
 #include "fnord-fts/StopwordDictionary.h"
 
 namespace fnord {
@@ -19,7 +20,9 @@ namespace fts {
 class QueryAnalyzer {
 public:
 
-  QueryAnalyzer(StopwordDictionary* stopwords);
+  QueryAnalyzer(
+      StopwordDictionary* stopwords,
+      Stemmer* stemmer);
 
   String normalize(Language lang, const String& query);
 
@@ -35,13 +38,12 @@ public:
 
 protected:
 
-  void stem(Language lang, String* term) const;
-
   void tokenize(
       const String& query,
       Function<void (const String& term)> term_callback) const;
 
   StopwordDictionary* stopwords_;
+  Stemmer* stemmer_;
 };
 
 } // namespace fts
