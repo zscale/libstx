@@ -8,6 +8,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include "fnord-fts/StopwordDictionary.h"
+#include "fnord-base/io/mmappedfile.h"
 
 namespace fnord {
 namespace fts {
@@ -20,6 +21,30 @@ bool StopwordDictionary::isStopword(Language lang, const String& term) const {
 
 void StopwordDictionary::addStopword(Language lang, const String& term) {
   stopwords_.emplace(stopwordKey(lang, term));
+}
+
+void StopwordDictionary::loadStopwordFile(const String& filename) {
+  io::MmappedFile mmap(File::openFile(filename, File::O_READ));
+
+  char* cur = (char*) mmap.data();
+  auto end = cur + mmap.size();
+  auto begin = cur;
+
+  for (; cur < end; ++cur) {
+    if (*cur == '\n') {
+      String line(begin, cur);
+      auto sep = line.find(" ");
+      if (sep == std::string::npos) {
+        RAISEF(kRuntimeError, "invalid stopword file -- line: $0", line);
+      }
+
+      auto lang = line.substr(0, sep);
+      auto term = line.substr(sep + 1);
+
+      addStopword(languageFromString(lang), term);
+      begin = cur + 1;
+    }
+  }
 }
 
 } // namespace fts
