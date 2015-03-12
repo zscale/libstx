@@ -551,6 +551,11 @@ template <typename PodType, size_t N>
 XZERO_API Buffer& operator<<(Buffer& b, PodType (&v)[N]);
 
 XZERO_API Buffer& operator+=(Buffer& b, const BufferRef& v);
+XZERO_API Buffer& operator+=(Buffer& b, const std::string& v);
+XZERO_API Buffer& operator+=(Buffer& b, Buffer::value_type v);
+
+template <typename PodType, size_t N>
+XZERO_API Buffer& operator+=(Buffer& b, PodType (&v)[N]);
 // }}}
 // {{{ free functions (concatenation) API
 XZERO_API Buffer operator+(const BufferRef& a, const BufferRef& b);
@@ -1476,6 +1481,22 @@ inline Buffer& operator<<(Buffer& b, typename Buffer::value_type* v) {
 
 inline Buffer& operator+=(Buffer& b, const BufferRef& v) {
   b.push_back(v);
+  return b;
+}
+
+inline Buffer& operator+=(Buffer& b, const std::string& v) {
+  b.push_back(v);
+  return b;
+}
+
+inline Buffer& operator+=(Buffer& b, typename Buffer::value_type v) {
+  b.push_back(v);
+  return b;
+}
+
+template <typename PodType, size_t N>
+inline Buffer& operator+=(Buffer& b, PodType (&v)[N]) {
+  b.template push_back<PodType, N>(v);
   return b;
 }
 // }}}
