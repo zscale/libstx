@@ -33,7 +33,7 @@ void QueryAnalyzer::analyze(
     const String& query,
     Function<void (const String& term)> term_callback) {
   tokenize(query, [this, lang, term_callback] (const String& t) {
-    if (isStopword(lang, t)) {
+    if (stopwords_->isStopword(lang, t)) {
       return;
     }
 
@@ -45,10 +45,6 @@ void QueryAnalyzer::analyze(
 }
 
 void QueryAnalyzer::stem(Language lang, String* term) const {
-}
-
-bool QueryAnalyzer::isStopword(Language lang, const String& term) const {
-  return false;
 }
 
 void QueryAnalyzer::tokenize(

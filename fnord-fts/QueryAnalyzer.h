@@ -33,15 +33,14 @@ public:
       const String& query,
       Function<void (const String& term)> term_callback);
 
+protected:
+
+  void stem(Language lang, String* term) const;
+
   void tokenize(
       const String& query,
       Function<void (const String& term)> term_callback) const;
 
-  void stem(Language lang, String* term) const;
-
-  bool isStopword(Language lang, const String& term) const;
-
-protected:
   StopwordDictionary* stopwords_;
 };
 

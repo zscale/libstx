@@ -20,9 +20,20 @@ public:
 
   StopwordDictionary();
 
-  const Set<String> stopwordsFor(Language lang) const;
+  bool isStopword(Language lang, const String& term) const;
+  void addStopword(Language lang, const String& term);
 
 protected:
+
+  inline String stopwordKey(Language lang, const String& term) const {
+    String sw;
+    sw.append((char *) &lang, sizeof(lang));
+    sw += "~";
+    sw += term;
+    return sw;
+  }
+
+  Set<String> stopwords_;
 };
 
 } // namespace fts
