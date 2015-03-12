@@ -5,12 +5,15 @@
 
 ### converge
 
+- [ ] io: File (is more a FileStream / FileChannel than a File [Info])
+  - got replaced via std::{i,o}stream
+  - missing: access to fd
+  - missing: clone()
+  - missing: truncate()
+  - missing: Buffer integration
+  - missing: some open flags: AutoDelete | AllowFork | Trunc | Create[OnOpen]
 - [ ] EH: global exception handlers
 - [ ] Assets (HtpMemoryFile) example
-- [ ] HttpMemoryFile unit test
-- [ ] io: File, FileRef
-- [ ] io: FileRepository
-- [ ] MappedFile
 - [ ] UDP networking
 - [ ] StatsServer as seperate xzero-stats module
 - [ ] introspection: `std::string inspect(const TYPE&)`
@@ -35,6 +38,10 @@
 - [x] BufferUtil
 - [x] EH: log-and-pass (logAndPass)
 - [x] EH: log-and-abort (logAndAbort)
+- [x] HttpMemoryFile unit test
+- [x] io: FileRepository
+- [x] MappedFile
+- [x] io: FileRef (got deprecated)
 
 ### concerns during converge
 
