@@ -25,6 +25,8 @@ class XZERO_API FileRepository {
 
   virtual void listFiles(std::function<bool(const std::string&)> callback) = 0;
   virtual void deleteAllFiles() = 0;
+
+  virtual int createTempFile(std::string* filename = nullptr) = 0;
 };
 
 }  // namespace xzero

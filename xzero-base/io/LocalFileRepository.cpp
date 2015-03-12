@@ -43,6 +43,13 @@ void LocalFileRepository::deleteAllFiles() {
                });
 }
 
+int LocalFileRepository::createTempFile(std::string* filename) {
+  if (basedir_.empty() || basedir_ == "/")
+    return FileUtil::createTempFileAt(FileUtil::tempDirectory(), filename);
+  else
+    return FileUtil::createTempFileAt(basedir_, filename);
+}
+
 void LocalFileRepository::configureETag(bool mtime, bool size, bool inode) {
   etagConsiderMTime_ = mtime;
   etagConsiderSize_ = size;
