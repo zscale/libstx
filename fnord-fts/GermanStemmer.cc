@@ -16,8 +16,9 @@ namespace fts {
 GermanStemmer::GermanStemmer(
       const String& hunspell_aff_file,
       const String& hunspell_dict_file,
+      const String& hunspell_hyphen_file,
       SynonymDictionary* synonyms) :
-      hunspell_(hunspell_aff_file, hunspell_dict_file),
+      hunspell_(hunspell_aff_file, hunspell_dict_file, hunspell_hyphen_file),
       synonyms_(synonyms) {}
 
 void GermanStemmer::stem(Language lang, String* term) {

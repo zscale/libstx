@@ -23,6 +23,7 @@ public:
   GermanStemmer(
       const String& hunspell_aff_file,
       const String& hunspell_dict_file,
+      const String& hunspell_hyphen_file,
       SynonymDictionary* synonyms);
 
   void stem(Language lang, String* term) override;
