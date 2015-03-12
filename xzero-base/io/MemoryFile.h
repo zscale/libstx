@@ -35,9 +35,11 @@ class XZERO_API MemoryFile : public File {
 
  private:
   time_t mtime_;
+  size_t inode_;
   size_t size_;
   std::string etag_;
-  std::string shm_path_;
+  std::string fspath_;
+  int fd_;
 };
 
 } // namespace xzero

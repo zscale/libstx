@@ -23,13 +23,19 @@
 
 namespace xzero {
 
-// TODO: use O_TMPFILE if available, otherwise shm_open if ok, otherwise mktemp
+// Since OS/X doesn't support SHM in a way Linux does, we need to work around it.
+#if XZERO_OS_DARWIN
+#  define XZERO_MEMORYFILE_USE_TMPFILE
+#else
+#  define XZERO_MEMORYFILE_USE_SHM
+#endif
 
 MemoryFile::MemoryFile()
     : File("", ""),
       mtime_(0),
+      inode_(0),
       etag_(),
-      shm_path_() {
+      fspath_() {
 }
 
 MemoryFile::MemoryFile(
@@ -39,29 +45,38 @@ MemoryFile::MemoryFile(
     DateTime mtime)
     : File(path, mimetype),
       mtime_(mtime.unixtime()),
+      inode_(0),
       size_(data.size()),
-      etag_(std::to_string(hash::FNV<uint64_t>().hash(data.data(), data.size()))),
-      shm_path_(path) {
+      etag_(std::to_string(data.hash())),
+      fspath_(),
+      fd_(-1) {
+#if defined(XZERO_MEMORYFILE_USE_TMPFILE)
+  fspath_ += FileUtil::tempDirectory();
+  fspath_ += FileUtil::pathSeperator();
+  fspath_ += "memfile.XXXXXXXX";
 
-  StringUtil::replaceAll(&shm_path_, "/", "\%2f"); // TODO: URL-escape instead
-
-  if (shm_path_.size() >= NAME_MAX)
-    RAISE(RuntimeError, "MemoryFile's path must not exceed NAME_MAX.");
-
-  FileDescriptor fd = shm_open(shm_path_.c_str(), O_RDWR | O_CREAT, 0600);
-  if (fd < 0)
+  fd_ = mkstemp(const_cast<char*>(fspath_.c_str()));
+  if (fd_ < 0)
     RAISE_ERRNO(errno);
-#if XZERO_OS_DARWIN
-  printf("1\n");
-  ssize_t n = write(fd, data.data(), data.size());
+
+  if (ftruncate(fd_, size()) < 0)
+    RAISE_ERRNO(errno);
+
+  ssize_t n = pwrite(fd_, data.data(), data.size(), 0);
   if (n < 0)
     RAISE_ERRNO(errno);
-
-  printf("2\n");
-  if (lseek(fd, 0, SEEK_SET) < 0)
-    RAISE_ERRNO(errno);
-  printf("3\n");
 #else
+  // TODO: URL-escape instead
+  fspath_ = path;
+  StringUtil::replaceAll(&fspath_, "/", "\%2f");
+
+  if (fspath_.size() >= NAME_MAX)
+    RAISE(RuntimeError, "MemoryFile's path must not exceed NAME_MAX.");
+
+  FileDescriptor fd = shm_open(fspath_.c_str(), O_RDWR | O_CREAT, 0600);
+  if (fd < 0)
+    RAISE_ERRNO(errno);
+
   if (ftruncate(fd, size()) < 0)
     RAISE_ERRNO(errno);
 
@@ -75,7 +90,13 @@ MemoryFile::MemoryFile(
 }
 
 MemoryFile::~MemoryFile() {
-  //shm_unlink(shm_path_.c_str());
+#if defined(XZERO_MEMORYFILE_USE_TMPFILE)
+  if (fd_ >= 0) {
+    ::close(fd_);
+  }
+#else
+  shm_unlink(fspath_.c_str());
+#endif
 }
 
 const std::string& MemoryFile::etag() const {
@@ -91,7 +112,7 @@ time_t MemoryFile::mtime() const XZERO_NOEXCEPT {
 }
 
 size_t MemoryFile::inode() const XZERO_NOEXCEPT {
-  return getpid();
+  return inode_;
 }
 
 bool MemoryFile::isRegular() const XZERO_NOEXCEPT {
@@ -99,12 +120,21 @@ bool MemoryFile::isRegular() const XZERO_NOEXCEPT {
 }
 
 int MemoryFile::tryCreateChannel() {
-  if (shm_path_.empty()) {
+#if defined(XZERO_MEMORYFILE_USE_TMPFILE)
+  if (fd_ < 0) {
+    errno = ENOENT;
+    return -1;
+  }
+
+  return dup(fd_);
+#else
+  if (fspath_.empty()) {
     setErrorCode(ENOENT);
     return -1;
   }
 
-  return shm_open(shm_path_.c_str(), O_RDONLY, 0600);
+  return shm_open(fspath_.c_str(), O_RDONLY, 0600);
+#endif
 }
 
 } // namespace xzero
