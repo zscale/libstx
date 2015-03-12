@@ -223,7 +223,20 @@ void FileUtil::mv(const std::string& path, const std::string& target) {
 }
 
 int FileUtil::createTempFile() {
-  RAISE(RuntimeError, "TODO");
+  return createTempFileAt(tempDirectory());
+}
+
+int FileUtil::createTempFileAt(const std::string& basedir, std::string* result) {
+  std::string pattern = joinPaths(basedir, "XXXXXXXX.tmp");
+
+  int fd = mkstemps(const_cast<char*>(pattern.c_str()), 4);
+  if (fd < 0)
+    RAISE_ERRNO(errno);
+
+  if (result)
+    *result = std::move(pattern);
+
+  return fd;
 }
 
 std::string FileUtil::createTempDirectory() {
