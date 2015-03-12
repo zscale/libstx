@@ -78,11 +78,7 @@ const std::string& LocalFile::etag() const {
 }
 
 void LocalFile::update() {
-#if 0
-  int rv = fstat(fd_, &stat_);
-#else
   int rv = stat(path().c_str(), &stat_);
-#endif
 
   if (rv < 0)
     setErrorCode(errno);
