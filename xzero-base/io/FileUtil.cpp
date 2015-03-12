@@ -23,6 +23,10 @@ void FileDescriptor::close() {
 
 static const char PathSeperator = '/';
 
+char FileUtil::pathSeperator() noexcept {
+  return PathSeperator;
+}
+
 std::string FileUtil::currentWorkingDirectory() {
   char buf[PATH_MAX];
   if (getcwd(buf, sizeof(buf)))
