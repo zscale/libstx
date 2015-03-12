@@ -10,9 +10,13 @@
 #include <xzero-base/Api.h>
 #include <xzero-base/Buffer.h>
 #include <functional>
+#include <iosfwd>
 #include <string>
+#include <memory>
 
 namespace xzero {
+
+class MemoryMap;
 
 /**
  * HTTP servable file.
@@ -44,6 +48,18 @@ class XZERO_API File {
 
   /** Creates a file descriptor for this file. */
   virtual int tryCreateChannel() = 0;
+
+  /** creates an input stream for given file. */
+  virtual std::unique_ptr<std::istream> createInputChannel() = 0;
+
+  /** creates an output stream for given file. */
+  virtual std::unique_ptr<std::ostream> createOutputChannel() = 0;
+
+  /** Creates a memory-map for a given file.
+   *
+   * @param rw weather to map file in read/write mode, or just in read-only.
+   */
+  virtual std::unique_ptr<MemoryMap> createMemoryMap(bool rw = true) = 0;
 
   /**
    * Sets file-error code, that is only used for the validity of the entity.

@@ -6,6 +6,8 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero-base/io/MemoryFile.h>
+#include <xzero-base/io/MemoryMap.h>
+#include <xzero-base/io/FileDescriptor.h>
 #include <xzero-base/Buffer.h>
 #include <xzero-base/hash/FNV.h>
 #include <xzero-base/io/FileUtil.h>
@@ -13,6 +15,7 @@
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/sysconfig.h>
 
+#include <fstream>
 #include <ctime>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -130,6 +133,37 @@ int MemoryFile::tryCreateChannel() {
   return dup(fd_);
 #else
   return shm_open(fspath_.c_str(), O_RDONLY, 0600);
+#endif
+}
+
+std::unique_ptr<std::istream> MemoryFile::createInputChannel() {
+#if defined(XZERO_MEMORYFILE_USE_TMPFILE)
+  return std::unique_ptr<std::istream>(
+      new std::ifstream(fspath_, std::ios::binary));
+#else
+  RAISE(RuntimeError, "Not implemented.");
+#endif
+}
+
+std::unique_ptr<std::ostream> MemoryFile::createOutputChannel() {
+#if defined(XZERO_MEMORYFILE_USE_TMPFILE)
+  return std::unique_ptr<std::ostream>(
+      new std::ofstream(fspath_, std::ios::binary));
+#else
+  RAISE(RuntimeError, "Not implemented.");
+#endif
+}
+
+std::unique_ptr<MemoryMap> MemoryFile::createMemoryMap(bool rw) {
+#if defined(XZERO_MEMORYFILE_USE_TMPFILE)
+  // use FileDescriptor for auto-closing here, in case of exceptions
+  FileDescriptor fd = ::open(fspath_.c_str(), rw ? O_RDWR : O_RDONLY);
+  if (fd < 0)
+    RAISE_ERRNO(errno);
+
+  return std::unique_ptr<MemoryMap>(new MemoryMap(fd, 0, size(), rw));
+#else
+  return std::unique_ptr<MemoryMap>(new MemoryMap(fd_, 0, size(), rw));
 #endif
 }
 

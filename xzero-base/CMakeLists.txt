@@ -135,6 +135,7 @@ set(xzero_base_SRC
   io/LocalFileRepository.cpp
   io/MemoryFile.cpp
   io/MemoryFileRepository.cpp
+  io/MemoryMap.cpp
 
   net/ByteArrayEndPoint.cpp
   net/Cidr.cpp

@@ -7,8 +7,12 @@
 
 #include <xzero-base/io/LocalFile.h>
 #include <xzero-base/io/LocalFileRepository.h>
+#include <xzero-base/io/MemoryMap.h>
+#include <xzero-base/io/FileDescriptor.h>
+#include <xzero-base/RuntimeError.h>
 #include <xzero-base/sysconfig.h>
 
+#include <fstream>
 #include <ctime>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -102,6 +106,25 @@ int LocalFile::tryCreateChannel() {
 #endif
 
   return ::open(path().c_str(), flags);
+}
+
+std::unique_ptr<std::istream> LocalFile::createInputChannel() {
+  return std::unique_ptr<std::istream>(
+      new std::ifstream(path(), std::ios::binary));
+}
+
+std::unique_ptr<std::ostream> LocalFile::createOutputChannel() {
+  return std::unique_ptr<std::ostream>(
+      new std::ofstream(path(), std::ios::binary));
+}
+
+std::unique_ptr<MemoryMap> LocalFile::createMemoryMap(bool rw) {
+  // use FileDescriptor for auto-closing here, in case of exceptions
+  FileDescriptor fd = ::open(path().c_str(), rw ? O_RDWR : O_RDONLY);
+  if (fd < 0)
+    RAISE_ERRNO(errno);
+
+  return std::unique_ptr<MemoryMap>(new MemoryMap(fd, 0, size(), rw));
 }
 
 } // namespace xzero
