@@ -10,30 +10,6 @@ namespace xzero {
 class Buffer;
 class File;
 
-/**
- * Represents a system file descriptor that gets automatically closed.
- */
-class XZERO_API FileDescriptor {
- public:
-  FileDescriptor(int fd) : fd_(fd) {}
-  FileDescriptor(FileDescriptor&& fd) : fd_(fd.release()) {}
-  ~FileDescriptor() { close(); }
-
-  FileDescriptor& operator=(FileDescriptor&& fd);
-
-  FileDescriptor(const FileDescriptor& fd) = delete;
-  FileDescriptor& operator=(const FileDescriptor& fd) = delete;
-
-  int get() const noexcept { return fd_; }
-  operator int() const noexcept { return fd_; }
-
-  int release();
-  void close();
-
- private:
-  int fd_;
-};
-
 class XZERO_API FileUtil {
  public:
   static char pathSeperator() noexcept;
