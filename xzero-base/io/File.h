@@ -45,7 +45,14 @@ class XZERO_API File {
   /** Creates a file descriptor for this file. */
   virtual int tryCreateChannel() = 0;
 
+  /**
+   * Sets file-error code, that is only used for the validity of the entity.
+   */
   void setErrorCode(int ec) { errno_ = ec; }
+
+  /**
+   * Retrieves errno-compatible error code for the validity of the entity.
+   */
   int errorCode() const XZERO_NOEXCEPT { return errno_; }
 
  private:
