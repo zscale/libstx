@@ -15,7 +15,7 @@
 #include <xzero-base/MimeTypes.h>
 #include <xzero-base/cli/CLI.h>
 
-#include <xzero-http/HttpLocalFileRepository.h>
+#include <xzero-base/io/LocalFileRepository.h>
 #include <xzero-http/HttpRequest.h>
 #include <xzero-http/HttpResponse.h>
 #include <xzero-http/HttpOutput.h>
@@ -74,7 +74,7 @@ int main(int argc, const char* argv[]) {
   compressor->setMinSize(5);
 
   xzero::MimeTypes mimetypes("/etc/mime.types", "application/octet-stream");
-  xzero::HttpLocalFileRepository localFiles(mimetypes, "/", true, true, true);
+  xzero::LocalFileRepository localFiles(mimetypes, "/", true, true, true);
   xzero::HttpFileHandler fileHandler(localFiles);
 
   http->setHandler([&](xzero::HttpRequest* request, xzero::HttpResponse* response) {

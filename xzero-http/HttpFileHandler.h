@@ -17,8 +17,8 @@ namespace xzero {
 
 class HttpRequest;
 class HttpResponse;
-class HttpFile;
-class HttpFileRepository;
+class File;
+class FileRepository;
 class MimeTypes;
 
 /**
@@ -33,7 +33,7 @@ class XZERO_HTTP_API HttpFileHandler {
    *
    * @param repo file repository to serve from.
    */
-  explicit HttpFileHandler(HttpFileRepository& repo);
+  explicit HttpFileHandler(FileRepository& repo);
 
   /**
    * Initializes static file handler.
@@ -42,7 +42,7 @@ class XZERO_HTTP_API HttpFileHandler {
    * @param generateBoundaryID boundary-ID generator function that generates
    *                           response-local unique boundary IDs.
    */
-  HttpFileHandler(HttpFileRepository& repo,
+  HttpFileHandler(FileRepository& repo,
                   std::function<std::string()> generateBoundaryID);
 
   ~HttpFileHandler();
@@ -74,7 +74,7 @@ class XZERO_HTTP_API HttpFileHandler {
    *              HttpResponse::completed() was invoked.
    * @retval false Could not handle request.
    */
-  bool handleClientCache(const HttpFile& transferFile, HttpRequest* request,
+  bool handleClientCache(const File& transferFile, HttpRequest* request,
                          HttpResponse* response);
 
   /**
@@ -91,11 +91,11 @@ class XZERO_HTTP_API HttpFileHandler {
    *
    * @note if this is no ranged request. nothing is done on it.
    */
-  bool handleRangeRequest(const HttpFile& transferFile, int fd,
+  bool handleRangeRequest(const File& transferFile, int fd,
                           HttpRequest* request, HttpResponse* response);
 
  private:
-  HttpFileRepository& fileRepository_;
+  FileRepository& fileRepository_;
   std::function<std::string()> generateBoundaryID_;
 
   // TODO stat cache

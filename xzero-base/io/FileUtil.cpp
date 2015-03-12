@@ -1,4 +1,5 @@
 #include <xzero-base/io/FileUtil.h>
+#include <xzero-base/io/File.h>
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/Buffer.h>
 
@@ -161,6 +162,11 @@ Buffer FileUtil::read(int fd) {
   output.resize(nread);
 
   return output;
+}
+
+Buffer FileUtil::read(File& file) {
+  FileDescriptor fd = file.tryCreateChannel();
+  return read(fd);
 }
 
 Buffer FileUtil::read(const std::string& path) {

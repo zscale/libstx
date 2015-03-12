@@ -9,9 +9,29 @@ This is a collection of C++ system libraries.
 
 ## Installation Requirements
 
+- OpenSSL (libssl-dev)
 - gcc >= 4.8.0 (for building only, clang >= 3.4 with libc++)
 - cmake (for building only)
+- pkg-config
 - gtest (optional, for unit testing)
+
+### Install From Source: Ubuntu
+
+```
+# Build gtest dependency
+apt-get install gtest-dev
+cd /usr/src/gtest
+cmake .
+make
+cp *.a /usr/local/lib/
+```
+
+```
+apt-get install git clang++ cmake pkg-config libssl-dev libbz2-dev
+git clone git@github.com:xzero/libxzero.git
+cd libxzero
+make debug
+```
 
 ## Uses
 

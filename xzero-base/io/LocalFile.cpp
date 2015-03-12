@@ -5,8 +5,8 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <xzero-http/HttpLocalFile.h>
-#include <xzero-http/HttpLocalFileRepository.h>
+#include <xzero-base/io/LocalFile.h>
+#include <xzero-base/io/LocalFileRepository.h>
 #include <xzero-base/sysconfig.h>
 
 #include <ctime>
@@ -18,36 +18,36 @@
 
 namespace xzero {
 
-HttpLocalFile::HttpLocalFile(HttpLocalFileRepository& repo,
-                             const std::string& path,
-                             const std::string& mimetype)
-    : HttpFile(path, mimetype),
+LocalFile::LocalFile(LocalFileRepository& repo,
+                     const std::string& path,
+                     const std::string& mimetype)
+    : File(path, mimetype),
       repo_(repo),
       stat_(),
       etag_() {
   update();
 }
 
-HttpLocalFile::~HttpLocalFile() {
+LocalFile::~LocalFile() {
 }
 
-size_t HttpLocalFile::size() const XZERO_NOEXCEPT {
+size_t LocalFile::size() const XZERO_NOEXCEPT {
   return stat_.st_size;
 }
 
-time_t HttpLocalFile::mtime() const XZERO_NOEXCEPT {
+time_t LocalFile::mtime() const XZERO_NOEXCEPT {
   return stat_.st_mtime;
 }
 
-size_t HttpLocalFile::inode() const XZERO_NOEXCEPT {
+size_t LocalFile::inode() const XZERO_NOEXCEPT {
   return stat_.st_ino;
 }
 
-bool HttpLocalFile::isRegular() const XZERO_NOEXCEPT {
+bool LocalFile::isRegular() const XZERO_NOEXCEPT {
   return S_ISREG(stat_.st_mode);
 }
 
-const std::string& HttpLocalFile::etag() const {
+const std::string& LocalFile::etag() const {
   // compute ETag response header value on-demand
   if (etag_.empty()) {
     size_t count = 0;
@@ -77,7 +77,7 @@ const std::string& HttpLocalFile::etag() const {
   return etag_;
 }
 
-void HttpLocalFile::update() {
+void LocalFile::update() {
 #if 0
   int rv = fstat(fd_, &stat_);
 #else
@@ -90,7 +90,7 @@ void HttpLocalFile::update() {
     setErrorCode(0);
 }
 
-int HttpLocalFile::tryCreateChannel() {
+int LocalFile::tryCreateChannel() {
   int flags = O_RDONLY | O_NONBLOCK;
 
 #if 0  // defined(O_NOATIME)

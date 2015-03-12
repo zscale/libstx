@@ -8,6 +8,7 @@
 namespace xzero {
 
 class Buffer;
+class File;
 
 class XZERO_API FileDescriptor {
  public:
@@ -55,6 +56,7 @@ class XZERO_API FileUtil {
   static std::string joinPaths(const std::string& base, const std::string& append);
 
   static Buffer read(int fd);
+  static Buffer read(File& file);
   static Buffer read(const std::string& path);
   static void write(const std::string& path, const Buffer& buffer);
   static void copy(const std::string& from, const std::string& to);

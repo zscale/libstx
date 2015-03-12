@@ -14,7 +14,6 @@ set(xzero_http_SRC
   HttpChannel.cpp
   HttpConnectionFactory.cpp
   HttpDateGenerator.cpp
-  HttpFile.cpp
   HttpFileHandler.cpp
   HttpInput.cpp
   HttpListener.cpp
@@ -27,14 +26,6 @@ set(xzero_http_SRC
   HttpStatus.cpp
   HttpTransport.cpp
   HttpVersion.cpp
-
-  # file
-  HttpFile.cpp
-  HttpFileRepository.cpp
-  HttpLocalFile.cpp
-  HttpLocalFileRepository.cpp
-  HttpMemoryFile.cpp
-  HttpMemoryFileRepository.cpp
 
   # transport: mock
   mock/MockTransport.cpp
