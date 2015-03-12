@@ -51,9 +51,7 @@ MemoryFile::MemoryFile(
       fspath_(),
       fd_(-1) {
 #if defined(XZERO_MEMORYFILE_USE_TMPFILE)
-  fspath_ += FileUtil::tempDirectory();
-  fspath_ += FileUtil::pathSeperator();
-  fspath_ += "memfile.XXXXXXXX";
+  fspath_ = FileUtil::joinPaths(FileUtil::tempDirectory(), "memfile.XXXXXXXX");
 
   fd_ = mkstemp(const_cast<char*>(fspath_.c_str()));
   if (fd_ < 0)
