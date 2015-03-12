@@ -10,6 +10,8 @@
 #include <xzero-base/Buffer.h>
 #include <xzero-base/sysconfig.h>
 #include <typeinfo>
+#include <memory>
+#include <functional>
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -100,19 +102,19 @@ StackTrace::~StackTrace() {
 std::string StackTrace::demangleSymbol(const char* symbol) {
   int status = 0;
   size_t len = 512;
-  char* buf = (char*) malloc(len);
 
-  try {
-    char* demangled = abi::__cxa_demangle(symbol, buf, &len, &status);
-    if (demangled) {
-      std::string result(demangled, strlen(demangled));
-      free(buf);
-      return result;
-    }
-  } catch (...) {
+  std::shared_ptr<char> buf(
+      (char*) malloc(len),
+      std::bind(&free, std::placeholders::_1));
+
+  char* demangled = abi::__cxa_demangle(symbol, buf.get(), &len, &status);
+
+  if (demangled) {
+    std::string result(demangled, strlen(demangled));
+    return result;
+  } else {
+    return symbol;
   }
-  free(buf);
-  return symbol;
 }
 
 std::vector<std::string> StackTrace::symbols() const {
