@@ -39,6 +39,8 @@ class XZERO_API FileUtil {
   static void mv(const std::string& path, const std::string& target);
 
   static int createTempFile();
+  static int createTempFileAt(const std::string& basedir,
+                              std::string* result = nullptr);
   static std::string createTempDirectory();
   static std::string tempDirectory();
 };
