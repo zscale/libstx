@@ -1,4 +1,5 @@
 #include <xzero-base/io/FileUtil.h>
+#include <xzero-base/io/FileDescriptor.h>
 #include <xzero-base/io/File.h>
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/Buffer.h>
@@ -13,26 +14,6 @@
 #include <stdlib.h>
 
 namespace xzero {
-
-FileDescriptor& FileDescriptor::operator=(FileDescriptor&& fd) {
-  close();
-  fd_ = fd.release();
-
-  return *this;
-}
-
-int FileDescriptor::release() {
-  int fd = fd_;
-  fd_ = -1;
-  return fd;
-}
-
-void FileDescriptor::close() {
-  if (fd_ >= 0) {
-    ::close(fd_);
-    fd_ = -1;
-  }
-}
 
 static const char PathSeperator = '/';
 
