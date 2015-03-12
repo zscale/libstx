@@ -55,6 +55,12 @@ void QueryAnalyzer::tokenize(
   auto end = cur + query.size() + 1;
   while (cur < end) {
     auto chr = UTF8::nextCodepoint(&cur, end);
+
+    // skip all symbols/dingbats characters
+    if (chr > 0x2000 && chr < 0x2BFF) {
+      continue;
+    }
+
     switch (chr) {
 
       /* token boundaries */
@@ -96,10 +102,6 @@ void QueryAnalyzer::tokenize(
       case '\n':
       case 0:
         break;
-
-      /* ignore chars */
-      case L'✪':
-        continue;
 
       /* valid chars */
       default:
