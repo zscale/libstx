@@ -13,8 +13,13 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(../)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
+find_package(hunspell)
+
 file(GLOB_RECURSE FNORD_FTS_SOURCES
   QueryAnalyzer.cc
+  GermanStemmer.cc
+  Hunspell.cc
   StopwordDictionary.cc)
 
   #search/*.cc
@@ -28,6 +33,7 @@ file(GLOB_RECURSE FNORD_FTS_SOURCES
 set(FNORD_FTS_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
+    ${HUNSPELL_LIBRARIES}
     z
     PARENT_SCOPE)
 
