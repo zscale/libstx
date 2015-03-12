@@ -29,7 +29,7 @@ protected:
 
   inline String stopwordKey(Language lang, const String& term) const {
     String sw;
-    sw.append((char *) &lang, sizeof(lang));
+    sw += languageToString(lang);
     sw += "~";
     sw += term;
     return sw;
