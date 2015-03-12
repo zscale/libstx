@@ -29,6 +29,8 @@ public:
 
   Option<String> stem(const String& term);
 
+  Vector<size_t> hyphenate(const String& term);
+
 protected:
   Hunhandle* handle_;
   HyphenDict* hyphen_dict_;

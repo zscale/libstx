@@ -38,6 +38,22 @@ void GermanStemmer::stemWithUmlauts(Language lang, String* term) {
     term->assign(stem.get());
     return;
   }
+
+  for (auto p : hunspell_.hyphenate(*term)) {
+    auto primary_compound = term->substr(p + 1);
+
+    auto synonym =  synonyms_->lookup(lang, primary_compound);
+    if (!synonym.isEmpty()) {
+      term->assign(term->substr(0, p + 1) + synonym.get());
+      return;
+    }
+
+    auto stem = hunspell_.stem(primary_compound);
+    if (!stem.isEmpty()) {
+      term->assign(term->substr(0, p + 1) + stem.get());
+      return;
+    }
+  }
 }
 
 void GermanStemmer::removeUmlauts(String* term) {
