@@ -31,6 +31,9 @@ class XZERO_API LocalFile : public File {
   size_t inode() const XZERO_NOEXCEPT override;
   bool isRegular() const XZERO_NOEXCEPT override;
   int tryCreateChannel() override;
+  std::unique_ptr<std::istream> createInputChannel() override;
+  std::unique_ptr<std::ostream> createOutputChannel() override;
+  std::unique_ptr<MemoryMap> createMemoryMap(bool rw = true) override;
 
   void update();
 
