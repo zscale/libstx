@@ -18,6 +18,36 @@
 
 namespace xzero {
 
+// a set of string constants to be used for exception type faking
+const char kBufferOverflowError[] = "BufferOverflowError";
+const char kEncodingError[] = "EncodingError";
+const char kConcurrentModificationError[] = "ConcurrentModificationError";
+const char kDivideByZeroError[] = "DivideByZeroError";
+const char kFlagError[] = "FlagError";
+const char kIOError[] = "IOError";
+const char kIllegalArgumentError[] = "IOIllegalArgument";
+const char kIllegalFormatError[] = "IllegalFormat";
+const char kIllegalStateError[] = "IllegalState";
+const char kIndexError[] = "IndexError";
+const char kInvalidOptionError[] = "InvalidOptionError";
+const char kKeyError[] = "KeyError";
+const char kMallocError[] = "MallocError";
+const char kNoSuchMethodError[] = "NoSuchMethodError";
+const char kNotImplementedError[] = "NotImplementedError";
+const char kNotYetImplementedError[] = "NotYetImplementedError";
+const char kNullPointerError[] = "NullPointerError";
+const char kParseError[] = "ParseError";
+const char kRangeError[] = "RangeError";
+const char kReflectionError[] = "kReflectionError";
+const char kResolveError[] = "kResolveError";
+const char kRPCError[] = "kRPCError";
+const char kRuntimeError[] = "RuntimeError";
+const char kTypeError[] = "TypeError";
+const char kUsageError[] = "UsageError";
+const char kVersionMismatchError[] = "VersionMismatchError";
+const char kWouldBlockError[] = "WouldBlockError";
+const char kFutureError[] = "FutureError";
+
 class XZERO_API RuntimeError : public std::runtime_error {
  public:
   explicit RuntimeError(const std::string& what);
