@@ -11,7 +11,7 @@
 #define _FNORD_FTS_HUNSPELL_H
 #include "fnord-base/stdtypes.h"
 #include "fnord-base/option.h"
-#include "hunspell/hunspell.h"
+#include "3rdparty/hunspell/hunspell.h"
 #include "3rdparty/hunspell/hyphen.h"
 
 namespace fnord {
