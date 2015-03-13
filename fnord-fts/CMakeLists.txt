@@ -14,7 +14,6 @@ include_directories(${Boost_INCLUDE_DIR})
 include_directories(../)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
-find_package(hunspell)
 
 file(GLOB_RECURSE FNORD_FTS_SOURCES
   SimpleTokenizer.cc
@@ -22,6 +21,19 @@ file(GLOB_RECURSE FNORD_FTS_SOURCES
   Hunspell.cc
   StopwordDictionary.cc
   SynonymDictionary.cc
+  ../3rdparty/hunspell/affentry.cxx
+  ../3rdparty/hunspell/affixmgr.cxx
+  ../3rdparty/hunspell/csutil.cxx
+  ../3rdparty/hunspell/dictmgr.cxx
+  ../3rdparty/hunspell/filemgr.cxx
+  ../3rdparty/hunspell/hashmgr.cxx
+  ../3rdparty/hunspell/hunspell.cxx
+  ../3rdparty/hunspell/hunzip.cxx
+  ../3rdparty/hunspell/phonet.cxx
+  ../3rdparty/hunspell/replist.cxx
+  ../3rdparty/hunspell/suggestmgr.cxx
+  ../3rdparty/hunspell/utf_info.cxx
+  ../3rdparty/hunspell/hnjalloc.c
   ../3rdparty/hunspell/hnjalloc.c
   ../3rdparty/hunspell/hyphen.c)
 
@@ -36,7 +48,6 @@ file(GLOB_RECURSE FNORD_FTS_SOURCES
 set(FNORD_FTS_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
-    ${HUNSPELL_LIBRARIES}
     z
     PARENT_SCOPE)
 
