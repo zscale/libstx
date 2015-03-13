@@ -43,6 +43,19 @@ class XZERO_API FileUtil {
                               std::string* result = nullptr);
   static std::string createTempDirectory();
   static std::string tempDirectory();
+
+  static void allocate(int fd, size_t length);
+  static void preallocate(int fd, size_t length);
+  static void deallocate(int fd, off_t offset, size_t length);
+
+  /**
+   * Collapses given range of a file.
+   *
+   * @note Operating systems that do not support it natively will be emulated.
+   */
+  static void collapse(int fd, off_t offset, size_t length);
+
+  static void truncate(int fd, size_t length);
 };
 
 }  // namespace xzero
