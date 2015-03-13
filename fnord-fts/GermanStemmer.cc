@@ -27,13 +27,7 @@ void GermanStemmer::stem(Language lang, String* term) {
 }
 
 void GermanStemmer::stemWithUmlauts(Language lang, String* term) {
-  auto synonym =  synonyms_->lookup(lang, *term);
-  if (!synonym.isEmpty()) {
-    term->assign(synonym.get());
-    return;
-  }
-
-  auto stem = hunspell_.stem(*term);
+  auto stem = findStemFor(lang, *term);
   if (!stem.isEmpty()) {
     term->assign(stem.get());
     return;
@@ -42,18 +36,26 @@ void GermanStemmer::stemWithUmlauts(Language lang, String* term) {
   for (auto p : hunspell_.hyphenate(*term)) {
     auto primary_compound = term->substr(p + 1);
 
-    auto synonym =  synonyms_->lookup(lang, primary_compound);
-    if (!synonym.isEmpty()) {
-      term->assign(term->substr(0, p + 1) + synonym.get());
-      return;
-    }
-
-    auto stem = hunspell_.stem(primary_compound);
+    auto stem = findStemFor(lang, primary_compound);
     if (!stem.isEmpty()) {
       term->assign(term->substr(0, p + 1) + stem.get());
       return;
     }
   }
+}
+
+Option<String> GermanStemmer::findStemFor(Language lang, const String& term) {
+  auto synonym =  synonyms_->lookup(lang, term);
+  if (!synonym.isEmpty()) {
+    return synonym;
+  }
+
+  auto stem = hunspell_.stem(term);
+  if (!stem.isEmpty()) {
+    return stem;
+  }
+
+  return None<String>();
 }
 
 void GermanStemmer::removeUmlauts(String* term) {
