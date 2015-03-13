@@ -41,9 +41,9 @@ TEST(MemoryMap, readAndWritable) {
   { // mutate and verify file contents
     std::unique_ptr<MemoryMap> mm = file.createMemoryMap(true);
     ASSERT_TRUE(mm.get() != nullptr);
-    //EXPECT_TRUE(mm->isReadable());
-    EXPECT_TRUE(mm->isWritable());
     ASSERT_EQ(5, mm->size());
+    EXPECT_TRUE(mm->isReadable());
+    EXPECT_TRUE(mm->isWritable());
 
     char* in = (char*) mm->data();
     in[0] = 'a';

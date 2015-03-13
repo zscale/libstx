@@ -5,7 +5,7 @@ namespace xzero {
 
 class XZERO_API MemoryMap {
  public:
-  MemoryMap(int fd, off_t ofs, size_t size, int mode);
+  MemoryMap(int fd, off_t ofs, size_t size, bool rw);
   MemoryMap(MemoryMap&& mm);
   MemoryMap(const MemoryMap& mm) = delete;
   MemoryMap& operator=(MemoryMap&& mm);

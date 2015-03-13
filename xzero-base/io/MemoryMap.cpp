@@ -8,26 +8,12 @@
 
 namespace xzero {
 
-MemoryMap::MemoryMap(int fd, off_t ofs, size_t size, int mode)
+MemoryMap::MemoryMap(int fd, off_t ofs, size_t size, bool rw)
     : data_(nullptr),
       size_(0),
       mode_(0) {
 
-  int prot = 0;
-  switch (mode) {
-    case O_RDONLY:
-      prot = PROT_READ;
-      break;
-    case O_WRONLY:
-      prot = PROT_WRITE;
-      break;
-    case O_RDWR:
-      prot = PROT_READ | PROT_WRITE;
-      break;
-    default:
-      RAISE(RuntimeError, "Invalid mode argument to MemoryMap.");
-  }
-
+  int prot = rw ? PROT_READ | PROT_WRITE : PROT_READ;
   data_ = mmap(nullptr, size, prot, MAP_SHARED, fd, ofs);
   if (!data_)
     RAISE_ERRNO(errno);
