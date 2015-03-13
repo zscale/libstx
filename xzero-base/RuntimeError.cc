@@ -9,8 +9,11 @@
 #include <xzero-base/StackTrace.h>
 #include <xzero-base/Tokenizer.h>
 #include <xzero-base/Buffer.h>
+#include <xzero-base/StringUtil.h>
 #include <xzero-base/logging.h>
 #include <xzero-base/sysconfig.h>
+
+#include <iostream>
 #include <typeinfo>
 #include <stdlib.h>
 #include <unistd.h>
@@ -76,6 +79,22 @@ void RuntimeError::setTypeName(const char* n) {
 
 bool RuntimeError::ofType(const char* s) const {
   return strcmp(typeName(), s) == 0;
+}
+
+void RuntimeError::debugPrint(std::ostream* os) const {
+  if (os == nullptr) {
+    os = &std::cerr;
+  }
+
+  *os << StringUtil::format(
+            "$0: $1\n"
+            "    in $2\n"
+            "    in $3:$4\n",
+            typeName(),
+            what(),
+            functionName_,
+            sourceFile_,
+            sourceLine_);
 }
 
 } // namespace xzero
