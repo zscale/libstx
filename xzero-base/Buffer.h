@@ -402,6 +402,7 @@ class XZERO_API MutableBuffer : public BufferRef {
 
   // buffer builders
   void push_back(value_type value);
+  void push_back(value_type value, size_t count);
   void push_back(int value);
   void push_back(long value);
   void push_back(long long value);
@@ -1245,6 +1246,14 @@ template <void (*ensure)(void*, size_t)>
 inline void MutableBuffer<ensure>::push_back(value_type value) {
   reserve(size() + sizeof(value));
   data_[size_++] = value;
+}
+
+template <void (*ensure)(void*, size_t)>
+void MutableBuffer<ensure>::push_back(value_type value, size_t count) {
+  reserve(size() + sizeof(value) * count);
+
+  memset(data_ + size_, value, count);
+  size_ += count;
 }
 
 template <void (*ensure)(void*, size_t)>
