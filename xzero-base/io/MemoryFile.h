@@ -31,7 +31,7 @@ class XZERO_API MemoryFile : public File {
   time_t mtime() const XZERO_NOEXCEPT override;
   size_t inode() const XZERO_NOEXCEPT override;
   bool isRegular() const XZERO_NOEXCEPT override;
-  int tryCreateChannel() override;
+  int createPosixChannel(OpenFlags flags) override;
   std::unique_ptr<std::istream> createInputChannel() override;
   std::unique_ptr<std::ostream> createOutputChannel() override;
   std::unique_ptr<MemoryMap> createMemoryMap(bool rw = true) override;

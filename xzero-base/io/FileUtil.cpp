@@ -164,7 +164,7 @@ Buffer FileUtil::read(int fd) {
 }
 
 Buffer FileUtil::read(File& file) {
-  FileDescriptor fd = file.tryCreateChannel();
+  FileDescriptor fd = file.createPosixChannel(File::Read);
   return read(fd);
 }
 
