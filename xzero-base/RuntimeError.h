@@ -9,6 +9,7 @@
 #include <xzero-base/Api.h>
 #include <xzero-base/StackTrace.h>
 #include <xzero-base/sysconfig.h>
+#include <iosfwd>
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -63,6 +64,8 @@ class XZERO_API RuntimeError : public std::runtime_error {
   bool ofType(const char* s) const;
 
   std::vector<std::string> backtrace() const;
+
+  void debugPrint(std::ostream* os) const;
 
  private:
   const char* sourceFile_;
