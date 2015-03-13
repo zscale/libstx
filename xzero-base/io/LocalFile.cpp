@@ -90,22 +90,8 @@ void LocalFile::update() {
     setErrorCode(0);
 }
 
-int LocalFile::tryCreateChannel() {
-  int flags = O_RDONLY | O_NONBLOCK;
-
-#if 0  // defined(O_NOATIME)
-  flags |= O_NOATIME;
-#endif
-
-#if defined(O_LARGEFILE)
-  flags |= O_LARGEFILE;
-#endif
-
-#if defined(O_CLOEXEC)
-  flags |= O_CLOEXEC;
-#endif
-
-  return ::open(path().c_str(), flags);
+int LocalFile::createPosixChannel(OpenFlags oflags) {
+  return ::open(path().c_str(), to_posix(oflags));
 }
 
 std::unique_ptr<std::istream> LocalFile::createInputChannel() {

@@ -123,16 +123,18 @@ bool MemoryFile::isRegular() const XZERO_NOEXCEPT {
   return true;
 }
 
-int MemoryFile::tryCreateChannel() {
+int MemoryFile::createPosixChannel(OpenFlags oflags) {
 #if defined(XZERO_MEMORYFILE_USE_TMPFILE)
   if (fd_ < 0) {
     errno = ENOENT;
     return -1;
   }
 
-  return dup(fd_);
+  // XXX when using dup(fd_) we'd also need to fcntl() the flags.
+  // - Both having advantages / disadvantages.
+  return ::open(fspath_.c_str(), to_posix(oflags));
 #else
-  return shm_open(fspath_.c_str(), O_RDONLY, 0600);
+  return shm_open(fspath_.c_str(), to_posix(oflags), 0600);
 #endif
 }
 

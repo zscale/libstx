@@ -113,7 +113,7 @@ bool HttpFileHandler::handle(HttpRequest* request, HttpResponse* response,
 
   int fd = -1;
   if (request->method() == HttpMethod::GET) {
-    fd = transferFile->tryCreateChannel();
+    fd = transferFile->createPosixChannel(File::Read | File::NonBlocking);
     if (fd < 0) {
       if (errno != EPERM && errno != EACCES)
         throw std::system_error(transferFile->errorCode(), std::system_category());

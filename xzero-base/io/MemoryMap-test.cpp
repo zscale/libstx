@@ -54,7 +54,7 @@ TEST(MemoryMap, readAndWritable) {
   }
 
   { // readout and verify file contents
-    FileDescriptor fd = file.tryCreateChannel();
+    FileDescriptor fd = file.createPosixChannel(File::Read);
     Buffer out = FileUtil::read(fd);
 
     EXPECT_EQ('a', out[0]);

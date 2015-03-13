@@ -13,6 +13,7 @@
 #include <iosfwd>
 #include <string>
 #include <memory>
+#include <fcntl.h> // O_* flags for createPosixChannel()
 
 namespace xzero {
 
@@ -46,13 +47,39 @@ class XZERO_API File {
   virtual size_t inode() const XZERO_NOEXCEPT = 0;
   virtual bool isRegular() const XZERO_NOEXCEPT = 0;
 
-  /** Creates a file descriptor for this file. */
-  virtual int tryCreateChannel() = 0;
+  /**
+   * Flags that can be passed when creating a system file handle.
+   *
+   * @see createPosixChannel(OpenFlags oflags)
+   */
+  enum OpenFlags {
+    Read        = 0x0001, // O_RDONLY
+    Write       = 0x0002, // O_WRONLY
+    ReadWrite   = 0x0003, // O_RDWR
+    Create      = 0x0004, // O_CREAT
+    CreateNew   = 0x0008, // O_EXCL
+    Truncate    = 0x0010, // O_TRUNC
+    Append      = 0x0020, // O_APPEND
+    Share       = 0x0040, // O_CLOEXEC negagted
+    NonBlocking = 0x0080, // O_NONBLOCK
+    TempFile    = 0x0100, // O_TMPFILE
+  };
 
-  /** creates an input stream for given file. */
+  /**
+   * Converts given OpenFlags to POSIX compatible flags.
+   */
+  static int to_posix(OpenFlags oflags);
+
+  /** Creates a POSIX file handle with given flags.
+   *
+   * @param oflags such as O_RDONLY or O_NONBLOCK, etc (from <fcntl.h>)
+   */
+  virtual int createPosixChannel(OpenFlags oflags) = 0;
+
+  /** Creates an input stream for given file. */
   virtual std::unique_ptr<std::istream> createInputChannel() = 0;
 
-  /** creates an output stream for given file. */
+  /** Creates an output stream for given file. */
   virtual std::unique_ptr<std::ostream> createOutputChannel() = 0;
 
   /** Creates a memory-map for a given file.
@@ -80,5 +107,14 @@ class XZERO_API File {
  protected:
   mutable std::string lastModified_;
 };
+
+XZERO_API File::OpenFlags operator|(File::OpenFlags a, File::OpenFlags b);
+
+// {{{ inlines
+XZERO_API inline File::OpenFlags operator|(File::OpenFlags a,
+                                           File::OpenFlags b) {
+  return (File::OpenFlags) ((unsigned) a | (unsigned) b);
+}
+// }}}
 
 } // namespace xzero
