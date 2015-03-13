@@ -3,6 +3,7 @@
 #include <xzero-base/io/File.h>
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/Buffer.h>
+#include <xzero-base/sysconfig.h>
 
 #include <system_error>
 #include <sys/types.h>
@@ -262,6 +263,62 @@ std::string FileUtil::tempDirectory() {
     return s;
 
   return "/tmp";
+}
+
+void FileUtil::allocate(int fd, size_t length) {
+  if (ftruncate(fd, length) < 0)
+    RAISE_ERRNO(errno);
+}
+
+void FileUtil::preallocate(int fd, size_t length) {
+#if defined(FALLOC_FL_KEEP_SIZE)
+  const int mode = FALLOC_FL_KEEP_SIZE;
+  if (fallocate(fd, mode, offset, length) < 0)
+    RAISE_ERRNO(errno);
+#else
+  // ignoring is fine
+#endif
+}
+
+void FileUtil::deallocate(int fd, off_t offset, size_t length) {
+#if defined(FALLOC_FL_PUNCH_HOLE) && defined(FALLOC_FL_KEEP_SIZE)
+  const int mode = FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
+  if (fallocate(fd, mode, offset, length) < 0)
+    RAISE_ERRNO(errno);
+#else
+  // we cannot release the underlying pages, but we can at least conform to
+  // filling with zeroes
+  const size_t pagesize = 4 * 4096;
+  Buffer zeroes;
+  zeroes.push_back('\0', pagesize);
+
+  while (length > pagesize) {
+    if (::pwrite(fd, zeroes.data(), pagesize, offset) < 0)
+      RAISE_ERRNO(errno);
+
+    offset += pagesize;
+    length -= pagesize;
+  }
+
+  if (::pwrite(fd, zeroes.data(), length, offset) < 0)
+    RAISE_ERRNO(errno);
+#endif
+}
+
+void FileUtil::collapse(int fd, off_t offset, size_t length) {
+#if defined(FALLOC_FL_COLLAPSE_RANGE)
+  const int mode = FALLOC_FL_COLLAPSE_RANGE;
+  if (fallocate(fd, mode, offset, length) < 0)
+    RAISE_ERRNO(errno);
+#else
+  // TODO: implement in userspace by copy+truncate
+  RAISE(RuntimeError, "TODO: workaround not implemented yet.");
+#endif
+}
+
+void FileUtil::truncate(int fd, size_t length) {
+  if (ftruncate(fd, length) < 0)
+    RAISE_ERRNO(errno);
 }
 
 }  // namespace xzero
