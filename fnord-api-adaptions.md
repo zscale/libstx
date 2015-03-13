@@ -11,6 +11,7 @@
 
 - FNV
 - Random
+- Uri
 
 ## Logging
 
