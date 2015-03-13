@@ -15,7 +15,7 @@
 ## Logging
 
 `#include <xzero-base/logging.h>` wie in fnord; jedoch exceptions
-werden via `logDebug(string component, std::exception& e)` geloggt.
+werden via `logError(string component, std::exception& e)` geloggt.
 
 ## Exceptions
 
