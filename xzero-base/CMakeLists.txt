@@ -103,6 +103,7 @@ set(xzero_base_SRC
   StringUtil.cpp
   TimeSpan.cpp
   Tokenizer.cpp
+  Uri.cpp
   WallClock.cpp
 
   cli/CLI.cpp
