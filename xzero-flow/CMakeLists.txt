@@ -9,45 +9,45 @@ include(XzeroCommon)
 option(ENABLE_FLOW_DIRECT_THREADED_VM "Flow VM using direct threaded mode [default: off]" OFF)
 
 set(xzero_flow_SRC
-  AST.cpp
-  ASTPrinter.cpp
+  AST.cc
+  ASTPrinter.cc
   CMakeLists.txt
-  FlowCallVisitor.cpp
-  FlowLexer.cpp
-  FlowLocation.cpp
-  FlowParser.cpp
-  FlowToken.cpp
-  FlowType.cpp
-  IRGenerator.cpp
-  TargetCodeGenerator.cpp
+  FlowCallVisitor.cc
+  FlowLexer.cc
+  FlowLocation.cc
+  FlowParser.cc
+  FlowToken.cc
+  FlowType.cc
+  IRGenerator.cc
+  TargetCodeGenerator.cc
 
-  ir/BasicBlock.cpp
-  ir/Constant.cpp
-  ir/ConstantArray.cpp
-  ir/ConstantValue.cpp
-  ir/Instr.cpp
-  ir/Instructions.cpp
-  ir/InstructionVisitor.cpp
-  ir/IRBuilder.cpp
-  ir/IRHandler.cpp
-  ir/IRProgram.cpp
-  ir/PassManager.cpp
-  ir/Value.cpp
+  ir/BasicBlock.cc
+  ir/Constant.cc
+  ir/ConstantArray.cc
+  ir/ConstantValue.cc
+  ir/Instr.cc
+  ir/Instructions.cc
+  ir/InstructionVisitor.cc
+  ir/IRBuilder.cc
+  ir/IRHandler.cc
+  ir/IRProgram.cc
+  ir/PassManager.cc
+  ir/Value.cc
 
-  transform/EmptyBlockElimination.cpp
-  transform/InstructionElimination.cpp
-  transform/UnusedBlockPass.cpp
+  transform/EmptyBlockElimination.cc
+  transform/InstructionElimination.cc
+  transform/UnusedBlockPass.cc
 
-  vm/ConstantPool.cpp
-  vm/Handler.cpp
-  vm/Instruction.cpp
-  vm/Match.cpp
-  vm/MatchClass.cpp
-  vm/NativeCallback.cpp
-  vm/Program.cpp
-  vm/Runner.cpp
-  vm/Runtime.cpp
-  vm/Signature.cpp
+  vm/ConstantPool.cc
+  vm/Handler.cc
+  vm/Instruction.cc
+  vm/Match.cc
+  vm/MatchClass.cc
+  vm/NativeCallback.cc
+  vm/Program.cc
+  vm/Runner.cc
+  vm/Runtime.cc
+  vm/Signature.cc
 )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)
@@ -77,8 +77,8 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                        PATTERN "CMakeFiles" EXCLUDE)
 
 # test-flow
-file(GLOB_RECURSE xzero_flow_test_SRC "*-test.cpp")
-add_executable(test-flow ${CMAKE_CURRENT_SOURCE_DIR}/../test-main.cpp ${xzero_flow_test_SRC})
+file(GLOB_RECURSE xzero_flow_test_SRC "*-test.cc")
+add_executable(test-flow ${CMAKE_CURRENT_SOURCE_DIR}/../test-main.cc ${xzero_flow_test_SRC})
 target_link_libraries(test-flow xzero-flow xzero-base gtest)
 
 # pkg-config target

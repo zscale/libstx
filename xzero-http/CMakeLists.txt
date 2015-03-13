@@ -8,34 +8,34 @@ include(XzeroCommon)
 
 set(xzero_http_SRC
   # common
-  HeaderField.cpp
-  HeaderFieldList.cpp
-  HttpBufferedInput.cpp
-  HttpChannel.cpp
-  HttpConnectionFactory.cpp
-  HttpDateGenerator.cpp
-  HttpFileHandler.cpp
-  HttpInput.cpp
-  HttpListener.cpp
-  HttpMethod.cpp
-  HttpOutput.cpp
-  HttpOutputCompressor.cpp
-  HttpRequest.cpp
-  HttpResponse.cpp
-  HttpService.cpp
-  HttpStatus.cpp
-  HttpTransport.cpp
-  HttpVersion.cpp
+  HeaderField.cc
+  HeaderFieldList.cc
+  HttpBufferedInput.cc
+  HttpChannel.cc
+  HttpConnectionFactory.cc
+  HttpDateGenerator.cc
+  HttpFileHandler.cc
+  HttpInput.cc
+  HttpListener.cc
+  HttpMethod.cc
+  HttpOutput.cc
+  HttpOutputCompressor.cc
+  HttpRequest.cc
+  HttpResponse.cc
+  HttpService.cc
+  HttpStatus.cc
+  HttpTransport.cc
+  HttpVersion.cc
 
   # transport: mock
-  mock/MockTransport.cpp
+  mock/MockTransport.cc
 
   # transport: http/1.1
-  http1/Http1Channel.cpp
-  http1/Http1ConnectionFactory.cpp
-  http1/HttpConnection.cpp
-  http1/HttpGenerator.cpp
-  http1/HttpParser.cpp
+  http1/Http1Channel.cc
+  http1/Http1ConnectionFactory.cc
+  http1/HttpConnection.cc
+  http1/HttpGenerator.cc
+  http1/HttpParser.cc
 )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)
@@ -67,8 +67,8 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                        PATTERN "CMakeFiles" EXCLUDE)
 
 # test-http
-file(GLOB_RECURSE xzero_http_test_SRC "*-test.cpp")
-add_executable(test-http ../test-main.cpp ${xzero_http_test_SRC})
+file(GLOB_RECURSE xzero_http_test_SRC "*-test.cc")
+add_executable(test-http ../test-main.cc ${xzero_http_test_SRC})
 target_link_libraries(test-http xzero-http xzero-base gtest)
 
 # pkg-config target

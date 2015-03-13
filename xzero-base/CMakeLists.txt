@@ -91,68 +91,68 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/sysconfig.h)
 
 set(xzero_base_SRC
-  Base64.cpp
-  Buffer.cpp
-  DateTime.cpp
-  IdleTimeout.cpp
-  MimeTypes.cpp
-  Random.cpp
-  RegExp.cpp
-  RuntimeError.cpp
-  StackTrace.cpp
-  StringUtil.cpp
-  TimeSpan.cpp
-  Tokenizer.cpp
-  Uri.cpp
-  WallClock.cpp
+  Base64.cc
+  Buffer.cc
+  DateTime.cc
+  IdleTimeout.cc
+  MimeTypes.cc
+  Random.cc
+  RegExp.cc
+  RuntimeError.cc
+  StackTrace.cc
+  StringUtil.cc
+  TimeSpan.cc
+  Tokenizer.cc
+  Uri.cc
+  WallClock.cc
 
-  cli/CLI.cpp
-  cli/Flags.cpp
+  cli/CLI.cc
+  cli/Flags.cc
 
-  logging/LogAggregator.cpp
-  logging/LogLevel.cpp
-  logging/LogSource.cpp
-  logging/LogTarget.cpp
-  logging.cpp
+  logging/LogAggregator.cc
+  logging/LogLevel.cc
+  logging/LogSource.cc
+  logging/LogTarget.cc
+  logging.cc
 
-  executor/SafeCall.cpp
-  executor/Executor.cpp
-  executor/DirectExecutor.cpp
-  executor/PosixScheduler.cpp
-  executor/Scheduler.cpp
-  executor/ThreadedExecutor.cpp
-  executor/ThreadPool.cpp
+  executor/SafeCall.cc
+  executor/Executor.cc
+  executor/DirectExecutor.cc
+  executor/PosixScheduler.cc
+  executor/Scheduler.cc
+  executor/ThreadedExecutor.cc
+  executor/ThreadPool.cc
 
-  hash/FNV.cpp
+  hash/FNV.cc
 
-  io/GzipFilter.cpp
-  io/File.cpp
-  io/FileDescriptor.cpp
-  io/FileRef.cpp
-  io/FileRepository.cpp
-  io/Filter.cpp
-  io/FileUtil.cpp
-  io/LocalFile.cpp
-  io/LocalFileRepository.cpp
-  io/MemoryFile.cpp
-  io/MemoryFileRepository.cpp
-  io/MemoryMap.cpp
+  io/GzipFilter.cc
+  io/File.cc
+  io/FileDescriptor.cc
+  io/FileRef.cc
+  io/FileRepository.cc
+  io/Filter.cc
+  io/FileUtil.cc
+  io/LocalFile.cc
+  io/LocalFileRepository.cc
+  io/MemoryFile.cc
+  io/MemoryFileRepository.cc
+  io/MemoryMap.cc
 
-  net/ByteArrayEndPoint.cpp
-  net/Cidr.cpp
-  net/Connection.cpp
-  net/ConnectionFactory.cpp
-  net/Connector.cpp
-  net/DnsClient.cpp
-  net/EndPoint.cpp
-  net/EndPointWriter.cpp
-  net/InetConnector.cpp
-  net/InetEndPoint.cpp
-  net/LocalConnector.cpp
-  net/Server.cpp
-  net/SslConnector.cpp
-  net/SslContext.cpp
-  net/SslEndPoint.cpp
+  net/ByteArrayEndPoint.cc
+  net/Cidr.cc
+  net/Connection.cc
+  net/ConnectionFactory.cc
+  net/Connector.cc
+  net/DnsClient.cc
+  net/EndPoint.cc
+  net/EndPointWriter.cc
+  net/InetConnector.cc
+  net/InetEndPoint.cc
+  net/LocalConnector.cc
+  net/Server.cc
+  net/SslConnector.cc
+  net/SslContext.cc
+  net/SslEndPoint.cc
 )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)
@@ -181,8 +181,8 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                        PATTERN "CMakeFiles" EXCLUDE)
 
 # test-base
-file(GLOB_RECURSE xzero_base_test_SRC "*-test.cpp")
-add_executable(test-base ../test-main.cpp ${xzero_base_test_SRC})
+file(GLOB_RECURSE xzero_base_test_SRC "*-test.cc")
+add_executable(test-base ../test-main.cc ${xzero_base_test_SRC})
 target_link_libraries(test-base xzero-base gtest)
 
 # pkg-config target
