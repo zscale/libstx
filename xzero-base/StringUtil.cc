@@ -76,7 +76,8 @@ std::string StringUtil::toString(bool value) {
 
 void StringUtil::stripTrailingSlashes(std::string* str) {
   while (str->back() == '/') {
-    str->pop_back();
+    str->resize(str->size() - 1);
+    //str->pop_back(); // does not compile on Ubuntu 12.04
   }
 }
 
