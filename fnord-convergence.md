@@ -24,7 +24,6 @@
 - [ ] thread::Future, thread::PromiseState
 - [ ] thread::Wakeup
 - [ ] thread::ThreadPool
-- [ ] thread::Queue
 - [ ] util/BinaryMessageWriter
 - [ ] util/BinaryMessageReader
 - [ ] reflection
@@ -55,6 +54,7 @@
 - [x] URI as Uri
 - [x] Application
 - [x] thread::SignalHandler
+- [x] thread::Queue
 
 ### concerns during converge
 
