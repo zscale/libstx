@@ -22,7 +22,6 @@
 - [ ] traits
 - [ ] thread::EventLoop (equivalent of xzero::{Posix,Native}Scheduler)
 - [ ] thread::Future, thread::PromiseState
-- [ ] thread::Wakeup
 - [ ] thread::ThreadPool
 - [ ] util/BinaryMessageWriter
 - [ ] util/BinaryMessageReader
@@ -55,6 +54,7 @@
 - [x] Application
 - [x] thread::SignalHandler
 - [x] thread::Queue
+- [x] thread::Wakeup
 
 ### concerns during converge
 
