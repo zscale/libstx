@@ -55,3 +55,11 @@ Buffer& operator<<(Buffer& buf, const TimeSpan& ts) {
 }
 
 }  // namespace xzero
+
+xzero::TimeSpan std::numeric_limits<xzero::TimeSpan>::max() {
+  return xzero::TimeSpan(0.0f);
+}
+
+xzero::TimeSpan std::numeric_limits<xzero::TimeSpan>::min() {
+  return xzero::TimeSpan(std::numeric_limits<double>::max());
+}

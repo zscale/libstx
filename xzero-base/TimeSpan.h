@@ -131,4 +131,12 @@ XZERO_API Buffer& operator<<(Buffer& buf, const TimeSpan& ts);
 
 }  // namespace xzero
 
+namespace std {
+template <> class numeric_limits<xzero::TimeSpan> {
+public:
+  static XZERO_API xzero::TimeSpan max();
+  static XZERO_API xzero::TimeSpan min();
+};
+}
+
 #endif
