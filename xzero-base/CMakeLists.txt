@@ -91,6 +91,7 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/sysconfig.h)
 
 set(xzero_base_SRC
+  Application.cc
   Base64.cc
   Buffer.cc
   DateTime.cc
