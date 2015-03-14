@@ -156,6 +156,7 @@ set(xzero_base_SRC
   net/SslEndPoint.cc
 
   thread/SignalHandler.cc
+  thread/Wakeup.cc
 )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)
