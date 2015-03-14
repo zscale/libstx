@@ -14,7 +14,9 @@
   - Random
   - Uri
   - Application
-  - SignalHandler
+  - thread::SignalHandler
+  - thread::Wakeup
+  - thread::Queue
 
 ## Logging
 
@@ -97,3 +99,8 @@ Kann auch via stdlib gehackt werden:
 ### Option Type
 
 `None<T>()` wird zu `None()` - das reicht.
+
+### Wakeup
+
+ist jetzt in `xzero::thread` anstatt nur im main namespace (aka: `fnord`)
+
