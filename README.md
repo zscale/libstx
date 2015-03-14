@@ -1,9 +1,9 @@
 # Xzero C++ Library Collection
 
-[ ![Build Status - Travis-CI](https://secure.travis-ci.org/xzero/xzero.png) ](http://travis-ci.org/xzero/xzero)
+[ ![Build Status - Travis-CI](https://secure.travis-ci.org/xzero/libxzero.png) ](http://travis-ci.org/xzero/libxzero)
 
-- github: https://github.com/xzero/xzero
-- travis-ci: https://travis-ci.org/xzero/xzero
+- github: https://github.com/xzero/libxzero
+- travis-ci: https://travis-ci.org/xzero/libxzero
 
 This is a collection of C++ system libraries.
 
@@ -33,9 +33,10 @@ cd libxzero
 make debug
 ```
 
-## Uses
+## Contributors
 
-- TODO
+- Christian Parpart (https://github.com/christianparpart)
+- Paul Asmuth (https://github.com/paulasmuth)
 
 LICENSE
 -------
