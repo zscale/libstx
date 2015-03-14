@@ -9,9 +9,12 @@
 
 ## Was so geblieben ist
 
-- FNV
-- Random
-- Uri
+- base:
+  - FNV
+  - Random
+  - Uri
+  - Application
+  - SignalHandler
 
 ## Logging
 
@@ -91,3 +94,6 @@ Kann auch via stdlib gehackt werden:
 }
 ```
 
+### Option Type
+
+`None<T>()` wird zu `None()` - das reicht.
