@@ -18,10 +18,13 @@
 - [ ] UDP networking
 - [ ] StatsServer as seperate xzero-stats module
 - [ ] introspection: `std::string inspect(const TYPE&)`
-- [ ] Application
 - [ ] IEEE754
 - [ ] traits
-- [ ] threading
+- [ ] thread::EventLoop (equivalent of xzero::{Posix,Native}Scheduler)
+- [ ] thread::Future, thread::PromiseState
+- [ ] thread::Wakeup
+- [ ] thread::ThreadPool
+- [ ] thread::Queue
 - [ ] util/BinaryMessageWriter
 - [ ] util/BinaryMessageReader
 - [ ] reflection
@@ -50,6 +53,8 @@
 - [x] io: FileRef (got deprecated)
 - [x] FreeOnDestroy: (maybe different impl via `unique_ptr` and custom deleter?)
 - [x] URI as Uri
+- [x] Application
+- [x] thread::SignalHandler
 
 ### concerns during converge
 
