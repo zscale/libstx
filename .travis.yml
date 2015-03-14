@@ -13,14 +13,16 @@ install:
   # clang 3.4
   - if [ "$CXX" == "clang++" ]; then sudo apt-get install -y -qq clang-3.4; fi
   - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
-  # x0 dependencies
-  - sudo apt-get install -y -qq cmake libgtest-dev pkg-config libtbb-dev libssl-dev
+  # libxzero dependencies
+  - sudo apt-get install -y -qq cmake libgtest-dev pkg-config libtbb-dev libssl-dev libpcre3-dev
   - mkdir ~/gtest && cd ~/gtest && cmake /usr/src/gtest -DBUILD_SHARED_LIBS=ON && make && sudo cp -vp libgtest*.so /usr/local/lib/ && sudo ldconfig && cd -
 script:
   - $CXX --version
-  - cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_{EXAMPLES,TESTS}=ON
+  - cmake -DCMAKE_BUILD_TYPE=debug -DENABLE_{EXAMPLES,TESTS,PCRE}=ON
   - make
-  - ./test/libxzero-test
+  - ./xzero-base/test-base
+  - ./xzero-flow/test-flow
+  - ./xzero-http/test-http
 branches:
   only:
     - master
