@@ -10,10 +10,14 @@
 #include <xzero-base/thread/SignalHandler.h>
 #include <xzero-base/logging/LogAggregator.h>
 #include <xzero-base/logging/LogTarget.h>
+#include <xzero-base/RuntimeError.h>
+#include <stdlib.h>
 
 namespace xzero {
 
 void Application::init() {
+  Application::installGlobalExceptionHandler();
+
   thread::SignalHandler::ignore(SIGPIPE);
 
   // well, when you detach from the terminal, you're garanteed to not get one.
@@ -24,6 +28,23 @@ void Application::init() {
 void Application::logToStderr(LogLevel loglevel) {
   LogAggregator::get().setLogTarget(LogTarget::console());
   LogAggregator::get().setLogLevel(loglevel);
+}
+
+static void globalEH() {
+  try {
+    throw;
+  } catch (const std::exception& e) {
+    logAndAbort(e);
+  } catch (...) {
+    // d'oh
+    fprintf(stderr, "Unhandled foreign exception caught.\n");
+    abort();
+  }
+}
+
+void Application::installGlobalExceptionHandler() {
+  std::set_terminate(&globalEH);
+  std::set_unexpected(&globalEH);
 }
 
 } // namespace xzero
