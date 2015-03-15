@@ -16,6 +16,8 @@ class XZERO_API Application {
   static void init();
 
   static void logToStderr(LogLevel loglevel = LogLevel::Info);
+
+  static void installGlobalExceptionHandler();
 };
 
 } // namespace xzero
