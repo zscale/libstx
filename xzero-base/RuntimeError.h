@@ -65,7 +65,7 @@ class XZERO_API RuntimeError : public std::runtime_error {
 
   std::vector<std::string> backtrace() const;
 
-  void debugPrint(std::ostream* os) const;
+  void debugPrint(std::ostream* os = nullptr) const;
 
  private:
   const char* sourceFile_;
