@@ -157,6 +157,10 @@ set(xzero_base_SRC
 
   thread/SignalHandler.cc
   thread/Wakeup.cc
+
+  util/BinaryMessageReader.cc
+  util/BinaryMessageWriter.cc
+  util/SimpleRateLimit.cc
 )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)
