@@ -56,8 +56,14 @@ class XZERO_API DateTime {
   /** Retrieves the timestamp as type @c double, as used by libev. */
   double value() const;
 
-  /** Retrieves the timestamp as @c time_t. */
+  /** Retrieves the UNIX timestamp as @c time_t. */
   std::time_t unixtime() const;
+
+  /** Retrieves the UNIX timestamp in total milliseconds. */
+  uint64_t unixMilliseconds() const;
+
+  /** Retrieves the UNIX timestamp in total microseconds. */
+  uint64_t unixMicroseconds() const;
 
   /**
    * @brief  Retrieve this dateime object as a HTTP/1.1 conform string.
@@ -100,10 +106,20 @@ inline time_t DateTime::mktime(const char* v) {
   return 0;
 }
 
-inline double DateTime::value() const { return value_; }
+inline double DateTime::value() const {
+  return value_;
+}
 
 inline std::time_t DateTime::unixtime() const {
   return static_cast<std::time_t>(value_);
+}
+
+inline uint64_t DateTime::unixMilliseconds() const {
+  return static_cast<uint64_t>(value_ * 1000llu);
+}
+
+inline uint64_t DateTime::unixMicroseconds() const {
+  return static_cast<uint64_t>(value_ * 1000000llu);
 }
 
 inline void DateTime::update() {
