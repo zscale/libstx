@@ -8,6 +8,7 @@
 
 #include <xzero-base/Api.h>
 #include <xzero-base/StackTrace.h>
+#include <xzero-base/Status.h>
 #include <xzero-base/sysconfig.h>
 #include <iosfwd>
 #include <vector>
@@ -19,39 +20,10 @@
 
 namespace xzero {
 
-// a set of string constants to be used for exception type faking
-const char kBufferOverflowError[] = "BufferOverflowError";
-const char kEncodingError[] = "EncodingError";
-const char kConcurrentModificationError[] = "ConcurrentModificationError";
-const char kDivideByZeroError[] = "DivideByZeroError";
-const char kFlagError[] = "FlagError";
-const char kIOError[] = "IOError";
-const char kIllegalArgumentError[] = "IOIllegalArgument";
-const char kIllegalFormatError[] = "IllegalFormat";
-const char kIllegalStateError[] = "IllegalState";
-const char kIndexError[] = "IndexError";
-const char kInvalidOptionError[] = "InvalidOptionError";
-const char kKeyError[] = "KeyError";
-const char kMallocError[] = "MallocError";
-const char kNoSuchMethodError[] = "NoSuchMethodError";
-const char kNotImplementedError[] = "NotImplementedError";
-const char kNotYetImplementedError[] = "NotYetImplementedError";
-const char kNullPointerError[] = "NullPointerError";
-const char kParseError[] = "ParseError";
-const char kRangeError[] = "RangeError";
-const char kReflectionError[] = "kReflectionError";
-const char kResolveError[] = "kResolveError";
-const char kRPCError[] = "kRPCError";
-const char kRuntimeError[] = "RuntimeError";
-const char kTypeError[] = "TypeError";
-const char kUsageError[] = "UsageError";
-const char kVersionMismatchError[] = "VersionMismatchError";
-const char kWouldBlockError[] = "WouldBlockError";
-const char kFutureError[] = "FutureError";
-
-class XZERO_API RuntimeError : public std::runtime_error {
+class XZERO_API RuntimeError : public std::system_error {
  public:
-  explicit RuntimeError(const std::string& what);
+  RuntimeError(int ev, const std::error_category& ec);
+  RuntimeError(int ev, const std::error_category& ec, const std::string& what);
   ~RuntimeError();
 
   void setSource(const char* file, int line, const char* fn);
@@ -86,8 +58,8 @@ XZERO_API void logAndAbort(const std::exception& e);
  * @see EXCEPTION(E, ...)
  */
 template<typename E, typename... Args>
-inline E make_error(const char* file, int line, const char* fn, Args... args) {
-  E e(args...);
+inline E make_error(const char* file, int line, const char* fn, Args&&... args) {
+  E e(std::forward<Args>(args)...);
   e.setSource(file, line, fn);
   return e;
 }
@@ -96,6 +68,18 @@ inline E make_error(const char* file, int line, const char* fn, Args... args) {
 
 #define EXCEPTION(E, ...)                                                     \
   (make_error<E>(__FILE__, __LINE__, __PRETTY_FUNCTION__, __VA_ARGS__))
+
+/**
+ * Raises an exception of given type constructor without arguments.
+ *
+ * The exception must derive from RuntimeError, whose additional
+ * source information will be initialized after.
+ */
+#define RAISE_EXCEPTION0(E) {                                                 \
+  E e;                                                                        \
+  e.setSource(__FILE__, __LINE__, __PRETTY_FUNCTION__);                       \
+  throw e;                                                                    \
+}
 
 /**
  * Raises an exception of given type and arguments being passed to the
@@ -111,22 +95,16 @@ inline E make_error(const char* file, int line, const char* fn, Args... args) {
 }
 
 /**
- * Raises an exception of given exception type.
+ * Raises an exception of type RuntimeError for given code and category.
  *
- * Alias to RAISE_EXCEPTION.
- */
-#define RAISE(E, ...) RAISE_EXCEPTION(E, __VA_ARGS__)
-
-/**
- * Raises a fake-typed RuntimeError exception.
+ * Also sets source file, line, and calling function.
  *
- * A RuntimeError exception is created and raised but its typeName
- * is customly set to the FakeType argument.
+ * @param code 1st argument is the error value.
+ * @param category 2nd argument is the error category.
+ * @param what_arg 3rd (optional) argument is the actual error message.
  */
-#define RAISE_FAKE(FakeType, ...) {                                           \
-  auto e = EXCEPTION(RuntimeError, __VA_ARGS__);                              \
-  e.setTypeName(FakeType);                                                    \
-  throw e;                                                                    \
+#define RAISE_CATEGORY(Code, ...) {                                           \
+  RAISE_EXCEPTION(RuntimeError, (int)(Code), __VA_ARGS__);                    \
 }
 
 /**
@@ -135,17 +113,33 @@ inline E make_error(const char* file, int line, const char* fn, Args... args) {
  * @see RAISE_EXCEPTION(E, ...)
  */
 #define RAISE_ERRNO(errno) {                                                  \
-  char buf[256];                                                              \
-  strerror_r((errno), buf, sizeof(buf));                                      \
-  size_t n = strlen(buf);                                                     \
-  RAISE_EXCEPTION(RuntimeError, std::string(buf, n));                         \
+  RAISE_CATEGORY(errno, std::system_category());                              \
 }
+
+/**
+ * Raises a RuntimeError for error codes of type Status.
+ *
+ * @param StatusCode must be a member field of Status.
+ */
+#define RAISE_STATUS(StatusCode)                                              \
+  RAISE_CATEGORY((Status:: StatusCode), StatusCategory::get())
+
+/**
+ * Alias to RAISE_STATUS(StatusCode).
+ *
+ * @param StatusCode must be a member field of Status.
+ */
+#define RAISE(StatusCode)                                                     \
+  RAISE_STATUS(StatusCode)
 
 /**
  * Raises an exception on given evaluated expression conditional.
  */
-#define BUG_ON(cond) {                                                    \
-  if (unlikely(cond)) {                                                   \
-    RAISE_EXCEPTION(RuntimeError, "BUG ON: (" #cond ")");                 \
-  }                                                                       \
+#define BUG_ON(cond) {                                                        \
+  if (unlikely(cond)) {                                                       \
+    RAISE_EXCEPTION(RuntimeError,                                             \
+        (int) Status::InternalError,                                          \
+        StatusCategory::get(),                                                \
+        "BUG ON: (" #cond ")");                                               \
+  }                                                                           \
 }

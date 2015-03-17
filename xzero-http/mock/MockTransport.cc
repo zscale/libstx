@@ -118,7 +118,7 @@ void MockTransport::run(HttpVersion version, const std::string& method,
 
     channel_->onMessageEnd();
   } catch (const BadMessage& e) {
-    channel_->response()->sendError(e.code(), e.what());
+    channel_->response()->sendError(e.httpCode(), e.what());
   }
 }
 

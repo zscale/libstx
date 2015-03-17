@@ -32,7 +32,6 @@ class Flag;
 class XZERO_API CLI {
  public:
   struct FlagDef;
-  class ValidationError;
   class TypeMismatchError;
   class UnknownOptionError;
   class MissingOptionError;
@@ -143,34 +142,30 @@ class XZERO_API CLI {
   std::string parametersHelpText_;
 };
 
-class XZERO_API CLI::ValidationError : public RuntimeError {
+class XZERO_API CLI::TypeMismatchError : public RuntimeError {
  public:
-  explicit ValidationError(const std::string& what) : RuntimeError(what) {}
+  TypeMismatchError()
+    : RuntimeError((int) Status::CliTypeMismatchError, StatusCategory::get()) {}
 };
 
-class XZERO_API CLI::TypeMismatchError  : public ValidationError {
+class XZERO_API CLI::UnknownOptionError : public RuntimeError {
  public:
-  explicit TypeMismatchError(const std::string& name)
-      : ValidationError("Type mismatch in " + name) {}
+  UnknownOptionError()
+    : RuntimeError((int) Status::CliUnknownOptionError, StatusCategory::get()) {}
 };
 
-class XZERO_API CLI::UnknownOptionError : public ValidationError {
+class XZERO_API CLI::MissingOptionError : public RuntimeError {
  public:
-  explicit UnknownOptionError(const std::string& name)
-      : ValidationError("Unknown option " + name) {}
+  MissingOptionError()
+    : RuntimeError((int) Status::CliMissingOptionError, StatusCategory::get()) {}
 };
 
-class XZERO_API CLI::MissingOptionError : public ValidationError {
+class XZERO_API CLI::MissingOptionValueError : public RuntimeError {
  public:
-  explicit MissingOptionError(const std::string& name)
-      : ValidationError("Missing option " + name) {}
+  MissingOptionValueError()
+    : RuntimeError((int) Status::CliMissingOptionValueError, StatusCategory::get()) {}
 };
 
-class XZERO_API CLI::MissingOptionValueError : public ValidationError {
- public:
-  explicit MissingOptionValueError(const std::string& name)
-      : ValidationError("Missing option value for " + name) {}
-};
 
 class XZERO_API FlagBuilder {
  public:

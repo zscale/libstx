@@ -101,6 +101,7 @@ set(xzero_base_SRC
   RegExp.cc
   RuntimeError.cc
   StackTrace.cc
+  Status.cc
   StringUtil.cc
   TimeSpan.cc
   Tokenizer.cc

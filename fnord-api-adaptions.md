@@ -18,6 +18,17 @@
   - thread::Wakeup
   - thread::Queue
 
+## Duration
+
+Neuer Name: `TimeSpan`.
+
+```Duraction.microseconds``` to ```TimeSpan.totalMicroseconds```
+
+## Reflection
+
+basically 1:1 uebernommen, jedoch ist der toplevel include header auch
+im toplevel directory, also `<xzero-base/reflect.h>`.
+
 ## Logging
 
 `#include <xzero-base/logging.h>` wie in fnord; jedoch exceptions
@@ -45,6 +56,15 @@ EH Naming Changes:
 
 - `CatchAndLogException` => `void logAndPass(const std::exception& e)`
 - `CatchAndAbortException` => `void logAndAbort(const std::exception& e)`
+
+Global exception handler wird installiert via:
+
+```
+int main() {
+  Application::installGlobalExceptionHandler();
+  // ...
+}
+```
 
 ## Buffer / String Management
 

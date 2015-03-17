@@ -30,13 +30,34 @@ namespace xzero {
 #define TRACE(msg...) do {} while (0)
 #endif
 
-#define THROW_SSL_ERROR() { \
-  char buf[256]; \
-  ERR_error_string_n(ERR_get_error(), buf, sizeof(buf)); \
-  RAISE(RuntimeError, buf); \
+#define THROW_SSL_ERROR() {                                                   \
+  RAISE_CATEGORY(ERR_get_error(), ssl_error_category());                      \
 }
 
+
+class SslErrorCategory : public std::error_category { // {{{
+ public:
+  static std::error_category& get() {
+    static SslErrorCategory ec;
+    return ec;
+  }
+
+  const char* name() const noexcept override {
+    return "ssl";
+  }
+
+  std::string message(int ev) const override {
+    char buf[256];
+    ERR_error_string_n(ev, buf, sizeof(buf));
+    return buf;
+  }
+}; // }}}
+
 // {{{ helper
+const std::error_category& ssl_error_category() {
+  return SslErrorCategory::get();
+}
+
 static inline void initializeSslLibrary() {
   static int initCounter = 0;
   if (initCounter == 0) {
@@ -130,7 +151,7 @@ SslContext::SslContext(SslConnector* connector,
     THROW_SSL_ERROR();
 
   if (!SSL_CTX_check_private_key(ctx_))
-    RAISE(RuntimeError, "Private key does not match the public certificate");
+    RAISE(SslPrivateKeyCheckError);
 
   SSL_CTX_set_tlsext_servername_callback(ctx_, &SslContext::onServerName);
   SSL_CTX_set_tlsext_servername_arg(ctx_, this);

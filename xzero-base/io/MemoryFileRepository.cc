@@ -34,7 +34,7 @@ void MemoryFileRepository::deleteAllFiles() {
 }
 
 int MemoryFileRepository::createTempFile(std::string* filename) {
-  RAISE(RuntimeError, "TODO");
+  RAISE_STATUS(NotImplementedError);
 }
 
 void MemoryFileRepository::insert(

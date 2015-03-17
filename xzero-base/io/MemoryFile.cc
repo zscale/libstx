@@ -75,7 +75,7 @@ MemoryFile::MemoryFile(
   StringUtil::replaceAll(&fspath_, "/", "\%2f");
 
   if (fspath_.size() >= NAME_MAX)
-    RAISE(RuntimeError, "MemoryFile's path must not exceed NAME_MAX.");
+    RAISE_ERRNO(ENAMETOOLONG);
 
   FileDescriptor fd = shm_open(fspath_.c_str(), O_RDWR | O_CREAT, 0600);
   if (fd < 0)
@@ -90,7 +90,7 @@ MemoryFile::MemoryFile(
 #endif
 
   if (static_cast<size_t>(n) != data.size())
-    RAISE(RuntimeError, "Couldn't write it all.");
+    RAISE_ERRNO(EIO);
 }
 
 MemoryFile::~MemoryFile() {

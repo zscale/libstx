@@ -5,7 +5,7 @@
 namespace xzero {
 
 std::string Uri::encode(const std::string& str) {
-  RAISE(RuntimeError, "Not implemented yet.");
+  RAISE_STATUS(NotImplementedError);
 }
 
 std::string Uri::decode(const std::string& str) {
@@ -17,7 +17,7 @@ std::string Uri::decode(const std::string& str) {
     if (*begin == '%') {
       char hex[3];
       if (++begin + 2 > end) {
-        RAISE(RuntimeError, "invalid URL encoding");
+        RAISE_STATUS(EncodingError);
       }
       hex[0] = *begin++;
       hex[1] = *begin++;
@@ -223,10 +223,7 @@ void Uri::parseURI(
           try {
             *port = std::stoi(port_str);
           } catch (const std::exception& e) {
-            RAISE(RuntimeError,
-                  StringUtil::format(
-                      "Invalid URI: invalid port: $0",
-                       port_str.c_str()));
+            RAISE_STATUS(InvalidUriPortError);
           }
         }
       }

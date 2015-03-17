@@ -95,11 +95,12 @@ void HttpConnection::completed() {
   TRACE("%p completed", this);
 
   if (onComplete_)
-    RAISE(RuntimeError, "there is still another completion hook.");
+    // "there is still another completion hook."
+    RAISE(IllegalStateError);
 
   if (!generator_.isChunked() && generator_.pendingContentLength() > 0)
-    RAISE(RuntimeError,
-        "Invalid State. Response not fully written but completed() invoked.");
+    //"Invalid State. Response not fully written but completed() invoked."
+    RAISE(IllegalStateError);
 
   onComplete_ = std::bind(&HttpConnection::onResponseComplete, this,
                           std::placeholders::_1);
@@ -141,7 +142,8 @@ void HttpConnection::send(HttpResponseInfo&& responseInfo,
                           const BufferRef& chunk,
                           CompletionHandler onComplete) {
   if (onComplete && onComplete_)
-    RAISE(RuntimeError, "there is still another completion hook.");
+    // "there is still another completion hook."
+    RAISE(IllegalStateError);
 
   TRACE("%p send(BufferRef, status=%d, persistent=%s, chunkSize=%zu)",
         this, responseInfo.status(), channel_->isPersistent() ? "yes" : "no",
@@ -162,7 +164,8 @@ void HttpConnection::send(HttpResponseInfo&& responseInfo,
                           Buffer&& chunk,
                           CompletionHandler onComplete) {
   if (onComplete && onComplete_)
-    RAISE(RuntimeError, "there is still another completion hook.");
+    // "there is still another completion hook."
+    RAISE(IllegalStateError);
 
   TRACE("%p send(Buffer, status=%d, persistent=%s, chunkSize=%zu)",
         this, responseInfo.status(), channel_->isPersistent() ? "yes" : "no",
@@ -183,7 +186,8 @@ void HttpConnection::send(HttpResponseInfo&& responseInfo,
                           FileRef&& chunk,
                           CompletionHandler onComplete) {
   if (onComplete && onComplete_)
-    RAISE(RuntimeError, "there is still another completion hook.");
+    // "there is still another completion hook."
+    RAISE(IllegalStateError);
 
   TRACE("%p send(FileRef, status=%d, persistent=%s, fileRef.fd=%d, chunkSize=%zu)",
         this, responseInfo.status(), channel_->isPersistent() ? "yes" : "no",
@@ -221,7 +225,8 @@ void HttpConnection::patchResponseInfo(HttpResponseInfo& responseInfo) {
 
 void HttpConnection::send(Buffer&& chunk, CompletionHandler onComplete) {
   if (onComplete && onComplete_)
-    RAISE(RuntimeError, "there is still another completion hook.");
+    // "there is still another completion hook."
+    RAISE(IllegalStateError);
 
   TRACE("%p send(Buffer, chunkSize=%zu)", this, chunk.size());
 
@@ -234,7 +239,8 @@ void HttpConnection::send(Buffer&& chunk, CompletionHandler onComplete) {
 void HttpConnection::send(const BufferRef& chunk,
                           CompletionHandler onComplete) {
   if (onComplete && onComplete_)
-    RAISE(RuntimeError, "there is still another completion hook.");
+    // "there is still another completion hook."
+    RAISE(IllegalStateError);
 
   TRACE("%p send(BufferRef, chunkSize=%zu)", this, chunk.size());
 
@@ -246,7 +252,8 @@ void HttpConnection::send(const BufferRef& chunk,
 
 void HttpConnection::send(FileRef&& chunk, CompletionHandler onComplete) {
   if (onComplete && onComplete_)
-    RAISE(RuntimeError, "there is still another completion hook.");
+    // "there is still another completion hook."
+    RAISE(IllegalStateError);
 
   TRACE("%p send(FileRef, chunkSize=%zu)", this, chunk.size());
 
@@ -266,7 +273,7 @@ void HttpConnection::onFillable() {
   TRACE("%p onFillable: calling fill()", this);
   if (endpoint()->fill(&inputBuffer_) == 0) {
     TRACE("%p onFillable: fill() returned 0", this);
-    // RAISE(RuntimeError, "client EOF");
+    // RAISE("client EOF");
     abort();
     return;
   }
@@ -284,7 +291,7 @@ void HttpConnection::parseFragment() {
     inputOffset_ += n;
   } catch (const BadMessage& e) {
     TRACE("%p parseFragment: BadMessage caught. %s", this, e.what());
-    channel_->response()->sendError(e.code(), e.what());
+    channel_->response()->sendError(e.httpCode(), e.what());
   }
 }
 

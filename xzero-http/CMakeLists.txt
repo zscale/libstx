@@ -8,6 +8,7 @@ include(XzeroCommon)
 
 set(xzero_http_SRC
   # common
+  BadMessage.cc
   HeaderField.cc
   HeaderFieldList.cc
   HttpBufferedInput.cc

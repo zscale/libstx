@@ -34,10 +34,26 @@ std::vector<IPAddress> DnsClient::ip(const std::string& name) {
   }
 
   if (result.empty())
-    RAISE(RuntimeError, "Could not resolve hostname " + name + ".");
+    RAISE_STATUS(ResolveError);
 
   return result;
 }
+
+class GaiErrorCategory : public std::error_category {
+ public:
+  static std::error_category& get() {
+    static GaiErrorCategory gaiErrorCategory_;
+    return gaiErrorCategory_;
+  }
+
+  const char* name() const noexcept override {
+    return "gai";
+  }
+
+  std::string message(int ec) const override {
+    return gai_strerror(ec);
+  }
+};
 
 template<typename InetType, const int AddressFamilty>
 const std::vector<IPAddress>& DnsClient::lookupIP(
@@ -58,7 +74,7 @@ const std::vector<IPAddress>& DnsClient::lookupIP(
 
   int rc = getaddrinfo(name.c_str(), nullptr, &hints, &res);
   if (rc != 0)
-    RAISE(RuntimeError, gai_strerror(rc));
+    RAISE_CATEGORY(rc, GaiErrorCategory::get());
 
   std::vector<IPAddress> list;
 
@@ -70,11 +86,11 @@ const std::vector<IPAddress>& DnsClient::lookupIP(
 
 std::vector<std::string> DnsClient::txt(const std::string& name) {
   // http://stackoverflow.com/questions/2315504/best-way-to-resolve-a-dns-txt-record-on-linux-unix-posix-bsd-type-systems
-  RAISE(RuntimeError, "TODO");
+  RAISE_STATUS(NotImplementedError);
 }
 
 std::vector<std::pair<int, std::string>> DnsClient::mx(const std::string& name) {
-  RAISE(RuntimeError, "TODO");
+  RAISE_STATUS(NotImplementedError);
 }
 
 void DnsClient::clearIPv4() {
