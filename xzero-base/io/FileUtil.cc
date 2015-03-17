@@ -196,7 +196,7 @@ void FileUtil::write(const std::string& path, const Buffer& buffer) {
 }
 
 void FileUtil::copy(const std::string& from, const std::string& to) {
-  RAISE(RuntimeError, "TODO");
+  RAISE_STATUS(NotImplementedError);
 }
 
 void FileUtil::truncate(const std::string& path, size_t size) {
@@ -210,7 +210,7 @@ void FileUtil::mkdir(const std::string& path, int mode) {
 }
 
 void FileUtil::mkdir_p(const std::string& path, int mode) {
-  RAISE(RuntimeError, "TODO");
+  RAISE_STATUS(NotImplementedError);
 }
 
 void FileUtil::rm(const std::string& path) {
@@ -312,7 +312,7 @@ void FileUtil::collapse(int fd, off_t offset, size_t length) {
     RAISE_ERRNO(errno);
 #else
   // TODO: implement in userspace by copy+truncate
-  RAISE(RuntimeError, "TODO: workaround not implemented yet.");
+  RAISE_STATUS(NotImplementedError);
 #endif
 }
 

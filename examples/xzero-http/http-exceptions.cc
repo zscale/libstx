@@ -20,6 +20,31 @@
 #include <xzero-http/HttpOutput.h>
 #include <xzero-http/http1/Http1ConnectionFactory.h>
 
+enum class MaybeRaise {
+  Never,
+  Now,
+};
+
+class MaybeRaiseCategory : public std::error_category {
+ public:
+  static std::error_category& get() {
+    static MaybeRaiseCategory ec;
+    return ec;
+  }
+  const char* name() const noexcept override {
+    return "maybe_raise";
+  }
+  std::string message(int ev) const override {
+    switch (static_cast<MaybeRaise>(ev)) {
+      case MaybeRaise::Now: return "Now";
+      case MaybeRaise::Never: return "Never";
+      default: return "Unknown MaybeRaise Error.";
+    }
+  }
+};
+
+using namespace xzero;
+
 int main() {
   auto errorHandler = [](const std::exception& e) {
     xzero::logAndPass(e);
@@ -44,7 +69,7 @@ int main() {
                       xzero::HttpResponse* response) {
     if (request->path() == "/raise") {
       printf("blah\n");
-      RAISE(xzero::RuntimeError, "maybe raise");
+      RAISE_CATEGORY(MaybeRaise::Now, MaybeRaiseCategory::get());
     }
 
     response->setStatus(xzero::HttpStatus::Ok);

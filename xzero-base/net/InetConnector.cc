@@ -90,7 +90,7 @@ InetConnector::InetConnector(const std::string& name, Executor* executor,
 void InetConnector::open(const IPAddress& ipaddress, int port, int backlog,
                          bool reuseAddr, bool reusePort) {
   if (isOpen())
-    RAISE(RuntimeError, "InetConnector already opened");
+    RAISE_STATUS(IllegalStateError);
 
   socket_ = ::socket(ipaddress.family(), SOCK_STREAM, 0);
   addressFamily_ = ipaddress.family();
@@ -181,7 +181,7 @@ size_t InetConnector::backlog() const XZERO_NOEXCEPT {
 
 void InetConnector::setBacklog(size_t value) {
   if (isStarted()) {
-    RAISE(RuntimeError, "Cannot change backlog when already listening.");
+    RAISE_STATUS(IllegalStateError);
   }
 
   backlog_ = value;
@@ -348,7 +348,7 @@ void InetConnector::setTcpFinTimeout(TimeSpan value) {
 
 void InetConnector::start() {
   if (!isOpen()) {
-    RAISE(RuntimeError, "Connector must be open in order to be started.");
+    RAISE_STATUS(IllegalStateError);
   }
 
   if (isStarted()) {

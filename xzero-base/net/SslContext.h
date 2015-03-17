@@ -53,6 +53,9 @@ inline const std::vector<std::string>& SslContext::dnsNames() const {
   return dnsNames_;
 }
 
+// some helper
+XZERO_API const std::error_category& ssl_error_category();
+
 } // namespace xzero
 
 

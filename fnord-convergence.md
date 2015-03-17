@@ -3,7 +3,32 @@
 
 - https://gist.github.com/paulasmuth/5d777701c8eff8826e68
 
+### Status vs Exceptions vs stdlib
+
+- Status is a replica of Exception (RuntimeError) in terms of error codes
+- RuntimeError should use Status's codes instead
+- ideally integrated with `std::system_error`'s `std::error_category`
+- `class std::error_code(int ev, std::error_category& ec)`
+- `class std::error_condition(int ev, std::error_category& ec)`
+- `class std::exception(const std::string& what)`
+- `class std::invalid_argument()`
+
+### Error Handling Proposal
+
+- use `class std::error_code` to reflect the actual error code
+- `enum class Status` to specify actual status codes
+- those status codes get its own error category `class StatusCodeCategory`
+- `class RuntimeError` now inherits from `std::system_error`
+  and is used for the above
+- The benifit of `RuntimeError` remains: ability to trace source file:line.
+
 ### converge
+
+- [ ] UDP networking
+- [ ] StatsServer as seperate xzero-stats module
+- [ ] IEEE754
+- [ ] Assets (MemoryFile) example
+- [ ] introspection: `std::string inspect(const TYPE&)`
 
 - [ ] io: File (is more a FileStream / FileChannel than a File [Info])
   - got replaced via std::{i,o}stream
@@ -13,22 +38,14 @@
   - missing: truncate()
   - missing: Buffer integration
   - missing: some open flags: AutoDelete | AllowFork | Trunc | Create[OnOpen]
-- [ ] EH: global exception handlers
-- [ ] Assets (MemoryFile) example
-- [ ] UDP networking
-- [ ] StatsServer as seperate xzero-stats module
-- [ ] introspection: `std::string inspect(const TYPE&)`
-- [ ] IEEE754
-- [ ] traits
-- [ ] thread::EventLoop (equivalent of xzero::{Posix,Native}Scheduler)
 - [ ] thread::Future, thread::PromiseState
+- [ ] thread::EventLoop (equivalent of xzero::{Posix,Native}Scheduler)
 - [ ] thread::ThreadPool
-- [ ] util/BinaryMessageWriter
-- [ ] util/BinaryMessageReader
-- [ ] reflection
-- [ ] Status (required by rps / json-rpc)
 - [ ] rpc
 - [ ] json-rpc
+- [ ] PageManager
+- [ ] fnord-rpc comm::ServerGroup to be part of base
+      <xzero-base/comm/ServerGroup.h>
 - [x] DateTime: `std::numeric_limits<DateTime>i { min, max }`
 - [x] logging api
 - [x] FNV
@@ -55,6 +72,17 @@
 - [x] thread::SignalHandler
 - [x] thread::Queue
 - [x] thread::Wakeup
+- [x] reflection
+- [x] traits
+- [x] EH: global exception handlers
+- [x] util/BinaryMessageWriter
+- [x] util/BinaryMessageReader
+- [x] Status (required by rpc / json-rpc)
+      (implemented via `std::error_category`)
+
+### DEPENDENCIES
+
+- rpc: base, Future, HttpClient
 
 ### concerns during converge
 
@@ -74,8 +102,15 @@
 
 ### Other Modules TBD
 
-- [ ] fnord-chart: should be dedicated library, it's too specific?
-- [ ] fnord-metricdb: should be dedicated library?
-- [ ] fnord-sstable: should be dedicated library?
-- [ ] fnord-webcomponents: should be dedicated library?
+- [ ] fnord-chart:
+- [ ] fnord-metricdb:
+- [ ] fnord-sstable:
+- [ ] fnord-webcomponents:
+- [ ] xzero-redis: redis client support
 
+### Ideas
+
+- [ ] xzero-redis: redis server transport implementation;
+      no actual commands, just the transport,
+      so apps can use it as protocol layer.
+- [ ] ...

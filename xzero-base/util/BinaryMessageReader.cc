@@ -37,7 +37,7 @@ void const* BinaryMessageReader::read(size_t size) {
 
 char const* BinaryMessageReader::readString(size_t size) {
   if ((pos_ + size) > size_) {
-    RAISE_FAKE(kBufferOverflowError, "requested read exceeds message bounds");
+    RAISE(BufferOverflowError);//, "requested read exceeds message bounds");
   }
 
   auto ptr = static_cast<char const*>(ptr_) + pos_;
@@ -51,7 +51,7 @@ void BinaryMessageReader::rewind() {
 
 void BinaryMessageReader::seekTo(size_t pos) {
   if (pos > size_) {
-    RAISE_FAKE(kBufferOverflowError, "requested position exceeds message bounds");
+    RAISE(BufferOverflowError);//, "requested position exceeds message bounds");
   }
 
   pos_ = pos;

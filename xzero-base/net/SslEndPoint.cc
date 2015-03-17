@@ -29,11 +29,10 @@ namespace xzero {
 #define TRACE(msg...) do {} while (0)
 #endif
 
-static inline std::string sslErrorString() {
-  char buf[256];
-  ERR_error_string_n(ERR_get_error(), buf, sizeof(buf));
-  return buf;
+#define THROW_SSL_ERROR() {                                                   \
+  RAISE_CATEGORY(ERR_get_error(), ssl_error_category());                      \
 }
+
 
 SslEndPoint::SslEndPoint(
     int socket, SslConnector* connector, Scheduler* scheduler)
@@ -99,7 +98,7 @@ void SslEndPoint::shutdown() {
             std::bind(&SslEndPoint::shutdown, this));
         break;
       default:
-        RAISE(RuntimeError, "SSL shutdown error. " + sslErrorString());
+        THROW_SSL_ERROR();
     }
   }
 }
@@ -145,7 +144,7 @@ size_t SslEndPoint::fill(Buffer* sink) {
     default:
       TRACE("%p fill(Buffer:%d): SSL_read() -> %d",
           this, space, SSL_get_error(ssl_, rv));
-      RAISE(RuntimeError, "SSL read error. " + sslErrorString());
+      THROW_SSL_ERROR();
   }
   errno = EAGAIN;
   return 0;
@@ -176,7 +175,7 @@ size_t SslEndPoint::flush(const BufferRef& source) {
       break;
     default:
       TRACE("%p flush(BufferRef, @%p, %zu bytes) failed. error.", this, source.data(), source.size());
-      RAISE(RuntimeError, "SSL write error. " + sslErrorString());
+      THROW_SSL_ERROR();
   }
   errno = EAGAIN;
   return 0;
@@ -237,7 +236,8 @@ void SslEndPoint::fillable() {
     connection()->onInterestFailure(e);
   } catch (...) {
     connection()->onInterestFailure(
-        EXCEPTION(RuntimeError, "Unhandled unknown exception caught."));
+        EXCEPTION(RuntimeError, (int) Status::CaughtUnknownExceptionError,
+                  StatusCategory::get()));
   }
 }
 
@@ -367,7 +367,8 @@ void SslEndPoint::flushable() {
     connection()->onInterestFailure(e);
   } catch (...) {
     connection()->onInterestFailure(
-        EXCEPTION(RuntimeError, "Unhandled unknown exception caught."));
+        EXCEPTION(RuntimeError, (int) Status::CaughtUnknownExceptionError,
+                  StatusCategory::get()));
   }
 }
 

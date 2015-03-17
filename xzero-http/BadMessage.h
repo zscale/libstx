@@ -6,28 +6,34 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero-http/Api.h>
-#include <xzero-base/sysconfig.h>
+#include <xzero-http/HttpStatus.h>
 #include <xzero-base/RuntimeError.h>
-#include <stdexcept>
+#include <xzero-base/sysconfig.h>
+#include <system_error>
 
 namespace xzero {
+
+class XZERO_HTTP_API HttpStatusCategory : public std::error_category {
+ public:
+  static std::error_category& get();
+
+  const char* name() const noexcept;
+  std::string message(int ev) const override;
+};
 
 /**
  * Helper exception that is thrown on semantic message errors by HttpChannel.
  */
 class XZERO_HTTP_API BadMessage : public RuntimeError {
  public:
-  explicit BadMessage(HttpStatus code)
-      : BadMessage(code, to_string(code)) {}
+  explicit BadMessage(HttpStatus code);
+  BadMessage(HttpStatus code, const std::string& reason);
 
-  BadMessage(HttpStatus code, const std::string& reason)
-      : RuntimeError(reason),
-        code_(code) {}
-
-  HttpStatus code() const XZERO_NOEXCEPT { return code_; }
-
- private:
-  HttpStatus code_;
+  HttpStatus httpCode() const XZERO_NOEXCEPT {
+    return static_cast<HttpStatus>(code().value());
+  }
 };
+
+#define RAISE_HTTP(status) RAISE_EXCEPTION(BadMessage, (HttpStatus:: status))
 
 } // namespace xzero

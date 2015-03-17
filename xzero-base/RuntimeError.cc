@@ -26,10 +26,6 @@
 #include <execinfo.h>
 #endif
 
-#if defined(HAVE_DLFCN_H)
-#include <dlfcn.h>
-#endif
-
 namespace xzero {
 
 #define MAX_FRAMES 64
@@ -44,8 +40,20 @@ void logAndAbort(const std::exception& e) {
   abort();
 }
 
-RuntimeError::RuntimeError(const std::string& what)
-  : std::runtime_error(what),
+RuntimeError::RuntimeError(int ev, const std::error_category& ec)
+  : std::system_error(ev, ec),
+    sourceFile_(""),
+    sourceLine_(0),
+    functionName_(""),
+    typeName_(nullptr),
+    stackTrace_() {
+}
+
+RuntimeError::RuntimeError(
+    int ev,
+    const std::error_category& ec,
+    const std::string& what)
+  : std::system_error(ev, ec, what),
     sourceFile_(""),
     sourceLine_(0),
     functionName_(""),

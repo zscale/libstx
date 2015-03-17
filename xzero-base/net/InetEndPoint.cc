@@ -65,7 +65,7 @@ InetEndPoint::~InetEndPoint() {
 
 std::pair<IPAddress, int> InetEndPoint::remoteAddress() const {
   if (handle_ < 0)
-    RAISE(RuntimeError, "Illegal State. Socket is closed.");
+    RAISE(IllegalStateError);
 
   std::pair<IPAddress, int> result;
   switch (connector_->addressFamily()) {
@@ -88,14 +88,14 @@ std::pair<IPAddress, int> InetEndPoint::remoteAddress() const {
       break;
     }
     default:
-      RAISE(RuntimeError, "Illegal State. IPAddress.addressFamily?");
+      RAISE(IllegalStateError);
   }
   return result;
 }
 
 std::pair<IPAddress, int> InetEndPoint::localAddress() const {
   if (handle_ < 0)
-    RAISE(RuntimeError, "Illegal State. Socket is closed.");
+    RAISE(IllegalStateError);
 
   std::pair<IPAddress, int> result;
   switch (connector_->addressFamily()) {
@@ -244,7 +244,9 @@ void InetEndPoint::onReadable() XZERO_NOEXCEPT {
   } catch (const std::exception& e) {
     connection()->onInterestFailure(e);
   } catch (...) {
-    connection()->onInterestFailure(EXCEPTION(RuntimeError, "Unhandled unknown exception caught."));
+    connection()->onInterestFailure(
+        EXCEPTION(RuntimeError, (int) Status::CaughtUnknownExceptionError,
+                  StatusCategory::get()));
   }
 }
 
@@ -256,7 +258,9 @@ void InetEndPoint::onWritable() XZERO_NOEXCEPT {
   } catch (const std::exception& e) {
     connection()->onInterestFailure(e);
   } catch (...) {
-    connection()->onInterestFailure(EXCEPTION(RuntimeError, "Unhandled unknown exception caught."));
+    connection()->onInterestFailure(
+        EXCEPTION(RuntimeError, (int) Status::CaughtUnknownExceptionError,
+                  StatusCategory::get()));
   }
 }
 
@@ -281,7 +285,9 @@ void InetEndPoint::fillable() {
   } catch (const std::exception& e) {
     connection()->onInterestFailure(e);
   } catch (...) {
-    connection()->onInterestFailure(EXCEPTION(RuntimeError, "Unhandled unknown exception caught."));
+    connection()->onInterestFailure(
+        EXCEPTION(RuntimeError, (int) Status::CaughtUnknownExceptionError,
+                  StatusCategory::get()));
   }
 }
 
@@ -305,7 +311,9 @@ void InetEndPoint::flushable() {
   } catch (const std::exception& e) {
     connection()->onInterestFailure(e);
   } catch (...) {
-    connection()->onInterestFailure(EXCEPTION(RuntimeError, "Unhandled unknown exception caught."));
+    connection()->onInterestFailure(
+        EXCEPTION(RuntimeError, (int) Status::CaughtUnknownExceptionError,
+                  StatusCategory::get()));
   }
 }
 
