@@ -324,8 +324,8 @@ bool InetConnector::reuseAddr() const {
 }
 
 void InetConnector::setReuseAddr(bool enable) {
-  int secs = enable ? 1 : 0;
-  if (::setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, &secs, sizeof(secs)) < 0) {
+  int rc = enable ? 1 : 0;
+  if (::setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, &rc, sizeof(rc)) < 0) {
     RAISE_ERRNO(errno);
   }
 }
