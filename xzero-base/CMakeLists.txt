@@ -95,6 +95,7 @@ set(xzero_base_SRC
   Base64.cc
   Buffer.cc
   DateTime.cc
+  IEEE754.cc
   IdleTimeout.cc
   MimeTypes.cc
   Random.cc
