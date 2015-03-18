@@ -157,6 +157,7 @@ set(xzero_base_SRC
   net/SslConnector.cc
   net/SslContext.cc
   net/SslEndPoint.cc
+  net/UdpClient.cc
   net/UdpConnector.cc
   net/UdpEndPoint.cc
 
