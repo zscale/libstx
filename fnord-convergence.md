@@ -24,11 +24,9 @@
 
 ### converge
 
-- [ ] UDP networking
 - [ ] StatsServer as seperate xzero-stats module
-- [ ] IEEE754
-- [ ] Assets (MemoryFile) example
 - [ ] introspection: `std::string inspect(const TYPE&)`
+- [ ] Assets (MemoryFile) example
 
 - [ ] io: File (is more a FileStream / FileChannel than a File [Info])
   - got replaced via std::{i,o}stream
@@ -41,8 +39,6 @@
 - [ ] thread::Future, thread::PromiseState
 - [ ] thread::EventLoop (equivalent of xzero::{Posix,Native}Scheduler)
 - [ ] thread::ThreadPool
-- [ ] rpc
-- [ ] json-rpc
 - [ ] PageManager
 - [ ] fnord-rpc comm::ServerGroup to be part of base
       <xzero-base/comm/ServerGroup.h>
@@ -79,6 +75,8 @@
 - [x] util/BinaryMessageReader
 - [x] Status (required by rpc / json-rpc)
       (implemented via `std::error_category`)
+- [x] UDP networking
+- [x] IEEE754
 
 ### DEPENDENCIES
 
@@ -107,6 +105,8 @@
 - [ ] fnord-sstable:
 - [ ] fnord-webcomponents:
 - [ ] xzero-redis: redis client support
+- [ ] rpc
+- [ ] json-rpc
 
 ### Ideas
 
