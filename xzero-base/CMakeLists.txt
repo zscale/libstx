@@ -145,6 +145,8 @@ set(xzero_base_SRC
   net/Connection.cc
   net/ConnectionFactory.cc
   net/Connector.cc
+  net/DatagramConnector.cc
+  net/DatagramEndPoint.cc
   net/DnsClient.cc
   net/EndPoint.cc
   net/EndPointWriter.cc
@@ -155,6 +157,8 @@ set(xzero_base_SRC
   net/SslConnector.cc
   net/SslContext.cc
   net/SslEndPoint.cc
+  net/UdpConnector.cc
+  net/UdpEndPoint.cc
 
   thread/SignalHandler.cc
   thread/Wakeup.cc
