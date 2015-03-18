@@ -15,3 +15,6 @@ target_link_libraries(echo-server2 xzero-base)
 
 add_executable(threaded-executor threaded-executor.cc)
 target_link_libraries(threaded-executor xzero-base)
+
+add_executable(udp-echo-server udp-echo-server.cc)
+target_link_libraries(udp-echo-server xzero-base)
