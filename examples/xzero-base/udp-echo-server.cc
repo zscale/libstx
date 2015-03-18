@@ -9,24 +9,24 @@
 
 using namespace xzero;
 
-void onEcho(RefPtr<DatagramEndPoint> client) {
-  logInfo("echo", "client said: \"%*s\"",
-                  client->message().size(),
-                  client->message().data());
-
-  client->reply(client->message());
-}
-
 int main(int argc, const char* argv[]) {
   xzero::DirectExecutor executor(false);
   xzero::NativeScheduler scheduler;
 
-  DatagramHandler handler;
+  DatagramHandler handler = [&](RefPtr<DatagramEndPoint> client) {
+    if (client->message() == "quit") {
+      client->send("Bye bye\n");
+      client->connector()->stop();
+    } else {
+      client->send(client->message());
+    }
+  };
 
-  UdpConnector srv("echo", handler, &executor, &scheduler,
+  UdpConnector echoServer(
+      "echo", handler, &executor, &scheduler,
       IPAddress("0.0.0.0"), 3333, true, false);
 
-  srv.start();
+  echoServer.start();
 
   scheduler.runLoop();
 }

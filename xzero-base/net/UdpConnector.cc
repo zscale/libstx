@@ -7,9 +7,11 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <xzero-base/net/UdpConnector.h>
+#include <xzero-base/net/UdpEndPoint.h>
 #include <xzero-base/net/IPAddress.h>
 #include <xzero-base/executor/Scheduler.h>
 #include <xzero-base/RuntimeError.h>
+#include <xzero-base/logging.h>
 
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
@@ -53,6 +55,9 @@ bool UdpConnector::isStarted() const {
 void UdpConnector::stop() {
   if (!isStarted())
     RAISE(IllegalStateError);
+
+  if (schedulerHandle_)
+    schedulerHandle_->cancel();
 
   ::close(socket_);
   socket_ = -1;
@@ -109,13 +114,44 @@ void UdpConnector::open(
 }
 
 void UdpConnector::notifyOnEvent() {
+  logTrace("UdpConnector", "notifyOnEvent()");
   schedulerHandle_ = scheduler_->executeOnReadable(
       socket_,
       std::bind(&UdpConnector::onMessage, this));
 }
 
 void UdpConnector::onMessage() {
-  RAISE(NotYetImplementedError);
+  logTrace("UdpConnector", "onMessage");
+
+  Buffer message;
+  message.reserve(65535);
+
+  sockaddr_in remoteAddr;
+  socklen_t remoteSocketLen = sizeof(remoteAddr);
+
+  notifyOnEvent();
+
+  int n = recvfrom(
+      socket_,
+      message.data(),
+      message.capacity(),
+      0,
+      (sockaddr*) &remoteAddr,
+      &remoteSocketLen);
+
+  if (n < 0)
+    RAISE_ERRNO(errno);
+
+  if (handler_) {
+    logTrace("UdpConnector", "handler set");
+    message.resize(n);
+    RefPtr<DatagramEndPoint> client(new UdpEndPoint(
+        this, std::move(message), (sockaddr*) &remoteAddr, remoteSocketLen));
+    handler_(client);
+  } else {
+    logTrace("UdpConnector",
+             "ignoring incoming message of %i bytes. No handler set.", n);
+  }
 }
 
 } // namespace xzero

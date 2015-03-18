@@ -9,6 +9,8 @@
 
 #include <xzero-base/Api.h>
 #include <xzero-base/net/DatagramEndPoint.h>
+#include <xzero-base/net/IPAddress.h>
+#include <xzero-base/Buffer.h>
 
 namespace xzero {
 
@@ -17,14 +19,15 @@ class IPAddress;
 
 class XZERO_API UdpEndPoint : public DatagramEndPoint {
  public:
-  UdpEndPoint(UdpConnector* connector, Buffer&& msg, const IPAddress& remoteIP);
+  UdpEndPoint(
+      UdpConnector* connector, Buffer&& msg,
+      struct sockaddr* remoteSock, int remoteSockLen);
   ~UdpEndPoint();
 
-  void reply(const BufferRef& response) override;
+  size_t send(const BufferRef& response) override;
 
  private:
-  //! indicator if already replied or not.
-  bool eof_;
+  Buffer remoteSock_;
 };
 
 } // namespace xzero
