@@ -10,6 +10,7 @@
 
 #include <xzero-base/Api.h>
 #include <xzero-base/Buffer.h>
+#include <limits>
 #include <cstdio>
 
 namespace xzero {
