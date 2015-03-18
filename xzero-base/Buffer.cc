@@ -7,6 +7,7 @@
 
 #include <xzero-base/Buffer.h>
 #include <xzero-base/hash/FNV.h>
+#include <xzero-base/RuntimeError.h>
 #include <sstream>
 #include <iomanip>
 #include <cstdlib>
@@ -91,6 +92,8 @@ std::string BufferRef::hexdump(
       return hexdumpInlineWide(bytes, length);
     case HexDumpMode::PrettyAscii:
       return hexdumpPrettyAscii(bytes, length);
+    default:
+      RAISE(InvalidArgumentError);
   }
 }
 
