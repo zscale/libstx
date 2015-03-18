@@ -20,7 +20,7 @@ int main(int argc, const char* argv[]) {
 
   UdpConnector echoServer(
       "echo", handler, &executor, &scheduler,
-      IPAddress("0.0.0.0"), 3333, true, false);
+      IPAddress("::"), 3333, true, false);
 
   echoServer.start();
 
