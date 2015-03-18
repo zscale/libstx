@@ -24,26 +24,42 @@ namespace xzero {
 
 UdpClient::UdpClient(const IPAddress& ipaddr, int port)
     : socket_(-1),
-      addressFamily_(0),
+      addressFamily_(ipaddr.family()),
       sockAddr_(nullptr),
       sockAddrLen_(0)
 {
   switch (ipaddr.family()) {
     case IPAddress::V4:
       sockAddrLen_ = sizeof(sockaddr_in);
+
+      sockAddr_ = malloc(sockAddrLen_);
+      if (!sockAddr_)
+        RAISE(MallocError);
+
+      memset(sockAddr_, 0, sockAddrLen_);
+
+      ((sockaddr_in*)sockAddr_)->sin_port = htons(port);
+      ((sockaddr_in*)sockAddr_)->sin_family = AF_INET;
+      memcpy(&((sockaddr_in*)sockAddr_)->sin_addr,
+             ipaddr.data(), ipaddr.size());
       break;
     case IPAddress::V6:
       sockAddrLen_ = sizeof(sockaddr_in6);
+
+      sockAddr_ = malloc(sockAddrLen_);
+      if (!sockAddr_)
+        RAISE(MallocError);
+
+      memset(sockAddr_, 0, sockAddrLen_);
+
+      ((sockaddr_in6*)sockAddr_)->sin6_port = htons(port);
+      ((sockaddr_in6*)sockAddr_)->sin6_family = AF_INET6;
+      memcpy(&((sockaddr_in6*)sockAddr_)->sin6_addr,
+             ipaddr.data(), ipaddr.size());
       break;
     default:
       RAISE(IllegalStateError);
   }
-
-  sockAddr_ = malloc(sockAddrLen_);
-  if (!sockAddr_)
-    RAISE(MallocError);
-
-  addressFamily_ = ipaddr.family();
 
   socket_ = ::socket(ipaddr.family(), SOCK_DGRAM, 0);
 }
