@@ -123,31 +123,48 @@ void UdpConnector::notifyOnEvent() {
 void UdpConnector::onMessage() {
   logTrace("UdpConnector", "onMessage");
 
+  socklen_t remoteAddrLen;
+  sockaddr* remoteAddr;
+  sockaddr_in sin4;
+  sockaddr_in6 sin6;
+
+  switch (addressFamily_) {
+    case IPAddress::V4:
+      remoteAddr = (sockaddr*) &sin4;
+      remoteAddrLen = sizeof(sin4);
+      break;
+    case IPAddress::V6:
+      remoteAddr = (sockaddr*) &sin6;
+      remoteAddrLen = sizeof(sin6);
+      break;
+    default:
+      RAISE(IllegalStateError);
+  }
+
   Buffer message;
   message.reserve(65535);
 
-  sockaddr_in remoteAddr;
-  socklen_t remoteSocketLen = sizeof(remoteAddr);
-
   notifyOnEvent();
 
-  int n = recvfrom(
-      socket_,
-      message.data(),
-      message.capacity(),
-      0,
-      (sockaddr*) &remoteAddr,
-      &remoteSocketLen);
+  int n;
+  do {
+    n = recvfrom(
+        socket_,
+        message.data(),
+        message.capacity(),
+        0,
+        remoteAddr,
+        &remoteAddrLen);
+  } while (n < 0 && errno == EINTR);
 
   if (n < 0)
     RAISE_ERRNO(errno);
 
   if (handler_) {
-    logTrace("UdpConnector", "handler set");
     message.resize(n);
     RefPtr<DatagramEndPoint> client(new UdpEndPoint(
-        this, std::move(message), (sockaddr*) &remoteAddr, remoteSocketLen));
-    handler_(client);
+        this, std::move(message), remoteAddr, remoteAddrLen));
+    executor_->execute(std::bind(handler_, client));
   } else {
     logTrace("UdpConnector",
              "ignoring incoming message of %i bytes. No handler set.", n);
