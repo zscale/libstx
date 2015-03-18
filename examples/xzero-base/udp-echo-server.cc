@@ -2,10 +2,6 @@
 #include <xzero-base/net/UdpEndPoint.h>
 #include <xzero-base/executor/NativeScheduler.h>
 #include <xzero-base/executor/DirectExecutor.h>
-#include <xzero-base/cli/Flags.h>
-#include <xzero-base/cli/CLI.h>
-#include <xzero-base/WallClock.h>
-#include <xzero-base/logging.h>
 
 using namespace xzero;
 
