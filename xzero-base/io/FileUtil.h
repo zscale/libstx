@@ -45,7 +45,7 @@ class XZERO_API FileUtil {
   static std::string tempDirectory();
 
   static void allocate(int fd, size_t length);
-  static void preallocate(int fd, size_t length);
+  static void preallocate(int fd, off_t offset, size_t length);
   static void deallocate(int fd, off_t offset, size_t length);
 
   /**

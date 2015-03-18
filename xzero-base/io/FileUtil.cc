@@ -270,7 +270,7 @@ void FileUtil::allocate(int fd, size_t length) {
     RAISE_ERRNO(errno);
 }
 
-void FileUtil::preallocate(int fd, size_t length) {
+void FileUtil::preallocate(int fd, off_t offset, size_t length) {
 #if defined(FALLOC_FL_KEEP_SIZE)
   const int mode = FALLOC_FL_KEEP_SIZE;
   if (fallocate(fd, mode, offset, length) < 0)
