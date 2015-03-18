@@ -33,7 +33,7 @@ class XZERO_API DatagramConnector {
 
   void setHandler(DatagramHandler handler);
 
- private:
+ protected:
   std::string name_;
   DatagramHandler handler_;
   Executor* executor_;

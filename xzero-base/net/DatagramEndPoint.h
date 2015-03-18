@@ -27,7 +27,7 @@ class XZERO_API DatagramEndPoint : public RefCounted {
 
   const BufferRef& message() const { return message_; }
 
-  virtual void reply(const BufferRef& response) = 0;
+  virtual size_t send(const BufferRef& response) = 0;
 
  private:
   //! the connector that was used to receive the message
