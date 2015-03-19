@@ -18,7 +18,7 @@ namespace fts {
 TokenStreamPtr AnalyzerAdapter::tokenStream(
     const String& field_name,
     const ReaderPtr& reader) {
-  auto len = reader->length()
+  auto len = reader->length();
   Buffer buf(len * sizeof(wchar_t));
   reader->read((wchar_t*) buf.data(), 0, len);
 
