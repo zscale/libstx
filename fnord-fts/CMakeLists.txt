@@ -22,6 +22,15 @@ file(GLOB_RECURSE FNORD_FTS_SOURCES
   StopwordDictionary.cc
   SynonymDictionary.cc
   AnalyzerAdapter.cc
+  analysis/TokenStream.cc
+  analysis/TokenFilter.cc
+  analysis/NumericTokenStream.cc
+  analysis/tokenattributes/TermAttribute.cc
+  analysis/tokenattributes/TypeAttribute.cc
+  analysis/tokenattributes/OffsetAttribute.cc
+  analysis/tokenattributes/PayloadAttribute.cc
+  analysis/tokenattributes/PositionIncrementAttribute.cc
+  analysis/CachingTokenFilter.cc
   ../3rdparty/hunspell/affentry.cxx
   ../3rdparty/hunspell/affixmgr.cxx
   ../3rdparty/hunspell/csutil.cxx
@@ -38,7 +47,6 @@ file(GLOB_RECURSE FNORD_FTS_SOURCES
   ../3rdparty/hunspell/hnjalloc.c
   ../3rdparty/hunspell/hyphen.c
   search/*.cc
-  analysis/*.cc
   document/*.cc
   index/*.cc
   queryparser/*.cc

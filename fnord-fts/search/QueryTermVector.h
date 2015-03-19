@@ -8,6 +8,7 @@
 #define QUERYTERMVECTOR_H
 
 #include "fnord-fts/index/TermFreqVector.h"
+#include "fnord-fts/AnalyzerAdapter.h"
 
 namespace fnord {
 namespace fts {

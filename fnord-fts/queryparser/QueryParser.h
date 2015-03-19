@@ -280,9 +280,6 @@ public:
     /// @return the collator used to determine index term inclusion in ranges for RangeQuerys.
     CollatorPtr getRangeCollator();
 
-    /// Command line tool to test QueryParser, using {@link SimpleAnalyzer}.
-    static int main(Collection<String> args);
-
     /// Query  ::= ( Clause )*
     /// Clause ::= ["+", "-"] [<TERM> ":"] ( <TERM> | "(" Query ")" )
     int32_t Conjunction();
