@@ -18,8 +18,18 @@ namespace fts {
 TokenStreamPtr AnalyzerAdapter::tokenStream(
     const String& field_name,
     const ReaderPtr& reader) {
-  fnord::iputs("tokenize: $0", field_name);
-  abort();
+  Buffer buf(reader->length() * sizeof(wchar_t));
+  reader->read((wchar_t*) buf.data(), 0, reader->length());
+
+  auto field_str = StringUtil::convertUTF16To8(
+      WString((wchar_t*) buf.data(), buf.size()));
+
+  fnord::iputs("tokenize: $0 => $1", field_name, field_str);
+  return std::make_shared<TokenStreamAdapter>();
+}
+
+bool TokenStreamAdapter::incrementToken() {
+  return false;
 }
 
 }
