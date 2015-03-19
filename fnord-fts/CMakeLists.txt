@@ -35,15 +35,14 @@ file(GLOB_RECURSE FNORD_FTS_SOURCES
   ../3rdparty/hunspell/utf_info.cxx
   ../3rdparty/hunspell/hnjalloc.c
   ../3rdparty/hunspell/hnjalloc.c
-  ../3rdparty/hunspell/hyphen.c)
-
-  #search/*.cc
-  #analysis/*.cc
-  #document/*.cc
-  #index/*.cc
-  #queryparser/*.cc
-  #store/*.cc
-  #util/*.c*)
+  ../3rdparty/hunspell/hyphen.c
+  search/*.cc
+  analysis/*.cc
+  document/*.cc
+  index/*.cc
+  queryparser/*.cc
+  store/*.cc
+  util/*.c*)
 
 set(FNORD_FTS_LIBS
     ${CMAKE_THREAD_LIBS_INIT}

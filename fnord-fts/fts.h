@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #ifndef FNORD_FTS_H_
 #define FNORD_FTS_H_
+#define BOOST_NO_CXX11_NUMERIC_LIMITS 1
 
 #ifdef _WIN32
 #ifndef WINVER                  // Specifies that the minimum required platform is Windows XP.
