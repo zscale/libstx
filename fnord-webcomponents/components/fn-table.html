@@ -19,7 +19,7 @@
 </style>
 
 <template id="fn-table-base-tpl">
-  <table>
+  <table name='visible'>
     <thead>
       <tr></tr>
     </thead>
@@ -35,7 +35,6 @@
         this.appendChild(document.createElement("table"));
       }
 
-      this.createShadowRoot();
       this.renderTable();
       this.setAttribute("data-resolved", "data-resolved");
     };
@@ -83,13 +82,18 @@
         header_row.appendChild(th_elem);
       });
 
-      this.shadowRoot.innerHTML = "";
-      this.shadowRoot.appendChild(tpl);
+      //this.shadowRoot.innerHTML = "";
+      var old_tbl = this.querySelector("table[name='visible']");
+      if (old_tbl) {
+        this.removeChild(old_tbl);
+      }
+
+      this.appendChild(tpl);
       this.renderRows();
     };
 
     this.renderRows = function() {
-      var tbody = this.shadowRoot.querySelector("table > tbody");
+      var tbody = this.querySelector("table[name='visible'] > tbody");
       tbody.innerHTML = "";
 
       var onRowClick = (function(base) {
@@ -134,6 +138,7 @@
       })(this);
 
       var is_selectable = this.getAttribute("data-selectable") != null;
+
       this.forEachRowWithPagination(function(row, index) {
         var tr_elem = document.createElement("tr");
         tr_elem.addEventListener("click", onRowClick, false);
@@ -177,7 +182,7 @@
     };
 
     this.forEachRowWithPagination = function(cb) {
-      var all_rows = this.querySelectorAll("tr");
+      var all_rows = this.querySelectorAll("tbody tr");
       var rows_per_page = this.rowsPerPage();
       var begin;
       var end;
@@ -315,8 +320,8 @@
       * Set data-per-page so that the table fits the max height
       */
     this.setDataPerPageForHeight = function(height) {
-      var header = this.shadowRoot.querySelector("thead th");
-      var row_height = this.shadowRoot.querySelector("tbody td").offsetHeight;
+      var header = this.querySelector("table[name='visible'] thead th");
+      var row_height = this.querySelector("table[name='visible'] tbody td").offsetHeight;
       var data_per_page;
 
       //rows haven't been rendered yet, return default
