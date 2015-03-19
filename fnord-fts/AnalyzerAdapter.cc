@@ -59,7 +59,13 @@ TokenStreamPtr AnalyzerAdapter::tokenStream(
     UTF8::encodeCodepoint(chr, &field_str);
   }
 
-  fnord::iputs("tokenize: $0 => $1", field_name, field_str);
+  Vector<fnord::String> terms;
+  auto lang = Language::DE;
+  analyzer_->extractTerms(lang, field_str, [&terms] (const fnord::String& t) {
+    terms.emplace_back(t);
+  });
+
+  fnord::iputs("tokenize: $0 => $1", field_name, terms);
   return std::make_shared<TokenStreamAdapter>();
 }
 
