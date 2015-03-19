@@ -100,7 +100,7 @@ public:
 
 protected:
   size_t pos_;
-  std::vector<std::string> terms_;
+  std::vector<std::wstring> terms_;
   TermAttributePtr term_att_;
   OffsetAttributePtr offset_att_;
 };
