@@ -8,6 +8,7 @@
 * <http://www.gnu.org/licenses/>.
 */
 #include "fnord-base/inspect.h"
+#include "fnord-base/utf8.h"
 #include "fnord-fts/fts.h"
 #include "fnord-fts/fts_common.h"
 #include "fnord-fts/AnalyzerAdapter.h"
@@ -18,14 +19,13 @@ namespace fts {
 TokenStreamPtr AnalyzerAdapter::tokenStream(
     const String& field_name,
     const ReaderPtr& reader) {
-  auto len = reader->length();
-  Buffer buf(len * sizeof(wchar_t));
-  reader->read((wchar_t*) buf.data(), 0, len);
+  std::string field_str;
+  wchar_t chr;
+  while ((chr = reader->read()) > 0) {
+    UTF8::encodeCodepoint(chr, &field_str);
+  }
 
-  auto field_str = StringUtil::convertUTF16To8(
-      WString((wchar_t*) buf.data(), buf.size()));
-
-  fnord::iputs("tokenize: $0 => ($2) $1", field_name, field_str, len);
+  fnord::iputs("tokenize: $0 => ($2)", field_name, field_str);
   return std::make_shared<TokenStreamAdapter>();
 }
 
