@@ -14,19 +14,19 @@ namespace fnord {
 namespace fts {
 
 GermanStemmer::GermanStemmer(
-      const String& hunspell_aff_file,
-      const String& hunspell_dict_file,
-      const String& hunspell_hyphen_file,
+      const fnord::String& hunspell_aff_file,
+      const fnord::String& hunspell_dict_file,
+      const fnord::String& hunspell_hyphen_file,
       SynonymDictionary* synonyms) :
       hunspell_(hunspell_aff_file, hunspell_dict_file, hunspell_hyphen_file),
       synonyms_(synonyms) {}
 
-void GermanStemmer::stem(Language lang, String* term) {
+void GermanStemmer::stem(Language lang, fnord::String* term) {
   stemWithUmlauts(lang, term);
   removeUmlauts(term);
 }
 
-void GermanStemmer::stemWithUmlauts(Language lang, String* term) {
+void GermanStemmer::stemWithUmlauts(Language lang, fnord::String* term) {
   auto stem = findStemFor(lang, *term);
   if (!stem.isEmpty()) {
     term->assign(stem.get());
@@ -44,7 +44,7 @@ void GermanStemmer::stemWithUmlauts(Language lang, String* term) {
   }
 }
 
-Option<String> GermanStemmer::findStemFor(Language lang, const String& term) {
+Option<fnord::String> GermanStemmer::findStemFor(Language lang, const fnord::String& term) {
   auto synonym =  synonyms_->lookup(lang, term);
   if (!synonym.isEmpty()) {
     return synonym;
@@ -55,11 +55,11 @@ Option<String> GermanStemmer::findStemFor(Language lang, const String& term) {
     return stem;
   }
 
-  return None<String>();
+  return None<fnord::String>();
 }
 
-void GermanStemmer::removeUmlauts(String* term) {
-  String stripped;
+void GermanStemmer::removeUmlauts(fnord::String* term) {
+  fnord::String stripped;
   stripped.reserve(term->size() + 2);
 
   auto cur = term->data();

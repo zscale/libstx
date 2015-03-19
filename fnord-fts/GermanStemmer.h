@@ -21,18 +21,18 @@ class GermanStemmer : public Stemmer {
 public:
 
   GermanStemmer(
-      const String& hunspell_aff_file,
-      const String& hunspell_dict_file,
-      const String& hunspell_hyphen_file,
+      const fnord::String& hunspell_aff_file,
+      const fnord::String& hunspell_dict_file,
+      const fnord::String& hunspell_hyphen_file,
       SynonymDictionary* synonyms);
 
-  void stem(Language lang, String* term) override;
-  Option<String> findStemFor(Language lang, const String& term);
+  void stem(Language lang, fnord::String* term) override;
+  Option<fnord::String> findStemFor(Language lang, const fnord::String& term);
 
-  void removeUmlauts(String* term);
+  void removeUmlauts(fnord::String* term);
 
 protected:
-  void stemWithUmlauts(Language lang, String* term);
+  void stemWithUmlauts(Language lang, fnord::String* term);
   Hunspell hunspell_;
   SynonymDictionary* synonyms_;
 };

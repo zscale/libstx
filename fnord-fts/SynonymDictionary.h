@@ -19,26 +19,26 @@ namespace fts {
 class SynonymDictionary {
 public:
 
-  Option<String> lookup(Language lang, const String& term);
+  Option<fnord::String> lookup(Language lang, const fnord::String& term);
 
   void addSynonym(
       Language lang,
-      const String& term,
-      const String& canonical_term);
+      const fnord::String& term,
+      const fnord::String& canonical_term);
 
-  void loadSynonmFile(const String& filename);
+  void loadSynonmFile(const fnord::String& filename);
 
 protected:
 
-  inline String synonymKey(Language lang, const String& term) const {
-    String sw;
+  inline fnord::String synonymKey(Language lang, const fnord::String& term) const {
+    fnord::String sw;
     sw += languageToString(lang);
     sw += "~";
     sw += term;
     return sw;
   }
 
-  HashMap<String, String> synonyms_;
+  HashMap<fnord::String, fnord::String> synonyms_;
 };
 
 } // namespace fts

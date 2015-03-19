@@ -10,6 +10,8 @@
 #ifndef _FNORD_FTS_ANALZERADAPTER_H
 #define _FNORD_FTS_ANALZERADAPTER_H
 
+#include "fnord-base/autoref.h"
+#include "fnord-fts/Analyzer.h"
 #include "fnord-fts/analysis/TokenStream.h"
 #include "fnord-fts/util/CloseableThreadLocal.h"
 
@@ -18,17 +20,21 @@ namespace fts {
 
 class AnalyzerAdapter : public LuceneObject {
 public:
-  virtual ~AnalyzerAdapter();
+  AnalyzerAdapter(RefPtr<Analyzer> analyzer);
+  ~AnalyzerAdapter();
   LUCENE_CLASS(AnalyzerAdapter);
-  virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
-  virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
-  virtual int32_t getPositionIncrementGap(const String& fieldName);
-  virtual int32_t getOffsetGap(const FieldablePtr& field);
-  virtual void close();
+
+  TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
+  TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
+  int32_t getPositionIncrementGap(const String& fieldName);
+  int32_t getOffsetGap(const FieldablePtr& field);
+  void close();
+
 protected:
+  RefPtr<Analyzer> analyzer_;
   CloseableThreadLocal<LuceneObject> tokenStreams;
-  virtual LuceneObjectPtr getPreviousTokenStream();
-  virtual void setPreviousTokenStream(const LuceneObjectPtr& stream);
+  LuceneObjectPtr getPreviousTokenStream();
+  void setPreviousTokenStream(const LuceneObjectPtr& stream);
 };
 
 class TokenStreamAdapter : public TokenStream {

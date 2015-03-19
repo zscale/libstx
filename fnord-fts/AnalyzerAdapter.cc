@@ -17,6 +17,10 @@
 namespace fnord {
 namespace fts {
 
+AnalyzerAdapter::AnalyzerAdapter(
+    RefPtr<Analyzer> analyzer) :
+    analyzer_(analyzer) {}
+
 AnalyzerAdapter::~AnalyzerAdapter() {}
 
 TokenStreamPtr AnalyzerAdapter::reusableTokenStream(

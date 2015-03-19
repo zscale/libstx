@@ -14,9 +14,9 @@ namespace fnord {
 namespace fts {
 
 void SimpleTokenizer::tokenize(
-    const String& query,
-    Function<void (const String& term)> term_callback) const {
-  String buf;
+    const fnord::String& query,
+    Function<void (const fnord::String& term)> term_callback) const {
+  fnord::String buf;
 
   auto cur = query.c_str();
   auto end = cur + query.size() + 1;

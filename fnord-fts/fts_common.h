@@ -1,3 +1,4 @@
+#include "fnord-fts/Analyzer.h"
 #include "fnord-fts/AnalyzerAdapter.h"
 #include "fnord-fts/analysis/Token.h"
 
