@@ -6,11 +6,16 @@
 
 #include "fnord-fts/fts.h"
 #include "fnord-fts/analysis/TokenStream.h"
+#include "fnord-fts/analysis/tokenattributes/TermAttribute.h"
+#include "fnord-fts/analysis/tokenattributes/OffsetAttribute.h"
 
 namespace fnord {
 namespace fts {
 
-TokenStream::TokenStream() : pos_(0) {}
+TokenStream::TokenStream() : pos_(0) {
+  term_att_ = addAttribute<TermAttribute>();
+  offset_att_ = addAttribute<OffsetAttribute>();
+}
 
 TokenStream::TokenStream(
     const AttributeSourcePtr& input) :
@@ -33,11 +38,23 @@ void TokenStream::reset() {
 void TokenStream::close() {}
 
 bool TokenStream::incrementToken() {
-  return ++pos_ >= tokens_.size();
+  clearAttributes();
+
+  if (++pos_ >= terms_.size()) {
+    return false;
+  } else {
+    const auto& term = terms_[pos_];
+    //offsetAtt->setOffset(correctOffset(0), finalOffset);
+    term_att_->setTermLength(term.length());
+    term_att_->resizeTermBuffer(term.length() + 1);
+    auto trgt = term_att_->termBuffer();
+    memcpy(trgt.get(), term.data(), trgt.size());
+    return true;
+  }
 }
 
 void TokenStream::addToken(const fnord::String token) {
-  tokens_.emplace_back(token);
+  terms_.emplace_back(token);
 }
 
 }
