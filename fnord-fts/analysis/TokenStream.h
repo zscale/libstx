@@ -46,61 +46,63 @@ namespace fts {
 class TokenStream : public AttributeSource {
 public:
 
-    /// A TokenStream using the default attribute factory.
-    TokenStream();
+  /// A TokenStream using the default attribute factory.
+  TokenStream();
 
-    /// A TokenStream that uses the same attributes as the supplied one.
-    TokenStream(const AttributeSourcePtr& input);
+  /// A TokenStream that uses the same attributes as the supplied one.
+  TokenStream(const AttributeSourcePtr& input);
 
-    /// A TokenStream using the supplied AttributeFactory for creating new {@link Attribute} instances.
-    TokenStream(const AttributeFactoryPtr& factory);
-    virtual ~TokenStream();
-    LUCENE_CLASS(TokenStream);
+  /// A TokenStream using the supplied AttributeFactory for creating new {@link Attribute} instances.
+  TokenStream(const AttributeFactoryPtr& factory);
+  virtual ~TokenStream();
+  LUCENE_CLASS(TokenStream);
 
-    void addToken(const fnord::String token);
+  void addToken(const fnord::String token);
 
-    /// Consumers (ie., {@link IndexWriter}) use this method to advance the stream to the next token. Implementing
-    /// classes must implement this method and update the appropriate {@link Attribute}s with the attributes of
-    /// the next token.
-    ///
-    /// The producer must make no assumptions about the attributes after the method has been returned: the caller may
-    /// arbitrarily change it.  If the producer needs to preserve the state for subsequent calls, it can use {@link
-    /// #captureState} to create a copy of the current attribute state.
-    ///
-    /// This method is called for every token of a document, so an efficient implementation is crucial for good
-    /// performance.  To avoid calls to {@link #addAttribute(Class)} and {@link #getAttribute(Class)}, references to
-    /// all {@link Attribute}s that this stream uses should be retrieved during instantiation.
-    ///
-    /// To ensure that filters and consumers know which attributes are available, the attributes must be added during
-    /// instantiation. Filters and consumers are not required to check for availability of attributes in {@link
-    /// #incrementToken()}.
-    ///
-    /// @return false for end of stream; true otherwise
-    bool incrementToken();
+  /// Consumers (ie., {@link IndexWriter}) use this method to advance the stream to the next token. Implementing
+  /// classes must implement this method and update the appropriate {@link Attribute}s with the attributes of
+  /// the next token.
+  ///
+  /// The producer must make no assumptions about the attributes after the method has been returned: the caller may
+  /// arbitrarily change it.  If the producer needs to preserve the state for subsequent calls, it can use {@link
+  /// #captureState} to create a copy of the current attribute state.
+  ///
+  /// This method is called for every token of a document, so an efficient implementation is crucial for good
+  /// performance.  To avoid calls to {@link #addAttribute(Class)} and {@link #getAttribute(Class)}, references to
+  /// all {@link Attribute}s that this stream uses should be retrieved during instantiation.
+  ///
+  /// To ensure that filters and consumers know which attributes are available, the attributes must be added during
+  /// instantiation. Filters and consumers are not required to check for availability of attributes in {@link
+  /// #incrementToken()}.
+  ///
+  /// @return false for end of stream; true otherwise
+  bool incrementToken();
 
-    /// This method is called by the consumer after the last token has been consumed, after {@link #incrementToken()}
-    /// returned false (using the new TokenStream API).  Streams implementing the old API should upgrade to use this
-    /// feature.
-    ///
-    /// This method can be used to perform any end-of-stream operations, such as setting the final offset of a stream.
-    /// The final offset of a stream might differ from the offset of the last token eg in case one or more whitespaces
-    /// followed after the last token, but a {@link WhitespaceTokenizer} was used.
-    virtual void end();
+  /// This method is called by the consumer after the last token has been consumed, after {@link #incrementToken()}
+  /// returned false (using the new TokenStream API).  Streams implementing the old API should upgrade to use this
+  /// feature.
+  ///
+  /// This method can be used to perform any end-of-stream operations, such as setting the final offset of a stream.
+  /// The final offset of a stream might differ from the offset of the last token eg in case one or more whitespaces
+  /// followed after the last token, but a {@link WhitespaceTokenizer} was used.
+  virtual void end();
 
-    /// Resets this stream to the beginning.  This is an optional operation, so subclasses may or may not implement
-    /// this method. {@link #reset()} is not needed for the standard indexing process. However, if the tokens of a
-    /// TokenStream are intended to be consumed more than once, it is necessary to implement {@link #reset()}. Note that
-    /// if your TokenStream caches tokens and feeds them back again after a reset, it is imperative that you clone the
-    /// tokens when you store them away (on the first pass) as well as when you return them (on future passes after
-    /// {@link #reset()}).
-    virtual void reset();
+  /// Resets this stream to the beginning.  This is an optional operation, so subclasses may or may not implement
+  /// this method. {@link #reset()} is not needed for the standard indexing process. However, if the tokens of a
+  /// TokenStream are intended to be consumed more than once, it is necessary to implement {@link #reset()}. Note that
+  /// if your TokenStream caches tokens and feeds them back again after a reset, it is imperative that you clone the
+  /// tokens when you store them away (on the first pass) as well as when you return them (on future passes after
+  /// {@link #reset()}).
+  virtual void reset();
 
-    /// Releases resources associated with this stream.
-    virtual void close();
+  /// Releases resources associated with this stream.
+  virtual void close();
 
+protected:
+  size_t pos_;
+  std::vector<std::string> tokens_;
 };
 
 }
-
 }
 #endif
