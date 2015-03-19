@@ -37,13 +37,6 @@ protected:
   void setPreviousTokenStream(const LuceneObjectPtr& stream);
 };
 
-class TokenStreamAdapter : public TokenStream {
-public:
-
-    bool incrementToken() override;
-
-};
-
 }
 }
 #endif
