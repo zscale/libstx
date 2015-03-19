@@ -8,7 +8,7 @@
 #include "fnord-fts/index/IndexWriter.h"
 #include "_IndexWriter.h"
 #include "fnord-fts/store/Directory.h"
-#include "fnord-fts/analysis/Analyzer.h"
+
 #include "fnord-fts/index/KeepOnlyLastCommitDeletionPolicy.h"
 #include "fnord-fts/index/DocumentsWriter.h"
 #include "fnord-fts/index/IndexFileDeleter.h"
