@@ -10,28 +10,30 @@
 namespace fnord {
 namespace fts {
 
-TokenStream::TokenStream() {
+TokenStream::TokenStream() {}
+
+TokenStream::TokenStream(
+    const AttributeSourcePtr& input) :
+    AttributeSource(input) {}
+
+TokenStream::TokenStream(
+    const AttributeFactoryPtr& factory) :
+    AttributeSource(factory) {}
+
+TokenStream::~TokenStream() {}
+
+void TokenStream::end() {}
+
+void TokenStream::reset() {}
+
+void TokenStream::close() {}
+
+bool TokenStream::incrementToken() {
+  return false;
 }
 
-TokenStream::TokenStream(const AttributeSourcePtr& input) : AttributeSource(input) {
-}
-
-TokenStream::TokenStream(const AttributeFactoryPtr& factory) : AttributeSource(factory) {
-}
-
-TokenStream::~TokenStream() {
-}
-
-void TokenStream::end() {
-    // do nothing by default
-}
-
-void TokenStream::reset() {
-}
-
-void TokenStream::close() {
+void TokenStream::addToken(const fnord::String token) {
 }
 
 }
-
 }

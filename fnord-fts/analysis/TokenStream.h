@@ -8,6 +8,7 @@
 #define TOKENSTREAM_H
 
 #include "fnord-fts/util/AttributeSource.h"
+#include "fnord-base/stdtypes.h"
 
 namespace fnord {
 namespace fts {
@@ -43,7 +44,8 @@ namespace fts {
 /// CachingTokenFilter}, {@link TeeSinkTokenFilter}). For this use case {@link AttributeSource#captureState} and {@link
 /// AttributeSource#restoreState} can be used.
 class TokenStream : public AttributeSource {
-protected:
+public:
+
     /// A TokenStream using the default attribute factory.
     TokenStream();
 
@@ -52,13 +54,11 @@ protected:
 
     /// A TokenStream using the supplied AttributeFactory for creating new {@link Attribute} instances.
     TokenStream(const AttributeFactoryPtr& factory);
-
-public:
     virtual ~TokenStream();
-
     LUCENE_CLASS(TokenStream);
 
-public:
+    void addToken(const fnord::String token);
+
     /// Consumers (ie., {@link IndexWriter}) use this method to advance the stream to the next token. Implementing
     /// classes must implement this method and update the appropriate {@link Attribute}s with the attributes of
     /// the next token.
@@ -76,7 +76,7 @@ public:
     /// #incrementToken()}.
     ///
     /// @return false for end of stream; true otherwise
-    virtual bool incrementToken() = 0;
+    bool incrementToken();
 
     /// This method is called by the consumer after the last token has been consumed, after {@link #incrementToken()}
     /// returned false (using the new TokenStream API).  Streams implementing the old API should upgrade to use this
@@ -97,6 +97,7 @@ public:
 
     /// Releases resources associated with this stream.
     virtual void close();
+
 };
 
 }
