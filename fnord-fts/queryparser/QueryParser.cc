@@ -27,10 +27,10 @@
 #include "fnord-fts/search/PrefixQuery.h"
 #include "fnord-fts/search/WildcardQuery.h"
 #include "fnord-fts/search/MatchAllDocsQuery.h"
-#include "fnord-fts/analysis/SimpleAnalyzer.h"
 #include "fnord-fts/document/DateField.h"
 #include "fnord-fts/util/MiscUtils.h"
 #include "fnord-fts/util/StringUtils.h"
+#include "fnord-fts/AnalyzerAdapter.h"
 
 namespace fnord {
 namespace fts {
@@ -682,17 +682,6 @@ String QueryParser::escape(const String& s) {
         buffer << c;
     }
     return buffer.str();
-}
-
-int QueryParser::main(Collection<String> args) {
-    if (args.empty()) {
-        std::wcout << L"Usage: QueryParser <input>";
-        return 1;
-    }
-    QueryParserPtr qp(newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<SimpleAnalyzer>()));
-    QueryPtr q(qp->parse(args[0]));
-    std::wcout << q->toString(L"field");
-    return 0;
 }
 
 int32_t QueryParser::Conjunction() {

@@ -11,10 +11,39 @@
 #include "fnord-base/UTF8.h"
 #include "fnord-fts/fts.h"
 #include "fnord-fts/fts_common.h"
+#include "fnord-fts/document/Fieldable.h"
 #include "fnord-fts/AnalyzerAdapter.h"
 
 namespace fnord {
 namespace fts {
+
+AnalyzerAdapter::~AnalyzerAdapter() {}
+
+TokenStreamPtr AnalyzerAdapter::reusableTokenStream(
+    const String& fieldName,
+    const ReaderPtr& reader) {
+  return tokenStream(fieldName, reader);
+}
+
+LuceneObjectPtr AnalyzerAdapter::getPreviousTokenStream() {
+  return tokenStreams.get();
+}
+
+void AnalyzerAdapter::setPreviousTokenStream(const LuceneObjectPtr& stream) {
+  tokenStreams.set(stream);
+}
+
+int32_t AnalyzerAdapter::getPositionIncrementGap(const String& fieldName) {
+  return 0;
+}
+
+int32_t AnalyzerAdapter::getOffsetGap(const FieldablePtr& field) {
+  return field->isTokenized() ? 1 : 0;
+}
+
+void AnalyzerAdapter::close() {
+  tokenStreams.close();
+}
 
 TokenStreamPtr AnalyzerAdapter::tokenStream(
     const String& field_name16,

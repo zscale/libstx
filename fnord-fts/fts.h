@@ -194,7 +194,9 @@ namespace fnord {
 namespace fts {
 
 // analysis
-DECLARE_SHARED_PTR(Analyzer)
+class AnalyzerAdapter;
+typedef std::shared_ptr<AnalyzerAdapter> AnalyzerPtr; \
+typedef std::weak_ptr<AnalyzerAdapter> AnalyzerWeakPtr;
 DECLARE_SHARED_PTR(ASCIIFoldingFilter)
 DECLARE_SHARED_PTR(BaseCharFilter)
 DECLARE_SHARED_PTR(CachingTokenFilter)

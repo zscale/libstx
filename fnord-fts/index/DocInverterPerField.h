@@ -8,6 +8,7 @@
 #define DOCINVERTERPERFIELD_H
 
 #include "fnord-fts/index/DocFieldConsumerPerField.h"
+#include "fnord-fts/AnalyzerAdapter.h"
 
 namespace fnord {
 namespace fts {
