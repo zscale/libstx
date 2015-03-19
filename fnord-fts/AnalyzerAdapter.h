@@ -1,10 +1,11 @@
-/**
- * Copyright (c) 2015 - The CM Authors <legal@clickmatcher.com>
- *   All Rights Reserved.
+/*
+ * This file is part of the "libfnord" project
+ *   Copyright (c) 2015 Paul Asmuth
  *
- * This file is CONFIDENTIAL -- Distribution or duplication of this material or
- * the information contained herein is strictly forbidden unless prior written
- * permission is obtained.
+ * FnordMetric is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License v3.0. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 #ifndef _FNORD_FTS_ANALZERADAPTER_H
 #define _FNORD_FTS_ANALZERADAPTER_H
@@ -18,12 +19,17 @@ class AnalyzerAdapter : public Analyzer {
 public:
 
   TokenStreamPtr tokenStream(
-      const String& fieldName,
+      const String& field_name,
       const ReaderPtr& reader) override;
 
 };
 
-}
 
+class TokenizerAdapter : public TokenStream {
+public:
+
+};
+
+}
 }
 #endif

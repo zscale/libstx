@@ -21,6 +21,7 @@ file(GLOB_RECURSE FNORD_FTS_SOURCES
   Hunspell.cc
   StopwordDictionary.cc
   SynonymDictionary.cc
+  AnalyzerAdapter.cc
   ../3rdparty/hunspell/affentry.cxx
   ../3rdparty/hunspell/affixmgr.cxx
   ../3rdparty/hunspell/csutil.cxx
