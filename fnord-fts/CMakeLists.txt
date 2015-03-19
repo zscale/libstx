@@ -16,6 +16,7 @@ include_directories(../)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 
 file(GLOB_RECURSE FNORD_FTS_SOURCES
+  Analyzer.cc
   SimpleTokenizer.cc
   GermanStemmer.cc
   Hunspell.cc

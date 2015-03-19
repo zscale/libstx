@@ -18,7 +18,7 @@ namespace fts {
 class Stemmer {
 public:
   virtual ~Stemmer() {}
-  virtual void stem(Language lang, String* term) = 0;
+  virtual void stem(Language lang, fnord::String* term) = 0;
 };
 
 } // namespace fts

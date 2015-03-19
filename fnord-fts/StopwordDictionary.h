@@ -20,22 +20,22 @@ public:
 
   StopwordDictionary();
 
-  bool isStopword(Language lang, const String& term) const;
+  bool isStopword(Language lang, const fnord::String& term) const;
 
-  void addStopword(Language lang, const String& term);
-  void loadStopwordFile(const String& filename);
+  void addStopword(Language lang, const fnord::String& term);
+  void loadStopwordFile(const fnord::String& filename);
 
 protected:
 
-  inline String stopwordKey(Language lang, const String& term) const {
-    String sw;
+  inline fnord::String stopwordKey(Language lang, const fnord::String& term) const {
+    fnord::String sw;
     sw += languageToString(lang);
     sw += "~";
     sw += term;
     return sw;
   }
 
-  Set<String> stopwords_;
+  Set<fnord::String> stopwords_;
 };
 
 } // namespace fts

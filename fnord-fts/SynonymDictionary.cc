@@ -12,10 +12,10 @@
 namespace fnord {
 namespace fts {
 
-Option<String> SynonymDictionary::lookup(Language lang, const String& term) {
+Option<fnord::String> SynonymDictionary::lookup(Language lang, const fnord::String& term) {
   auto iter = synonyms_.find(synonymKey(lang, term));
   if (iter == synonyms_.end()) {
-    return None<String>();
+    return None<fnord::String>();
   } else {
     return Some(iter->second);
   }
@@ -23,12 +23,12 @@ Option<String> SynonymDictionary::lookup(Language lang, const String& term) {
 
 void SynonymDictionary::addSynonym(
     Language lang,
-    const String& term,
-    const String& canonical_term) {
+    const fnord::String& term,
+    const fnord::String& canonical_term) {
   synonyms_[synonymKey(lang, term)] = canonical_term;
 }
 
-void SynonymDictionary::loadSynonmFile(const String& filename) {
+void SynonymDictionary::loadSynonmFile(const fnord::String& filename) {
 }
 
 } // namespace fts

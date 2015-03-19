@@ -21,8 +21,8 @@ class SimpleTokenizer {
 public:
 
   void tokenize(
-      const String& query,
-      Function<void (const String& term)> term_callback) const;
+      const fnord::String& query,
+      Function<void (const fnord::String& term)> term_callback) const;
 };
 
 } // namespace fts
