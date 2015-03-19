@@ -16,7 +16,7 @@
 #include "fnord-fts/index/FieldInvertState.h"
 #include "fnord-fts/index/DocumentsWriter.h"
 #include "fnord-fts/document/Document.h"
-#include "fnord-fts/analysis/Analyzer.h"
+
 #include "fnord-fts/index/ReusableStringReader.h"
 #include "fnord-fts/analysis/TokenStream.h"
 #include "fnord-fts/analysis/tokenattributes/PositionIncrementAttribute.h"
