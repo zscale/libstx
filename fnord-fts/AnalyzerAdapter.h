@@ -25,8 +25,10 @@ public:
 };
 
 
-class TokenizerAdapter : public TokenStream {
+class TokenStreamAdapter : public TokenStream {
 public:
+
+    bool incrementToken() override;
 
 };
 
