@@ -3,9 +3,9 @@
 //   (c) 2014-2015 Paul Asmuth <https://github.com/paulasmuth>
 //
 // libxzero is free software: you can redistribute it and/or modify it under
-// the terms of the GNU General Public License v3.0. You should have received a
-// copy of the GNU General Public License along with this program. If not, see
-// <http://www.gnu.org/licenses/>.
+// the terms of the GNU Affero General Public License v3.0.
+// You should have received a copy of the GNU Affero General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef xzero_sysconfig_h
 #define xzero_sysconfig_h (1)
