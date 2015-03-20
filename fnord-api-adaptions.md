@@ -39,6 +39,8 @@ werden via `logError(string component, std::exception& e)` geloggt.
 `#include <xzero-base/RuntimeError.h>` um die standard exception base class,
 `RuntimeError` und deren Helfer zu includen.
 
+`RuntimeError.appendMessage()` wurde nicht mit uebernommen.
+
 `RAISE(E, ...)` ist *NICHT* wie in libfnord, da `E` nun ein echter typ sein
 muss. Die alte behaviour wird via `RAISE_FAKE(E, ...)` erzielt, hier
 ist `E` ein string.
