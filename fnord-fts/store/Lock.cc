@@ -4,6 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
+#include "fnord-base/exception.h"
 #include "fnord-fts/fts.h"
 #include "fnord-fts/store/Lock.h"
 #include "fnord-fts/util/LuceneThread.h"
@@ -26,7 +27,7 @@ bool Lock::obtain(int32_t lockWaitTimeout) {
     int32_t sleepCount = 0;
     while (!locked) {
         if (lockWaitTimeout != LOCK_OBTAIN_WAIT_FOREVER && sleepCount++ >= maxSleepCount) {
-            boost::throw_exception(LockObtainFailedException(L"Lock obtain timed out"));
+          RAISE(kRuntimeError, "lock obtain timed out");
         }
         LuceneThread::threadSleep(LOCK_POLL_INTERVAL);
         locked = obtain();
