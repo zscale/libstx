@@ -35,12 +35,19 @@ void FTSQuery::addQuery(
 }
 
 void FTSQuery::execute(IndexSearcher* searcher) {
-  auto query = fts::newLucene<fts::DisjunctionMaxQuery>();
+  auto query = fts::newLucene<fts::BooleanQuery>();
 
-  auto t_query = fts::newLucene<fts::TermQuery>(
-      fts::newLucene<fts::Term>(L"text~de", L"zubehoer"));
+  for (const auto& t : terms_) {
+    auto dm_query = fts::newLucene<fts::DisjunctionMaxQuery>();
+    auto term = StringUtil::convertUTF8To16(t);
 
-  query->add(t_query);
+    auto t_query = fts::newLucene<fts::TermQuery>(
+        fts::newLucene<fts::Term>(L"text~de", term));
+
+    dm_query->add(t_query);
+
+    query->add(dm_query, fts::BooleanClause::MUST);
+  }
 
   auto collector = fts::TopScoreDocCollector::create(
       500,
