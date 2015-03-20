@@ -49,8 +49,11 @@ bool TokenStream::incrementToken() {
   } else {
     const auto& term = terms_[pos_];
     //offsetAtt->setOffset(correctOffset(0), finalOffset);
-    term_att_->setTermLength(term.length());
+
+    // N.B. do not switch these two calls as the first one allocates memory for
+    // the second. lucene magic... ;)
     term_att_->setTermBuffer(term);
+    term_att_->setTermLength(term.length());
     return true;
   }
 }
