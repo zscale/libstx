@@ -14,4 +14,12 @@ DatagramConnector::DatagramConnector(
 DatagramConnector::~DatagramConnector() {
 }
 
+DatagramHandler DatagramConnector::handler() const {
+  return handler_;
+}
+
+void DatagramConnector::setHandler(DatagramHandler handler) {
+  handler_ = handler;
+}
+
 } // namespace xzero

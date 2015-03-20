@@ -17,8 +17,25 @@ namespace xzero {
 
 class Scheduler;
 
+/**
+ * Datagram Connector for UDP protocol.
+ *
+ * @see DatagramConnector, DatagramEndPoint
+ */
 class XZERO_API UdpConnector : public DatagramConnector {
  public:
+  /**
+   * Initializes the UDP connector.
+   *
+   * @param name Human readable name for the given connector (such as "ntp").
+   * @param handler Callback handler to be invoked on every incoming message.
+   * @param executor Executor service to be used for invoking the handler.
+   * @param scheduler Scheduler service to be used for I/O notifications.
+   * @param ipaddress IP address to bind the connector to.
+   * @param port UDP port number to bind the connector to.
+   * @param reuseAddr Whether or not to enable @c SO_REUSEADDR.
+   * @param reusePort Whether or not to enable @c SO_REUSEPORT.
+   */
   UdpConnector(
       const std::string& name,
       DatagramHandler handler,
@@ -26,6 +43,7 @@ class XZERO_API UdpConnector : public DatagramConnector {
       Scheduler* scheduler,
       const IPAddress& ipaddress, int port,
       bool reuseAddr, bool reusePort);
+
   ~UdpConnector();
 
   int handle() const noexcept { return socket_; }
@@ -49,11 +67,4 @@ class XZERO_API UdpConnector : public DatagramConnector {
   int addressFamily_;
 };
 
-class StatsServer {
- public:
-  DatagramConnector* dgramConnector_;
-};
-
-
 } // namespace xzero
-

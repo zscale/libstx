@@ -21,11 +21,9 @@ UdpEndPoint::UdpEndPoint(
     int remoteSockLen)
     : DatagramEndPoint(connector, std::move(msg)),
       remoteSock_((char*) remoteSock, remoteSockLen) {
-  logTrace("UdpEndPoint", "ctor");
 }
 
 UdpEndPoint::~UdpEndPoint() {
-  logTrace("UdpEndPoint", "dtor");
   //static_cast<UdpConnector*>(connector())->release(this);
 }
 
