@@ -38,7 +38,7 @@ protected:
     return sw;
   }
 
-  HashMap<fnord::String, fnord::String> synonyms_;
+  fnord::HashMap<fnord::String, fnord::String> synonyms_;
 };
 
 } // namespace fts

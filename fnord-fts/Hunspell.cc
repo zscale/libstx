@@ -26,8 +26,8 @@ Hunspell::Hunspell(
 }
 
 Hunspell::~Hunspell () {
-  Hunspell_destroy(handle_);
-  hnj_hyphen_free(hyphen_dict_);
+  //Hunspell_destroy(handle_);
+  //hnj_hyphen_free(hyphen_dict_);
 }
 
 Option<String> Hunspell::stem(const String& term) {
