@@ -154,6 +154,8 @@ set(xzero_base_SRC
   net/InetConnector.cc
   net/InetEndPoint.cc
   net/LocalConnector.cc
+  net/LocalDatagramConnector.cc
+  net/LocalDatagramEndPoint.cc
   net/Server.cc
   net/SslConnector.cc
   net/SslContext.cc
