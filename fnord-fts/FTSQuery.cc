@@ -16,7 +16,7 @@ FTSQuery::FTSQuery() {}
 
 void FTSQuery::addField(const fnord::String& field_name, double boost) {
   FieldInfo fi;
-  fi.field_name = field_name;
+  fi.field_name = StringUtil::convertUTF8To16(field_name);
   fi.boost = boost;
   fields_.emplace_back(fi);
 }
@@ -41,10 +41,13 @@ void FTSQuery::execute(IndexSearcher* searcher) {
     auto dm_query = fts::newLucene<fts::DisjunctionMaxQuery>();
     auto term = StringUtil::convertUTF8To16(t);
 
-    auto t_query = fts::newLucene<fts::TermQuery>(
-        fts::newLucene<fts::Term>(L"text~de", term));
+    for (const auto& f : fields_) {
+      auto t_query = fts::newLucene<fts::TermQuery>(
+          fts::newLucene<fts::Term>(f.field_name, term));
 
-    dm_query->add(t_query);
+      t_query->setBoost(f.boost);
+      dm_query->add(t_query);
+    }
 
     query->add(dm_query, fts::BooleanClause::MUST);
   }
