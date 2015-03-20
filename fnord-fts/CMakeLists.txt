@@ -22,6 +22,7 @@ file(GLOB_RECURSE FNORD_FTS_SOURCES
   Hunspell.cc
   StopwordDictionary.cc
   SynonymDictionary.cc
+  FTSQuery.cc
   AnalyzerAdapter.cc
   analysis/TokenStream.cc
   analysis/TokenFilter.cc

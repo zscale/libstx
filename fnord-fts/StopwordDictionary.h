@@ -35,7 +35,7 @@ protected:
     return sw;
   }
 
-  Set<fnord::String> stopwords_;
+  fnord::Set<fnord::String> stopwords_;
 };
 
 } // namespace fts
