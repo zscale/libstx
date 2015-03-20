@@ -35,7 +35,7 @@ public:
 
 protected:
   struct FieldInfo {
-    fnord::String field_name;
+    fnord::WString field_name;
     double boost;
   };
 
