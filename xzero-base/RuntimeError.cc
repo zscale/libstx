@@ -61,13 +61,22 @@ RuntimeError::RuntimeError(
     stackTrace_() {
 }
 
+RuntimeError::RuntimeError(Status ev)
+  : RuntimeError((int) ev, StatusCategory::get()) {
+}
+
+RuntimeError::RuntimeError(Status ev, const std::string& what)
+  : RuntimeError((int) ev, StatusCategory::get(), what) {
+}
+
 RuntimeError::~RuntimeError() {
 }
 
-void RuntimeError::setSource(const char* file, int line, const char* fn) {
+RuntimeError& RuntimeError::setSource(const char* file, int line, const char* fn) {
   sourceFile_ = file;
   sourceLine_ = line;
   functionName_ = fn;
+  return *this;
 }
 
 std::vector<std::string> RuntimeError::backtrace() const {
@@ -81,8 +90,9 @@ const char* RuntimeError::typeName() const {
   return typeName_;
 }
 
-void RuntimeError::setTypeName(const char* n) {
+RuntimeError& RuntimeError::setTypeName(const char* n) {
   typeName_ = n;
+  return *this;
 }
 
 bool RuntimeError::ofType(const char* s) const {
@@ -103,6 +113,17 @@ void RuntimeError::debugPrint(std::ostream* os) const {
             functionName_,
             sourceFile_,
             sourceLine_);
+}
+
+std::string RuntimeError::cformat(const char* fmt, ...) {
+  va_list ap;
+  char buf[1024];
+
+  va_start(ap, fmt);
+  int n = vsnprintf(buf, sizeof(buf), fmt, ap);
+  va_end(ap);
+
+  return std::string(buf, n);
 }
 
 } // namespace xzero
