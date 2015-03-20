@@ -36,11 +36,19 @@ UdpConnector::UdpConnector(
       socket_(-1),
       addressFamily_(0) {
   open(ipaddr, port, reuseAddr, reusePort);
+
+  BUG_ON(executor == nullptr);
+  BUG_ON(scheduler == nullptr);
 }
 
 UdpConnector::~UdpConnector() {
   if (isStarted()) {
     stop();
+  }
+
+  if (socket_ >= 0) {
+    ::close(socket_);
+    socket_ = -1;
   }
 }
 
@@ -49,18 +57,17 @@ void UdpConnector::start() {
 }
 
 bool UdpConnector::isStarted() const {
-  return socket_ >= 0;
+  return schedulerHandle_.get() != nullptr;
 }
 
 void UdpConnector::stop() {
   if (!isStarted())
     RAISE(IllegalStateError);
 
-  if (schedulerHandle_)
+  if (schedulerHandle_) {
     schedulerHandle_->cancel();
-
-  ::close(socket_);
-  socket_ = -1;
+    schedulerHandle_ = nullptr;
+  }
 }
 
 void UdpConnector::open(

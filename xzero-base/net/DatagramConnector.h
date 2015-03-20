@@ -19,19 +19,44 @@ class DatagramEndPoint;
 
 typedef std::function<void(RefPtr<DatagramEndPoint>)> DatagramHandler;
 
+/**
+ * Datagram Connector.
+ *
+ * @see DatagramConnector, DatagramEndPoint
+ */
 class XZERO_API DatagramConnector {
  public:
+  /**
+   * Initializes the UDP connector.
+   *
+   * @param name Human readable name for the given connector (such as "ntp").
+   * @param handler Callback handler to be invoked on every incoming message.
+   * @param executor Executor service to be used for invoking the handler.
+   */
   DatagramConnector(
       const std::string& name,
       DatagramHandler handler,
       Executor* executor);
+
   virtual ~DatagramConnector();
 
-  virtual void start() = 0;
-  virtual bool isStarted() const = 0;
-  virtual void stop() = 0;
-
+  DatagramHandler handler() const;
   void setHandler(DatagramHandler handler);
+
+  /**
+   * Starts handling incoming messages.
+   */
+  virtual void start() = 0;
+
+  /**
+   * Whether or not incoming messages are being handled.
+   */
+  virtual bool isStarted() const = 0;
+
+  /**
+   * Stops handling incoming messages.
+   */
+  virtual void stop() = 0;
 
  protected:
   std::string name_;
