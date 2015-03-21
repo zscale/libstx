@@ -62,7 +62,7 @@ void FTSQuery::execute(IndexSearcher* searcher) {
   fnord::iputs("return $0 docs", collector->getTotalHits());
   for (int32_t i = 0; i < hits.size(); ++i) {
     auto doc = searcher->doc(hits[i]->doc);
-    fnord::WString docid_w = doc->get(L"docid");
+    fnord::WString docid_w = doc->get(L"_docid");
     fnord::String docid = StringUtil::convertUTF16To8(docid_w);
     fnord::iputs("doc $0 -> $1, $2", i, hits[i]->doc, docid);
   }
