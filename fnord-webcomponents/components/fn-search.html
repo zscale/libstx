@@ -14,7 +14,8 @@
       var input = this.querySelector("fn-input");
       var icon = this.querySelector("fn-input-icon");
       var base = this;
-      var min_length = 1;
+
+      var value_length = 0;
 
       if (!input) {
         input = document.createElement("fn-input");
@@ -35,7 +36,7 @@
         switch (e.keyCode) {
           //Enter
           case 13:
-            base.submitSearch();
+            base.onDropdownItemClick();
             break;
           //Up Arrow
           case 38:
@@ -45,10 +46,18 @@
           case 40:
             base.keyNavigation('down', true);
             break;
+          //Shift
+          case 16:
+          case 20:
+            break;
+
           default:
             var value = this.getValue();
-            if (value.length >= min_length) {
+            if (value.length >= base.getMinLength() && value.length != value_length) {
+
+              value_length = value.length;
               base.fireAutocompleteEvent(value);
+
             } else {
               base.closeDropdown();
             }
@@ -61,6 +70,14 @@
       }, false);
 
     };
+
+    this.getMinLength = function() {
+      if (this.minLength && !isNaN(this.minLength)) {
+        return this.minLength;
+      }
+
+      return 1;
+    }
 
     this.getValue = function() {
       var input = this.querySelector("fn-input");
@@ -133,6 +150,25 @@
       this.fireSubmitEvent(value);
     };
 
+    this.createDropdownItem = function(item) {
+      var li = document.createElement("li");
+      li.innerHTML = item.query;
+
+      if (item.data_value) {
+        li.setAttribute('data-value', item.data_value);
+      }
+
+      return li;
+    };
+
+    this.onDropdownItemClick = function(item) {
+      if (item) {
+        this.submitSearch(item.innerText);
+      } else {
+        this.submitSearch();
+      }
+    };
+
     this.renderDropdown = function(items) {
       var base = this;
       var list = this.querySelector("ul");
@@ -145,14 +181,13 @@
       list.setAttribute('data-active', 'active');
 
       items.map(function(item) {
-        var list_elem = document.createElement("li");
-        list_elem.innerHTML = item.query;
+        var list_elem = base.createDropdownItem(item);
         list.appendChild(list_elem);
 
         list_elem.onclick = function(e) {
           e.stopPropagation();
           e.preventDefault();
-          base.submitSearch(this.innerText);
+          base.onDropdownItemClick(this);
         }
 
         list_elem.addEventListener('mouseover', function() {
@@ -172,7 +207,7 @@
     };
 
     this.autocomplete = function(term, items) {
-      if (term == this.querySelector("fn-input").getValue() && items.length > 0) {
+      if (term.toLowerCase() == this.querySelector("fn-input").getValue().toLowerCase() && items.length > 0) {
         this.renderDropdown(items);
       }
     };
