@@ -10,6 +10,7 @@
 #include <boost/filesystem/path.hpp>
 #include "fnord-base/io/fileutil.h"
 #include "fnord-base/logging.h"
+#include "fnord-base/stringutil.h"
 #include "fnord-fts/util/LuceneThread.h"
 #include "fnord-fts/util/StringUtils.h"
 #include "fnord-fts/util/FileUtils.h"
@@ -28,11 +29,8 @@ namespace fts {
 namespace FileUtils {
 
 bool fileExists(const String& path) {
-    try {
-        return boost::filesystem::exists(path.c_str());
-    } catch (...) {
-        return false;
-    }
+  auto path_utf8 = StringUtil::convertUTF16To8(path);
+  return FileUtil::exists(path_utf8);
 }
 
 uint64_t fileModified(const String& path) {
@@ -82,11 +80,14 @@ bool setFileLength(const String& path, int64_t length) {
 }
 
 bool removeFile(const String& path) {
-    try {
-        return boost::filesystem::remove(path.c_str());
-    } catch (...) {
-        return false;
-    }
+  auto path_utf8 = StringUtil::convertUTF16To8(path);
+  if (FileUtil::exists(path_utf8)) {
+    FileUtil::rm(path_utf8);
+    return true;
+  } else {
+    return false;
+  }
+
 }
 
 bool copyFile(const String& wsource, const String& wdest) {
@@ -126,11 +127,8 @@ bool removeDirectory(const String& path) {
 }
 
 bool isDirectory(const String& path) {
-    try {
-        return boost::filesystem::is_directory(path.c_str());
-    } catch (...) {
-        return false;
-    }
+  auto path_utf8 = StringUtil::convertUTF16To8(path);
+  return FileUtil::isDirectory(path_utf8);
 }
 
 bool listDirectory(const String& path, bool filesOnly, HashSet<String> dirList) {
