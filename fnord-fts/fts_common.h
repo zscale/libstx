@@ -24,10 +24,6 @@
 #include "fnord-fts/index/TermDocs.h"
 #include "fnord-fts/index/TermEnum.h"
 
-#include "fnord-fts/queryparser/MultiFieldQueryParser.h"
-#include "fnord-fts/queryparser/QueryParseError.h"
-#include "fnord-fts/queryparser/QueryParser.h"
-
 #include "fnord-fts/search/BooleanClause.h"
 #include "fnord-fts/search/BooleanQuery.h"
 #include "fnord-fts/search/DocIdSet.h"
