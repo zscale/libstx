@@ -1,0 +1,6 @@
+libxzero contains multiple submodules, each potentially licensed
+differently. The license of a whole module (such as xzero-http) can change,
+but never a single file inside that module.
+
+See the respective source code for individual license information.
+A copy of the Affero General Public License is also supplied in LICENSE.AGPL-3.
