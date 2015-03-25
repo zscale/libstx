@@ -36,7 +36,8 @@ class XZERO_API RuntimeError : public std::system_error {
 
   ~RuntimeError();
 
-  RuntimeError setSource(const char* file, int line, const char* fn);
+  template<typename T = RuntimeError>
+  T setSource(const char* file, int line, const char* fn);
   const char* sourceFile() const { return sourceFile_; }
   int sourceLine() const XZERO_NOEXCEPT { return sourceLine_; }
   const char* functionName() const { return functionName_; }
@@ -63,6 +64,15 @@ XZERO_API void logAndPass(const std::exception& e);
 XZERO_API void logAndAbort(const std::exception& e);
 
 // {{{ inlines
+template<typename T>
+inline T RuntimeError::setSource(const char* file, int line, const char* fn) {
+  sourceFile_ = file;
+  sourceLine_ = line;
+  functionName_ = fn;
+  return T(*this);
+}
+
+
 template<typename... Args>
 inline RuntimeError::RuntimeError(
     Status ev,
@@ -77,7 +87,7 @@ inline RuntimeError::RuntimeError(
 } // namespace xzero
 
 #define EXCEPTION(E, ...)                                                     \
-  (E(__VA_ARGS__).setSource(__FILE__, __LINE__, __PRETTY_FUNCTION__))
+  (E(__VA_ARGS__).setSource<E>(__FILE__, __LINE__, __PRETTY_FUNCTION__))
 
 /**
  * Raises an exception of given type and arguments being passed to the
@@ -87,7 +97,7 @@ inline RuntimeError::RuntimeError(
  * source information will be initialized after.
  */
 #define RAISE_EXCEPTION(E, ...) {                                             \
-  throw E(__VA_ARGS__).setSource(__FILE__, __LINE__, __PRETTY_FUNCTION__);  \
+  throw E(__VA_ARGS__).setSource<E>(__FILE__, __LINE__, __PRETTY_FUNCTION__); \
 }
 
 //  throw (RuntimeError(Status:: __VA_ARGS__).setSource(__FILE__, __LINE__, __PRETTY_FUNCTION__));

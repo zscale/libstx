@@ -147,24 +147,28 @@ class XZERO_API CLI {
 
 class XZERO_API CLI::TypeMismatchError : public RuntimeError {
  public:
+  explicit TypeMismatchError(const RuntimeError& v) : RuntimeError(v) {}
   TypeMismatchError()
     : RuntimeError((int) Status::CliTypeMismatchError, StatusCategory::get()) {}
 };
 
 class XZERO_API CLI::UnknownOptionError : public RuntimeError {
  public:
+  explicit UnknownOptionError(const RuntimeError& v) : RuntimeError(v) {}
   UnknownOptionError()
     : RuntimeError((int) Status::CliUnknownOptionError, StatusCategory::get()) {}
 };
 
 class XZERO_API CLI::MissingOptionError : public RuntimeError {
  public:
+  explicit MissingOptionError(const RuntimeError& v) : RuntimeError(v) {}
   MissingOptionError()
     : RuntimeError((int) Status::CliMissingOptionError, StatusCategory::get()) {}
 };
 
 class XZERO_API CLI::MissingOptionValueError : public RuntimeError {
  public:
+  explicit MissingOptionValueError(const RuntimeError& v) : RuntimeError(v) {}
   MissingOptionValueError()
     : RuntimeError((int) Status::CliMissingOptionValueError, StatusCategory::get()) {}
 };

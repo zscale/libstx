@@ -28,6 +28,7 @@ class XZERO_HTTP_API BadMessage : public RuntimeError {
  public:
   explicit BadMessage(HttpStatus code);
   BadMessage(HttpStatus code, const std::string& reason);
+  explicit BadMessage(RuntimeError& v) : RuntimeError(v) {}
 
   HttpStatus httpCode() const XZERO_NOEXCEPT {
     return static_cast<HttpStatus>(code().value());
