@@ -12,6 +12,7 @@
 #include <xzero-base/logging/LogAggregator.h>
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/StackTrace.h>
+#include <typeinfo>
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
@@ -51,7 +52,7 @@ void LogSource::error(const std::exception& e) {
     if (auto rt = dynamic_cast<const RuntimeError*>(&e)) {
       auto bt = rt->backtrace();
 
-      sstr << "Exception of type " << rt->typeName() << " caught from "
+      sstr << "Exception of type " << typeid(*rt).name() << " caught from "
            << rt->sourceFile() << ":" << rt->sourceLine() << ". "
            << rt->what();
 
