@@ -50,6 +50,7 @@ _sed 's/^\(.include .xzero-base\/\)status.h/\1Status.h/'
 echo "*** Exception Handling ***"
 _sed 's/^\(.include xzero-base\/\)exception.h/\1RuntimeError.h/'
 _sed 's/\<StandardException\>/RuntimeError/g'
+_sed 's/\<getTypeName\>/typeName/g'
 # Exception -> RuntimeError
 
 echo "*** Logging ***"
