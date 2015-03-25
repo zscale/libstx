@@ -47,7 +47,6 @@ RuntimeError::RuntimeError(int ev, const std::error_category& ec)
     sourceFile_(""),
     sourceLine_(0),
     functionName_(""),
-    typeName_(nullptr),
     stackTrace_() {
 }
 
@@ -59,7 +58,6 @@ RuntimeError::RuntimeError(
     sourceFile_(""),
     sourceLine_(0),
     functionName_(""),
-    typeName_(nullptr),
     stackTrace_() {
 }
 
@@ -86,19 +84,12 @@ std::vector<std::string> RuntimeError::backtrace() const {
 }
 
 const char* RuntimeError::typeName() const {
-  if (!typeName_) {
-    typeName_ = typeid(*this).name();
-  }
-  return typeName_;
+  return typeid(*this).name();
 }
 
-RuntimeError& RuntimeError::setTypeName(const char* n) {
-  typeName_ = n;
-  return *this;
-}
-
-bool RuntimeError::ofType(const char* s) const {
-  return strcmp(typeName(), s) == 0;
+bool RuntimeError::ofType(Status ev) const {
+  return static_cast<int>(ev) == code().value()
+      && &code().category() == &StatusCategory().get();
 }
 
 void RuntimeError::debugPrint(std::ostream* os) const {
@@ -110,7 +101,7 @@ void RuntimeError::debugPrint(std::ostream* os) const {
             "$0: $1\n"
             "    in $2\n"
             "    in $3:$4\n",
-            typeName(),
+            typeid(*this).name(),
             what(),
             functionName_,
             sourceFile_,

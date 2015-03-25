@@ -36,26 +36,26 @@ class XZERO_API RuntimeError : public std::system_error {
 
   ~RuntimeError();
 
-  RuntimeError& setSource(const char* file, int line, const char* fn);
+  RuntimeError setSource(const char* file, int line, const char* fn);
   const char* sourceFile() const { return sourceFile_; }
   int sourceLine() const XZERO_NOEXCEPT { return sourceLine_; }
   const char* functionName() const { return functionName_; }
 
-  const char* typeName() const;
-  RuntimeError& setTypeName(const char* n);
-  bool ofType(const char* s) const;
+  // XXX for backwards-compatibility only
+  XZERO_DEPRECATED const char* typeName() const;
+  XZERO_DEPRECATED bool ofType(Status ev) const;
 
   std::vector<std::string> backtrace() const;
 
   void debugPrint(std::ostream* os = nullptr) const;
 
+ private:
   static std::string cformat(const char* fmt, ...);
 
  private:
   const char* sourceFile_;
   int sourceLine_;
   const char* functionName_;
-  mutable const char* typeName_;
   StackTrace stackTrace_;
 };
 
