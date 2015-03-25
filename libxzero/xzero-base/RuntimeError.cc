@@ -72,13 +72,6 @@ RuntimeError::RuntimeError(Status ev, const std::string& what)
 RuntimeError::~RuntimeError() {
 }
 
-RuntimeError RuntimeError::setSource(const char* file, int line, const char* fn) {
-  sourceFile_ = file;
-  sourceLine_ = line;
-  functionName_ = fn;
-  return *this;
-}
-
 std::vector<std::string> RuntimeError::backtrace() const {
   return stackTrace_.symbols();
 }
