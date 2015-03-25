@@ -74,7 +74,7 @@ RuntimeError::RuntimeError(Status ev, const std::string& what)
 RuntimeError::~RuntimeError() {
 }
 
-RuntimeError& RuntimeError::setSource(const char* file, int line, const char* fn) {
+RuntimeError RuntimeError::setSource(const char* file, int line, const char* fn) {
   sourceFile_ = file;
   sourceLine_ = line;
   functionName_ = fn;
