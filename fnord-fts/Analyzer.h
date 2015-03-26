@@ -36,6 +36,8 @@ public:
 
   void stem(Language lang, fnord::String* term);
 
+  fnord::String normalize(Language lang, const fnord::String& query);
+
 protected:
 
   fnord::fts::SimpleTokenizer tokenizer_;

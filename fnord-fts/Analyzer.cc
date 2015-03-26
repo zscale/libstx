@@ -64,5 +64,21 @@ void Analyzer::stem(Language lang, fnord::String* term) {
   }
 }
 
+fnord::String Analyzer::normalize(Language lang, const fnord::String& query) {
+  Vector<fnord::String> terms;
+
+  extractTerms(lang, query, [&terms] (const fnord::String& term) {
+    terms.emplace_back(term);
+  });
+
+  std::sort(terms.begin(), terms.end(), [] (
+      const fnord::String& a,
+      const fnord::String& b) {
+    return a < b;
+  });
+
+  return StringUtil::join(terms, " ");
+}
+
 }
 }
