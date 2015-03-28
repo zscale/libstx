@@ -75,18 +75,29 @@ void Analyzer::normalize(
       Language lang,
       const fnord::String& query,
       fnord::Vector<fnord::String>* terms) {
-  tokenizer_.tokenize(query, [this, lang, terms] (const fnord::String& t) {
-    if (stopwords_.isStopword(lang, t)) {
-      return;
-    }
-
-    terms->emplace_back(t);
-  });
+  tokenize(lang, query, terms);
 
   std::sort(terms->begin(), terms->end(), [] (
       const fnord::String& a,
       const fnord::String& b) {
     return a < b;
+  });
+}
+
+void Analyzer::tokenize(
+      Language lang,
+      const fnord::String& query,
+      fnord::Vector<fnord::String>* terms) {
+  tokenizer_.tokenize(query, [this, lang, terms] (const fnord::String& t) {
+    if (t.length() == 0) {
+      return;
+    }
+
+    if (stopwords_.isStopword(lang, t)) {
+      return;
+    }
+
+    terms->emplace_back(t);
   });
 }
 
