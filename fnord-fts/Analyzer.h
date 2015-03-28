@@ -38,8 +38,12 @@ public:
 
   fnord::String normalize(Language lang, const fnord::String& query);
 
-protected:
+  void normalize(
+      Language lang,
+      const fnord::String& query,
+      fnord::Vector<fnord::String>* terms);
 
+protected:
   fnord::fts::SimpleTokenizer tokenizer_;
   fnord::fts::StopwordDictionary stopwords_;
   fnord::fts::SynonymDictionary synonyms_;

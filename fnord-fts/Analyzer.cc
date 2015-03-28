@@ -67,22 +67,27 @@ void Analyzer::stem(Language lang, fnord::String* term) {
 
 fnord::String Analyzer::normalize(Language lang, const fnord::String& query) {
   Vector<fnord::String> terms;
+  normalize(lang, query, &terms);
+  return StringUtil::join(terms, " ");
+}
 
-  tokenizer_.tokenize(query, [this, lang, &terms] (const fnord::String& t) {
+void Analyzer::normalize(
+      Language lang,
+      const fnord::String& query,
+      fnord::Vector<fnord::String>* terms) {
+  tokenizer_.tokenize(query, [this, lang, terms] (const fnord::String& t) {
     if (stopwords_.isStopword(lang, t)) {
       return;
     }
 
-    terms.emplace_back(t);
+    terms->emplace_back(t);
   });
 
-  std::sort(terms.begin(), terms.end(), [] (
+  std::sort(terms->begin(), terms->end(), [] (
       const fnord::String& a,
       const fnord::String& b) {
     return a < b;
   });
-
-  return StringUtil::join(terms, " ");
 }
 
 }
