@@ -43,6 +43,11 @@ public:
       const fnord::String& query,
       fnord::Vector<fnord::String>* terms);
 
+  void tokenize(
+      Language lang,
+      const fnord::String& query,
+      fnord::Vector<fnord::String>* terms);
+
 protected:
   fnord::fts::SimpleTokenizer tokenizer_;
   fnord::fts::StopwordDictionary stopwords_;
