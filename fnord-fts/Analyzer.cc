@@ -68,8 +68,12 @@ void Analyzer::stem(Language lang, fnord::String* term) {
 fnord::String Analyzer::normalize(Language lang, const fnord::String& query) {
   Vector<fnord::String> terms;
 
-  extractTerms(lang, query, [&terms] (const fnord::String& term) {
-    terms.emplace_back(term);
+  tokenizer_.tokenize(query, [this, lang, &terms] (const fnord::String& t) {
+    if (stopwords_.isStopword(lang, t)) {
+      return;
+    }
+
+    terms.emplace_back(t);
   });
 
   std::sort(terms.begin(), terms.end(), [] (
