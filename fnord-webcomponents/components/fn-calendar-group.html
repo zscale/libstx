@@ -23,11 +23,13 @@
       text-align:center;
       cursor: default;
       color: inherit;
+      padding: 0;
+      vertical-align: top;
     }
 
-    table tr {
+    /*table tr {
       height: 1.98em;
-    }
+    }*/
 
     table th {
       padding: 0.4em;
@@ -37,9 +39,12 @@
       color: inherit;
     }
 
-    table.calendar {
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 3px;
+    td.border {
+      border-left: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    td.border.bottom {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     }
 
     table.calendar td {
@@ -48,6 +53,15 @@
 
     table td.selectable:hover {
       cursor: pointer;
+    }
+
+    tr.month_header td {
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    tr.month_picker td {
+      padding: 0;
     }
 
     .fa {
@@ -65,9 +79,10 @@
     }
 
     .month_picker .picker {
-      padding: 3px 5px;
-      background-color: #f0f0f0;
+      padding: 10px 5px 9px;
+      color: rgba(0, 0, 0, 0.8);
       font-size: 0.8em;
+      background-color: rgba(0, 0, 0, 0.1);
     }
 
     /**********************
@@ -104,10 +119,10 @@
         <div class='picker'><i class='fa fa-chevron-left'></i></div>
       </td>
 
-      <td id='calendar0'>
-        <table class='calendar'>
+      <td class='border bottom'>
+        <table class='calendar' id='0' cellspacing='0' cellpadding='0'>
           <thead>
-            <tr class="month_header"><td></td></tr>
+            <tr class="month_header"><td colspan='8'></td></tr>
           </thead>
           <tr>
             <th>M</th>
@@ -118,19 +133,19 @@
             <th>S</th>
             <th>S</th>
           </tr>
-          <tr class="week" id='week0'></tr>
-          <tr class="week" id='week1'></tr>
-          <tr class="week" id='week2'></tr>
-          <tr class="week" id='week3'></tr>
-          <tr class="week" id='week4'></tr>
-          <tr class="week" id='week5'></tr>
+          <tr class="week" id='0_week0'></tr>
+          <tr class="week" id='0_week1'></tr>
+          <tr class="week" id='0_week2'></tr>
+          <tr class="week" id='0_week3'></tr>
+          <tr class="week" id='0_week4'></tr>
+          <tr class="week" id='0_week5'></tr>
         </table>
       </td>
 
-      <td id='calendar1'>
-        <table class='calendar'>
+      <td class='border bottom'>
+        <table class='calendar' id='1' cellspacing='0' cellpadding='0'>
           <thead>
-            <tr class="month_header"><td></td></tr>
+            <tr class="month_header"><td colspan='8'></td></tr>
           </thead>
           <tr>
             <th>M</th>
@@ -141,19 +156,19 @@
             <th>S</th>
             <th>S</th>
           </tr>
-          <tr class="week" id='week0'></tr>
-          <tr class="week" id='week1'></tr>
-          <tr class="week" id='week2'></tr>
-          <tr class="week" id='week3'></tr>
-          <tr class="week" id='week4'></tr>
-          <tr class="week" id='week5'></tr>
+          <tr class="week" id='1_week0'></tr>
+          <tr class="week" id='1_week1'></tr>
+          <tr class="week" id='1_week2'></tr>
+          <tr class="week" id='1_week3'></tr>
+          <tr class="week" id='1_week4'></tr>
+          <tr class="week" id='1_week5'></tr>
         </table>
       </td>
 
-      <td id='calendar2'>
-        <table class='calendar'>
+      <td class='border bottom'>
+        <table class='calendar' id='2' cellspacing='0' cellpadding='0'>
           <thead>
-            <tr class="month_header"><td></td></tr>
+            <tr class="month_header"><td colspan='8'></td></tr>
           </thead>
           <tr>
             <th>M</th>
@@ -164,16 +179,16 @@
             <th>S</th>
             <th>S</th>
           </tr>
-          <tr class="week" id='week0'></tr>
-          <tr class="week" id='week1'></tr>
-          <tr class="week" id='week2'></tr>
-          <tr class="week" id='week3'></tr>
-          <tr class="week" id='week4'></tr>
-          <tr class="week" id='week5'></tr>
+          <tr class="week" id='2_week0'></tr>
+          <tr class="week" id='2_week1'></tr>
+          <tr class="week" id='2_week2'></tr>
+          <tr class="week" id='2_week3'></tr>
+          <tr class="week" id='2_week4'></tr>
+          <tr class="week" id='2_week5'></tr>
         </table>
       </td>
 
-      <td id='next_month_picker' class='month_picker'>
+      <td id='next_month_picker' class='month_picker border'>
         <div class='picker'><i class='fa fa-chevron-right'></i></div>
       </td>
 
@@ -191,22 +206,224 @@
 
     this.init = function() {
       this.render(
-        DateUtil.parseTimestamp(this.getAttribute('data-from'),
-        DateUtil.parseTimestamp(this.getAttribute('data-until')
+        DateUtil.parseTimestamp(this.getAttribute('data-from'))
       );
+
+      this.observeMonthSelectors();
+    };
+
+    this.observeMonthSelectors = function() {
+      var _this = this;
+      this.shadowRoot.getElementById('prev_month_picker').addEventListener('click',
+        function() {
+          _this.render(
+            DateUtil.getMonthTimestamp(_this.firstDate.month, _this.firstDate.year, -1));
+        },
+      false);
+
+      this.shadowRoot.getElementById('next_month_picker').addEventListener('click',
+        function() {
+          _this.render(
+            DateUtil.getMonthTimestamp(_this.lastDate.month, _this.lastDate.year, -1));
+        },
+      false);
+
     }
 
-    this.render = function(from, until) {
-      this.from = DateUtil.getDateObject(from, 'date', true);
-      this.until = DateUtil.getDateObject(until, 'date', true);
-      
-      this.renderMonthHeaders();
+    this.render = function(date) {
+      var date0 = DateUtil.getDateObject(date, 'date', true);
+      var date1 = DateUtil.getDateObject(
+        DateUtil.getMonthTimestamp(date0.month, date0.year, 1), 'date', true);
+      var date2 = DateUtil.getDateObject(
+        DateUtil.getMonthTimestamp(date0.month, date0.year, 2), 'date', true);
+
+      this.firstDate = date0;
+      this.lastDate = date2;
+
+      this.renderMonthHeaders(date0, date1, date2);
+
+      this.renderWeeks(0, date0);
+      this.renderWeeks(1, date1);
+      this.renderWeeks(2, date2);
+    }
+
+    this.renderMonthHeaders = function(date0, date1, date2) {
+      var headers = this.shadowRoot.querySelectorAll(".month_header td");
+
+      headers[0].innerHTML = DateUtil.humanMonth[date0.month] + " " + date0.year;
+      headers[1].innerHTML = DateUtil.humanMonth[date1.month] + " " + date1.year;
+      headers[2].innerHTML = DateUtil.humanMonth[date2.month] + " " + date2.year;
+
+    };
+
+    this.renderWeeks = function(id, date) {
+      var current_date = this.renderFirstWeek(id, date);
+
+      for (var week = 1; week < 6; week++) {
+        var tr_elem = this.shadowRoot.getElementById(id + "_week" + week);
+        tr_elem.innerHTML = "";
+
+        for (var day = 0; day < 7; day++) {
+          //all days of current month are rendered
+          if (current_date > date.num_days) {
+            return this.renderLastWeeks(day, week, tr_elem, id, date);
+          }
+
+          tr_elem.appendChild(
+            this.renderDayElem(current_date, date.month_timestamp, true));
+
+          current_date++;
+        }
+      }
 
     }
 
-    this.renderMonthHeaders = function() {
-      
+    this.renderFirstWeek = function(id, date) {
+      var preview = this.hasAttribute('data-preview');
+      var prev_month =
+        DateUtil.getMonthTimestamp(date.month, date.year, -1);
+      var prev_dates = this.datesOfPrevMonth(prev_month, date);
+      var current_date = 1;
+      var tr_elem = this.shadowRoot.getElementById(id + "_week0");
+
+
+      tr_elem.innerHTML = '';
+
+      //render last days of previous month
+      for (var i = 0; i < prev_dates.length; i++) {
+        tr_elem.appendChild(
+          this.renderDayElem(prev_dates[i], prev_month, preview));
+      };
+
+      //render first days of current month
+      for (day = prev_dates.length; day < 7; day ++) {
+        tr_elem.appendChild(
+          this.renderDayElem(current_date, date.month_timestamp, true));
+        current_date++;
+      }
+
+      return current_date;
     }
+
+    this.renderDayElem = function(date, month_timestamp, displayed) {
+      var td_elem = document.createElement("td");
+
+      if (displayed && displayed != "false") {
+        var timestamp = month_timestamp + (date - 1) * DateUtil.millisPerDay;
+
+        td_elem.className = this.tdClassName(date, month_timestamp);
+
+        /*if (this.isSelectable(date, month_timestamp)) {
+          td_elem.classList.add("selectable");
+          this.handleDateLinks(td_elem, date, month_timestamp);
+        }*/
+
+
+        td_elem.innerHTML = date;
+      }
+
+      return td_elem;
+    };
+
+    this.renderLastWeeks = function(day, week, tr_elem, id, date) {
+      //inidcates whether days of next months should be displayed or not
+      var preview = this.hasAttribute('data-preview');
+
+      var next_month =
+        DateUtil.getMonthTimestamp(date.month, date.year, 1);
+      var current_date = 1;
+
+      //add for remaining weekdays of week days of next month
+      for (; day < 7; day++) {
+        tr_elem.appendChild(
+          this.renderDayElem(current_date, next_month, preview));
+
+        current_date++;
+      }
+
+      //render week with days of next month
+      for (week++; week < 6; week++) {
+        var tr_elem = this.shadowRoot.getElementById(id + "_week" + week);
+        tr_elem.innerHTML = "";
+
+        for (day = 0; day < 7; day++) {
+          tr_elem.appendChild(
+            this.renderDayElem(current_date, next_month, preview));
+
+          current_date++;
+        }
+      }
+    };
+
+    this.tdClassName = function(date, month_timestamp) {
+      var now = Date.now();
+      var timestamp = month_timestamp + (date - 1) * DateUtil.millisPerDay;
+      var name = "";
+
+      // date isn't in current month
+     /* if (month_timestamp !== this.date.month_timestamp) {
+        name += " bright";
+      }*/
+
+      // date is today
+      if (DateUtil.isSameDay(now, timestamp)) {
+        name += " highlight_border";
+      }
+
+      if (this.hasAttribute('data-from') || this.hasAttribute('data-until')) {
+
+        var from = this.hasAttribute('data-from') ?
+          DateUtil.parseTimestamp(this.getAttribute('data-from')) : null;
+
+        var until = this.hasAttribute('data-until') ?
+          DateUtil.parseTimestamp(this.getAttribute('data-until')) : null;
+
+
+        if ((from && until && timestamp >= from && timestamp <= until) ||
+            (from && !until && timestamp >= from) ||
+            (until && !from && timestamp <= until) ||
+            DateUtil.isSameDay(from, timestamp) ||
+            DateUtil.isSameDay(until, timestamp)) {
+              name+= " colored";
+        }
+
+      }
+
+      if (this.hasAttribute('data-selected')) {
+        var selected_dates = [DateUtil.parseTimestamp(this.getAttribute('data-selected'))];
+
+        for (var i = 0; i < selected_dates.length; i++) {
+          // date is selected date
+          if (DateUtil.isSameDay(selected_dates[i], timestamp)) {
+            name += " highlight";
+            break;
+          }
+        }
+      }
+
+      console.log(name);
+      return name;
+
+    }
+
+    //timestamp -> beginning of last month
+    this.datesOfPrevMonth = function(timestamp, date) {
+      var dates = [];
+
+      if (date.first_day == 0) {
+        return dates;
+      }
+
+      var new_date = new Date(timestamp);
+      var num_days = DateUtil.daysInMonth(new_date.getMonth() + 1, new_date.getYear());
+
+      for (var i = date.first_day - 1; i >= 0; i--) {
+        dates.push(num_days - i);
+      }
+
+      return dates;
+    };
+
 
   }
 
