@@ -7,6 +7,7 @@
 #ifndef TOPDOCS_H
 #define TOPDOCS_H
 
+#include "fnord-base/stdtypes.h"
 #include "fnord-fts/util/LuceneObject.h"
 
 namespace fnord {
@@ -26,7 +27,6 @@ public:
 
     LUCENE_CLASS(TopDocs);
 
-public:
     /// The total number of hits for the query.
     int32_t totalHits;
 
@@ -36,13 +36,15 @@ public:
     /// Stores the maximum score value encountered, needed for normalizing.
     double maxScore;
 
-public:
     /// Returns the maximum score value encountered. Note that in case scores are not tracked,
     /// this returns NaN.
     double getMaxScore();
 
     /// Sets the maximum score value encountered.
     void setMaxScore(double maxScore);
+
+    void forEach(Function<bool (ScoreDoc* sdoc)> fn) const;
+
 };
 
 }

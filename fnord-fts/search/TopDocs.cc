@@ -33,6 +33,14 @@ void TopDocs::setMaxScore(double maxScore) {
     this->maxScore = maxScore;
 }
 
+void TopDocs::forEach(Function<bool (ScoreDoc* sdoc)> fn) const {
+  for (int32_t i = 0; i < scoreDocs.size(); ++i) {
+    if (!fn(scoreDocs[i].get())) {
+      return;
+    }
+  }
+}
+
 }
 
 }

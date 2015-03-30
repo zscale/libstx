@@ -4,6 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
+#include "fnord-base/stringutil.h"
 #include "fnord-fts/fts.h"
 #include "fnord-fts/util/LuceneException.h"
 
@@ -24,6 +25,11 @@ LuceneException::ExceptionType LuceneException::getType() const {
 
 String LuceneException::getError() const {
     return error;
+}
+
+const char* LuceneException::what() const noexcept {
+  auto error_utf8 = StringUtil::convertUTF16To8(error);
+  return error_utf8.c_str();
 }
 
 bool LuceneException::isNull() const {

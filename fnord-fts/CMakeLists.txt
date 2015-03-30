@@ -13,9 +13,42 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(../)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
+
 file(GLOB_RECURSE FNORD_FTS_SOURCES
+  Analyzer.cc
+  SimpleTokenizer.cc
+  GermanStemmer.cc
+  Hunspell.cc
+  StopwordDictionary.cc
+  SynonymDictionary.cc
+  FTSQuery.cc
+  AnalyzerAdapter.cc
+  analysis/TokenStream.cc
+  analysis/TokenFilter.cc
+  analysis/NumericTokenStream.cc
+  analysis/tokenattributes/TermAttribute.cc
+  analysis/tokenattributes/TypeAttribute.cc
+  analysis/tokenattributes/OffsetAttribute.cc
+  analysis/tokenattributes/PayloadAttribute.cc
+  analysis/tokenattributes/PositionIncrementAttribute.cc
+  analysis/CachingTokenFilter.cc
+  ../3rdparty/hunspell/affentry.cxx
+  ../3rdparty/hunspell/affixmgr.cxx
+  ../3rdparty/hunspell/csutil.cxx
+  ../3rdparty/hunspell/dictmgr.cxx
+  ../3rdparty/hunspell/filemgr.cxx
+  ../3rdparty/hunspell/hashmgr.cxx
+  ../3rdparty/hunspell/hunspell.cxx
+  ../3rdparty/hunspell/hunzip.cxx
+  ../3rdparty/hunspell/phonet.cxx
+  ../3rdparty/hunspell/replist.cxx
+  ../3rdparty/hunspell/suggestmgr.cxx
+  ../3rdparty/hunspell/utf_info.cxx
+  ../3rdparty/hunspell/hnjalloc.c
+  ../3rdparty/hunspell/hnjalloc.c
+  ../3rdparty/hunspell/hyphen.c
   search/*.cc
-  analysis/*.cc
   document/*.cc
   index/*.cc
   queryparser/*.cc
