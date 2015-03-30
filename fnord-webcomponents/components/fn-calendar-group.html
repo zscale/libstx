@@ -215,16 +215,21 @@
       switch (attr) {
         case 'data-select':
           //return this.setSelectability(new_val);
-          return this.render(DateUtil.parseTimestamp(this.getAttribute('data-from')));
+          //return this.render(DateUtil.parseTimestamp(this.getAttribute('data-from')));
         default:
           break;
       }
     };
 
+    this.getStartTimestamp = function() {
+      var timestamp = (this.hasAttribute('data-timestamp')) ?
+        this.getAttribute('data-timestamp') : this.getAttribute('data-from');
+
+      return DateUtil.parseTimestamp(timestamp);
+    }
+
     this.init = function() {
-      this.render(
-        DateUtil.parseTimestamp(this.getAttribute('data-from'))
-      );
+      this.render(this.getStartTimestamp());
 
       this.observeMonthSelectors();
     };
@@ -249,7 +254,7 @@
 
     this.render = function(date) {
       if (!date) {
-        date = DateUtil.parseTimestamp(this.getAttribute('data-from'));
+        date = this.getStartTimestamp();
       }
 
       var date0 = DateUtil.getDateObject(date, 'date', true);
