@@ -4,6 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
+#include "fnord-base/exception.h"
 #include "fnord-fts/fts.h"
 #include "fnord-fts/analysis/tokenattributes/TermAttribute.h"
 #include "fnord-fts/util/MiscUtils.h"
@@ -88,15 +89,18 @@ int32_t TermAttribute::termLength() {
 }
 
 void TermAttribute::setTermLength(int32_t length) {
-    if (!_termBuffer) {
-        initTermBuffer();
-    }
-    if (length > _termBuffer.size()) {
-        boost::throw_exception(IllegalArgumentException(L"length " + StringUtils::toString(length) +
-                               L" exceeds the size of the termBuffer (" +
-                               StringUtils::toString(_termBuffer.size()) + L")"));
-    }
-    _termLength = length;
+  if (!_termBuffer) {
+    initTermBuffer();
+  }
+
+  if (length > _termBuffer.size()) {
+    RAISEF(
+        kBufferOverflowError,
+        "term length exceeds size of termbuffer: $0",
+        _termBuffer.size());
+  }
+
+  _termLength = length;
 }
 
 int32_t TermAttribute::hashCode() {

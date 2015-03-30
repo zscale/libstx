@@ -54,6 +54,9 @@ protected:
     String error;
 
 public:
+
+    const char* what() const noexcept override;
+
     ExceptionType getType() const;
     String getError() const;
     bool isNull() const;
