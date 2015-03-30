@@ -16,6 +16,11 @@
       if (this.hasAttribute('data-resolved')) {
         this.initHeaderItem();
       }
+
+      //close dropdown only if click event is outside
+      this.addEventListener('click', function(e) {
+        e.stopPropagation();
+      }, false);
     };
 
     this.attributeChangedCallback = function(attr, old_val, new_val) {
@@ -26,7 +31,7 @@
 
     this.onDocumentClick = function() {
       this.hideDropdown();
-    }
+    };
 
     // Checks if a header_elem exists and renders one if not
     this.initHeaderItem = function() {
@@ -71,7 +76,7 @@
             innerHTML += ", ";
           }
 
-          innerHTML += selected_items[i].innerText
+          innerHTML += selected_items[i].innerText || selected_items[i].textContent;
         }
 
       } else {
@@ -97,13 +102,21 @@
            innerHTML = this.querySelector("fn-dropdown-item").innerHTML;
           }
         } else {
-          //set selected_item's html as header (standard case)
-          innerHTML = selected_item.innerHTML;
+          //set items input value as html header
+          if (selected_item.hasAttribute('data-input-select')) {
+            var input = selected_item.querySelector("input");
+            innerHTML = input.value;
+
+          } else {
+            //set selected_item's html as header (standard case)
+            innerHTML = selected_item.innerHTML;
+          }
         }
       }
 
       header.innerHTML = innerHTML;
     };
+
 
     this.toggleDropdown = function() {
       if (this.hasAttribute('data-active')) {
@@ -121,6 +134,8 @@
       if (hover_item) {
         hover_item.classList.remove('hover');
       }
+
+      this.fireCloseEvent();
 
       //remove global event listener
       if (!this.querySelector("fn-input")) {
@@ -153,11 +168,38 @@
 
     this.setItemEventListeners = function() {
       var base = this;
-      var items = this.querySelectorAll("fn-dropdown-item");
+      var items = this.querySelectorAll("fn-dropdown-item:not([data-input-select])");
+      var input_items = this.querySelectorAll('fn-dropdown-item[data-input-select]');
 
       for (var i = 0; i < items.length; i++) {
         items[i].onclick = function() {
           base.onItemClick(this);
+        }
+      }
+
+
+      for (var i = 0; i < input_items.length; i++) {
+        input_items[i].addEventListener('click', function(e) {
+          e.stopPropagation;
+        }, false);
+
+        var input = input_items[i].querySelector("input");
+        var checkbox = input_items[i].querySelector("fn-checkbox");
+        var item = input_items[i];
+
+        if (input) {
+          input.addEventListener('keydown', function(e) {
+            e.stopPropagation();
+
+            if (e.keyCode == 13) {
+              if (checkbox) {
+                checkbox.setAttribute('data-active', 'active');
+              }
+
+              base.onItemClick(item);
+
+            }
+          }, false);
         }
       }
 
@@ -177,10 +219,28 @@
       if (this.classList.contains('checkbox')) {
         var checkbox = item.querySelector("fn-checkbox");
 
-        //checkbox has been unselected
-        if (!checkbox.hasAttribute('data-active')) {
+        if (item.hasAttribute('data-selected')) {
           selected = false;
           item.removeAttribute('data-selected');
+          checkbox.removeAttribute('data-active');
+
+          //not completely unselectable dropdown
+          if (this.hasAttribute('data-force-select') &&
+              !this.querySelector('fn-dropdown-item[data-selected]')) {
+
+            var default_select = this.querySelector('fn-dropdown-item[data-default]');
+
+            if (default_select) {
+              default_select.setAttribute('data-selected', 'selected');
+              checkbox = default_select.querySelector('fn-checkbox');
+
+              if (checkbox) {
+                checkbox.setAttribute('data-active', 'active');
+              }
+            }
+          }
+        } else {
+          checkbox.setAttribute('data-active', 'active');
         }
 
       } else {
@@ -202,19 +262,31 @@
       }
 
       this.fireClickEvent(item, selected);
-      this.hideDropdown();
+
+      if (!this.hasAttribute('data-open-onclick')) {
+        this.hideDropdown();
+      }
     };
 
     this.fireClickEvent = function(item, selected) {
       var name = (selected) ? "fn-dropdown-item-click" : "fn-dropdown-item-unselect";
 
       var ev = new CustomEvent(name, {
-        detail : {'text' : item.innerText},
+        detail : {'text' : item.textContent},
         bubbles: true,
         cancelable: true
       });
       item.dispatchEvent(ev);
     };
+
+    this.fireCloseEvent = function() {
+      var ev = new CustomEvent('fn-dropdown-close', {
+        bubbles: true,
+        cancelable: true
+      });
+
+      this.dispatchEvent(ev);
+    }
 
 
     /*********************** Key Navigation **********************************/
@@ -313,7 +385,7 @@
       }
 
       if (selected_item) {
-        input.setAttribute('data-value', selected_item.innerText);
+        input.setAttribute('data-value', selected_item.textContent);
       }
 
       dropdown_input.appendChild(input);
@@ -331,7 +403,7 @@
       var value = value.toLowerCase();
 
       for (var i = 0; i < items.length; i++) {
-        if (items[i].innerText.toLowerCase().indexOf(value) > -1) {
+        if (items[i].textContent.toLowerCase().indexOf(value) > -1) {
           items[i].classList.remove('hidden');
         } else {
           items[i].classList.add('hidden');
