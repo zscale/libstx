@@ -8,6 +8,12 @@
   copy of the GNU General Public License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 -->
+<style type='text/css'>
+  fn-calendar-group {
+    display: block;
+  }
+</style>
+
 <template id="fn-calendar-group-base-tpl">
   <style type='text/css'>
     table {
@@ -51,8 +57,9 @@
       padding: 0.45em 0.5em;
     }
 
-    table td.selectable:hover {
+    td.selectable:hover {
       cursor: pointer;
+      background-color: #fffbe6;
     }
 
     tr.month_header td {
@@ -79,7 +86,7 @@
     }
 
     .month_picker .picker {
-      padding: 10px 5px 9px;
+      padding: 0.5em;
       color: rgba(0, 0, 0, 0.8);
       font-size: 0.8em;
       background-color: rgba(0, 0, 0, 0.1);
@@ -204,6 +211,16 @@
       this.init();
     }
 
+    this.attributeChangedCallback = function(attr, old_val, new_val) {
+      switch (attr) {
+        case 'data-select':
+          //return this.setSelectability(new_val);
+          return this.render(DateUtil.parseTimestamp(this.getAttribute('data-from')));
+        default:
+          break;
+      }
+    };
+
     this.init = function() {
       this.render(
         DateUtil.parseTimestamp(this.getAttribute('data-from'))
@@ -231,6 +248,10 @@
     }
 
     this.render = function(date) {
+      if (!date) {
+        date = DateUtil.parseTimestamp(this.getAttribute('data-from'));
+      }
+
       var date0 = DateUtil.getDateObject(date, 'date', true);
       var date1 = DateUtil.getDateObject(
         DateUtil.getMonthTimestamp(date0.month, date0.year, 1), 'date', true);
@@ -313,16 +334,37 @@
 
         td_elem.className = this.tdClassName(date, month_timestamp);
 
-        /*if (this.isSelectable(date, month_timestamp)) {
+        if (this.isSelectable(date, month_timestamp)) {
           td_elem.classList.add("selectable");
           this.handleDateLinks(td_elem, date, month_timestamp);
-        }*/
-
+        }
 
         td_elem.innerHTML = date;
       }
 
       return td_elem;
+    };
+
+    this.handleDateLinks = function(td_elem, date, month_timestamp) {
+      var _this = this;
+      var timestamp = month_timestamp + (date - 1) * DateUtil.millisPerDay;
+
+      td_elem.onclick = function() {
+        _this.fireDateSelectEvent(timestamp, this.classList.toString());
+      };
+    };
+
+    this.fireDateSelectEvent = function(timestamp, classList) {
+      var ev = new CustomEvent('fn-calendar-group-select', {
+        'detail' : {
+          'timestamp' : timestamp,
+          'classList' : classList
+        },
+        cancelable: true,
+        bubbles: true
+      });
+
+      this.dispatchEvent(ev);
     };
 
     this.renderLastWeeks = function(day, week, tr_elem, id, date) {
@@ -401,9 +443,35 @@
         }
       }
 
-      console.log(name);
       return name;
+    };
 
+    this.isSelectable = function(date, month_timestamp) {
+      var now = Date.now();
+      var timestamp = month_timestamp + (date - 1) * DateUtil.millisPerDay;
+      var period = this.getAttribute('data-selectable');
+      var select = this.getAttribute('data-select');
+      var selectable = true;
+
+      if (select == 'until') {
+        var from = DateUtil.parseTimestamp(this.getAttribute('data-from'));
+        selectable = timestamp >= from || DateUtil.isSameDay(from, timestamp);
+      }
+
+      if (period == "past") {
+        selectable = selectable && timestamp < now;
+      }
+
+      if (period == "future") {
+        selectable = selectable && timestamp > now;
+      }
+
+      return selectable;
+    };
+
+    this.setSelectability = function(select) {
+      var rows = this.querySelectorAll(".week");
+      console.log(rows);
     }
 
     //timestamp -> beginning of last month
