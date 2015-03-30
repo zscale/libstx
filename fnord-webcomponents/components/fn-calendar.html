@@ -21,6 +21,7 @@
       line-height: 1em;
       border: 1px solid rgba(0, 0, 0, 0.1);
       color: rgba(0, 0, 0, 0.8);
+      border-collapse: collapse;
     }
 
     table tr {
@@ -36,7 +37,7 @@
     }
 
     table td {
-      padding: 0.4em;
+      padding: 0.45em 0.5em;
       line-height: 1.3em;
       text-align:center;
       cursor: default;
@@ -79,6 +80,10 @@
     table td.bright {
       opacity: 0.6;
     }
+
+    table td.colored {
+      background-color: #f0f0f0;
+    }
   </style>
 
   <table>
@@ -91,7 +96,7 @@
       <th>Sa</th>
       <th>Su</th>
     </tr>
-    <tr>
+    <tr name="month_header">
       <td><i class='fa fa-chevron-left'></i></td>
       <td colspan='5'>
         <b id='month_header'></b>
@@ -119,11 +124,12 @@
     this.attributeChangedCallback = function(attr, old_val, new_val) {
       switch (attr) {
         case 'data-timestamp':
-          this.render(this.getTimeStamp(attr));
-          break;
+          return this.render(this.getTimeStamp(attr));
+
         case 'data-selected':
-          this.render(this.getTimeStamp('data-timestamp'));
-          break;
+        case 'data-from':
+        case 'data-until':
+          return this.render(this.getTimeStamp('data-timestamp'));
         default:
           break;
       }
@@ -131,7 +137,10 @@
 
     this.init = function() {
       this.render(this.getTimeStamp('data-timestamp'));
-      this.observeMonthSelectors();
+
+      if (this.getAttribute('data-month-header') != "false") {
+        this.observeMonthSelectors();
+      }
     };
 
     //render previous/next month onclick
@@ -171,8 +180,15 @@
         "December"
       ];
 
-      this.shadowRoot.getElementById('month_header').innerHTML = 
-        human_month[this.date.month] + " " + this.date.year;
+      if (this.getAttribute('data-month-header') != "false") {
+        this.shadowRoot.getElementById('month_header').innerHTML = 
+          human_month[this.date.month] + " " + this.date.year;
+      } else {
+        //without month header
+        this.shadowRoot.querySelector("table tbody").removeChild(
+          this.shadowRoot.querySelector("tr[name='month_header']")
+        );
+      }
     };
 
     this.renderWeeks = function() {
@@ -198,6 +214,10 @@
 
     //returns last rendered date of current month
     this.renderFirstWeek = function() {
+      //inidcates whether days of prev months should be displayed or not
+      var preview = this.hasAttribute('data-preview')?
+        this.getAttribute('data-preview') : true;
+
       var prev_month =
         DateUtil.getMonthTimestamp(this.date.month, this.date.year, -1);
 
@@ -209,13 +229,13 @@
       //render last days of previous month
       for (var i = 0; i < prev_dates.length; i++) {
         tr_elem.appendChild(
-          this.renderDayElem(prev_dates[i], prev_month));
+          this.renderDayElem(prev_dates[i], prev_month, preview));
       };
 
       //render first days of current month
       for (day = prev_dates.length; day < 7; day ++) {
         tr_elem.appendChild(
-          this.renderDayElem(current_date, this.date.month_timestamp));
+          this.renderDayElem(current_date, this.date.month_timestamp, true));
         current_date++;
       }
 
@@ -223,6 +243,10 @@
     };
 
     this.renderLastWeeks = function(day, week, tr_elem) {
+      //inidcates whether days of next months should be displayed or not
+      var preview = this.hasAttribute('data-preview')?
+        this.getAttribute('data-preview') : true;
+
       var next_month =
         DateUtil.getMonthTimestamp(this.date.month, this.date.year, 1);
       var current_date = 1;
@@ -230,7 +254,7 @@
       //add for remaining weekdays of week days of next month
       for (; day < 7; day++) {
         tr_elem.appendChild(
-          this.renderDayElem(current_date, next_month));
+          this.renderDayElem(current_date, next_month, preview));
 
         current_date++;
       }
@@ -242,24 +266,29 @@
 
         for (day = 0; day < 7; day++) {
           tr_elem.appendChild(
-            this.renderDayElem(current_date, next_month));
+            this.renderDayElem(current_date, next_month, preview));
+
           current_date++;
         }
       }
     };
 
-    this.renderDayElem = function(date, month_timestamp) {
+    this.renderDayElem = function(date, month_timestamp, displayed) {
       var td_elem = document.createElement("td");
-      var timestamp = month_timestamp + (date - 1) * DateUtil.millisPerDay;
 
-      td_elem.className = this.tdClassName(date, month_timestamp);
+      if (displayed && displayed != "false") {
+        var timestamp = month_timestamp + (date - 1) * DateUtil.millisPerDay;
 
-      if (this.isSelectable(date, month_timestamp)) {
-        td_elem.classList.add("selectable");
-        this.handleDateLinks(td_elem, date, month_timestamp);
+        td_elem.className = this.tdClassName(date, month_timestamp);
+
+        if (this.isSelectable(date, month_timestamp)) {
+          td_elem.classList.add("selectable");
+          this.handleDateLinks(td_elem, date, month_timestamp);
+        }
+
+
+        td_elem.innerHTML = date;
       }
-
-      td_elem.innerHTML = date;
 
       return td_elem;
     };
@@ -295,11 +324,32 @@
         name += " highlight_border";
       }
 
+      if (this.hasAttribute('data-from') || this.hasAttribute('data-until')) {
+
+        var from = this.hasAttribute('data-from') ?
+          this.getTimeStamp('data-from') : null;
+        var until = this.hasAttribute('data-until') ?
+          this.getTimeStamp('data-until') : null;
+
+        if ((from && until && timestamp >= from && timestamp <= until) ||
+            (from && !until && timestamp >= from) ||
+            (until && !from && timestamp <= until) ||
+            DateUtil.isSameDay(from, timestamp) ||
+            DateUtil.isSameDay(until, timestamp)) {
+              name+= " colored";
+        }
+
+      }
+
       if (this.hasAttribute('data-selected')) {
-        var selected = this.getTimeStamp('data-selected');
-        // date is selected date
-        if (DateUtil.isSameDay(selected, timestamp)) {
-              name += " highlight";
+        var selected_dates = [this.getTimeStamp('data-selected')];
+
+        for (var i = 0; i < selected_dates.length; i++) {
+          // date is selected date
+          if (DateUtil.isSameDay(selected_dates[i], timestamp)) {
+            name += " highlight";
+            break;
+          }
         }
       }
 
@@ -333,14 +383,17 @@
       var timestamp = month_timestamp + (date - 1) * DateUtil.millisPerDay;
 
       td_elem.onclick = function() {
-        base.fireDateSelectEvent(timestamp);
+        base.fireDateSelectEvent(timestamp, this.classList.toString());
       };
     };
 
-    this.fireDateSelectEvent = function(timestamp) {
+    this.fireDateSelectEvent = function(timestamp, classList) {
       var dateEvent = new CustomEvent(
         'fn-calendar-select', {
-          'detail': {'timestamp': timestamp},
+          'detail': {
+            'timestamp': timestamp,
+            'classList' : classList
+          },
           bubbles: true,
           cancealable: true
         }
