@@ -15,6 +15,7 @@
 namespace xzero {
 
 enum class Status {
+  Success = 0,
   BufferOverflowError = 1,
   EncodingError,
   ConcurrentModificationError,
