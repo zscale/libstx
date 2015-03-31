@@ -45,6 +45,7 @@ enum class Status {
   WouldBlockError,
   FutureError,
 
+  ForeignError,
   InvalidArgumentError,
   InternalError,
   InvalidUriPortError,
