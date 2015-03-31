@@ -8,6 +8,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <xzero-base/Status.h>
+#include <xzero-base/RuntimeError.h>
 #include <string>
 
 namespace xzero {
@@ -71,6 +72,12 @@ std::string StatusCategory::message(int ec) const {
     case Status::CaughtUnknownExceptionError: return "Caught Unknown exception Error";
     //.
     default: return "Unknown Xzero Status Code";
+  }
+}
+
+void raiseIfError(Status status) {
+  if (status != Status::Success) {
+    RAISE_EXCEPTION(RuntimeError, status);
   }
 }
 
