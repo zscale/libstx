@@ -68,6 +68,7 @@ class StatusCategory : public std::error_category {
 };
 
 XZERO_API std::error_code makeErrorCode(Status ec);
+XZERO_API void raiseIfError(Status status);
 
 enum StatusCompat { // {{{
   kBufferOverflowError = (int) Status::BufferOverflowError,
