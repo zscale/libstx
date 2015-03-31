@@ -100,8 +100,6 @@ inline RuntimeError::RuntimeError(
   throw E(__VA_ARGS__).setSource<E>(__FILE__, __LINE__, __PRETTY_FUNCTION__); \
 }
 
-//  throw (RuntimeError(Status:: __VA_ARGS__).setSource(__FILE__, __LINE__, __PRETTY_FUNCTION__));
-
 /**
  * Raises an exception of type RuntimeError for given code and category.
  *
