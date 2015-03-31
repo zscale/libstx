@@ -14,7 +14,6 @@
 #include <list>
 
 namespace xzero {
-namespace thread {
 
 class XZERO_API Wakeup {
  public:
@@ -39,5 +38,4 @@ class XZERO_API Wakeup {
   std::list<std::function<void()>> callbacks_;
 };
 
-} // namespace thread
 } // namespace xzero
