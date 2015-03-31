@@ -10,7 +10,6 @@
 #include <xzero-base/thread/Wakeup.h>
 
 namespace xzero {
-namespace thread {
 
 Wakeup::Wakeup() : gen_(0) {
 }
@@ -62,6 +61,5 @@ void Wakeup::wakeup() {
   }
 }
 
-} // namespace thread
 } // namespace xzero
 
