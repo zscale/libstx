@@ -3,25 +3,6 @@
 
 - https://gist.github.com/paulasmuth/5d777701c8eff8826e68
 
-### Status vs Exceptions vs stdlib
-
-- Status is a replica of Exception (RuntimeError) in terms of error codes
-- RuntimeError should use Status's codes instead
-- ideally integrated with `std::system_error`'s `std::error_category`
-- `class std::error_code(int ev, std::error_category& ec)`
-- `class std::error_condition(int ev, std::error_category& ec)`
-- `class std::exception(const std::string& what)`
-- `class std::invalid_argument()`
-
-### Error Handling Proposal
-
-- use `class std::error_code` to reflect the actual error code
-- `enum class Status` to specify actual status codes
-- those status codes get its own error category `class StatusCodeCategory`
-- `class RuntimeError` now inherits from `std::system_error`
-  and is used for the above
-- The benifit of `RuntimeError` remains: ability to trace source file:line.
-
 ### converge
 
 - [ ] StatsServer as seperate xzero-stats module
@@ -36,7 +17,6 @@
   - missing: truncate()
   - missing: Buffer integration
   - missing: some open flags: AutoDelete | AllowFork | Trunc | Create[OnOpen]
-- [ ] thread::Future, thread::PromiseState
 - [ ] thread::EventLoop (equivalent of xzero::{Posix,Native}Scheduler)
 - [ ] thread::ThreadPool
 - [ ] PageManager
@@ -77,6 +57,7 @@
       (implemented via `std::error_category`)
 - [x] UDP networking
 - [x] IEEE754
+- [x] Future
 
 ### DEPENDENCIES
 
@@ -88,8 +69,6 @@
 
 ### concerns
 
-- Status: clarify again the use, and see if we can get it better (instead of
-    blindingly migrating)
 - `fnord::hash<>` why?
 - InputStream, RewindableInputStream, FileInputStream, StringInputStream,
   BufferInputStream - why not std::istream?
