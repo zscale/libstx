@@ -211,15 +211,7 @@
       this.init();
     }
 
-    this.attributeChangedCallback = function(attr, old_val, new_val) {
-      switch (attr) {
-        case 'data-select':
-          //return this.setSelectability(new_val);
-          //return this.render(DateUtil.parseTimestamp(this.getAttribute('data-from')));
-        default:
-          break;
-      }
-    };
+
 
     this.getStartTimestamp = function() {
       var timestamp = (this.hasAttribute('data-timestamp')) ?
@@ -256,6 +248,7 @@
       if (!date) {
         date = this.getStartTimestamp();
       }
+      console.log(date);
 
       var date0 = DateUtil.getDateObject(date, 'date', true);
       var date1 = DateUtil.getDateObject(
