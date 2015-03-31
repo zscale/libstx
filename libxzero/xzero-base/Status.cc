@@ -27,6 +27,7 @@ const char* StatusCategory::name() const noexcept {
 
 std::string StatusCategory::message(int ec) const {
   switch (static_cast<Status>(ec)) {
+    case Status::Success: return "Success";
     case Status::BufferOverflowError: return "BufferOverflowError";
     case Status::EncodingError: return "EncodingError";
     case Status::ConcurrentModificationError: return "ConcurrentModificationError";
