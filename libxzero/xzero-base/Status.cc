@@ -57,6 +57,7 @@ std::string StatusCategory::message(int ec) const {
     case Status::WouldBlockError: return "WouldBlockError";
     case Status::FutureError: return "FutureError";
     //.
+    case Status::ForeignError: return "Foreign Error";
     case Status::InvalidArgumentError: return "Invalid Argument Error";
     case Status::InternalError: return "Internal Error";
     case Status::InvalidUriPortError: return "Invalid URI-Port Error";
