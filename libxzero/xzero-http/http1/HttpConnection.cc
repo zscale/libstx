@@ -95,12 +95,10 @@ void HttpConnection::completed() {
   TRACE("%p completed", this);
 
   if (onComplete_)
-    // "there is still another completion hook."
-    RAISE(IllegalStateError);
+    RAISE(IllegalStateError, "there is still another completion hook.");
 
   if (!generator_.isChunked() && generator_.pendingContentLength() > 0)
-    //"Invalid State. Response not fully written but completed() invoked."
-    RAISE(IllegalStateError);
+    RAISE(IllegalStateError, "Invalid State. Response not fully written but completed() invoked.");
 
   onComplete_ = std::bind(&HttpConnection::onResponseComplete, this,
                           std::placeholders::_1);
@@ -304,7 +302,7 @@ void HttpConnection::onFlushable() {
   const bool complete = writer_.flush(endpoint());
 
   if (complete) {
-    TRACE("%p onFlushable: completed.", this);
+    TRACE("%p onFlushable: completed. (%s)", this, (onComplete_ ? "onComplete cb set" : "onComplete cb not set"));
     channel_->setState(HttpChannelState::HANDLING);
 
     if (onComplete_) {
