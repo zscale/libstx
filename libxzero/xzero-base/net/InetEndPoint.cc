@@ -188,6 +188,7 @@ std::string InetEndPoint::toString() const {
 size_t InetEndPoint::fill(Buffer* result) {
   result->reserve(result->size() + 1024);
   ssize_t n = read(handle(), result->end(), result->capacity() - result->size());
+  TRACE("read(%zu bytes) -> %zi", result->capacity() - result->size(), n);
 
   if (n < 0) {
     // don't raise on soft errors, such as there is simply no more data to read.
@@ -211,6 +212,8 @@ size_t InetEndPoint::fill(Buffer* result) {
 size_t InetEndPoint::flush(const BufferRef& source) {
   ssize_t rv = write(handle(), source.data(), source.size());
 
+  TRACE("flush(%zu bytes) -> %zi", source.size(), rv);
+
   if (rv < 0)
     RAISE_ERRNO(errno);
 
@@ -223,12 +226,14 @@ size_t InetEndPoint::flush(int fd, off_t offset, size_t size) {
 #if defined(__APPLE__)
   off_t len = 0;
   int rv = sendfile(fd, handle(), offset, &len, nullptr, 0);
+  TRACE("flush(offset:%zu, size:%zu) -> %zi", offset, size, rv);
   if (rv < 0)
     RAISE_ERRNO(errno);
 
   return len;
 #else
   ssize_t rv = sendfile(handle(), fd, &offset, size);
+  TRACE("flush(offset:%zu, size:%zu) -> %zi", offset, size, rv);
   if (rv < 0)
     RAISE_ERRNO(errno);
 
