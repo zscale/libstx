@@ -1,0 +1,209 @@
+<!--
+  This file is part of the "FnordMetric" project
+    Copyright (c) 2015 Laura Schlimmer
+    Copyright (c) 2015 Paul Asmuth, Google Inc.
+
+  FnordMetric is free software: you can redistribute it and/or modify it under
+  the terms of the GNU General Public License v3.0. You should have received a
+  copy of the GNU General Public License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
+-->
+<template id="fn-segment-editor-base-tpl">
+</template>
+
+<script type='text/javascript'>
+  var SegmentEditor = function() {
+    this.createdCallback = function() {
+
+      if (this.hasAttribute('data-resolved')) {
+        this.init();
+      }
+    }
+
+    this.attributeChangedCallback = function(attr, old_val, new_val) {
+      if (attr == 'data-resolved' && new_val == 'resolved') {
+        this.init();
+      }
+    }
+
+    this.init = function() {
+      if (this.hasAttribute('data-multiselect')) {
+        return this.observeSaveButton();
+      }
+
+      if (this.hasAttribute('data-overview')) {
+        this.observeAddButton();
+        this.observeClickableSegments();
+        this.observeRemovableSegments();
+        return;
+      }
+    };
+
+    /************************ fn-segment-multiselect ************************/
+
+    this.generateJson = function(selection) {
+      var json = {};
+      json[selection.name] = selection.selection;
+
+      return (JSON.stringify(json));
+    }
+
+    /**
+      * validates the selection
+      * Note: you may want to override this function to customize the validation
+      */
+    this.isValidSelection = function(selection) {
+      return (selection.name && Object.keys(selection.selection).length > 0)
+    }
+
+    this.onSaveMultiselect = function() {
+      var selection = this.getSelection();
+
+      if (this.isValidSelection(selection)) {
+        var json = this.generateJson(selection);
+        console.log("is valid");
+        this.fireSaveMultiselectEvent(json);
+      } else {
+        //TODO mark as invalid
+      }
+    };
+
+    this.getSelection = function() {
+      var name = this.querySelector("input[name='fn-segment-editor-name']").value;
+      var multiselects = this.querySelectorAll("fn-segment-editor-multiselect");
+      var selection = {};
+
+      selection.name = name;
+      selection.selection = {};
+
+      for (var i = 0; i < multiselects.length; i++) {
+        var checkbox = multiselects[i].querySelector("[name='fn-segment-editor-checkbox']");
+
+        if (!checkbox || (checkbox && !checkbox.hasAttribute('data-active'))) {
+          continue;
+        }
+
+        var select_elem = multiselects[i].querySelector("[name='fn-segment-editor-select']");
+        var selected = select_elem.querySelectorAll("[data-selected]");
+
+        var key = multiselects[i].getAttribute('data-key');
+        var value = [];
+
+        for (var j = 0; j < selected.length; j++) {
+          value.push(selected[j].getAttribute('data-value'));
+        }
+
+        //string or null
+        if (key && value.length > 0) {
+          selection.selection[key] = value;
+        }
+      }
+
+      return selection;
+    };
+
+    this.observeSaveButton = function() {
+      var btn = this.querySelector("[name='fn-segment-editor-save']");
+      var _this = this;
+
+      if (btn) {
+        btn.addEventListener('click', function() {
+          _this.onSaveMultiselect();
+        }, false);
+      }
+    };
+
+    this.fireSaveMultiselectEvent = function(json) {
+      var ev = new CustomEvent('fn-segment-editor-multiselect-save', {
+        'detail' : {'selection' : json},
+        bubbles: true,
+        cancelable: true
+      });
+
+      this.dispatchEvent(ev);
+    }
+
+    /****************************** fn-segment-overview **********************/
+
+    this.observeAddButton = function() {
+      var btn = this.querySelector("[name='fn-segment-editor-add']");
+      var _this = this;
+
+      if (btn) {
+        btn.addEventListener('click', function(e) {
+          _this.fireAddSegmentEvent();
+        }, false);
+      }
+    }
+
+    this.observeClickableSegments = function() {
+      var _this = this;
+      var c_segments = this.querySelectorAll(
+        "fn-segment-editor-element[data-clickable]");
+
+      for (var i = 0; i < c_segments.length; i++) {
+        c_segments[i].addEventListener('click', function() {
+          _this.fireSegmentClickEvent(this);
+        }, false);
+      }
+    };
+
+    this.observeRemovableSegments = function() {
+      var _this = this;
+      var r_icons = this.querySelectorAll(
+        "[name='fn-segment-editor-element-remove']");
+
+      for (var i = 0; i < r_icons.length; i++) {
+        r_icons[i].addEventListener('click', function(e) {
+          e.stopPropagation();
+
+          var element = Fnord.getParentByTagname("fn-segment-editor-element", this);
+
+          if (element) {
+            _this.onRemoveSegment(element);
+          }
+
+        }, false);
+      }
+    };
+
+    this.fireAddSegmentEvent = function() {
+      var ev = new CustomEvent('fn-segment-editor-add', {
+        cancelable: true,
+        bubbles: true
+      });
+
+      this.dispatchEvent(ev);
+    };
+
+    this.onRemoveSegment = function(segment) {
+      this.fireRemoveSegmentEvent(segment);
+
+      this.removeChild(segment);
+    }
+
+    this.fireRemoveSegmentEvent = function(elem) {
+      var ev = new CustomEvent('fn-segment-editor-remove', {
+        'detail' : {'value' : elem.getAttribute('data-value')},
+        cancelable: true,
+        bubbles: true
+      });
+
+      elem.dispatchEvent(ev);
+    }
+
+    this.fireSegmentClickEvent = function(elem) {
+      var ev = new CustomEvent('fn-segment-editor-element-click', {
+        cancelable: true,
+        bubbles: true
+      });
+
+      elem.dispatchEvent(ev);
+    };
+
+  };
+
+  window.addEventListener('fn-ready', function() {
+    Fnord.registerComponent('fn-segment-editor', SegmentEditor);
+  }, false);
+</script>
