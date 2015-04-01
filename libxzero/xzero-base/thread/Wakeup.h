@@ -15,20 +15,50 @@
 
 namespace xzero {
 
+/**
+ * Provides a facility to wait for events.
+ *
+ * While one or more caller are waiting for one event, another
+ * caller can cause those waiting callers to be fired.
+ */
 class XZERO_API Wakeup {
  public:
   Wakeup();
 
   /**
-   * Block the current thread and wait for the next wakeup event
+   * Block the current thread and wait for the next wakeup event.
    */
   void waitForNextWakeup();
+
+  /**
+   * Block the current thread and wait for the first wakeup event (generation 0).
+   */
   void waitForFirstWakeup();
+
+  /**
+   * Block the current thread and wait for wakeup of generation > given.
+   *
+   * @param generation the generation number considered <b>old</b>.
+   *                   Any generation number bigger this will wakeup the caller.
+   */
   void waitForWakeup(long generation);
 
+  /**
+   * Increments the generation and invokes all waiters.
+   */
   void wakeup();
+
+  /**
+   * Registeres a callback to be invoked when given generation has become old.
+   *
+   * @param generation Threshold of old generations.
+   * @param callback Callback to invoke upon fire.
+   */
   void onWakeup(long generation, std::function<void()> callback);
 
+  /**
+   * Retrieves the current wakeup-generation number.
+   */
   long generation() const;
 
  protected:
