@@ -308,6 +308,7 @@ void HttpConnection::onFlushable() {
     if (onComplete_) {
       TRACE("%p onFlushable: invoking completion callback", this);
       auto callback = std::move(onComplete_);
+      onComplete_ = nullptr;
       callback(true);
     }
   } else {
@@ -324,6 +325,7 @@ void HttpConnection::onInterestFailure(const std::exception& error) {
   logError("HttpConnection", error);
 
   auto callback = std::move(onComplete_);
+  onComplete_ = nullptr;
 
   // notify the callback that we failed doing something wrt. I/O.
   if (callback) {
