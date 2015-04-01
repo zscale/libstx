@@ -36,5 +36,6 @@ class XZERO_HTTP_API BadMessage : public RuntimeError {
 };
 
 #define RAISE_HTTP(status) RAISE_EXCEPTION(BadMessage, (HttpStatus:: status))
+#define RAISE_HTTP_REASON(status, reason) RAISE_EXCEPTION(BadMessage, (HttpStatus:: status), reason)
 
 } // namespace xzero
