@@ -11,115 +11,66 @@
 <template id="fn-segment-editor-demo-base-tpl">
 
   <section>
+    <fn-segment-editor id='editor1' data-resolved>
+      <template name='fn-segment-options'>
+        <fn-segment-option data-key='lang' data-title='Language'>
+          <fn-dropdown class='input' data-resolved data-segment-option>
+            <fn-dropdown-header data-blank></fn-dropdown-header>
+            <fn-dropdown-items>
+              <fn-dropdown-item data-value='de' data-title='German'>
+                German
+              </fn-dropdown-item>
+              <fn-dropdown-item data-value='fr' data-title='French'>
+                French
+              </fn-dropdown-item>
+            </fn-dropdown-items>
+          </fn-dropdown>
+        </fn-segment-option>
 
-    <fn-segment-editor data-overview data-resolved style="width: 50%;">
-      <fn-segment-editor-header>
-        <fn-segment-editor-header-title>Segments</fn-segment-editor-header-title>
-      </fn-segment-editor-header>
-
-      <fn-segment-editor-element data-clickable data-value='all'>
-        <fn-segment-editor-element-title>All Traffic</fn-segment-editor-element-title>
-        <fn-segment-editor-remove-icon data-editor='fn-segment-editor-element-remove'></fn-segment-editor-remove-icon>
-      </fn-segment-editor-element>
-
-      <fn-segment-editor-element data-clickable data-value='fr_mobile'>
-        <fn-segment-editor-element-title>French Mobile</fn-segment-editor-element-title>
-        <fn-segment-editor-element-text>
-          Language: French, Device Type: Mobile, Tablet
-        </fn-segment-editor-element-text>
-        <fn-segment-editor-remove-icon data-editor='fn-segment-editor-element-remove'></fn-segment-editor-remove-icon>
-      </fn-segment-editor-element>
-
-      <fn-segment-editor-footer>
-        <fn-button data-editor='fn-segment-editor-add'>Add Segment</fn-button>
-      </fn-segment-editor-footer>
-
+        <fn-segment-option data-key='device_type' data-title='Device Type'>
+          <fn-dropdown class='input checkbox' data-resolved data-segment-option>
+            <fn-dropdown-items>
+              <fn-dropdown-item data-value='desktop' data-title='Desktop'>
+                <fn-checkbox></fn-checkbox>
+                Desktop
+              </fn-dropdown-item>
+              <fn-dropdown-item data-value='mobile' data-title='Mobile'>
+                <fn-checkbox></fn-checkbox>
+                Mobile
+              </fn-dropdown-item>
+            </fn-dropdown-items>
+          </fn-dropdown>
+        </fn-segment-option>
+      </template>
     </fn-segment-editor>
 
     <script type='text/javascript'>
-      var editor_overview = document.body.querySelector("fn-segment-editor[data-overview]");
+      var editor = document.getElementById('editor1');
+      var segments = [
+        {
+          'name' : 'French Mobile',
+          'selection' : [
+            {'key' : 'lang', 'value' : ['fr']},
+            {'key' : 'device_type', 'value' : ['mobile', 'tablet']},
+          ],
+          'removable' : true,
+          'editable' : true,
+          'color' : '#4572a7'
+        },
+        {
+          'name' : 'German',
+          'selection' : [
+            {'key' : 'lang', 'value' : ['fr']},
+            {'key' : 'device_type', 'value' : ['mobile', 'tablet']},
+          ],
+          'removable' : true,
+          'editable' : true,
+          'color' : '#89a54e'
+        }
+      ];
 
-      editor_overview.addEventListener('fn-segment-editor-add', function() {
-        console.log("Add Segment");
-      }, false);
-
-      editor_overview.addEventListener('fn-segment-editor-remove', function(e) {
-        var target = e.srcElement || e.target;
-        var value = e.detail.value;
-
-        console.log("Remove Segment: ", target, " with value: " + value);
-      }, false)
-
-      editor_overview.addEventListener('fn-segment-editor-element-click', function(e) {
-        var target = e.srcElement || e.target;
-
-        console.log("Clicked: ", target);
-      }, false);
+      editor.addSegments(JSON.stringify(segments));
+      editor.availableColors = ["#4572a7", "#89a54e", "#aa4643", "#80699b"];
     </script>
   </section>
-
-  <section>
-
-    <fn-segment-editor data-resolved data-multiselect style='width: 50%;'>
-      <fn-segment-editor-header>
-        <fn-segment-editor-header-title>Name</fn-segment-editor-header-title>
-        <input class='fn-input' data-editor='fn-segment-editor-name' />
-      </fn-segment-editor-header>
-
-      <fn-segment-editor-multiselect data-key='lang'>
-        <fn-checkbox data-editor='fn-segment-editor-checkbox'></fn-checkbox>
-        <fn-segment-editor-multiselect-title>
-          Language
-        <fn-segment-editor-multiselect-title>
-        <fn-dropdown class='input' data-resolved data-editor='fn-segment-editor-select'>
-          <fn-dropdown-items>
-            <fn-dropdown-item data-selected data-value='en'>English</fn-dropdown-item>
-            <fn-dropdown-item data-value='fr'>French</fn-dropdown-item>
-            <fn-dropdown-item data-value='de'>German</fn-dropdown-item>
-            <fn-dropdown-item data-value='nl'>Dutch</fn-dropdown-item>
-          </fn-dropdown-items>
-        </fn-dropdown>
-      </fn-segment-editor-multiselect>
-
-      <fn-segment-editor-multiselect data-key='device'>
-
-        <fn-checkbox data-editor='fn-segment-editor-checkbox'></fn-checkbox>
-        <fn-segment-editor-multiselect-title>
-          Device Type
-        <fn-segment-editor-multiselect-title>
-
-        <fn-dropdown class='input checkbox' data-multiselect data-resolved data-editor='fn-segment-editor-select'>
-          <fn-dropdown-items>
-            <fn-dropdown-item data-selected data-value='desktop'>
-              <fn-checkbox data-active></fn-checkbox>
-              Desktop
-            </fn-dropdown-item>
-            <fn-dropdown-item data-value='mobile'>
-              <fn-checkbox></fn-checkbox>
-              Mobile
-            </fn-dropdown-item>
-            <fn-dropdown-item data-value='tablet'>
-              <fn-checkbox></fn-checkbox>
-              Tablet
-            </fn-dropdown-item>
-          </fn-dropdown-items>
-        </fn-dropdown>
-
-      </fn-segment-editor-multiselect>
-
-      <fn-segment-editor-footer>
-        <fn-button data-editor='fn-segment-editor-save'>Save</fn-button>
-      </fn-segment-editor-footer>
-
-    </fn-segment-editor>
-
-    <script type='text/javascript'>
-      var editor = document.body.querySelector("fn-segment-editor[data-multiselect]");
-
-      editor.addEventListener('fn-segment-editor-multiselect-save', function(e) {
-        console.log(e);
-      }, false);
-    </script>
-  </section>
-
 </template>
