@@ -40,8 +40,7 @@ class XZERO_FLOW_API Runtime {
   const std::vector<NativeCallback*>& builtins() const { return builtins_; }
 
   NativeCallback& registerHandler(const std::string& name);
-  NativeCallback& registerFunction(const std::string& name,
-                                   FlowType returnType);
+  NativeCallback& registerFunction(const std::string& name, FlowType returnType);
   void unregisterNative(const std::string& name);
 
   void invoke(int id, int argc, Value* argv, Runner* cx);
