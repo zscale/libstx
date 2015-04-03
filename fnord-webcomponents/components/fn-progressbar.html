@@ -51,7 +51,7 @@
   }
 
   fn-progressbar[data-state='unknown']  /deep/ .bar {
-    width: 100%;
+    width: 0;
   }
 </style>
 <template id='fn-progressbar-base-tpl'>
@@ -192,10 +192,9 @@
       var bar_elem = this.shadowRoot.querySelector(".bar");
       bar_elem.style.width = progress + "%";
 
-
       if (!(this.getAttribute('data-show-progress') == "off")) {
         var progress_elem = this.shadowRoot.querySelector(".progress");
-        progress_elem.innerHTML = progress + "%";
+        progress_elem.innerHTML = parseInt(progress, 10).toFixed(1) + "%";
       }
     };
   };
