@@ -12,6 +12,7 @@ Fnord = {
   components: {}
 };
 
+
 Fnord.getTemplate = function(component, template) {
   var template_selector = "#" + component + "-" + template + "-tpl";
 
@@ -124,6 +125,18 @@ Fnord.jsonRPC = function(url, method, params, callback) {
 Fnord.setAttributes = function(attrs, elem) {
   for (var key in attrs) {
     elem.setAttribute(key, attrs[key]);
+  }
+}
+
+Fnord.getParentByTagname = function(tagname, elem) {
+  var tagname = tagname.toUpperCase();
+
+  while (true) {
+    if (elem.parentNode.tagName == tagname) {
+      return elem.parentNode;
+    }
+
+    elem = elem.parentNode;
   }
 }
 
