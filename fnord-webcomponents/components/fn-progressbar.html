@@ -178,10 +178,14 @@
     };
 
     this.renderDataLabel = function() {
-      var label_elem = document.createElement("div");
-      label_elem.className = "label";
+      var label_elem = this.shadowRoot.querySelector(".label");
+      if (!label_elem) {
+        label_elem = document.createElement("div");
+        label_elem.className = "label";
+        this.shadowRoot.appendChild(label_elem);
+      }
+
       label_elem.innerHTML = this.getAttribute('data-label');
-      this.shadowRoot.appendChild(label_elem);
     };
 
     this.updateProgressBar = function(progress) {
