@@ -50,7 +50,7 @@ class XZERO_FLOW_API Handler {
 #endif
 
   std::unique_ptr<Runner> createRunner();
-  bool run(void* userdata = nullptr);
+  bool run(void* userdata = nullptr, void* userdata2 = nullptr);
 
   void disassemble();
 

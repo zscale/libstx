@@ -38,8 +38,10 @@ class XZERO_FLOW_API Runner : public CustomData {
  private:
   Handler* handler_;
   Program* program_;
-  void* userdata_;  //!< pointer to the currently executed request handler in
-                    //our case
+
+  //! pointer to the currently evaluated HttpRequest/HttpResponse our case
+  std::pair<void*,void*> userdata_;
+
   State state_;     //!< current VM state
   size_t pc_;       //!< last saved program execution offset
 
@@ -64,8 +66,17 @@ class XZERO_FLOW_API Runner : public CustomData {
 
   Handler* handler() const { return handler_; }
   Program* program() const { return program_; }
-  void* userdata() const { return userdata_; }
-  void setUserData(void* p) { userdata_ = p; }
+  void* userdata() const { return userdata_.first; }
+  void* userdata2() const { return userdata_.second; }
+  void setUserData(void* p, void* q = nullptr) {
+    userdata_.first = p;
+    userdata_.second = q;
+  }
+
+  template<typename P, typename Q>
+  inline void setUserData(std::pair<P, Q> udata) {
+    setUserData(udata.first, udata.second);
+  }
 
   const Register* data() const { return data_; }
 

@@ -72,9 +72,9 @@ void Handler::setCode(std::vector<Instruction>&& code) {
 
 std::unique_ptr<Runner> Handler::createRunner() { return Runner::create(this); }
 
-bool Handler::run(void* userdata) {
+bool Handler::run(void* userdata, void* userdata2) {
   auto runner = createRunner();
-  runner->setUserData(userdata);
+  runner->setUserData(userdata, userdata2);
   return runner->run();
 }
 
