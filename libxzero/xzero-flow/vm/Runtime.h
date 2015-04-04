@@ -45,6 +45,9 @@ class XZERO_FLOW_API Runtime {
 
   void invoke(int id, int argc, Value* argv, Runner* cx);
 
+  /**
+   * Verifies all call instructions.
+   */
   bool verify(IRProgram* program);
 
  private:
