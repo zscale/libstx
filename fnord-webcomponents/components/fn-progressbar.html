@@ -194,7 +194,7 @@
 
       if (!(this.getAttribute('data-show-progress') == "off")) {
         var progress_elem = this.shadowRoot.querySelector(".progress");
-        progress_elem.innerHTML = parseInt(progress, 10).toFixed(1) + "%";
+        progress_elem.innerHTML = parseFloat(progress).toFixed(1) + "%";
       }
     };
   };
