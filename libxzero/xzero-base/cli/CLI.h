@@ -46,6 +46,7 @@ class XZERO_API CLI {
   CLI& defineString(
       const std::string& longOpt,
       char shortOpt,
+      const std::string& valuePlaceholder,
       const std::string& helpText,
       std::function<void(const std::string&)> callback = nullptr);
 
@@ -53,6 +54,7 @@ class XZERO_API CLI {
   CLI& defineString(
       const std::string& longOpt,
       char shortOpt,
+      const std::string& valuePlaceholder,
       const std::string& helpText,
       const std::string& defaultValue,
       std::function<void(const std::string&)> callback = nullptr);
@@ -61,6 +63,7 @@ class XZERO_API CLI {
   CLI& defineNumber(
       const std::string& longOpt,
       char shortOpt,
+      const std::string& valuePlaceholder,
       const std::string& helpText,
       std::function<void(long int)> callback = nullptr);
 
@@ -68,6 +71,7 @@ class XZERO_API CLI {
   CLI& defineNumber(
       const std::string& longOpt,
       char shortOpt,
+      const std::string& valuePlaceholder,
       const std::string& helpText,
       long int defaultValue,
       std::function<void(long int)> callback = nullptr);
@@ -76,6 +80,7 @@ class XZERO_API CLI {
   CLI& defineFloat(
       const std::string& longOpt,
       char shortOpt,
+      const std::string& valuePlaceholder,
       const std::string& helpText,
       std::function<void(float)> callback = nullptr);
 
@@ -83,6 +88,7 @@ class XZERO_API CLI {
   CLI& defineFloat(
       const std::string& longOpt,
       char shortOpt,
+      const std::string& valuePlaceholder,
       const std::string& helpText,
       float defaultValue,
       std::function<void(float)> callback = nullptr);
@@ -91,6 +97,7 @@ class XZERO_API CLI {
   CLI& defineIPAddress(
       const std::string& longOpt,
       char shortOpt,
+      const std::string& valuePlaceholder,
       const std::string& helpText,
       std::function<void(const IPAddress&)> callback = nullptr);
 
@@ -98,6 +105,7 @@ class XZERO_API CLI {
   CLI& defineIPAddress(
       const std::string& longOpt,
       char shortOpt,
+      const std::string& valuePlaceholder,
       const std::string& helpText,
       const IPAddress& defaultValue,
       std::function<void(const IPAddress&)> callback = nullptr);
@@ -189,8 +197,8 @@ struct XZERO_API CLI::FlagDef {
   std::string longOption;
   char shortOption;
   bool required;
-  std::string helpText;
   std::string valuePlaceholder;
+  std::string helpText;
   std::string defaultValue;
   std::function<void(const std::string&)> callback;
 
