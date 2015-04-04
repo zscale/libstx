@@ -8,7 +8,12 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <xzero-base/thread/SignalHandler.h>
+#include <xzero-base/sysconfig.h>
 #include <signal.h>
+
+// XXX on OSX, I seem to require this header to get signal() and SIG_* defs
+// since as of today (lol)
+#include <stdlib.h>
 
 namespace xzero {
 namespace thread {
