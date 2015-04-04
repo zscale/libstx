@@ -40,7 +40,7 @@ if [[ "$1" == "clean" ]]; then
 else
   cmake "$(dirname $0)" \
     -DCMAKE_BUILD_TYPE="debug" \
-    -DCMAKE_CXX_FLAGS_DEBUG="-O0 -g3 -fsanitize=address" \
+    -DCMAKE_CXX_FLAGS_DEBUG="-O0 -g3" \
     -DCMAKE_INSTALL_PREFIX="${HOME}/local" \
     -DCMAKE_VERBOSE_MAKEFILE=OFF \
     -DENABLE_EXAMPLES=ON \
