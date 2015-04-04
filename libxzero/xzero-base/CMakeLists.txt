@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 2.8)
 project(xzero-base CXX)
 set(XZERO_BASE_VERSION "0.11.0-dev")
 
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
 include(XzeroCommon)
 include(FindPkgConfig)
 include(FindDoxygen)
