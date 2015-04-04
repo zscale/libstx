@@ -57,6 +57,7 @@ enum class Status {
   SslPrivateKeyCheckError,
   OptionUncheckedAccessToInstance,
   CaughtUnknownExceptionError,
+  ConfigurationError,
 };
 
 class StatusCategory : public std::error_category {
