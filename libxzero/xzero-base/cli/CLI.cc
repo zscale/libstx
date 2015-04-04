@@ -30,8 +30,8 @@ CLI& CLI::define(
     char shortOpt,
     bool required,
     FlagType type,
-    const std::string& helpText,
     const std::string& valuePlaceholder,
+    const std::string& helpText,
     const std::string& defaultValue,
     std::function<void(const std::string&)> callback) {
 
@@ -40,8 +40,8 @@ CLI& CLI::define(
   fd.longOption = longOpt;
   fd.shortOption = shortOpt;
   fd.required = required;
-  fd.helpText = helpText;
   fd.valuePlaceholder = valuePlaceholder;
+  fd.helpText = helpText;
   fd.defaultValue = defaultValue;
   fd.callback = callback;
 
@@ -53,33 +53,36 @@ CLI& CLI::define(
 CLI& CLI::defineString(
     const std::string& longOpt,
     char shortOpt,
+    const std::string& valuePlaceholder,
     const std::string& helpText,
     std::function<void(const std::string&)> callback) {
 
-  return define(longOpt, shortOpt, true, FlagType::String, helpText,
-                "<string>", "", callback);
+  return define(longOpt, shortOpt, true, FlagType::String, valuePlaceholder,
+                helpText, "", callback);
 }
 
 CLI& CLI::defineString(
     const std::string& longOpt,
     char shortOpt,
+    const std::string& valuePlaceholder,
     const std::string& helpText,
     const std::string& defaultValue,
     std::function<void(const std::string&)> callback) {
 
-  return define(longOpt, shortOpt, false, FlagType::String, helpText,
-                "<string>", defaultValue, callback);
+  return define(longOpt, shortOpt, false, FlagType::String, valuePlaceholder,
+                helpText, defaultValue, callback);
 }
 
 CLI& CLI::defineNumber(
     const std::string& longOpt,
     char shortOpt,
+    const std::string& valuePlaceholder,
     const std::string& helpText,
     std::function<void(long int)> callback) {
 
   return define(
-      longOpt, shortOpt, true, FlagType::Number, helpText,
-      "<int>", "",
+      longOpt, shortOpt, true, FlagType::Number, valuePlaceholder,
+      helpText, "",
       [=](const std::string& value) {
         if (callback) {
           callback(std::stoi(value));
@@ -90,13 +93,14 @@ CLI& CLI::defineNumber(
 CLI& CLI::defineNumber(
     const std::string& longOpt,
     char shortOpt,
+    const std::string& valuePlaceholder,
     const std::string& helpText,
     long int defaultValue,
     std::function<void(long int)> callback) {
 
   return define(
-      longOpt, shortOpt, false, FlagType::Number, helpText,
-      "<int>", std::to_string(defaultValue),
+      longOpt, shortOpt, false, FlagType::Number, valuePlaceholder,
+      helpText, std::to_string(defaultValue),
       [=](const std::string& value) {
         if (callback) {
           callback(std::stoi(value));
@@ -107,12 +111,13 @@ CLI& CLI::defineNumber(
 CLI& CLI::defineFloat(
     const std::string& longOpt,
     char shortOpt,
+    const std::string& valuePlaceholder,
     const std::string& helpText,
     std::function<void(float)> callback) {
 
   return define(
-      longOpt, shortOpt, true, FlagType::Float, helpText,
-      "<float>", "",
+      longOpt, shortOpt, true, FlagType::Float, valuePlaceholder,
+      helpText, "",
       [=](const std::string& value) {
         if (callback) {
           callback(std::stof(value));
@@ -123,13 +128,14 @@ CLI& CLI::defineFloat(
 CLI& CLI::defineFloat(
     const std::string& longOpt,
     char shortOpt,
+    const std::string& valuePlaceholder,
     const std::string& helpText,
     float defaultValue,
     std::function<void(float)> callback) {
 
   return define(
-      longOpt, shortOpt, false, FlagType::Float, helpText,
-      "<float>", std::to_string(defaultValue),
+      longOpt, shortOpt, false, FlagType::Float, valuePlaceholder,
+      helpText, std::to_string(defaultValue),
       [=](const std::string& value) {
         if (callback) {
           callback(std::stof(value));
@@ -140,12 +146,13 @@ CLI& CLI::defineFloat(
 CLI& CLI::defineIPAddress(
     const std::string& longOpt,
     char shortOpt,
+    const std::string& valuePlaceholder,
     const std::string& helpText,
     std::function<void(const IPAddress&)> callback) {
 
   return define(
-      longOpt, shortOpt, true, FlagType::IP, helpText,
-      "<IP>", "",
+      longOpt, shortOpt, true, FlagType::IP, valuePlaceholder,
+      helpText, "",
       [=](const std::string& value) {
         if (callback) {
           callback(IPAddress(value));
@@ -156,13 +163,14 @@ CLI& CLI::defineIPAddress(
 CLI& CLI::defineIPAddress(
     const std::string& longOpt,
     char shortOpt,
+    const std::string& valuePlaceholder,
     const std::string& helpText,
     const IPAddress& defaultValue,
     std::function<void(const IPAddress&)> callback) {
 
   return define(
-      longOpt, shortOpt, false, FlagType::IP, helpText,
-      "<IP>", defaultValue.str(),
+      longOpt, shortOpt, false, FlagType::IP, valuePlaceholder,
+      helpText, defaultValue.str(),
       [=](const std::string& value) {
         if (callback) {
           callback(IPAddress(value));
@@ -177,8 +185,8 @@ CLI& CLI::defineBool(
     std::function<void(bool)> callback) {
 
   return define(
-      longOpt, shortOpt, false, FlagType::Bool, helpText,
-      "<bool>", "",
+      longOpt, shortOpt, false, FlagType::Bool, "<bool>",
+      helpText, "",
       [=](const std::string& value) {
         if (callback) {
           callback(value == "true");
@@ -187,7 +195,7 @@ CLI& CLI::defineBool(
 }
 
 CLI& CLI::enableParameters(const std::string& valuePlaceholder,
-                                         const std::string& helpText) {
+                           const std::string& helpText) {
   parametersEnabled_ = true;
   parametersPlaceholder_ = valuePlaceholder;
   parametersHelpText_ = helpText;

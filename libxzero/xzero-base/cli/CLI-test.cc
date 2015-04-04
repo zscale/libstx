@@ -38,7 +38,7 @@ using namespace xzero;
 
 TEST(CLI, defaults) {
   CLI cli;
-  cli.defineString("some", 's', "Something", "some value");
+  cli.defineString("some", 's', "<text>", "Something", "some value");
   cli.defineBool("bool", 'b', "some boolean");
 
   Flags flags = cli.evaluate({});
@@ -62,22 +62,22 @@ TEST(CLI, raise_on_unknown_short_option) {
 
 TEST(CLI, raise_on_missing_long_option) {
   CLI cli;
-  cli.defineString("some", 's', "Something");
+  cli.defineString("some", 's', "<text>", "Something");
   ASSERT_THROW(cli.evaluate({"--some"}), CLI::MissingOptionValueError);
 }
 
 TEST(CLI, raise_on_missing_option_value) {
   CLI cli;
-  cli.defineString("some", 's', "Something");
-  cli.defineString("tea", 't', "Tea Time");
+  cli.defineString("some", 's', "<some>", "Something");
+  cli.defineString("tea", 't', "<some>", "Tea Time");
   ASSERT_THROW(cli.evaluate({"-s", "-tblack"}), CLI::MissingOptionValueError);
   ASSERT_THROW(cli.evaluate({"-swhite", "-t"}), CLI::MissingOptionValueError);
 }
 
 TEST(CLI, short_option_values) {
   CLI cli;
-  cli.defineString("some", 's', "Something");
-  cli.defineString("tea", 't', "Tea Time");
+  cli.defineString("some", 's', "<text>", "Something");
+  cli.defineString("tea", 't', "<text>", "Tea Time");
 
   Flags flags = cli.evaluate({"-sthing", "-t", "time"});
 
@@ -113,7 +113,7 @@ TEST(CLI, short_option_multi) {
 TEST(CLI, short_option_multi_mixed) {
   CLI cli;
   cli.defineBool("some", 's', "The Some");
-  cli.defineString("text", 't', "The Text");
+  cli.defineString("text", 't', "<text>", "The Text");
 
   Flags flags = cli.evaluate({"-sthello"});
 
@@ -124,7 +124,7 @@ TEST(CLI, short_option_multi_mixed) {
 
 TEST(CLI, short_option_value_inline) {
   CLI cli;
-  cli.defineString("text", 't', "The Text");
+  cli.defineString("text", 't', "<text>", "The Text");
 
   Flags flags = cli.evaluate({"-thello"});
 
@@ -134,7 +134,7 @@ TEST(CLI, short_option_value_inline) {
 
 TEST(CLI, short_option_value_sep) {
   CLI cli;
-  cli.defineString("text", 't', "The Text");
+  cli.defineString("text", 't', "<text>", "The Text");
 
   Flags flags = cli.evaluate({"-t", "hello"});
 
@@ -144,7 +144,7 @@ TEST(CLI, short_option_value_sep) {
 
 TEST(CLI, long_option_with_value_inline) {
   CLI cli;
-  cli.defineString("text", 't', "The Text");
+  cli.defineString("text", 't', "<text>", "The Text");
 
   Flags flags = cli.evaluate({"--text=hello"});
 
@@ -154,7 +154,7 @@ TEST(CLI, long_option_with_value_inline) {
 
 TEST(CLI, long_option_with_value_sep) {
   CLI cli;
-  cli.defineString("text", 't', "The Text");
+  cli.defineString("text", 't', "<text>", "The Text");
 
   Flags flags = cli.evaluate({"--text", "hello"});
 
@@ -164,7 +164,7 @@ TEST(CLI, long_option_with_value_sep) {
 
 TEST(CLI, type_int) {
   CLI cli;
-  cli.defineNumber("number", 'n', "The Number");
+  cli.defineNumber("number", 'n', "<number>", "The Number");
 
   Flags flags = cli.evaluate({"-n42"});
   ASSERT_EQ(1, flags.size());
@@ -173,7 +173,7 @@ TEST(CLI, type_int) {
 
 TEST(CLI, type_float) {
   CLI cli;
-  cli.defineFloat("float", 'f', "The Float");
+  cli.defineFloat("float", 'f', "<float>", "The Float");
 
   Flags flags = cli.evaluate({"-f1.42"});
   ASSERT_EQ(1, flags.size());
@@ -182,7 +182,7 @@ TEST(CLI, type_float) {
 
 TEST(CLI, type_ip) {
   CLI cli;
-  cli.defineIPAddress("ip", 'a', "The IP");
+  cli.defineIPAddress("ip", 'a', "<IP>", "The IP");
 
   Flags flags = cli.evaluate({"--ip=4.2.2.1"});
   ASSERT_EQ(1, flags.size());
@@ -193,7 +193,7 @@ TEST(CLI, callbacks_on_explicit) {
   IPAddress bindIP;
 
   CLI cli;
-  cli.defineIPAddress("bind", 'a', "IP address to bind listener address to.",
+  cli.defineIPAddress("bind", 'a', "<IP>", "IP address to bind listener address to.",
       [&](const IPAddress& ip) {
         bindIP = ip;
       });
@@ -208,7 +208,7 @@ TEST(CLI, callbacks_on_defaults) {
 
   CLI cli;
   cli.defineIPAddress(
-      "bind", 'a', "IP address to bind listener address to.",
+      "bind", 'a', "<IP>", "IP address to bind listener address to.",
       IPAddress("127.0.0.2"),
       [&](const IPAddress& ip) { bindIP = ip; });
 
@@ -223,7 +223,7 @@ TEST(CLI, callbacks_on_repeated_args) {
   std::vector<IPAddress> hosts;
   CLI cli;
   cli.defineIPAddress(
-      "host", 't', "Host address to talk to.",
+      "host", 't', "<IP>", "Host address to talk to.",
       [&](const IPAddress& host) { hosts.emplace_back(host); });
 
   cli.evaluate({"--host=127.0.0.1", "--host=192.168.0.1", "-t10.10.20.40"});

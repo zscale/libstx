@@ -31,20 +31,20 @@ int main(int argc, const char* argv[]) {
 
   xzero::CLI cli;
   cli.defineBool("help", 'h', "Prints this help and terminates.")
-     .defineIPAddress("bind", 0, "Bind listener to given IP.",
+     .defineIPAddress("bind", 0, "<IP>", "Bind listener to given IP.",
          xzero::IPAddress("0.0.0.0"))
-     .defineString("mimetypes-path", 0, "Path to mime.types file.",
+     .defineString("mimetypes", 0, "<PATH>", "Path to mime.types file.",
          "/etc/mime.types")
-     .defineNumber("port", 'p', "Port number to listen to.",
+     .defineNumber("port", 'p', "<PORT>", "Port number to listen to.",
          3000)
-     .defineNumber("backlog", 0, "Listener backlog.",
+     .defineNumber("backlog", 0, "<COUNT>", "Listener backlog.",
          128)
-     .defineNumber("timeout", 't', "I/O timeout in seconds.",
+     .defineNumber("timeout", 't', "<SECONDS>", "I/O timeout in seconds.",
          30)
-     .defineString("very-long", 'L',
+     .defineString("very-long", 'L', "<TEXT>",
          "A very very long help text for the rather short long option. "
          "You can use it, but it will not produce or cause you anything "
-         "but a word-wrapped help text in the help output."
+         "but a word-wrapped help text in the help output. "
          "Have fun reading.",
          "rather long")
      .defineBool("tcp-nodelay", 0, "Enables TCP_NODELAY.")
