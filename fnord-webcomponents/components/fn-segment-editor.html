@@ -168,11 +168,10 @@
       *
       * @return {boolean}
       */
-    this.validateSegment = function(segment) {
-      return true;
+    this.validateSegment = function(segment, isNew) {
       var valid = true;
 
-      if (segment.name.length == 0 || this.segmentNameExists(segment.name)) {
+      if (segment.name.length == 0 || (isNew && this.segmentNameExists(segment.name))) {
         valid = false;
 
         this.querySelector(".segment-active fn-segment-header").classList
@@ -264,7 +263,7 @@
       var fn_segment_select = this.querySelector("fn-segment-select");
       var segment = this.getSegmentSelection(fn_segment_select);
 
-      if (!this.validateSegment(segment)) {
+      if (!this.validateSegment(segment, true)) {
         return;
       }
 
@@ -469,9 +468,9 @@
           var edited_segment = _this.getSegmentSelection(fn_segment_edit);
           _this.removeErrorMessages();
 
-          if (_this.validateSegment(edited_segment)) {
-            _this.fireEditSegmentEvent(segment, edited_segment);
+          if (_this.validateSegment(edited_segment, false)) {
             _this.editSegment(segment.name, edited_segment);
+            _this.fireEditSegmentEvent(segment, edited_segment);
             _this.changeView("fn-segment-overview");
           }
         }
