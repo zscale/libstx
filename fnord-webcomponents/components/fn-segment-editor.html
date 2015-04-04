@@ -414,13 +414,15 @@
 
       fn_segment.innerHTML = html.join("");
 
-      if (segment.removable) {
+      //LATER
+      if (segment.removable || true) {
         var icon = document.createElement("fn-segment-remove-icon");
         fn_segment.appendChild(icon);
         _this.observeRemovableSegment(icon, segment.name);
       }
 
-      if (segment.editable) {
+      //LATER
+      if (segment.editable || true) {
         var icon = document.createElement("fn-segment-edit-icon");
         fn_segment.appendChild(icon);
         _this.observeEditableSegment(icon, fn_segment, segment);
