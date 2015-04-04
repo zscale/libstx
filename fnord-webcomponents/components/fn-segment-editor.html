@@ -182,7 +182,7 @@
         for (var i = 0; i < segment.rules.length; i++) {
           var s = segment.rules[i];
 
-          if (s.field.length == 0 || s.value[0].length == 0) {
+          if (s.field.length == 0 || s.values[0].length == 0) {
             valid = false;
 
             //FIXME proper error message text
@@ -218,14 +218,14 @@
       * @return {Array[object]} segment.rules The selected options
       * @return {string} segment.rules.field The rule field name
       * @return {string} segment.rules.op The rule option (=matches)
-      * @return {Array[string]} segment.rules.value The rule values
+      * @return {Array[string]} segment.rules.values The rule values
       * @return {boolean} segment.removable
       * @return {boolean} segment.editable
       * @return {string} segment.color The segments hex or rgb(a) color
       */
     this.getSegmentSelection = function(fn_segment) {
       var options = fn_segment.querySelectorAll("fn-segment-option");
-      var name = fn_segment.querySelector("input[data-segment-name]").value;
+      var name = fn_segment.querySelector("input[data-segment-name]").values;
 
       var segment = {
         'key' : this.getSegmentKey(name),
@@ -244,7 +244,7 @@
         segment.rules.push({
           'field' : options[i].getAttribute('data-key'),
           'op' : 'matches',
-          'value' : option_elem.getValue().split(",")
+          'values' : option_elem.getValue().split(",")
         });
       }
 
@@ -386,7 +386,7 @@
       rules.forEach(function(rule) {
         html.push(
           "<fn-segment-text-title>", rule.field, ":",
-          "</fn-segment-text-title>", "<fn-segment-text-value>", rule.value.join(", "),
+          "</fn-segment-text-title>", "<fn-segment-text-value>", rule.values.join(", "),
           "</fn-segment-text-value>"
         );
       });
@@ -458,7 +458,7 @@
           "fn-segment-option[data-key='" + rule.field + "']");
 
         option.querySelector("fn-checkbox").setAttribute('data-active', 'active');
-        option.querySelector("[data-segment-option]").setValue(rule.value);
+        option.querySelector("[data-segment-option]").setValue(rule.values);
       });
 
 
