@@ -169,6 +169,7 @@
       * @return {boolean}
       */
     this.validateSegment = function(segment) {
+      return true;
       var valid = true;
 
       if (segment.name.length == 0 || this.segmentNameExists(segment.name)) {
@@ -225,7 +226,7 @@
       */
     this.getSegmentSelection = function(fn_segment) {
       var options = fn_segment.querySelectorAll("fn-segment-option");
-      var name = fn_segment.querySelector("input[data-segment-name]").values;
+      var name = fn_segment.querySelector("input[data-segment-name]").value;
 
       var segment = {
         'key' : this.getSegmentKey(name),
