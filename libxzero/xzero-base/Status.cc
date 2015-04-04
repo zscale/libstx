@@ -70,6 +70,7 @@ std::string StatusCategory::message(int ec) const {
     case Status::SslPrivateKeyCheckError: return "Private Key Check Error";
     case Status::OptionUncheckedAccessToInstance: return "Unchecked access to Option instance";
     case Status::CaughtUnknownExceptionError: return "Caught Unknown exception Error";
+    case Status::ConfigurationError: return "Configuration Error";
     //.
     default: return "Unknown Xzero Status Code";
   }
