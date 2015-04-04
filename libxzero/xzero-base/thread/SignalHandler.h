@@ -6,6 +6,7 @@
 // the terms of the GNU Affero General Public License v3.0.
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
+#pragma once
 
 #include <xzero-base/Api.h>
 #include <signal.h>            // for signum defs (such as: SIGPIPE, etc)
