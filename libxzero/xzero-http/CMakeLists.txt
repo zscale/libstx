@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 2.8)
 project(xzero-http CXX)
 set(XZERO_HTTP_VERSION "0.11.0-dev")
 
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
 include(XzeroCommon)
 
 set(xzero_http_SRC
