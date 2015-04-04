@@ -5,10 +5,11 @@
 
 ### converge
 
+- [ ] InetAddr: do we really need you?
+- [ ] Scheduler::runOnWakeup()-family (needed?)
+
 - [ ] StatsServer as seperate xzero-stats module
 - [ ] introspection: `std::string inspect(const TYPE&)`
-- [ ] Assets (MemoryFile) example
-
 - [ ] io: File (is more a FileStream / FileChannel than a File [Info])
   - got replaced via std::{i,o}stream
   - fixme: conflicts with fnord's InputStream/OutputStream - why?
@@ -22,6 +23,7 @@
 - [ ] PageManager
 - [ ] fnord-rpc comm::ServerGroup to be part of base
       <xzero-base/comm/ServerGroup.h>
+
 - [x] DateTime: `std::numeric_limits<DateTime>i { min, max }`
 - [x] logging api
 - [x] FNV
