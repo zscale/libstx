@@ -102,6 +102,7 @@
       }
     };
 
+
     this.init = function() {
       var _this = this;
 
@@ -117,8 +118,30 @@
         this.renderPreviewValues();
       }
 
+      this.querySelector("fn-segment-select").onclick = function() {
+        _this.closeActiveItems.bind(this)();
+      }
+
+      this.querySelector("fn-segment-edit").onclick = function() {
+        _this.closeActiveItems.bind(this)();
+      }
+
       this.renderSegmentOptions();
       this.handleViewVisibility();
+    };
+
+
+    /**
+      * Close open Items (e.g. dropdowns) on editor click
+      */
+    this.closeActiveItems = function() {
+      var active_items = this.querySelectorAll("[data-active]");
+
+      for (var i = 0; i < active_items.length; i++) {
+        if (typeof active_items[i].onDocumentClick == 'function') {
+          active_items[i].onDocumentClick();
+        }
+      }
     };
 
     /**
@@ -463,8 +486,9 @@
 
 
       fn_segment_edit.querySelector("[data-action='replace-segment']")
-        .onclick = function() {
+        .onclick = function(e) {
 
+          e.stopPropagation();
           var edited_segment = _this.getSegmentSelection(fn_segment_edit);
           _this.removeErrorMessages();
 
@@ -557,12 +581,14 @@
       this.removeErrorMessages();
 
       segment_select.querySelector("[data-action='save-segment']")
-        .onclick = function() {
+        .onclick = function(e) {
+          e.stopPropagation();
           _this.onSaveSegment();
       }
 
       segment_select.querySelector("[data-action='cancel-segment']")
-        .onclick = function() {
+        .onclick = function(e) {
+          e.stopPropagation();
           _this.changeView("fn-segment-overview");
       }
     };
@@ -583,13 +609,15 @@
       var cancel_btns = this.querySelectorAll("[data-action='cancel-segment']");
       var _this = this;
 
-      add_btn.onclick = function() {
+      add_btn.onclick = function(e) {
+        e.stopPropagation();
         _this.showSegmentSelect();
       }
 
 
       for (var i = 0; i < cancel_btns.length; i++) {
-        cancel_btns[i].onclick = function() {
+        cancel_btns[i].onclick = function(e) {
+          e.stopPropagation();
           _this.changeView("fn-segment-overview");
         }
       }
@@ -611,7 +639,8 @@
     this.observeEditableSegment = function(icon, fn_segment, segment) {
       var _this = this;
 
-      icon.addEventListener('click', function() {
+      icon.addEventListener('click', function(e) {
+        e.stopPropagation();
         _this.renderEditSegment(fn_segment, segment);
       }, false);
     };
