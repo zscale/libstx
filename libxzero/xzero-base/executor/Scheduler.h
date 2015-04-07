@@ -41,7 +41,6 @@ class XZERO_API Scheduler : public Executor {
      */
     void cancel();
 
-   private:
     /**
      * This method is invoked internally when the given intended event fired.
      *
@@ -51,8 +50,6 @@ class XZERO_API Scheduler : public Executor {
      * already.
      */
     void fire();
-
-    friend class Scheduler;
 
    private:
     std::mutex mutex_;
