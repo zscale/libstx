@@ -230,15 +230,28 @@ size_t ThreadPool::taskCount() {
 }
 
 void ThreadPool::runLoop() {
-  RAISE(RuntimeError, "This is a ThreadPool!");
+  for (;;) {
+    bool cont = !taskCount()
+             || !timerCount()
+             || !readerCount()
+             || !writerCount();
+
+    if (!cont)
+      break;
+
+    runLoopOnce();
+  }
 }
 
 void ThreadPool::runLoopOnce() {
-  RAISE(RuntimeError, "This is a ThreadPool!");
+  // in terms of this implementation, I shall decide, that
+  // a ThreadPool's runLoopOnce() will block the caller until
+  // there is no more task running nor pending.
+  wait();
 }
 
 void ThreadPool::breakLoop() {
-  /* no-op */
+  condition_.notify_all();
 }
 
 std::string ThreadPool::toString() const {
