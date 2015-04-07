@@ -201,9 +201,8 @@ ThreadPool::HandleRef ThreadPool::executeAt(DateTime dt, Task task) {
 
 void ThreadPool::executeOnWakeup(Task task, Wakeup* wakeup, long generation) {
   activeTimers_++;
-  execute([this, task, wakeup, generation] {
-    wakeup->waitForWakeup(generation);
-    safeCall(task);
+  wakeup->onWakeup(generation, [this, task] {
+    execute(task);
     activeTimers_--;
   });
 }
