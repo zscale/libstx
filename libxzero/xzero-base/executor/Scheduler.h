@@ -63,7 +63,7 @@ class XZERO_API Scheduler : public Executor {
   typedef std::shared_ptr<Handle> HandleRef;
 
   Scheduler(std::function<void(const std::exception&)> eh)
-      : Executor(std::move(eh)) {}
+      : Executor(eh) {}
 
   /**
    * Schedules given task to be run after given delay.

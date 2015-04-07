@@ -30,7 +30,7 @@ static std::mutex m;
 
 ThreadedExecutor::ThreadedExecutor(
     std::function<void(const std::exception&)> eh)
-    : Executor(std::move(eh)),
+    : Executor(eh),
       threads_() {
 }
 
