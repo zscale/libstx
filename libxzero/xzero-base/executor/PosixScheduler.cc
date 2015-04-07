@@ -30,7 +30,7 @@ PosixScheduler::PosixScheduler(
     WallClock* clock,
     std::function<void()> preInvoke,
     std::function<void()> postInvoke)
-    : Scheduler(std::move(errorLogger)),
+    : Scheduler(errorLogger),
       clock_(clock ? clock : WallClock::monotonic()),
       lock_(),
       wakeupPipe_(),
@@ -61,7 +61,7 @@ PosixScheduler::~PosixScheduler() {
 void PosixScheduler::execute(Task task) {
   {
     std::lock_guard<std::mutex> lk(lock_);
-    tasks_.push_back(task);
+    tasks_.emplace_back(std::move(task));
   }
   breakLoop();
 }

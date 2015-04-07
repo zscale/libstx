@@ -38,13 +38,13 @@ namespace xzero {
 #endif
 
 ThreadPool::ThreadPool(std::function<void(const std::exception&)> eh)
-    : ThreadPool(processorCount(), std::move(eh)) {
+    : ThreadPool(processorCount(), eh) {
 }
 
 ThreadPool::ThreadPool(
     size_t num_threads,
     std::function<void(const std::exception&)> eh)
-    : Scheduler(std::move(eh)),
+    : Scheduler(eh),
       active_(true),
       threads_(),
       mutex_(),
