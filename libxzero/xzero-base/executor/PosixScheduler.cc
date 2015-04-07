@@ -11,7 +11,9 @@
 #include <xzero-base/thread/Wakeup.h>
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/WallClock.h>
+#include <xzero-base/StringUtil.h>
 #include <xzero-base/sysconfig.h>
+#include <xzero-base/logging.h>
 #include <algorithm>
 #include <vector>
 #include <sys/types.h>
@@ -24,6 +26,14 @@ namespace xzero {
 
 #define PIPE_READ_END  0
 #define PIPE_WRITE_END 1
+
+#define ERROR(msg...) logError("PosixScheduler", msg)
+
+#ifndef NDEBUG
+#define TRACE(msg...) logTrace("PosixScheduler", msg)
+#else
+#define TRACE(msg...) do {} while (0)
+#endif
 
 PosixScheduler::PosixScheduler(
     std::function<void(const std::exception&)> errorLogger,
@@ -41,6 +51,11 @@ PosixScheduler::PosixScheduler(
   }
   fcntl(wakeupPipe_[0], F_SETFL, O_NONBLOCK);
   fcntl(wakeupPipe_[1], F_SETFL, O_NONBLOCK);
+
+  TRACE("ctor: wakeupPipe {read=%d, write=%d}, clock=@%p",
+      wakeupPipe_[PIPE_READ_END],
+      wakeupPipe_[PIPE_WRITE_END],
+      clock_);
 }
 
 PosixScheduler::PosixScheduler(
@@ -54,6 +69,7 @@ PosixScheduler::PosixScheduler()
 }
 
 PosixScheduler::~PosixScheduler() {
+  TRACE("~PosixScheduler");
   ::close(wakeupPipe_[PIPE_READ_END]);
   ::close(wakeupPipe_[PIPE_WRITE_END]);
 }
@@ -67,7 +83,9 @@ void PosixScheduler::execute(Task task) {
 }
 
 std::string PosixScheduler::toString() const {
-  return "PosixScheduler";
+  return StringUtil::format("PosixScheduler: wakeupPipe{$0, $1}",
+      wakeupPipe_[PIPE_READ_END],
+      wakeupPipe_[PIPE_WRITE_END]);
 }
 
 Scheduler::HandleRef PosixScheduler::executeAfter(TimeSpan delay, Task task) {
