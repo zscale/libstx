@@ -298,4 +298,86 @@ void PosixScheduler::breakLoop() {
   ::write(wakeupPipe_[PIPE_WRITE_END], &dummy, sizeof(dummy));
 }
 
+void PosixScheduler::waitForReadable(int fd, TimeSpan timeout) {
+  fd_set input, output;
+
+  FD_ZERO(&input);
+  FD_ZERO(&output);
+  FD_SET(fd, &input);
+
+  struct timeval tv;
+  tv.tv_sec = timeout.totalSeconds();
+  tv.tv_usec = timeout.totalMicroseconds();
+
+  int res = select(fd + 1, &input, &output, &input, &tv);
+
+  if (res == 0) {
+    RAISE(IOError, "unexpected timeout while select()ing");
+  }
+
+  if (res == -1) {
+    RAISE_ERRNO(errno);
+  }
+}
+
+void PosixScheduler::waitForReadable(int fd) {
+  fd_set input, output;
+
+  FD_ZERO(&input);
+  FD_ZERO(&output);
+  FD_SET(fd, &input);
+
+  int res = select(fd + 1, &input, &output, &input, nullptr);
+
+  if (res == 0) {
+    RAISE(IOError, "unexpected timeout while select()ing");
+  }
+
+  if (res == -1) {
+    RAISE_ERRNO(errno);
+  }
+}
+
+void PosixScheduler::waitForWritable(int fd, TimeSpan timeout) {
+  fd_set input;
+  FD_ZERO(&input);
+
+  fd_set output;
+  FD_ZERO(&output);
+  FD_SET(fd, &output);
+
+  struct timeval tv;
+  tv.tv_sec = timeout.totalSeconds();
+  tv.tv_usec = timeout.totalMicroseconds();
+
+  int res = select(fd + 1, &input, &output, &input, &tv);
+
+  if (res == 0) {
+    RAISE(IOError, "unexpected timeout while select()ing");
+  }
+
+  if (res == -1) {
+    RAISE_ERRNO(errno);
+  }
+}
+
+void PosixScheduler::waitForWritable(int fd) {
+  fd_set input;
+  FD_ZERO(&input);
+
+  fd_set output;
+  FD_ZERO(&output);
+  FD_SET(fd, &output);
+
+  int res = select(fd + 1, &input, &output, &input, nullptr);
+
+  if (res == 0) {
+    RAISE(IOError, "unexpected timeout while select()ing");
+  }
+
+  if (res == -1) {
+    RAISE_ERRNO(errno);
+  }
+}
+
 } // namespace xzero
