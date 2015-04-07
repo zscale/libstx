@@ -8,6 +8,11 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <xzero-base/executor/ThreadPool.h>
+#include <xzero-base/executor/PosixScheduler.h>
+#include <xzero-base/thread/Wakeup.h>
+#include <xzero-base/RuntimeError.h>
+#include <xzero-base/WallClock.h>
+#include <xzero-base/DateTime.h>
 #include <xzero-base/logging.h>
 #include <xzero-base/sysconfig.h>
 #include <system_error>
@@ -39,13 +44,16 @@ ThreadPool::ThreadPool(std::function<void(const std::exception&)> eh)
 ThreadPool::ThreadPool(
     size_t num_threads,
     std::function<void(const std::exception&)> eh)
-    : Executor(std::move(eh)),
+    : Scheduler(std::move(eh)),
       active_(true),
       threads_(),
       mutex_(),
       condition_(),
       pendingTasks_(),
-      activeTasks_(0) {
+      activeTasks_(0),
+      activeTimers_(0),
+      activeReaders_(0),
+      activeWriters_(0) {
 
   if (num_threads < 1)
     throw std::runtime_error("Invalid argument.");
@@ -146,6 +154,91 @@ void ThreadPool::execute(Task task) {
     pendingTasks_.emplace_back(std::move(task));
   }
   condition_.notify_all();
+}
+
+ThreadPool::HandleRef ThreadPool::executeOnReadable(int fd, Task task) {
+  HandleRef hr(new Handle(task, nullptr));
+  activeReaders_++;
+  execute([this, hr, fd] {
+    PosixScheduler::waitForReadable(fd);
+    hr->fire();
+    activeReaders_--;
+  });
+  return nullptr;
+}
+
+ThreadPool::HandleRef ThreadPool::executeOnWritable(int fd, Task task) {
+  HandleRef hr(new Handle(task, nullptr));
+  activeWriters_++;
+  execute([this, hr, fd] {
+    PosixScheduler::waitForWritable(fd);
+    hr->fire();
+    activeWriters_--;
+  });
+  return hr;
+}
+
+ThreadPool::HandleRef ThreadPool::executeAfter(TimeSpan delay, Task task) {
+  HandleRef hr(new Handle(task, nullptr));
+  activeTimers_++;
+  execute([this, hr, delay] {
+    WallClock::sleep(delay);
+    hr->fire();
+    activeTimers_--;
+  });
+  return hr;
+}
+
+ThreadPool::HandleRef ThreadPool::executeAt(DateTime dt, Task task) {
+  HandleRef hr(new Handle(task, nullptr));
+  activeTimers_++;
+  execute([this, hr, dt] {
+    DateTime now = WallClock::system()->get();
+    if (dt > now) {
+      TimeSpan delay = dt - now;
+      WallClock::sleep(delay);
+    }
+    hr->fire();
+    activeTimers_--;
+  });
+  return hr;
+}
+
+void ThreadPool::executeOnWakeup(Task task, Wakeup* wakeup, long generation) {
+  activeTimers_++;
+  execute([this, task, wakeup, generation] {
+    wakeup->waitForWakeup(generation);
+    safeCall(task);
+    activeTimers_--;
+  });
+}
+
+size_t ThreadPool::timerCount() {
+  return activeTimers_.load();
+}
+
+size_t ThreadPool::readerCount() {
+  return activeReaders_.load();
+}
+
+size_t ThreadPool::writerCount() {
+  return activeWriters_.load();
+}
+
+size_t ThreadPool::taskCount() {
+  return activeTasks_.load();
+}
+
+void ThreadPool::runLoop() {
+  RAISE(RuntimeError, "This is a ThreadPool!");
+}
+
+void ThreadPool::runLoopOnce() {
+  RAISE(RuntimeError, "This is a ThreadPool!");
+}
+
+void ThreadPool::breakLoop() {
+  /* no-op */
 }
 
 std::string ThreadPool::toString() const {
