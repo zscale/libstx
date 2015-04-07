@@ -12,6 +12,7 @@
 #include <xzero-base/sysconfig.h>
 #include <xzero-base/RuntimeError.h>
 #include <sys/time.h>
+#include <unistd.h>
 #include <ctime>
 
 namespace xzero {
@@ -78,6 +79,10 @@ WallClock* WallClock::monotonic() {
   static SimpleClock bc;
   return &bc;
 #endif
+}
+
+void WallClock::sleep(TimeSpan ts) {
+  usleep(ts.totalMicroseconds());
 }
 
 } // namespace xzero
