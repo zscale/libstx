@@ -50,6 +50,26 @@ class XZERO_API PosixScheduler : public Scheduler {
   void runLoopOnce() override;
   void breakLoop() override;
 
+  /**
+   * Waits at most @p timeout for @p fd to become readable without blocking.
+   */
+  static void waitForReadable(int fd, TimeSpan timeout);
+
+  /**
+   * Waits until given @p fd becomes readable without blocking.
+   */
+  static void waitForReadable(int fd);
+
+  /**
+   * Waits at most @p timeout for @p fd to become writable without blocking.
+   */
+  static void waitForWritable(int fd, TimeSpan timeout);
+
+  /**
+   * Waits until given @p fd becomes writable without blocking.
+   */
+  static void waitForWritable(int fd);
+
  protected:
   void removeFromTimersList(Handle* handle);
   HandleRef insertIntoTimersList(DateTime dt, HandleRef handle);
