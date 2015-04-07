@@ -8,6 +8,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <xzero-base/executor/PosixScheduler.h>
+#include <xzero-base/thread/Wakeup.h>
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/WallClock.h>
 #include <xzero-base/sysconfig.h>
@@ -165,6 +166,13 @@ Scheduler::HandleRef PosixScheduler::executeOnReadable(int fd, Task task) {
 
 Scheduler::HandleRef PosixScheduler::executeOnWritable(int fd, Task task) {
   return registerInterest(&lock_, &writers_, fd, task);
+}
+
+// FIXME: this is actually so generic, it could be put into Executor API directly
+void PosixScheduler::executeOnWakeup(Task task, Wakeup* wakeup, long generation) {
+  wakeup->onWakeup(
+      generation,
+      std::bind(&PosixScheduler::execute, this, task));
 }
 
 inline void collectActiveHandles(

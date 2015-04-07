@@ -42,6 +42,7 @@ class XZERO_API PosixScheduler : public Scheduler {
   HandleRef executeAt(DateTime dt, Task task) override;
   HandleRef executeOnReadable(int fd, Task task) override;
   HandleRef executeOnWritable(int fd, Task task) override;
+  void executeOnWakeup(Task task, Wakeup* wakeup, long generation) override;
   size_t timerCount() override;
   size_t readerCount() override;
   size_t writerCount() override;

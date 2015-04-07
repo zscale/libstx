@@ -21,6 +21,8 @@
 
 namespace xzero {
 
+class Wakeup;
+
 /**
  * Interface for scheduling tasks.
  */
@@ -85,6 +87,26 @@ class XZERO_API Scheduler : public Executor {
    * Runs given task when given selectable is non-blocking writable.
    */
   virtual HandleRef executeOnWritable(int fd, Task task) = 0;
+
+  /**
+   * Executes @p task  when given @p wakeup triggered a wakeup event
+   * for >= @p generation.
+   *
+   * @param task Task to invoke when the wakeup is triggered.
+   * @param wakeup Wakeup object to watch
+   * @param generation Generation number to match at least.
+   */
+  virtual void executeOnWakeup(Task task, Wakeup* wakeup, long generation) = 0;
+
+  /**
+   * Run the provided task when the wakeup handle is woken up.
+   */
+  void executeOnNextWakeup(std::function<void()> task, Wakeup* wakeup);
+
+  /**
+   * Run the provided task when the wakeup handle is woken up.
+   */
+  void executeOnFirstWakeup(std::function<void()> task, Wakeup* wakeup);
 
   /**
    * Retrieves the number of active timers.
