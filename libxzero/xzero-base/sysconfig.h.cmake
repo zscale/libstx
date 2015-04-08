@@ -77,6 +77,8 @@
 #cmakedefine HAVE_POSIX_FADVISE
 #cmakedefine HAVE_READAHEAD
 #cmakedefine HAVE_PREAD
+#cmakedefine HAVE_NANOSLEEP
+#cmakedefine HAVE_DAEMON
 #cmakedefine HAVE_SYSCONF
 #cmakedefine HAVE_PATHCONF
 #cmakedefine HAVE_ACCEPT4
