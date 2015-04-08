@@ -109,6 +109,7 @@ set(xzero_base_SRC
   Tokenizer.cc
   Uri.cc
   WallClock.cc
+  inspect.cc
 
   cli/CLI.cc
   cli/Flags.cc
