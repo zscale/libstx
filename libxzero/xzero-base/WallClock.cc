@@ -82,7 +82,23 @@ WallClock* WallClock::monotonic() {
 }
 
 void WallClock::sleep(TimeSpan ts) {
+#if defined(HAVE_NANOSLEEP)
+  timespec remaining;
+  remaining.tv_sec = ts.totalSeconds();
+  remaining.tv_nsec = ts.nanoseconds();
+
+  for (;;) {
+    timespec expected = remaining;
+    int rv = nanosleep(&expected, &remaining);
+    if (rv == 0)
+      break;
+
+    if (errno != EINTR)
+      RAISE_ERRNO(errno);
+  }
+#else
   usleep(ts.totalMicroseconds());
+#endif
 }
 
 } // namespace xzero
