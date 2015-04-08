@@ -16,16 +16,13 @@
 #include <xzero-base/logging.h>
 #include <xzero-base/sysconfig.h>
 #include <system_error>
+#include <thread>
 #include <exception>
 #include <typeinfo>
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-
-// #ifdef HAVE_PTHREAD_H
-// #include <pthread.h>
-// #endif
 
 namespace xzero {
 
