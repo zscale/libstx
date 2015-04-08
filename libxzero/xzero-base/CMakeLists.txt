@@ -114,12 +114,6 @@ set(xzero_base_SRC
   cli/CLI.cc
   cli/Flags.cc
 
-  logging/LogAggregator.cc
-  logging/LogLevel.cc
-  logging/LogSource.cc
-  logging/LogTarget.cc
-  logging.cc
-
   executor/SafeCall.cc
   executor/Executor.cc
   executor/DirectExecutor.cc
@@ -142,6 +136,12 @@ set(xzero_base_SRC
   io/MemoryFile.cc
   io/MemoryFileRepository.cc
   io/MemoryMap.cc
+
+  logging/LogAggregator.cc
+  logging/LogLevel.cc
+  logging/LogSource.cc
+  logging/LogTarget.cc
+  logging.cc
 
   net/ByteArrayEndPoint.cc
   net/Cidr.cc
