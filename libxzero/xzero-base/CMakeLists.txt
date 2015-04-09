@@ -136,6 +136,7 @@ set(xzero_base_SRC
   io/MemoryFile.cc
   io/MemoryFileRepository.cc
   io/MemoryMap.cc
+  io/PageManager.cc
 
   logging/LogAggregator.cc
   logging/LogLevel.cc
