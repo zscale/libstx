@@ -11,7 +11,7 @@
 
 #include <xzero-base/Api.h>
 #include <xzero-base/sysconfig.h>
-#include <xzero-base/executor/Executor.h>
+#include <xzero-base/executor/Scheduler.h>
 #include <condition_variable>
 #include <mutex>
 #include <thread>
@@ -23,7 +23,7 @@ namespace xzero {
 /**
  * Standard thread-safe thread pool.
  */
-class XZERO_API ThreadPool : public Executor {
+class XZERO_API ThreadPool : public Scheduler {
  public:
   /**
    * Initializes this thread pool as many threads as CPU cores are available.
@@ -74,6 +74,18 @@ class XZERO_API ThreadPool : public Executor {
 
   // overrides
   void execute(Task task) override;
+  HandleRef executeAfter(TimeSpan delay, Task task) override;
+  HandleRef executeAt(DateTime dt, Task task) override;
+  HandleRef executeOnReadable(int fd, Task task) override;
+  HandleRef executeOnWritable(int fd, Task task) override;
+  void executeOnWakeup(Task task, Wakeup* wakeup, long generation) override;
+  size_t timerCount() override;
+  size_t readerCount() override;
+  size_t writerCount() override;
+  size_t taskCount() override;
+  void runLoop() override;
+  void runLoopOnce() override;
+  void breakLoop() override;
   std::string toString() const override;
 
  private:
@@ -86,6 +98,9 @@ class XZERO_API ThreadPool : public Executor {
   std::condition_variable condition_;
   std::deque<Task> pendingTasks_;
   std::atomic<size_t> activeTasks_;
+  std::atomic<size_t> activeTimers_;
+  std::atomic<size_t> activeReaders_;
+  std::atomic<size_t> activeWriters_;
 };
 
 } // namespace xzero

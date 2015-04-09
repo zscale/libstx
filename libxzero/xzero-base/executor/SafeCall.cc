@@ -18,13 +18,13 @@ SafeCall::SafeCall()
 }
 
 SafeCall::SafeCall(std::function<void(const std::exception&)> eh)
-    : exceptionHandler_(std::move(eh)) {
+    : exceptionHandler_(eh) {
 }
 
 void SafeCall::setExceptionHandler(
     std::function<void(const std::exception&)> eh) {
 
-  exceptionHandler_ = std::move(eh);
+  exceptionHandler_ = eh;
 }
 
 void SafeCall::safeCall(std::function<void()> task) XZERO_NOEXCEPT {

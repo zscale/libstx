@@ -22,7 +22,7 @@ namespace xzero {
 DirectExecutor::DirectExecutor(
     bool recursive,
     std::function<void(const std::exception&)> eh)
-    : Executor(std::move(eh)),
+    : Executor(eh),
       recursive_(recursive),
       running_(0),
       deferred_() {
@@ -30,7 +30,7 @@ DirectExecutor::DirectExecutor(
 
 void DirectExecutor::execute(Task task) {
   if (isRunning() && !isRecursive()) {
-    deferred_.push_back(std::move(task));
+    deferred_.emplace_back(std::move(task));
     TRACE("%p execute: enqueue task (%zu)", this, deferred_.size());
     return;
   }

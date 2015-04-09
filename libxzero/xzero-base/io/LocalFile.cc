@@ -11,6 +11,7 @@
 #include <xzero-base/io/LocalFileRepository.h>
 #include <xzero-base/io/MemoryMap.h>
 #include <xzero-base/io/FileDescriptor.h>
+#include <xzero-base/MimeTypes.h>
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/sysconfig.h>
 
@@ -113,6 +114,12 @@ std::unique_ptr<MemoryMap> LocalFile::createMemoryMap(bool rw) {
     RAISE_ERRNO(errno);
 
   return std::unique_ptr<MemoryMap>(new MemoryMap(fd, 0, size(), rw));
+}
+
+std::shared_ptr<LocalFile> LocalFile::get(const std::string& path) {
+  static MimeTypes mimetypes;
+  static LocalFileRepository repo(mimetypes, "/", true, true, false);
+  return std::static_pointer_cast<LocalFile>(repo.getFile(path, "/"));
 }
 
 } // namespace xzero
