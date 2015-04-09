@@ -11,6 +11,7 @@
 
 #include <xzero-base/Api.h>
 #include <xzero-base/io/File.h>
+#include <xzero-base/RefPtr.h>
 #include <string>
 #include <functional>
 #include <unordered_map>
@@ -26,6 +27,8 @@ class XZERO_API LocalFile : public File {
             const std::string& path,
             const std::string& mimetype);
   ~LocalFile();
+
+  static std::shared_ptr<LocalFile> get(const std::string& path);
 
   const std::string& etag() const override;
   size_t size() const XZERO_NOEXCEPT override;
