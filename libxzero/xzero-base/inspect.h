@@ -39,8 +39,8 @@ template <typename H>
 std::vector<std::string> inspectAll(H head);
 
 // XXX this has nothing to do here. really needed?
-// template <typename... T>
-// void iputs(const char* fmt, T... values);
+template <typename... T>
+void iputs(const char* fmt, T... values);
 
 } // namespace xzero
 
