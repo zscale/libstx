@@ -9,6 +9,7 @@
 
 #include <xzero-base/io/FileUtil.h>
 #include <xzero-base/io/PageManager.h>
+#include <xzero-base/io/FileDescriptor.h>
 #include <gtest/gtest.h>
 #include <stdlib.h>
 #include <stdio.h>
