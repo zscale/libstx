@@ -9,8 +9,7 @@
 
 #include <xzero-base/StringUtil.h>
 #include <xzero-base/Buffer.h>
-#include <ostream>
-//#include "xzero-base/io/outputstream.h"
+#include <cstdio>
 
 namespace xzero {
 
@@ -71,14 +70,13 @@ std::vector<std::string> inspectAll(H head) {
   return vec;
 }
 
-// XXX this has nothing to do here. really needed?
-// template <typename... T>
-// void iputs(const char* fmt, T... values) {
-//   auto str = StringUtil::formatv(fmt, inspectAll(values...));
-//   str += "\n";
-//   OutputStream::getStdout()->write(str);
-// }
-// 
+// TODO: move into its own more correct file
+template <typename... T>
+void iputs(const char* fmt, T... values) {
+  auto str = StringUtil::formatv(fmt, inspectAll(values...));
+  printf("%*s\n", str.size(), str.data());
 }
+
+} // namespace xzero
 
 
