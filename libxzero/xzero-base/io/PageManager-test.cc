@@ -106,7 +106,7 @@ TEST_F(PageManagerTest, TestAbstractPageManagerAllocFree) {
 }
 
 TEST_F(PageManagerTest, TestMmapPageManager) {
-  int fd = open("build/tests/tmp/__fnordmetric_testMmapPageManager",
+  FileDescriptor fd = open("build/tests/tmp/__fnordmetric_testMmapPageManager",
       O_CREAT | O_TRUNC | O_RDWR, S_IRUSR | S_IWUSR);
   EXPECT_TRUE(fd > 0);
   auto page_manager = new TestMmapPageManager(
@@ -127,6 +127,5 @@ TEST_F(PageManagerTest, TestMmapPageManager) {
 
   delete page_manager;
   unlink("build/tests/tmp/__fnordmetric_testMmapPageManager");
-  close(fd);
 }
 
