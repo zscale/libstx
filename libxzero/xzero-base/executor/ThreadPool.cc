@@ -8,19 +8,21 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <xzero-base/executor/ThreadPool.h>
+#include <xzero-base/executor/PosixScheduler.h>
+#include <xzero-base/thread/Wakeup.h>
+#include <xzero-base/RuntimeError.h>
+#include <xzero-base/WallClock.h>
+#include <xzero-base/DateTime.h>
 #include <xzero-base/logging.h>
 #include <xzero-base/sysconfig.h>
 #include <system_error>
+#include <thread>
 #include <exception>
 #include <typeinfo>
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-
-// #ifdef HAVE_PTHREAD_H
-// #include <pthread.h>
-// #endif
 
 namespace xzero {
 
@@ -33,19 +35,22 @@ namespace xzero {
 #endif
 
 ThreadPool::ThreadPool(std::function<void(const std::exception&)> eh)
-    : ThreadPool(processorCount(), std::move(eh)) {
+    : ThreadPool(processorCount(), eh) {
 }
 
 ThreadPool::ThreadPool(
     size_t num_threads,
     std::function<void(const std::exception&)> eh)
-    : Executor(std::move(eh)),
+    : Scheduler(eh),
       active_(true),
       threads_(),
       mutex_(),
       condition_(),
       pendingTasks_(),
-      activeTasks_(0) {
+      activeTasks_(0),
+      activeTimers_(0),
+      activeReaders_(0),
+      activeWriters_(0) {
 
   if (num_threads < 1)
     throw std::runtime_error("Invalid argument.");
@@ -124,12 +129,7 @@ void ThreadPool::work(int workerId) {
     }
 
     activeTasks_++;
-    try {
-      safeCall(task);
-    } catch (std::exception& e) {
-      ERROR("%p worker[%d] Unhandled exception %s caught. %s",
-            this, workerId, typeid(e).name(), e.what());
-    }
+    safeCall(task);
     activeTasks_--;
 
     // notify the potential wait() call
@@ -145,6 +145,103 @@ void ThreadPool::execute(Task task) {
     TRACE("%p execute: enqueue task & notify_all", this);
     pendingTasks_.emplace_back(std::move(task));
   }
+  condition_.notify_all();
+}
+
+ThreadPool::HandleRef ThreadPool::executeOnReadable(int fd, Task task) {
+  HandleRef hr(new Handle(task, nullptr));
+  activeReaders_++;
+  execute([this, hr, fd] {
+    PosixScheduler::waitForReadable(fd);
+    hr->fire();
+    activeReaders_--;
+  });
+  return nullptr;
+}
+
+ThreadPool::HandleRef ThreadPool::executeOnWritable(int fd, Task task) {
+  HandleRef hr(new Handle(task, nullptr));
+  activeWriters_++;
+  execute([this, hr, fd] {
+    PosixScheduler::waitForWritable(fd);
+    hr->fire();
+    activeWriters_--;
+  });
+  return hr;
+}
+
+ThreadPool::HandleRef ThreadPool::executeAfter(TimeSpan delay, Task task) {
+  HandleRef hr(new Handle(task, nullptr));
+  activeTimers_++;
+  execute([this, hr, delay] {
+    WallClock::sleep(delay);
+    hr->fire();
+    activeTimers_--;
+  });
+  return hr;
+}
+
+ThreadPool::HandleRef ThreadPool::executeAt(DateTime dt, Task task) {
+  HandleRef hr(new Handle(task, nullptr));
+  activeTimers_++;
+  execute([this, hr, dt] {
+    DateTime now = WallClock::system()->get();
+    if (dt > now) {
+      TimeSpan delay = dt - now;
+      WallClock::sleep(delay);
+    }
+    hr->fire();
+    activeTimers_--;
+  });
+  return hr;
+}
+
+void ThreadPool::executeOnWakeup(Task task, Wakeup* wakeup, long generation) {
+  activeTimers_++;
+  wakeup->onWakeup(generation, [this, task] {
+    execute(task);
+    activeTimers_--;
+  });
+}
+
+size_t ThreadPool::timerCount() {
+  return activeTimers_.load();
+}
+
+size_t ThreadPool::readerCount() {
+  return activeReaders_.load();
+}
+
+size_t ThreadPool::writerCount() {
+  return activeWriters_.load();
+}
+
+size_t ThreadPool::taskCount() {
+  return activeTasks_.load();
+}
+
+void ThreadPool::runLoop() {
+  for (;;) {
+    bool cont = !taskCount()
+             || !timerCount()
+             || !readerCount()
+             || !writerCount();
+
+    if (!cont)
+      break;
+
+    runLoopOnce();
+  }
+}
+
+void ThreadPool::runLoopOnce() {
+  // in terms of this implementation, I shall decide, that
+  // a ThreadPool's runLoopOnce() will block the caller until
+  // there is no more task running nor pending.
+  wait();
+}
+
+void ThreadPool::breakLoop() {
   condition_.notify_all();
 }
 

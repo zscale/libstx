@@ -5,10 +5,10 @@
 
 ### converge
 
+- [ ] VFS (bridge to FileRepository)
+- [ ] WhitelistVFS (bad by design, but keep it for now)
+- [ ] InetAddr: (kept for compat only)
 - [ ] StatsServer as seperate xzero-stats module
-- [ ] introspection: `std::string inspect(const TYPE&)`
-- [ ] Assets (MemoryFile) example
-
 - [ ] io: File (is more a FileStream / FileChannel than a File [Info])
   - got replaced via std::{i,o}stream
   - fixme: conflicts with fnord's InputStream/OutputStream - why?
@@ -18,8 +18,6 @@
   - missing: Buffer integration
   - missing: some open flags: AutoDelete | AllowFork | Trunc | Create[OnOpen]
 - [ ] thread::EventLoop (equivalent of xzero::{Posix,Native}Scheduler)
-- [ ] thread::ThreadPool
-- [ ] PageManager
 - [ ] fnord-rpc comm::ServerGroup to be part of base
       <xzero-base/comm/ServerGroup.h>
 - [x] DateTime: `std::numeric_limits<DateTime>i { min, max }`
@@ -58,6 +56,10 @@
 - [x] UDP networking
 - [x] IEEE754
 - [x] Future
+- [x] Scheduler::runOnWakeup()-family (needed?)
+- [x] thread::ThreadPool
+- [x] introspection: `std::string inspect(const TYPE&)`
+- [x] PageManager
 
 ### DEPENDENCIES
 

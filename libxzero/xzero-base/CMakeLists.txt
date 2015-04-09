@@ -33,6 +33,8 @@ CHECK_INCLUDE_FILES(dlfcn.h HAVE_DLFCN_H)
 CHECK_INCLUDE_FILES(execinfo.h HAVE_EXECINFO_H)
 CHECK_INCLUDE_FILES(uuid/uuid.h HAVE_UUID_UUID_H)
 
+CHECK_FUNCTION_EXISTS(nanosleep HAVE_NANOSLEEP)
+CHECK_FUNCTION_EXISTS(daemon HAVE_DAEMON)
 CHECK_FUNCTION_EXISTS(sysconf HAVE_SYSCONF)
 CHECK_FUNCTION_EXISTS(pathconf HAVE_PATHCONF)
 CHECK_FUNCTION_EXISTS(accept4 HAVE_ACCEPT4)
@@ -107,15 +109,10 @@ set(xzero_base_SRC
   Tokenizer.cc
   Uri.cc
   WallClock.cc
+  inspect.cc
 
   cli/CLI.cc
   cli/Flags.cc
-
-  logging/LogAggregator.cc
-  logging/LogLevel.cc
-  logging/LogSource.cc
-  logging/LogTarget.cc
-  logging.cc
 
   executor/SafeCall.cc
   executor/Executor.cc
@@ -139,6 +136,13 @@ set(xzero_base_SRC
   io/MemoryFile.cc
   io/MemoryFileRepository.cc
   io/MemoryMap.cc
+  io/PageManager.cc
+
+  logging/LogAggregator.cc
+  logging/LogLevel.cc
+  logging/LogSource.cc
+  logging/LogTarget.cc
+  logging.cc
 
   net/ByteArrayEndPoint.cc
   net/Cidr.cc

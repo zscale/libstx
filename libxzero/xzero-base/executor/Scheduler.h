@@ -21,6 +21,8 @@
 
 namespace xzero {
 
+class Wakeup;
+
 /**
  * Interface for scheduling tasks.
  */
@@ -41,7 +43,6 @@ class XZERO_API Scheduler : public Executor {
      */
     void cancel();
 
-   private:
     /**
      * This method is invoked internally when the given intended event fired.
      *
@@ -51,8 +52,6 @@ class XZERO_API Scheduler : public Executor {
      * already.
      */
     void fire();
-
-    friend class Scheduler;
 
    private:
     std::mutex mutex_;
@@ -64,7 +63,7 @@ class XZERO_API Scheduler : public Executor {
   typedef std::shared_ptr<Handle> HandleRef;
 
   Scheduler(std::function<void(const std::exception&)> eh)
-      : Executor(std::move(eh)) {}
+      : Executor(eh) {}
 
   /**
    * Schedules given task to be run after given delay.
@@ -88,6 +87,26 @@ class XZERO_API Scheduler : public Executor {
    * Runs given task when given selectable is non-blocking writable.
    */
   virtual HandleRef executeOnWritable(int fd, Task task) = 0;
+
+  /**
+   * Executes @p task  when given @p wakeup triggered a wakeup event
+   * for >= @p generation.
+   *
+   * @param task Task to invoke when the wakeup is triggered.
+   * @param wakeup Wakeup object to watch
+   * @param generation Generation number to match at least.
+   */
+  virtual void executeOnWakeup(Task task, Wakeup* wakeup, long generation) = 0;
+
+  /**
+   * Run the provided task when the wakeup handle is woken up.
+   */
+  void executeOnNextWakeup(std::function<void()> task, Wakeup* wakeup);
+
+  /**
+   * Run the provided task when the wakeup handle is woken up.
+   */
+  void executeOnFirstWakeup(std::function<void()> task, Wakeup* wakeup);
 
   /**
    * Retrieves the number of active timers.

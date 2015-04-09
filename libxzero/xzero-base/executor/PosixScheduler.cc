@@ -8,9 +8,12 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <xzero-base/executor/PosixScheduler.h>
+#include <xzero-base/thread/Wakeup.h>
 #include <xzero-base/RuntimeError.h>
 #include <xzero-base/WallClock.h>
+#include <xzero-base/StringUtil.h>
 #include <xzero-base/sysconfig.h>
+#include <xzero-base/logging.h>
 #include <algorithm>
 #include <vector>
 #include <sys/types.h>
@@ -24,12 +27,20 @@ namespace xzero {
 #define PIPE_READ_END  0
 #define PIPE_WRITE_END 1
 
+#define ERROR(msg...) logError("PosixScheduler", msg)
+
+#ifndef NDEBUG
+#define TRACE(msg...) logTrace("PosixScheduler", msg)
+#else
+#define TRACE(msg...) do {} while (0)
+#endif
+
 PosixScheduler::PosixScheduler(
     std::function<void(const std::exception&)> errorLogger,
     WallClock* clock,
     std::function<void()> preInvoke,
     std::function<void()> postInvoke)
-    : Scheduler(std::move(errorLogger)),
+    : Scheduler(errorLogger),
       clock_(clock ? clock : WallClock::monotonic()),
       lock_(),
       wakeupPipe_(),
@@ -40,6 +51,11 @@ PosixScheduler::PosixScheduler(
   }
   fcntl(wakeupPipe_[0], F_SETFL, O_NONBLOCK);
   fcntl(wakeupPipe_[1], F_SETFL, O_NONBLOCK);
+
+  TRACE("ctor: wakeupPipe {read=%d, write=%d}, clock=@%p",
+      wakeupPipe_[PIPE_READ_END],
+      wakeupPipe_[PIPE_WRITE_END],
+      clock_);
 }
 
 PosixScheduler::PosixScheduler(
@@ -53,6 +69,7 @@ PosixScheduler::PosixScheduler()
 }
 
 PosixScheduler::~PosixScheduler() {
+  TRACE("~PosixScheduler");
   ::close(wakeupPipe_[PIPE_READ_END]);
   ::close(wakeupPipe_[PIPE_WRITE_END]);
 }
@@ -60,13 +77,15 @@ PosixScheduler::~PosixScheduler() {
 void PosixScheduler::execute(Task task) {
   {
     std::lock_guard<std::mutex> lk(lock_);
-    tasks_.push_back(task);
+    tasks_.emplace_back(std::move(task));
   }
   breakLoop();
 }
 
 std::string PosixScheduler::toString() const {
-  return "PosixScheduler";
+  return StringUtil::format("PosixScheduler: wakeupPipe{$0, $1}",
+      wakeupPipe_[PIPE_READ_END],
+      wakeupPipe_[PIPE_WRITE_END]);
 }
 
 Scheduler::HandleRef PosixScheduler::executeAfter(TimeSpan delay, Task task) {
@@ -165,6 +184,13 @@ Scheduler::HandleRef PosixScheduler::executeOnReadable(int fd, Task task) {
 
 Scheduler::HandleRef PosixScheduler::executeOnWritable(int fd, Task task) {
   return registerInterest(&lock_, &writers_, fd, task);
+}
+
+// FIXME: this is actually so generic, it could be put into Executor API directly
+void PosixScheduler::executeOnWakeup(Task task, Wakeup* wakeup, long generation) {
+  wakeup->onWakeup(
+      generation,
+      std::bind(&PosixScheduler::execute, this, task));
 }
 
 inline void collectActiveHandles(
@@ -296,6 +322,88 @@ void PosixScheduler::runLoopOnce() {
 void PosixScheduler::breakLoop() {
   int dummy = 42;
   ::write(wakeupPipe_[PIPE_WRITE_END], &dummy, sizeof(dummy));
+}
+
+void PosixScheduler::waitForReadable(int fd, TimeSpan timeout) {
+  fd_set input, output;
+
+  FD_ZERO(&input);
+  FD_ZERO(&output);
+  FD_SET(fd, &input);
+
+  struct timeval tv;
+  tv.tv_sec = timeout.totalSeconds();
+  tv.tv_usec = timeout.totalMicroseconds();
+
+  int res = select(fd + 1, &input, &output, &input, &tv);
+
+  if (res == 0) {
+    RAISE(IOError, "unexpected timeout while select()ing");
+  }
+
+  if (res == -1) {
+    RAISE_ERRNO(errno);
+  }
+}
+
+void PosixScheduler::waitForReadable(int fd) {
+  fd_set input, output;
+
+  FD_ZERO(&input);
+  FD_ZERO(&output);
+  FD_SET(fd, &input);
+
+  int res = select(fd + 1, &input, &output, &input, nullptr);
+
+  if (res == 0) {
+    RAISE(IOError, "unexpected timeout while select()ing");
+  }
+
+  if (res == -1) {
+    RAISE_ERRNO(errno);
+  }
+}
+
+void PosixScheduler::waitForWritable(int fd, TimeSpan timeout) {
+  fd_set input;
+  FD_ZERO(&input);
+
+  fd_set output;
+  FD_ZERO(&output);
+  FD_SET(fd, &output);
+
+  struct timeval tv;
+  tv.tv_sec = timeout.totalSeconds();
+  tv.tv_usec = timeout.totalMicroseconds();
+
+  int res = select(fd + 1, &input, &output, &input, &tv);
+
+  if (res == 0) {
+    RAISE(IOError, "unexpected timeout while select()ing");
+  }
+
+  if (res == -1) {
+    RAISE_ERRNO(errno);
+  }
+}
+
+void PosixScheduler::waitForWritable(int fd) {
+  fd_set input;
+  FD_ZERO(&input);
+
+  fd_set output;
+  FD_ZERO(&output);
+  FD_SET(fd, &output);
+
+  int res = select(fd + 1, &input, &output, &input, nullptr);
+
+  if (res == 0) {
+    RAISE(IOError, "unexpected timeout while select()ing");
+  }
+
+  if (res == -1) {
+    RAISE_ERRNO(errno);
+  }
 }
 
 } // namespace xzero

@@ -42,6 +42,7 @@ class XZERO_API PosixScheduler : public Scheduler {
   HandleRef executeAt(DateTime dt, Task task) override;
   HandleRef executeOnReadable(int fd, Task task) override;
   HandleRef executeOnWritable(int fd, Task task) override;
+  void executeOnWakeup(Task task, Wakeup* wakeup, long generation) override;
   size_t timerCount() override;
   size_t readerCount() override;
   size_t writerCount() override;
@@ -49,6 +50,26 @@ class XZERO_API PosixScheduler : public Scheduler {
   void runLoop() override;
   void runLoopOnce() override;
   void breakLoop() override;
+
+  /**
+   * Waits at most @p timeout for @p fd to become readable without blocking.
+   */
+  static void waitForReadable(int fd, TimeSpan timeout);
+
+  /**
+   * Waits until given @p fd becomes readable without blocking.
+   */
+  static void waitForReadable(int fd);
+
+  /**
+   * Waits at most @p timeout for @p fd to become writable without blocking.
+   */
+  static void waitForWritable(int fd, TimeSpan timeout);
+
+  /**
+   * Waits until given @p fd becomes writable without blocking.
+   */
+  static void waitForWritable(int fd);
 
  protected:
   void removeFromTimersList(Handle* handle);

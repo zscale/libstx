@@ -8,6 +8,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <xzero-base/executor/Scheduler.h>
+#include <xzero-base/thread/Wakeup.h>
 
 namespace xzero {
 
@@ -35,6 +36,20 @@ void Scheduler::Handle::fire() {
   if (!isCancelled_.load()) {
     onFire_();
   }
+}
+
+/**
+ * Run the provided task when the wakeup handle is woken up
+ */
+void Scheduler::executeOnNextWakeup(Task  task, Wakeup* wakeup) {
+  executeOnWakeup(task, wakeup, wakeup->generation());
+}
+
+/**
+ * Run the provided task when the wakeup handle is woken up
+ */
+void Scheduler::executeOnFirstWakeup(Task task, Wakeup* wakeup) {
+  executeOnWakeup(task, wakeup, 0);
 }
 
 }  // namespace xzero

@@ -14,6 +14,8 @@
 
 namespace xzero {
 
+class TimeSpan;
+
 /**
  * Abstract API for retrieving the current system time.
  */
@@ -32,6 +34,8 @@ class XZERO_API WallClock {
    * Retrieves a process-global monotonic clock that never jumps back in time.
    */
   static WallClock* monotonic();
+
+  static void sleep(TimeSpan ts);
 };
 
 } // namespace xzero

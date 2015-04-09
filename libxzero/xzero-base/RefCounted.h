@@ -22,6 +22,9 @@ class XZERO_API RefCounted {
   void ref();
   bool unref();
 
+  XZERO_DEPRECATED void incRef() { ref(); }
+  XZERO_DEPRECATED void decRef() { unref(); }
+
   unsigned refCount() const;
 
  private:
