@@ -17,26 +17,23 @@
 
 namespace xzero {
 
-MemoryMap::MemoryMap(int fd, off_t ofs, size_t size, bool rw)
-    : data_(nullptr),
-      size_(0),
-      mode_(0) {
-
+static inline char* createMemoryMap(int fd, off_t ofs, size_t size, bool rw) {
   int prot = rw ? PROT_READ | PROT_WRITE : PROT_READ;
-  data_ = mmap(nullptr, size, prot, MAP_SHARED, fd, ofs);
-  if (!data_)
+  char* data = (char*) mmap(nullptr, size, prot, MAP_SHARED, fd, ofs);
+  if (!data)
     RAISE_ERRNO(errno);
 
-  size_ = size;
-  mode_ = prot;
+  return data;
+}
+
+MemoryMap::MemoryMap(int fd, off_t ofs, size_t size, bool rw)
+    : FixedBuffer(createMemoryMap(fd, ofs, size, rw), size, size),
+      mode_(rw ? PROT_READ | PROT_WRITE : PROT_READ) {
 }
 
 MemoryMap::MemoryMap(MemoryMap&& mm)
-  : data_(mm.data_),
-    size_(mm.size_),
+  : FixedBuffer(mm),
     mode_(mm.mode_) {
-  mm.data_ = nullptr;
-  mm.size_ = 0;
   mm.mode_ = 0;
 }
 
