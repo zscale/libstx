@@ -145,13 +145,17 @@ FlowParser::~FlowParser() {
   // a bug.");
 }
 
-bool FlowParser::open(const std::string& filename) {
-  return lexer_->open(filename);
+void FlowParser::openString(const std::string& content) {
+  lexer_->openString(content);
 }
 
-bool FlowParser::open(const std::string& filename,
-                      std::unique_ptr<std::istream>&& ifs) {
-  return lexer_->open(filename, std::move(ifs));
+void FlowParser::openLocalFile(const std::string& filename) {
+  lexer_->openLocalFile(filename);
+}
+
+void FlowParser::openStream(std::unique_ptr<std::istream>&& ifs,
+                            const std::string& filename) {
+  lexer_->openStream(std::move(ifs), filename);
 }
 
 SymbolTable* FlowParser::enter(SymbolTable* scope) {
