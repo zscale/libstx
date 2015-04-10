@@ -12,6 +12,7 @@
 #include <cortex-flow/vm/Runtime.h>
 #include <cortex-flow/vm/Runner.h>
 #include <cortex-flow/vm/Match.h>
+#include <cortex-base/RuntimeError.h>
 #include <utility>
 #include <vector>
 #include <memory>
@@ -103,6 +104,13 @@ Handler* Program::findHandler(const std::string& name) const {
     if (handler->name() == name) return handler;
 
   return nullptr;
+}
+
+bool Program::run(const std::string& handlerName, void* u1, void* u2) {
+  if (Handler* handler = findHandler(handlerName))
+    return handler->run(u1, u2);
+
+  RAISE(RuntimeError, "No handler with name '%s' found.", handlerName.c_str());
 }
 
 int Program::indexOf(const Handler* handler) const {
