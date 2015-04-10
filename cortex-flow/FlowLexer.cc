@@ -7,6 +7,8 @@
 
 #include <cortex-flow/FlowLexer.h>
 #include <cortex-base/net/IPAddress.h>
+#include <cortex-base/RuntimeError.h>
+#include <sstream>
 #include <unordered_map>
 #include <string.h>
 #include <glob.h>
@@ -96,23 +98,27 @@ void FlowLexer::Scope::setStream(const std::string& filename,
 
 FlowLexer::~FlowLexer() {}
 
-bool FlowLexer::open(const std::string& filename) {
-  if (enterScope(filename) == nullptr) return false;
-
+void FlowLexer::openLocalFile(const std::string& filename) {
+  enterScope(filename);
   nextToken();
-  return true;
 }
 
-bool FlowLexer::open(const std::string& filename,
-                     std::unique_ptr<std::istream>&& ifs) {
-  if (enterScope(filename, std::move(ifs)) == nullptr) return false;
-
-  nextToken();
-  return true;
+void FlowLexer::openString(const std::string& content) {
+  std::unique_ptr<std::stringstream> sstr(new std::stringstream());
+  (*sstr) << content;
+  openStream(std::move(sstr), "<string>");
 }
 
-FlowLexer::Scope* FlowLexer::enterScope(const std::string& filename,
-                                        std::unique_ptr<std::istream>&& ifs) {
+void FlowLexer::openStream(
+    std::unique_ptr<std::istream>&& ifs,
+    const std::string& filename) {
+  enterScope(std::move(ifs), filename);
+  nextToken();
+}
+
+FlowLexer::Scope* FlowLexer::enterScope(
+    std::unique_ptr<std::istream>&& ifs,
+    const std::string& filename) {
   std::unique_ptr<Scope> cx(new Scope());
   if (!cx) return nullptr;
 
@@ -133,12 +139,12 @@ FlowLexer::Scope* FlowLexer::enterScope(const std::string& filename,
 
 FlowLexer::Scope* FlowLexer::enterScope(const std::string& filename) {
   auto ifs = std::unique_ptr<std::ifstream>(new std::ifstream());
-  if (!ifs) return nullptr;
 
   ifs->open(filename);
-  if (!ifs->good()) return nullptr;
+  if (!ifs->good())
+    RAISE_ERRNO(errno);
 
-  return enterScope(filename, std::move(ifs));
+  return enterScope(std::move(ifs), filename);
 }
 
 void FlowLexer::leaveScope() {

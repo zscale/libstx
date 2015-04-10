@@ -30,8 +30,13 @@ class CORTEX_FLOW_API FlowLexer {
   FlowLexer();
   ~FlowLexer();
 
-  bool open(const std::string& filename);
-  bool open(const std::string& filename, std::unique_ptr<std::istream>&& ifs);
+  void openLocalFile(const std::string& filename);
+
+  void openStream(std::unique_ptr<std::istream>&& ifs,
+                  const std::string& filename = "<stream>");
+
+  void openString(const std::string& content);
+
   size_t depth() const { return contexts_.size(); }
   bool eof() const;
 
@@ -57,8 +62,8 @@ class CORTEX_FLOW_API FlowLexer {
   struct Scope;
 
   Scope* enterScope(const std::string& filename);
-  Scope* enterScope(const std::string& filename,
-                    std::unique_ptr<std::istream>&& ifs);
+  Scope* enterScope(std::unique_ptr<std::istream>&& ifs,
+                    const std::string& filename);
   Scope* scope() const;
   void leaveScope();
 

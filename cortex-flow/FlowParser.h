@@ -45,8 +45,9 @@ class CORTEX_FLOW_API FlowParser {
   explicit FlowParser(vm::Runtime* runtime);
   ~FlowParser();
 
-  bool open(const std::string& filename);
-  bool open(const std::string& filename, std::unique_ptr<std::istream>&& ifs);
+  void openString(const std::string& filename);
+  void openLocalFile(const std::string& filename);
+  void openStream(std::unique_ptr<std::istream>&& ifs, const std::string& filename);
 
   std::unique_ptr<Unit> parse();
 
