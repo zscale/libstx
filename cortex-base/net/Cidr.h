@@ -20,7 +20,7 @@ namespace cortex {
  *
  * @see IPAddress
  */
-class XZERO_API Cidr {
+class CORTEX_API Cidr {
  public:
   /**
    * @brief Initializes an empty cidr notation.
@@ -79,12 +79,12 @@ class XZERO_API Cidr {
   /**
    * @brief compares 2 CIDR notations for equality.
    */
-  friend XZERO_API bool operator==(const Cidr& a, const Cidr& b);
+  friend CORTEX_API bool operator==(const Cidr& a, const Cidr& b);
 
   /**
    * @brief compares 2 CIDR notations for inequality.
    */
-  friend XZERO_API bool operator!=(const Cidr& a, const Cidr& b);
+  friend CORTEX_API bool operator!=(const Cidr& a, const Cidr& b);
 
  private:
   IPAddress ipaddr_;

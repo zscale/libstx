@@ -46,7 +46,7 @@ typedef BufferRef FlowString;
 std::string tos(FlowType type);
 
 // {{{ array types
-class XZERO_FLOW_API FlowArray {
+class CORTEX_FLOW_API FlowArray {
  public:
   size_t size() const { return base_[0]; }
 

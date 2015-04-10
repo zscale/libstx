@@ -89,7 +89,7 @@ void LogSource::enable() {
   enabled_ = true;
 }
 
-bool LogSource::isEnabled() const XZERO_NOEXCEPT {
+bool LogSource::isEnabled() const CORTEX_NOEXCEPT {
   return enabled_;
 }
 

@@ -19,7 +19,7 @@ namespace cortex {
 namespace flow {
 
 template <typename T, const FlowType Ty>
-class XZERO_FLOW_API ConstantValue : public Constant {
+class CORTEX_FLOW_API ConstantValue : public Constant {
  public:
   ConstantValue(const T& value, const std::string& name = "")
       : Constant(Ty, name), value_(value) {}

@@ -16,7 +16,7 @@ namespace cortex {
 /**
  * Represents a system file descriptor that gets automatically closed.
  */
-class XZERO_API FileDescriptor {
+class CORTEX_API FileDescriptor {
  public:
   FileDescriptor(int fd) : fd_(fd) {}
   FileDescriptor(FileDescriptor&& fd) : fd_(fd.release()) {}

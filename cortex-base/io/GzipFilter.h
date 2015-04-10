@@ -19,7 +19,7 @@ namespace cortex {
 /**
  * Gzip encoding filter.
  */
-class XZERO_API GzipFilter : public Filter {
+class CORTEX_API GzipFilter : public Filter {
  public:
   explicit GzipFilter(int level);
   ~GzipFilter();

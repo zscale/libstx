@@ -42,7 +42,7 @@ class EndPoint : public RefCounted {
   EndPoint& operator=(EndPoint&) = delete;
 
  public:
-  EndPoint() XZERO_NOEXCEPT;
+  EndPoint() CORTEX_NOEXCEPT;
   ~EndPoint();
 
   /**
@@ -106,7 +106,7 @@ class EndPoint : public RefCounted {
    * When a fill-interest can be satisfied you will be notified via your
    * associated Connection object to process the event.
    *
-   * @see Connection::onSelectable() XZERO_NOEXCEPT
+   * @see Connection::onSelectable() CORTEX_NOEXCEPT
    */
   virtual void wantFill() = 0;
 
@@ -116,7 +116,7 @@ class EndPoint : public RefCounted {
    * When a flush-interest can be satisfied you will be notified via your
    * associated Connection object to process the event.
    *
-   * @see Connection::onSelectable() XZERO_NOEXCEPT
+   * @see Connection::onSelectable() CORTEX_NOEXCEPT
    */
   virtual void wantFlush() = 0;
 

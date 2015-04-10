@@ -24,7 +24,7 @@ namespace cortex {
  * Every executed task will be getting its own dedicated
  * system thread.
  */
-class XZERO_API ThreadedExecutor : public Executor {
+class CORTEX_API ThreadedExecutor : public Executor {
  public:
   ThreadedExecutor() : ThreadedExecutor(nullptr) {}
   explicit ThreadedExecutor(std::function<void(const std::exception&)> eh);

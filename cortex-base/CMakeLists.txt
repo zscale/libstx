@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(cortex-base CXX)
-set(XZERO_BASE_VERSION "0.11.0-dev")
+set(CORTEX_BASE_VERSION "0.11.0-dev")
 
 include(CortexCommon)
 include(FindPkgConfig)
@@ -181,13 +181,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-set(XZERO_BASE_LIBRARIES pthread dl
+set(CORTEX_BASE_LIBRARIES pthread dl
     ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES} ${PCRE_LIBRARIES} ${RT_LIBRARIES})
 
 # libcortex-base.a
 add_library(cortex-base STATIC ${cortex_base_SRC})
-target_link_libraries(cortex-base ${XZERO_BASE_LIBRARIES})
-#set_target_properties(cortex-base PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO_BASE=1")
+target_link_libraries(cortex-base ${CORTEX_BASE_LIBRARIES})
+#set_target_properties(cortex-base PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_CORTEX_BASE=1")
 #install(TARGETS cortex-base DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 # headers

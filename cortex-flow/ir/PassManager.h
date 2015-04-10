@@ -18,7 +18,7 @@ class HandlerPass;
 class IRHandler;
 class IRProgram;
 
-class XZERO_FLOW_API PassManager {
+class CORTEX_FLOW_API PassManager {
  public:
   PassManager();
   ~PassManager();

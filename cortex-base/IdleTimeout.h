@@ -23,7 +23,7 @@ class Scheduler;
 /**
  * Manages a single idle timeout.
  */
-class XZERO_API IdleTimeout {
+class CORTEX_API IdleTimeout {
  public:
   IdleTimeout(WallClock* clock, Scheduler* scheduler);
   ~IdleTimeout();

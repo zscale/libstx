@@ -31,7 +31,7 @@ namespace http1 {
  *
  * @todo how to support sendfile() alike optimizations
  */
-class XZERO_HTTP_API HttpGenerator {
+class CORTEX_HTTP_API HttpGenerator {
   enum class State {
     None,
     WritingBody,
@@ -92,12 +92,12 @@ class XZERO_HTTP_API HttpGenerator {
   /**
    * Retrieves the number of bytes pending for the content.
    */
-  size_t pendingContentLength() const XZERO_NOEXCEPT { return contentLength_; }
+  size_t pendingContentLength() const CORTEX_NOEXCEPT { return contentLength_; }
 
   /**
    * Retrieves boolean indicating whether chunked response is generated.
    */
-  bool isChunked() const XZERO_NOEXCEPT { return chunked_; }
+  bool isChunked() const CORTEX_NOEXCEPT { return chunked_; }
 
  private:
   void generateRequestLine(const HttpRequestInfo& info);

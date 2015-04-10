@@ -21,7 +21,7 @@ namespace cortex {
 
 class LocalFileRepository;
 
-class XZERO_API LocalFile : public File {
+class CORTEX_API LocalFile : public File {
  public:
   LocalFile(LocalFileRepository& repo,
             const std::string& path,
@@ -31,10 +31,10 @@ class XZERO_API LocalFile : public File {
   static std::shared_ptr<LocalFile> get(const std::string& path);
 
   const std::string& etag() const override;
-  size_t size() const XZERO_NOEXCEPT override;
-  time_t mtime() const XZERO_NOEXCEPT override;
-  size_t inode() const XZERO_NOEXCEPT override;
-  bool isRegular() const XZERO_NOEXCEPT override;
+  size_t size() const CORTEX_NOEXCEPT override;
+  time_t mtime() const CORTEX_NOEXCEPT override;
+  size_t inode() const CORTEX_NOEXCEPT override;
+  bool isRegular() const CORTEX_NOEXCEPT override;
   int createPosixChannel(OpenFlags flags) override;
   std::unique_ptr<std::istream> createInputChannel() override;
   std::unique_ptr<std::ostream> createOutputChannel() override;

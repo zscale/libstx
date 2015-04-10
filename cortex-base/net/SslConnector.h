@@ -26,7 +26,7 @@ class SslContext;
  * @see InetConnector
  * @see SslEndPoint
  */
-class XZERO_API SslConnector : public InetConnector {
+class CORTEX_API SslConnector : public InetConnector {
  public:
   /**
    * Initializes this connector.
@@ -65,7 +65,7 @@ class XZERO_API SslConnector : public InetConnector {
                   const std::string& keyFilePath);
 
   void start() override;
-  bool isStarted() const XZERO_NOEXCEPT override;
+  bool isStarted() const CORTEX_NOEXCEPT override;
   void stop() override;
   std::list<RefPtr<EndPoint>> connectedEndPoints() override;
 

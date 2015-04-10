@@ -14,7 +14,7 @@
 
 namespace cortex {
 
-class XZERO_API RefCounted {
+class CORTEX_API RefCounted {
  public:
   RefCounted();
   virtual ~RefCounted();
@@ -22,8 +22,8 @@ class XZERO_API RefCounted {
   void ref();
   bool unref();
 
-  XZERO_DEPRECATED void incRef() { ref(); }
-  XZERO_DEPRECATED void decRef() { unref(); }
+  CORTEX_DEPRECATED void incRef() { ref(); }
+  CORTEX_DEPRECATED void decRef() { unref(); }
 
   unsigned refCount() const;
 

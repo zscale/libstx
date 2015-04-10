@@ -53,7 +53,7 @@ class CondStmt;
 class MatchStmt;
 class AssignStmt;
 
-class XZERO_FLOW_API ASTVisitor {
+class CORTEX_FLOW_API ASTVisitor {
  public:
   virtual ~ASTVisitor() {}
 

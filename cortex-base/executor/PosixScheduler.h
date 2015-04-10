@@ -20,7 +20,7 @@ namespace cortex {
 
 class WallClock;
 
-class XZERO_API PosixScheduler : public Scheduler {
+class CORTEX_API PosixScheduler : public Scheduler {
  public:
   PosixScheduler(
       std::function<void(const std::exception&)> errorLogger,

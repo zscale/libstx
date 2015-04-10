@@ -16,7 +16,7 @@ namespace flow {
 /**
  * Eliminates empty blocks, that are just jumping to the next block.
  */
-class XZERO_FLOW_API EmptyBlockElimination : public HandlerPass {
+class CORTEX_FLOW_API EmptyBlockElimination : public HandlerPass {
  public:
   EmptyBlockElimination() : HandlerPass("EmptyBlockElimination") {}
 

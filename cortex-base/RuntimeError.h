@@ -23,7 +23,7 @@
 
 namespace cortex {
 
-class XZERO_API RuntimeError : public std::system_error {
+class CORTEX_API RuntimeError : public std::system_error {
  public:
   RuntimeError(int ev, const std::error_category& ec);
   RuntimeError(int ev, const std::error_category& ec, const std::string& what);
@@ -39,12 +39,12 @@ class XZERO_API RuntimeError : public std::system_error {
   template<typename T = RuntimeError>
   T setSource(const char* file, int line, const char* fn);
   const char* sourceFile() const { return sourceFile_; }
-  int sourceLine() const XZERO_NOEXCEPT { return sourceLine_; }
+  int sourceLine() const CORTEX_NOEXCEPT { return sourceLine_; }
   const char* functionName() const { return functionName_; }
 
   // XXX for backwards-compatibility only
-  XZERO_DEPRECATED const char* typeName() const;
-  XZERO_DEPRECATED bool ofType(Status ev) const;
+  CORTEX_DEPRECATED const char* typeName() const;
+  CORTEX_DEPRECATED bool ofType(Status ev) const;
 
   std::vector<std::string> backtrace() const;
 
@@ -60,8 +60,8 @@ class XZERO_API RuntimeError : public std::system_error {
   StackTrace stackTrace_;
 };
 
-XZERO_API void logAndPass(const std::exception& e);
-XZERO_API void logAndAbort(const std::exception& e);
+CORTEX_API void logAndPass(const std::exception& e);
+CORTEX_API void logAndAbort(const std::exception& e);
 
 // {{{ inlines
 template<typename T>

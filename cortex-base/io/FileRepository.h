@@ -18,7 +18,7 @@ namespace cortex {
 
 class File;
 
-class XZERO_API FileRepository {
+class CORTEX_API FileRepository {
  public:
   virtual ~FileRepository();
 

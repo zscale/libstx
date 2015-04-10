@@ -20,7 +20,7 @@ namespace flow {
 
 class ASTNode;
 
-class XZERO_FLOW_API FlowCallVisitor : public ASTVisitor {
+class CORTEX_FLOW_API FlowCallVisitor : public ASTVisitor {
  private:
   std::vector<CallExpr*> calls_;
 

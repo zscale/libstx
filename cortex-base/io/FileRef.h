@@ -26,7 +26,7 @@ namespace cortex {
  * If the FileRef was initialized with auto-close set to on, its
  * underlying resource file descriptor will be automatically closed.
  */
-class XZERO_API FileRef {
+class CORTEX_API FileRef {
  private:
   FileRef(const FileRef&) = delete;
   FileRef& operator=(const FileRef&) = delete;
@@ -76,12 +76,12 @@ class XZERO_API FileRef {
     }
   }
 
-  int handle() const XZERO_NOEXCEPT { return fd_; }
+  int handle() const CORTEX_NOEXCEPT { return fd_; }
 
-  off_t offset() const XZERO_NOEXCEPT { return offset_; }
+  off_t offset() const CORTEX_NOEXCEPT { return offset_; }
   void setOffset(off_t n) { offset_ = n; }
 
-  size_t size() const XZERO_NOEXCEPT { return size_; }
+  size_t size() const CORTEX_NOEXCEPT { return size_; }
   void setSize(size_t n) { size_ = n; }
 
   void fill(Buffer* output) const;

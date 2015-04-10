@@ -15,7 +15,7 @@
 namespace cortex {
 namespace util {
 
-class XZERO_API BinaryMessageReader {
+class CORTEX_API BinaryMessageReader {
 public:
   BinaryMessageReader(void const* buf, size_t buf_len);
   virtual ~BinaryMessageReader() {};

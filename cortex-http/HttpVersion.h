@@ -23,6 +23,6 @@ enum class HttpVersion {
   VERSION_2_0 = 0x20,
 };
 
-XZERO_HTTP_API const std::string& to_string(HttpVersion value);
+CORTEX_HTTP_API const std::string& to_string(HttpVersion value);
 
 } // namespace cortex

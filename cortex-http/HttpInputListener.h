@@ -15,7 +15,7 @@ namespace cortex {
 /**
  * Callback API for HTTP message body availability.
  */
-class XZERO_HTTP_API HttpInputListener {
+class CORTEX_HTTP_API HttpInputListener {
  public:
   virtual ~HttpInputListener() {}
 

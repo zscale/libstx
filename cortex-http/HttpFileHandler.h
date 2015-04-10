@@ -26,7 +26,7 @@ class MimeTypes;
  *
  * @note this class is not meant to be thread safe.
  */
-class XZERO_HTTP_API HttpFileHandler {
+class CORTEX_HTTP_API HttpFileHandler {
  public:
   /**
    * Initializes static file handler.

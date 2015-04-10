@@ -14,7 +14,7 @@
 namespace cortex {
 namespace flow {
 
-class XZERO_FLOW_API IRBuiltinFunction : public Constant {
+class CORTEX_FLOW_API IRBuiltinFunction : public Constant {
  public:
   IRBuiltinFunction(const vm::Signature& sig)
       : Constant(sig.returnType(), sig.name()), signature_(sig) {}

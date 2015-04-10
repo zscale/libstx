@@ -12,7 +12,7 @@
 
 namespace cortex {
 
-class XZERO_API Application {
+class CORTEX_API Application {
  public:
   static void init();
 

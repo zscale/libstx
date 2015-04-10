@@ -20,7 +20,7 @@
 namespace cortex {
 namespace util {
 
-class XZERO_API SimpleRateLimit {
+class CORTEX_API SimpleRateLimit {
  public:
   SimpleRateLimit(const TimeSpan& period);
 
@@ -31,7 +31,7 @@ class XZERO_API SimpleRateLimit {
   uint64_t last_micros_;
 };
 
-class XZERO_API SimpleRateLimitedFn {
+class CORTEX_API SimpleRateLimitedFn {
  public:
   SimpleRateLimitedFn(const TimeSpan& period, std::function<void ()> fn);
 

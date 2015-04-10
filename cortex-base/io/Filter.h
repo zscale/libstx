@@ -22,7 +22,7 @@ class FileRef;
 /**
  * I/O Filter API.
  */
-class XZERO_API Filter {
+class CORTEX_API Filter {
  public:
   /**
    * Applies this filter to the given @p input.

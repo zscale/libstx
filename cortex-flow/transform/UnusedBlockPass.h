@@ -18,7 +18,7 @@ class BasicBlock;
 /**
  * Eliminates empty blocks, that are just jumping to the next block.
  */
-class XZERO_FLOW_API UnusedBlockPass : public HandlerPass {
+class CORTEX_FLOW_API UnusedBlockPass : public HandlerPass {
  public:
   UnusedBlockPass() : HandlerPass("UnusedBlockPass") {}
 

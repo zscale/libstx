@@ -17,7 +17,7 @@
 namespace cortex {
 namespace util {
 
-class XZERO_API BinaryMessageWriter {
+class CORTEX_API BinaryMessageWriter {
 public:
   static const size_t kInitialDataSize = 4096;
 

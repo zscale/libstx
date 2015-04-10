@@ -30,7 +30,7 @@ namespace cortex {
  * @see DirectExecutor
  * @see ThreadPool
  */
-class XZERO_API Executor : protected SafeCall {
+class CORTEX_API Executor : protected SafeCall {
  public:
   explicit Executor(std::function<void(const std::exception&)> eh);
   virtual ~Executor();

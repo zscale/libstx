@@ -33,7 +33,7 @@ class ConnectionListener;
  * @see Connection
  * @see ConnectionFactory
  */
-class XZERO_API Connector {
+class CORTEX_API Connector {
  public:
   /**
    * Initializes this connector.
@@ -72,7 +72,7 @@ class XZERO_API Connector {
   /**
    * Tests whether this connector has been started.
    */
-  virtual bool isStarted() const XZERO_NOEXCEPT = 0;
+  virtual bool isStarted() const CORTEX_NOEXCEPT = 0;
 
   /**
    * Stops given connector.

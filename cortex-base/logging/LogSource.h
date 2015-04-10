@@ -27,7 +27,7 @@ namespace cortex {
  * Your class that needs logging creates a static member of LogSource
  * for generating logging messages.
  */
-class XZERO_API LogSource {
+class CORTEX_API LogSource {
  public:
   explicit LogSource(const std::string& component);
   ~LogSource();
@@ -40,10 +40,10 @@ class XZERO_API LogSource {
   void error(const std::exception& e);
 
   void enable();
-  bool isEnabled() const XZERO_NOEXCEPT;
+  bool isEnabled() const CORTEX_NOEXCEPT;
   void disable();
 
-  const std::string& componentName() const XZERO_NOEXCEPT { return componentName_; }
+  const std::string& componentName() const CORTEX_NOEXCEPT { return componentName_; }
 
  private:
   std::string componentName_;

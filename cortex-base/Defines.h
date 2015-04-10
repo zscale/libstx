@@ -17,29 +17,29 @@
 
 // platforms
 #if defined(_WIN32) || defined(__WIN32__)
-#define XZERO_OS_WIN32 1
+#define CORTEX_OS_WIN32 1
 //#	define _WIN32_WINNT 0x0510
 #else
-#define XZERO_OS_UNIX 1
+#define CORTEX_OS_UNIX 1
 #if defined(__CYGWIN__)
-#define XZERO_OS_WIN32 1
+#define CORTEX_OS_WIN32 1
 #elif defined(__APPLE__)
-#define XZERO_OS_DARWIN 1 /* MacOS/X 10 */
+#define CORTEX_OS_DARWIN 1 /* MacOS/X 10 */
 #endif
 #endif
 
 // api decl tools
 #if defined(__GNUC__)
-#define XZERO_NO_EXPORT __attribute__((visibility("hidden")))
-#define XZERO_EXPORT __attribute__((visibility("default")))
-#define XZERO_IMPORT /*!*/
-#define XZERO_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
-#define XZERO_NO_RETURN __attribute__((no_return))
-#define XZERO_DEPRECATED __attribute__((__deprecated__))
-#define XZERO_PURE __attribute__((pure))
-#define XZERO_PACKED __attribute__((packed))
-#define XZERO_INIT __attribute__((constructor))
-#define XZERO_FINI __attribute__((destructor))
+#define CORTEX_NO_EXPORT __attribute__((visibility("hidden")))
+#define CORTEX_EXPORT __attribute__((visibility("default")))
+#define CORTEX_IMPORT /*!*/
+#define CORTEX_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+#define CORTEX_NO_RETURN __attribute__((no_return))
+#define CORTEX_DEPRECATED __attribute__((__deprecated__))
+#define CORTEX_PURE __attribute__((pure))
+#define CORTEX_PACKED __attribute__((packed))
+#define CORTEX_INIT __attribute__((constructor))
+#define CORTEX_FINI __attribute__((destructor))
 #if !defined(likely)
 #define likely(x) __builtin_expect((x), 1)
 #endif
@@ -47,16 +47,16 @@
 #define unlikely(x) __builtin_expect((x), 0)
 #endif
 #elif defined(__MINGW32__)
-#define XZERO_NO_EXPORT /*!*/
-#define XZERO_EXPORT __declspec(export)
-#define XZERO_IMPORT __declspec(import)
-#define XZERO_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
-#define XZERO_NO_RETURN __attribute__((no_return))
-#define XZERO_DEPRECATED __attribute__((__deprecated__))
-#define XZERO_PURE __attribute__((pure))
-#define XZERO_PACKED __attribute__((packed))
-#define XZERO_INIT /*!*/
-#define XZERO_FINI /*!*/
+#define CORTEX_NO_EXPORT /*!*/
+#define CORTEX_EXPORT __declspec(export)
+#define CORTEX_IMPORT __declspec(import)
+#define CORTEX_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+#define CORTEX_NO_RETURN __attribute__((no_return))
+#define CORTEX_DEPRECATED __attribute__((__deprecated__))
+#define CORTEX_PURE __attribute__((pure))
+#define CORTEX_PACKED __attribute__((packed))
+#define CORTEX_INIT /*!*/
+#define CORTEX_FINI /*!*/
 #if !defined(likely)
 #define likely(x) (x)
 #endif
@@ -64,16 +64,16 @@
 #define unlikely(x) (x)
 #endif
 #elif defined(__MSVC__)
-#define XZERO_NO_EXPORT /*!*/
-#define XZERO_EXPORT __declspec(export)
-#define XZERO_IMPORT __declspec(import)
-#define XZERO_WARN_UNUSED_RESULT /*!*/
-#define XZERO_NO_RETURN          /*!*/
-#define XZERO_DEPRECATED         /*!*/
-#define XZERO_PURE               /*!*/
-#define XZERO_PACKED __packed    /* ? */
-#define XZERO_INIT               /*!*/
-#define XZERO_FINI               /*!*/
+#define CORTEX_NO_EXPORT /*!*/
+#define CORTEX_EXPORT __declspec(export)
+#define CORTEX_IMPORT __declspec(import)
+#define CORTEX_WARN_UNUSED_RESULT /*!*/
+#define CORTEX_NO_RETURN          /*!*/
+#define CORTEX_DEPRECATED         /*!*/
+#define CORTEX_PURE               /*!*/
+#define CORTEX_PACKED __packed    /* ? */
+#define CORTEX_INIT               /*!*/
+#define CORTEX_FINI               /*!*/
 #if !defined(likely)
 #define likely(x) (x)
 #endif
@@ -82,16 +82,16 @@
 #endif
 #else
 #warning Unknown platform
-#define XZERO_NO_EXPORT          /*!*/
-#define XZERO_EXPORT             /*!*/
-#define XZERO_IMPORT             /*!*/
-#define XZERO_WARN_UNUSED_RESULT /*!*/
-#define XZERO_NO_RETURN          /*!*/
-#define XZERO_DEPRECATED         /*!*/
-#define XZERO_PURE               /*!*/
-#define XZERO_PACKED             /*!*/
-#define XZERO_INIT               /*!*/
-#define XZERO_FINI               /*!*/
+#define CORTEX_NO_EXPORT          /*!*/
+#define CORTEX_EXPORT             /*!*/
+#define CORTEX_IMPORT             /*!*/
+#define CORTEX_WARN_UNUSED_RESULT /*!*/
+#define CORTEX_NO_RETURN          /*!*/
+#define CORTEX_DEPRECATED         /*!*/
+#define CORTEX_PURE               /*!*/
+#define CORTEX_PACKED             /*!*/
+#define CORTEX_INIT               /*!*/
+#define CORTEX_FINI               /*!*/
 #if !defined(likely)
 #define likely(x) (x)
 #endif
@@ -114,10 +114,10 @@
 /// the filename only part of __FILE__ (no leading path)
 #define __FILENAME__ ((std::strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)
 
-#if defined(XZERO_ENABLE_NOEXCEPT)
-#define XZERO_NOEXCEPT noexcept
+#if defined(CORTEX_ENABLE_NOEXCEPT)
+#define CORTEX_NOEXCEPT noexcept
 #else
-#define XZERO_NOEXCEPT /*XZERO_NOEXCEPT*/
+#define CORTEX_NOEXCEPT /*CORTEX_NOEXCEPT*/
 #endif
 
 #endif

@@ -21,7 +21,7 @@ namespace cortex {
  * While one or more caller are waiting for one event, another
  * caller can cause those waiting callers to be fired.
  */
-class XZERO_API Wakeup {
+class CORTEX_API Wakeup {
  public:
   Wakeup();
 

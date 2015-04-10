@@ -28,7 +28,7 @@ template <typename> class Future;
 template <typename> class Promise;
 
 template <typename T>
-class XZERO_API PromiseState : public RefCounted {
+class CORTEX_API PromiseState : public RefCounted {
  public:
   PromiseState();
   ~PromiseState();
@@ -49,7 +49,7 @@ class XZERO_API PromiseState : public RefCounted {
 };
 
 template <typename T>
-class XZERO_API Future {
+class CORTEX_API Future {
  public:
   Future(RefPtr<PromiseState<T>> promise_state);
   Future(const Future<T>& other);
@@ -81,7 +81,7 @@ class XZERO_API Future {
 };
 
 template <typename T>
-class XZERO_API Promise {
+class CORTEX_API Promise {
  public:
   Promise();
   Promise(const Promise<T>& other);

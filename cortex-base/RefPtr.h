@@ -16,7 +16,7 @@
 namespace cortex {
 
 template<typename T>
-class XZERO_API RefPtr {
+class CORTEX_API RefPtr {
  public:
   RefPtr();
   RefPtr(std::nullptr_t);
@@ -54,7 +54,7 @@ class XZERO_API RefPtr {
 };
 
 template<typename T, typename... Args>
-XZERO_API RefPtr<T> make_ref(Args... args);
+CORTEX_API RefPtr<T> make_ref(Args... args);
 
 // {{{ RefPtr impl
 template<typename T>

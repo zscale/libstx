@@ -28,7 +28,7 @@ class ConnectionListener;
  * This doesn't necessarily has to be HTTP, but can also be SMTP or anything
  * else.
  */
-class XZERO_API Connection {
+class CORTEX_API Connection {
  public:
   Connection(EndPoint* endpoint, Executor* executor);
   virtual ~Connection();
@@ -46,12 +46,12 @@ class XZERO_API Connection {
   /**
    * Retrieves the corresponding endpoint for this connection.
    */
-  EndPoint* endpoint() const XZERO_NOEXCEPT;
+  EndPoint* endpoint() const CORTEX_NOEXCEPT;
 
   /**
    * Retrieves the Executor that may be used for handling this connection.
    */
-  Executor* executor() const XZERO_NOEXCEPT;
+  Executor* executor() const CORTEX_NOEXCEPT;
 
   /**
    * Registers given @p listener to this connection.
@@ -126,11 +126,11 @@ class XZERO_API Connection {
   std::list<ConnectionListener*> listeners_;
 };
 
-inline EndPoint* Connection::endpoint() const XZERO_NOEXCEPT {
+inline EndPoint* Connection::endpoint() const CORTEX_NOEXCEPT {
   return endpoint_;
 }
 
-inline Executor* Connection::executor() const XZERO_NOEXCEPT {
+inline Executor* Connection::executor() const CORTEX_NOEXCEPT {
   return executor_;
 }
 
@@ -139,7 +139,7 @@ inline Executor* Connection::executor() const XZERO_NOEXCEPT {
  *
  * @see void Connector::addListener(ConnectionListener* listener)
  */
-class XZERO_API ConnectionListener {
+class CORTEX_API ConnectionListener {
  public:
   virtual ~ConnectionListener();
 

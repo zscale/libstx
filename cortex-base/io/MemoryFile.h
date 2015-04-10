@@ -16,7 +16,7 @@
 
 namespace cortex {
 
-class XZERO_API MemoryFile : public File {
+class CORTEX_API MemoryFile : public File {
  public:
   /** Initializes a "not found" file. */
   MemoryFile();
@@ -29,10 +29,10 @@ class XZERO_API MemoryFile : public File {
   ~MemoryFile();
 
   const std::string& etag() const override;
-  size_t size() const XZERO_NOEXCEPT override;
-  time_t mtime() const XZERO_NOEXCEPT override;
-  size_t inode() const XZERO_NOEXCEPT override;
-  bool isRegular() const XZERO_NOEXCEPT override;
+  size_t size() const CORTEX_NOEXCEPT override;
+  time_t mtime() const CORTEX_NOEXCEPT override;
+  size_t inode() const CORTEX_NOEXCEPT override;
+  bool isRegular() const CORTEX_NOEXCEPT override;
   int createPosixChannel(OpenFlags flags) override;
   std::unique_ptr<std::istream> createInputChannel() override;
   std::unique_ptr<std::ostream> createOutputChannel() override;

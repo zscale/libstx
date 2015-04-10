@@ -11,10 +11,10 @@
 #include <cortex-base/Defines.h>
 
 // libcortex-http exports
-#if defined(BUILD_XZERO_HTTP)
-#define XZERO_HTTP_API XZERO_EXPORT
+#if defined(BUILD_CORTEX_HTTP)
+#define CORTEX_HTTP_API CORTEX_EXPORT
 #else
-#define XZERO_HTTP_API XZERO_IMPORT
+#define CORTEX_HTTP_API CORTEX_IMPORT
 #endif
 
 #endif

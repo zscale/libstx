@@ -21,7 +21,7 @@ class Instr;
 /**
  * Defines an immutable IR value.
  */
-class XZERO_FLOW_API Value {
+class CORTEX_FLOW_API Value {
  protected:
   Value(const Value& v);
 

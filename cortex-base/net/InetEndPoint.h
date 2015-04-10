@@ -23,7 +23,7 @@ class InetConnector;
 /**
  * TCP/IP endpoint, as created by the InetConnector.
  */
-class XZERO_API InetEndPoint : public EndPoint {
+class CORTEX_API InetEndPoint : public EndPoint {
  public:
   InetEndPoint(int socket, InetConnector* connector, Scheduler* scheduler);
   ~InetEndPoint();
@@ -41,7 +41,7 @@ class XZERO_API InetEndPoint : public EndPoint {
   std::pair<IPAddress, int> localAddress() const;
 
   // EndPoint overrides
-  bool isOpen() const XZERO_NOEXCEPT override;
+  bool isOpen() const CORTEX_NOEXCEPT override;
   void close() override;
   bool isBlocking() const override;
   void setBlocking(bool enable) override;
@@ -57,8 +57,8 @@ class XZERO_API InetEndPoint : public EndPoint {
   void setIdleTimeout(TimeSpan timeout) override;
 
  private:
-  void onReadable() XZERO_NOEXCEPT;
-  void onWritable() XZERO_NOEXCEPT;
+  void onReadable() CORTEX_NOEXCEPT;
+  void onWritable() CORTEX_NOEXCEPT;
 
   void fillable();
   void flushable();

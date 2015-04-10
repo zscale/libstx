@@ -20,7 +20,7 @@ class SslConnector;
 /**
  * An SSL context (certificate & keyfile).
  */
-class XZERO_API SslContext {
+class CORTEX_API SslContext {
  public:
   SslContext(SslConnector* connector,
              const std::string& crtFile,
@@ -57,7 +57,7 @@ inline const std::vector<std::string>& SslContext::dnsNames() const {
 }
 
 // some helper
-XZERO_API const std::error_category& ssl_error_category();
+CORTEX_API const std::error_category& ssl_error_category();
 
 } // namespace cortex
 

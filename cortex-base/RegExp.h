@@ -19,7 +19,7 @@ namespace cortex {
 
 class BufferRef;
 
-class XZERO_API RegExp {
+class CORTEX_API RegExp {
  private:
   std::string pattern_;
   pcre* re_;
@@ -65,7 +65,7 @@ class XZERO_API RegExp {
   }
 };
 
-class XZERO_API RegExpContext {
+class CORTEX_API RegExpContext {
  public:
   RegExpContext();
   virtual ~RegExpContext();

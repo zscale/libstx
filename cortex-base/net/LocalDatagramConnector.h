@@ -24,7 +24,7 @@ namespace cortex {
  * @see DatagramConnector, DatagramEndPoint
  * @see UdpConnector, UdpEndPoint
  */
-class XZERO_API LocalDatagramConnector : public DatagramConnector {
+class CORTEX_API LocalDatagramConnector : public DatagramConnector {
  public:
   /**
    * Initializes the UDP connector.

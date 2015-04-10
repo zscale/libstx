@@ -27,7 +27,7 @@ typedef uint64_t Value;
 class Runner;
 class NativeCallback;
 
-class XZERO_FLOW_API Runtime {
+class CORTEX_FLOW_API Runtime {
  public:
   virtual ~Runtime();
 

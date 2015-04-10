@@ -28,7 +28,7 @@ class MemoryMap;
  * @see LocalFile, MemoryFile
  * @see FileRepository
  */
-class XZERO_API File {
+class CORTEX_API File {
  public:
   File(const File&) = delete;
   File& operator=(const File&) = delete;
@@ -44,10 +44,10 @@ class XZERO_API File {
 
   virtual const std::string& etag() const = 0;
 
-  virtual size_t size() const XZERO_NOEXCEPT = 0;
-  virtual time_t mtime() const XZERO_NOEXCEPT = 0;
-  virtual size_t inode() const XZERO_NOEXCEPT = 0;
-  virtual bool isRegular() const XZERO_NOEXCEPT = 0;
+  virtual size_t size() const CORTEX_NOEXCEPT = 0;
+  virtual time_t mtime() const CORTEX_NOEXCEPT = 0;
+  virtual size_t inode() const CORTEX_NOEXCEPT = 0;
+  virtual bool isRegular() const CORTEX_NOEXCEPT = 0;
 
   /**
    * Flags that can be passed when creating a system file handle.
@@ -98,7 +98,7 @@ class XZERO_API File {
   /**
    * Retrieves errno-compatible error code for the validity of the entity.
    */
-  int errorCode() const XZERO_NOEXCEPT { return errno_; }
+  int errorCode() const CORTEX_NOEXCEPT { return errno_; }
 
  private:
   std::string path_;
@@ -110,10 +110,10 @@ class XZERO_API File {
   mutable std::string lastModified_;
 };
 
-XZERO_API File::OpenFlags operator|(File::OpenFlags a, File::OpenFlags b);
+CORTEX_API File::OpenFlags operator|(File::OpenFlags a, File::OpenFlags b);
 
 // {{{ inlines
-XZERO_API inline File::OpenFlags operator|(File::OpenFlags a,
+CORTEX_API inline File::OpenFlags operator|(File::OpenFlags a,
                                            File::OpenFlags b) {
   return (File::OpenFlags) ((unsigned) a | (unsigned) b);
 }

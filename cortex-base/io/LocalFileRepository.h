@@ -19,7 +19,7 @@ namespace cortex {
 class MimeTypes;
 class LocalFile;
 
-class XZERO_API LocalFileRepository : public FileRepository {
+class CORTEX_API LocalFileRepository : public FileRepository {
  public:
   /**
    * Initializes local file repository.

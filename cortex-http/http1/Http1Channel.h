@@ -25,8 +25,8 @@ class Http1Channel : public cortex::HttpChannel {
               HttpOutputCompressor* outputCompressor);
   ~Http1Channel();
 
-  bool isPersistent() const XZERO_NOEXCEPT { return persistent_; }
-  void setPersistent(bool value) XZERO_NOEXCEPT { persistent_ = value; }
+  bool isPersistent() const CORTEX_NOEXCEPT { return persistent_; }
+  void setPersistent(bool value) CORTEX_NOEXCEPT { persistent_ = value; }
 
   virtual void reset();
 

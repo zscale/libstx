@@ -21,7 +21,7 @@ namespace cortex {
  * Logging target implementations (such as a console logger or syslog logger)
  * must implement this interface.
  */
-class XZERO_API LogTarget {
+class CORTEX_API LogTarget {
  public:
   virtual ~LogTarget() {}
 

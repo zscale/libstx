@@ -19,7 +19,7 @@ class WallClock;
 /**
  * API to generate an HTTP conform Date response header field value.
  */
-class XZERO_HTTP_API HttpDateGenerator {
+class CORTEX_HTTP_API HttpDateGenerator {
  public:
   explicit HttpDateGenerator(WallClock* clock);
 

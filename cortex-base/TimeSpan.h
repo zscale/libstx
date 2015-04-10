@@ -20,7 +20,7 @@ namespace cortex {
 /**
  * @brief High resolution time span.
  */
-class XZERO_API TimeSpan {
+class CORTEX_API TimeSpan {
  public:
   static constexpr const uint64_t MicrosPerSecond = 1000000;
   static constexpr const uint64_t MillisPerSecond = 1000;
@@ -130,15 +130,15 @@ inline TimeSpan operator-(const TimeSpan& a, const TimeSpan& b) {
   return TimeSpan(a() - b());
 }
 
-XZERO_API Buffer& operator<<(Buffer& buf, const TimeSpan& ts);
+CORTEX_API Buffer& operator<<(Buffer& buf, const TimeSpan& ts);
 
 }  // namespace cortex
 
 namespace std {
 template <> class numeric_limits<cortex::TimeSpan> {
 public:
-  static XZERO_API cortex::TimeSpan max();
-  static XZERO_API cortex::TimeSpan min();
+  static CORTEX_API cortex::TimeSpan max();
+  static CORTEX_API cortex::TimeSpan min();
 };
 }
 

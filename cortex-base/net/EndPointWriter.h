@@ -28,7 +28,7 @@ class EndPoint;
  * @todo 2 consecutive buffer writes should merge.
  * @todo consider managing its own BufferPool
  */
-class XZERO_API EndPointWriter {
+class CORTEX_API EndPointWriter {
  public:
   EndPointWriter();
   ~EndPointWriter();
@@ -68,14 +68,14 @@ class XZERO_API EndPointWriter {
 };
 
 // {{{ Chunk API
-class XZERO_API EndPointWriter::Chunk {
+class CORTEX_API EndPointWriter::Chunk {
  public:
   virtual ~Chunk() {}
 
   virtual bool transferTo(EndPoint* sink) = 0;
 };
 
-class XZERO_API EndPointWriter::BufferChunk : public Chunk {
+class CORTEX_API EndPointWriter::BufferChunk : public Chunk {
  public:
   explicit BufferChunk(Buffer&& buffer)
       : data_(std::forward<Buffer>(buffer)), offset_(0) {}
@@ -93,7 +93,7 @@ class XZERO_API EndPointWriter::BufferChunk : public Chunk {
   size_t offset_;
 };
 
-class XZERO_API EndPointWriter::BufferRefChunk : public Chunk {
+class CORTEX_API EndPointWriter::BufferRefChunk : public Chunk {
  public:
   explicit BufferRefChunk(const BufferRef& buffer)
       : data_(buffer), offset_(0) {}
@@ -105,7 +105,7 @@ class XZERO_API EndPointWriter::BufferRefChunk : public Chunk {
   size_t offset_;
 };
 
-class XZERO_API EndPointWriter::FileChunk : public Chunk {
+class CORTEX_API EndPointWriter::FileChunk : public Chunk {
  public:
   explicit FileChunk(FileRef&& ref)
       : file_(std::forward<FileRef>(ref)) {}

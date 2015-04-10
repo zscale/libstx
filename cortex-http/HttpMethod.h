@@ -24,7 +24,7 @@ enum class HttpMethod {
   CONNECT,
 };
 
-XZERO_HTTP_API std::string to_string(HttpMethod value);
-XZERO_HTTP_API HttpMethod to_method(const std::string& value);
+CORTEX_HTTP_API std::string to_string(HttpMethod value);
+CORTEX_HTTP_API HttpMethod to_method(const std::string& value);
 
 } // namespace cortex

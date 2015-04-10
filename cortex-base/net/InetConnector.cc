@@ -154,7 +154,7 @@ void InetConnector::listen(int backlog) {
     RAISE_ERRNO(errno);
 }
 
-bool InetConnector::isOpen() const XZERO_NOEXCEPT {
+bool InetConnector::isOpen() const CORTEX_NOEXCEPT {
   return socket_ >= 0;
 }
 
@@ -169,7 +169,7 @@ InetConnector::~InetConnector() {
   }
 }
 
-int InetConnector::handle() const XZERO_NOEXCEPT {
+int InetConnector::handle() const CORTEX_NOEXCEPT {
   return socket_;
 }
 
@@ -177,7 +177,7 @@ void InetConnector::setSocket(int socket) {
   socket_ = socket;
 }
 
-size_t InetConnector::backlog() const XZERO_NOEXCEPT {
+size_t InetConnector::backlog() const CORTEX_NOEXCEPT {
   return backlog_;
 }
 
@@ -332,11 +332,11 @@ void InetConnector::setReuseAddr(bool enable) {
   }
 }
 
-size_t InetConnector::multiAcceptCount() const XZERO_NOEXCEPT {
+size_t InetConnector::multiAcceptCount() const CORTEX_NOEXCEPT {
   return multiAcceptCount_;
 }
 
-void InetConnector::setMultiAcceptCount(size_t value) XZERO_NOEXCEPT {
+void InetConnector::setMultiAcceptCount(size_t value) CORTEX_NOEXCEPT {
   multiAcceptCount_ = value;
 }
 
@@ -370,7 +370,7 @@ void InetConnector::notifyOnEvent() {
       std::bind(&InetConnector::onConnect, this));
 }
 
-bool InetConnector::isStarted() const XZERO_NOEXCEPT {
+bool InetConnector::isStarted() const CORTEX_NOEXCEPT {
   return isStarted_;
 }
 

@@ -17,7 +17,7 @@
 
 namespace cortex {
 
-class XZERO_API StringUtil {
+class CORTEX_API StringUtil {
 public:
   /**
    * Stringify the provided value

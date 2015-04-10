@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(cortex-http CXX)
-set(XZERO_HTTP_VERSION "0.11.0-dev")
+set(CORTEX_HTTP_VERSION "0.11.0-dev")
 
 include(CortexCommon)
 
@@ -48,12 +48,12 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/sysconfig.h.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/sysconfig.h)
 
-set(XZERO_HTTP_LIBRARIES cortex-base)
+set(CORTEX_HTTP_LIBRARIES cortex-base)
 
 # libcortex-http.a
 add_library(cortex-http STATIC ${cortex_http_SRC})
-#set_target_properties(cortex-http PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO_HTTP=1")
-target_link_libraries(cortex-http ${XZERO_HTTP_LIBRARIES})
+#set_target_properties(cortex-http PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_CORTEX_HTTP=1")
+target_link_libraries(cortex-http ${CORTEX_HTTP_LIBRARIES})
 install(TARGETS cortex-http DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 # headers

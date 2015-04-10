@@ -19,7 +19,7 @@ namespace cortex {
 /**
  * Represents a parsed URI.
  */
-class XZERO_API Uri {
+class CORTEX_API Uri {
 public:
   typedef std::vector<std::pair<std::string, std::string>> ParamList;
 

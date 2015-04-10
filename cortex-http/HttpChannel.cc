@@ -207,7 +207,7 @@ HttpResponseInfo HttpChannel::commitInline() {
                         response_->trailers());
 
   if (!info.headers().contains("Server"))
-    info.headers().push_back("Server", "cortex-base/" XZERO_HTTP_VERSION);
+    info.headers().push_back("Server", "cortex-base/" CORTEX_HTTP_VERSION);
 
   return info;
 }

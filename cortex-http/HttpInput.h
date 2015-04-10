@@ -19,7 +19,7 @@ class HttpInputListener;
 /**
  * Abstract HTTP message body consumer API.
  */
-class XZERO_HTTP_API HttpInput {
+class CORTEX_HTTP_API HttpInput {
  public:
   HttpInput();
   virtual ~HttpInput();
@@ -51,7 +51,7 @@ class XZERO_HTTP_API HttpInput {
   /**
    * Retrieves the HttpInputListener that is being associated with this input.
    */
-  HttpInputListener* listener() const XZERO_NOEXCEPT { return listener_; }
+  HttpInputListener* listener() const CORTEX_NOEXCEPT { return listener_; }
 
   /**
    * Internally invoked to pass some input chunk to this layer.

@@ -21,7 +21,7 @@ namespace cortex {
 /**
  * DNS client API.
  */
-class XZERO_API DnsClient {
+class CORTEX_API DnsClient {
  public:
   /** Retrieves all IPv4 addresses for given DNS name.
    *

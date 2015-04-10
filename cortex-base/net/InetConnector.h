@@ -32,7 +32,7 @@ class SslEndPoint;
 /**
  * TCP/IP Internet Connector API
  */
-class XZERO_API InetConnector : public Connector {
+class CORTEX_API InetConnector : public Connector {
  public:
   /**
    * Initializes this connector.
@@ -79,7 +79,7 @@ class XZERO_API InetConnector : public Connector {
 
   ~InetConnector();
 
-  Scheduler* scheduler() const XZERO_NOEXCEPT;
+  Scheduler* scheduler() const CORTEX_NOEXCEPT;
 
   /**
    * Opens this connector by binding to the given @p ipaddress and @p port.
@@ -98,7 +98,7 @@ class XZERO_API InetConnector : public Connector {
   /**
    * Tests whether this connector is open.
    */
-  bool isOpen() const XZERO_NOEXCEPT;
+  bool isOpen() const CORTEX_NOEXCEPT;
 
   /**
    * Implicitely stops and finally closes this connnector.
@@ -108,7 +108,7 @@ class XZERO_API InetConnector : public Connector {
   /**
    * Retrieves the underlying system socket handle.
    */
-  int handle() const XZERO_NOEXCEPT;
+  int handle() const CORTEX_NOEXCEPT;
 
   /**
    * Returns the IP address family, such as @c IPAddress::V4 or @c IPAddress::V6.
@@ -120,7 +120,7 @@ class XZERO_API InetConnector : public Connector {
    */
   void setSocket(int socket);
 
-  size_t backlog() const XZERO_NOEXCEPT;
+  size_t backlog() const CORTEX_NOEXCEPT;
   void setBacklog(size_t enable);
 
   /** Tests wether this connector is blocking on accepting new clients. */
@@ -181,17 +181,17 @@ class XZERO_API InetConnector : public Connector {
   /**
    * Retrieves the number of maximum attempts to accept a new clients in a row.
    */
-  size_t multiAcceptCount() const XZERO_NOEXCEPT;
+  size_t multiAcceptCount() const CORTEX_NOEXCEPT;
 
   /**
    * Sets the number of attempts to accept a new client in a row.
    */
-  void setMultiAcceptCount(size_t value) XZERO_NOEXCEPT;
+  void setMultiAcceptCount(size_t value) CORTEX_NOEXCEPT;
 
   /**
    * Retrieves the timespan a connection may be idle within an I/O operation.
    */
-  TimeSpan idleTimeout() const XZERO_NOEXCEPT;
+  TimeSpan idleTimeout() const CORTEX_NOEXCEPT;
 
   /**
    * Sets the timespan a connection may be idle within an I/O operation.
@@ -203,7 +203,7 @@ class XZERO_API InetConnector : public Connector {
    *
    * A value of 0 means to use the system default.
    */
-  TimeSpan tcpFinTimeout() const XZERO_NOEXCEPT;
+  TimeSpan tcpFinTimeout() const CORTEX_NOEXCEPT;
 
   /**
    * Sets the timespan to leave a closing client connection in FIN_WAIT2 state.
@@ -213,7 +213,7 @@ class XZERO_API InetConnector : public Connector {
   void setTcpFinTimeout(TimeSpan value);
 
   void start() override;
-  bool isStarted() const XZERO_NOEXCEPT override;
+  bool isStarted() const CORTEX_NOEXCEPT override;
   void stop() override;
   std::list<RefPtr<EndPoint>> connectedEndPoints() override;
 
@@ -288,15 +288,15 @@ class XZERO_API InetConnector : public Connector {
   bool isStarted_;
 };
 
-inline Scheduler* InetConnector::scheduler() const XZERO_NOEXCEPT {
+inline Scheduler* InetConnector::scheduler() const CORTEX_NOEXCEPT {
   return scheduler_;
 }
 
-inline TimeSpan InetConnector::idleTimeout() const XZERO_NOEXCEPT {
+inline TimeSpan InetConnector::idleTimeout() const CORTEX_NOEXCEPT {
   return idleTimeout_;
 }
 
-inline TimeSpan InetConnector::tcpFinTimeout() const XZERO_NOEXCEPT {
+inline TimeSpan InetConnector::tcpFinTimeout() const CORTEX_NOEXCEPT {
   return idleTimeout_;
 }
 

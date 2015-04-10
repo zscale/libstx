@@ -33,7 +33,7 @@ enum class HttpChannelState {
   DONE,     //!< handling request done
 };
 
-XZERO_HTTP_API std::string to_string(HttpChannelState state);
+CORTEX_HTTP_API std::string to_string(HttpChannelState state);
 
 /**
  * Semantic HTTP message exchange layer.
@@ -42,7 +42,7 @@ XZERO_HTTP_API std::string to_string(HttpChannelState state);
  *
  * @see HttpTransport
  */
-class XZERO_HTTP_API HttpChannel : public HttpListener {
+class CORTEX_HTTP_API HttpChannel : public HttpListener {
  public:
   HttpChannel(HttpTransport* transport,
               const HttpHandler& handler,

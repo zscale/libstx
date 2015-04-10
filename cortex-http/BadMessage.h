@@ -13,7 +13,7 @@
 
 namespace cortex {
 
-class XZERO_HTTP_API HttpStatusCategory : public std::error_category {
+class CORTEX_HTTP_API HttpStatusCategory : public std::error_category {
  public:
   static std::error_category& get();
 
@@ -24,13 +24,13 @@ class XZERO_HTTP_API HttpStatusCategory : public std::error_category {
 /**
  * Helper exception that is thrown on semantic message errors by HttpChannel.
  */
-class XZERO_HTTP_API BadMessage : public RuntimeError {
+class CORTEX_HTTP_API BadMessage : public RuntimeError {
  public:
   explicit BadMessage(HttpStatus code);
   BadMessage(HttpStatus code, const std::string& reason);
   explicit BadMessage(RuntimeError& v) : RuntimeError(v) {}
 
-  HttpStatus httpCode() const XZERO_NOEXCEPT {
+  HttpStatus httpCode() const CORTEX_NOEXCEPT {
     return static_cast<HttpStatus>(code().value());
   }
 };

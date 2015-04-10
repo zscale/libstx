@@ -100,7 +100,7 @@ enum class HexDumpMode {
 };
 
 template <typename T>
-class XZERO_API BufferBase {
+class CORTEX_API BufferBase {
  public:
   typedef typename BufferTraits<T>::value_type value_type;
   typedef typename BufferTraits<T>::reference_type reference_type;
@@ -269,7 +269,7 @@ bool operator!=(PodType (&b)[N], const BufferBase<T>& a) {
  * buffer reference owner has to make sure the underlying buffer exists
  * during the whole lifetime of this buffer reference.
  */
-class XZERO_API BufferRef : public BufferBase<char*> {
+class CORTEX_API BufferRef : public BufferBase<char*> {
  public:
   /** Initializes an empty buffer reference. */
   BufferRef() : BufferBase<char*>() {}
@@ -328,7 +328,7 @@ class XZERO_API BufferRef : public BufferBase<char*> {
       const void* bytes, std::size_t length,
       HexDumpMode mode = HexDumpMode::InlineWide);
 
-  class XZERO_API reverse_iterator {  // {{{
+  class CORTEX_API reverse_iterator {  // {{{
    private:
     BufferRef* buf_;
     int cur_;
@@ -385,7 +385,7 @@ inline void mutableEnsure(void* self, size_t size);
  *write to.
  */
 template <void (*ensure)(void*, size_t)>
-class XZERO_API MutableBuffer : public BufferRef {
+class CORTEX_API MutableBuffer : public BufferRef {
  protected:
   size_t capacity_;
 
@@ -446,7 +446,7 @@ class XZERO_API MutableBuffer : public BufferRef {
  *    printf("result: '%s'\n", obj.c_str());
  * @endcode
  */
-class XZERO_API FixedBuffer : public MutableBuffer<immutableEnsure> {
+class CORTEX_API FixedBuffer : public MutableBuffer<immutableEnsure> {
  public:
   FixedBuffer();
   FixedBuffer(const FixedBuffer& v);
@@ -468,7 +468,7 @@ class XZERO_API FixedBuffer : public MutableBuffer<immutableEnsure> {
  *it is the main goal
  * of some certain linear information to share.
  */
-class XZERO_API Buffer : public MutableBuffer<mutableEnsure> {
+class CORTEX_API Buffer : public MutableBuffer<mutableEnsure> {
  public:
   enum { CHUNK_SIZE = 4096 };
 
@@ -494,7 +494,7 @@ class XZERO_API Buffer : public MutableBuffer<mutableEnsure> {
 
   void swap(Buffer& other);
 
-  size_t mark() const XZERO_NOEXCEPT;
+  size_t mark() const CORTEX_NOEXCEPT;
   void setMark(size_t value);
 
   BufferSlice slice(size_t offset = 0) const;
@@ -514,7 +514,7 @@ class XZERO_API Buffer : public MutableBuffer<mutableEnsure> {
 // {{{ BufferSlice
 /** Holds a reference to a slice (region) of a managed mutable buffer.
  */
-class XZERO_API BufferSlice : public BufferBase<Buffer> {
+class CORTEX_API BufferSlice : public BufferBase<Buffer> {
  public:
   BufferSlice();
   BufferSlice(Buffer& buffer, size_t offset, size_t _size);
@@ -538,30 +538,30 @@ class XZERO_API BufferSlice : public BufferBase<Buffer> {
 };
 // }}}
 // {{{ free functions API
-XZERO_API Buffer& operator<<(Buffer& b, Buffer::value_type v);
-XZERO_API Buffer& operator<<(Buffer& b, int v);
-XZERO_API Buffer& operator<<(Buffer& b, long v);
-XZERO_API Buffer& operator<<(Buffer& b, long long v);
-XZERO_API Buffer& operator<<(Buffer& b, unsigned v);
-XZERO_API Buffer& operator<<(Buffer& b, unsigned long v);
-XZERO_API Buffer& operator<<(Buffer& b, unsigned long long v);
-XZERO_API Buffer& operator<<(Buffer& b, const Buffer& v);
-XZERO_API Buffer& operator<<(Buffer& b, const BufferRef& v);
-XZERO_API Buffer& operator<<(Buffer& b, const std::string& v);
-XZERO_API Buffer& operator<<(Buffer& b, typename Buffer::value_type* v);
+CORTEX_API Buffer& operator<<(Buffer& b, Buffer::value_type v);
+CORTEX_API Buffer& operator<<(Buffer& b, int v);
+CORTEX_API Buffer& operator<<(Buffer& b, long v);
+CORTEX_API Buffer& operator<<(Buffer& b, long long v);
+CORTEX_API Buffer& operator<<(Buffer& b, unsigned v);
+CORTEX_API Buffer& operator<<(Buffer& b, unsigned long v);
+CORTEX_API Buffer& operator<<(Buffer& b, unsigned long long v);
+CORTEX_API Buffer& operator<<(Buffer& b, const Buffer& v);
+CORTEX_API Buffer& operator<<(Buffer& b, const BufferRef& v);
+CORTEX_API Buffer& operator<<(Buffer& b, const std::string& v);
+CORTEX_API Buffer& operator<<(Buffer& b, typename Buffer::value_type* v);
 
 template <typename PodType, size_t N>
-XZERO_API Buffer& operator<<(Buffer& b, PodType (&v)[N]);
+CORTEX_API Buffer& operator<<(Buffer& b, PodType (&v)[N]);
 
-XZERO_API Buffer& operator+=(Buffer& b, const BufferRef& v);
-XZERO_API Buffer& operator+=(Buffer& b, const std::string& v);
-XZERO_API Buffer& operator+=(Buffer& b, Buffer::value_type v);
+CORTEX_API Buffer& operator+=(Buffer& b, const BufferRef& v);
+CORTEX_API Buffer& operator+=(Buffer& b, const std::string& v);
+CORTEX_API Buffer& operator+=(Buffer& b, Buffer::value_type v);
 
 template <typename PodType, size_t N>
-XZERO_API Buffer& operator+=(Buffer& b, PodType (&v)[N]);
+CORTEX_API Buffer& operator+=(Buffer& b, PodType (&v)[N]);
 // }}}
 // {{{ free functions (concatenation) API
-XZERO_API Buffer operator+(const BufferRef& a, const BufferRef& b);
+CORTEX_API Buffer operator+(const BufferRef& a, const BufferRef& b);
 // }}}
 //@}
 
@@ -1670,7 +1670,7 @@ inline void Buffer::swap(cortex::Buffer& other) {
   std::swap(mark_, other.mark_);
 }
 
-inline size_t Buffer::mark() const XZERO_NOEXCEPT {
+inline size_t Buffer::mark() const CORTEX_NOEXCEPT {
   return mark_;
 }
 
@@ -1766,7 +1766,7 @@ inline void swap(cortex::BufferRef& left, cortex::BufferRef& right) {
 namespace cortex {
   // Fowler / Noll / Vo (FNV) Hash-Implementation
   template <typename T>
-  uint32_t _hash(const T& array) XZERO_NOEXCEPT {
+  uint32_t _hash(const T& array) CORTEX_NOEXCEPT {
     uint32_t result = 2166136261u;
 
     for (auto value : array) {
@@ -1784,7 +1784,7 @@ struct hash<cortex::BufferSlice> {
   typedef cortex::BufferSlice argument_type;
   typedef uint32_t result_type;
 
-  result_type operator()(const argument_type& value) const XZERO_NOEXCEPT {
+  result_type operator()(const argument_type& value) const CORTEX_NOEXCEPT {
     return cortex::_hash(value);
   }
 };
@@ -1794,7 +1794,7 @@ struct hash<cortex::BufferRef> {
   typedef cortex::BufferRef argument_type;
   typedef uint32_t result_type;
 
-  result_type operator()(const argument_type& value) const XZERO_NOEXCEPT {
+  result_type operator()(const argument_type& value) const CORTEX_NOEXCEPT {
     return cortex::_hash(value);
   }
 };
@@ -1804,7 +1804,7 @@ struct hash<cortex::Buffer> {
   typedef cortex::Buffer argument_type;
   typedef uint32_t result_type;
 
-  result_type operator()(const argument_type& value) const XZERO_NOEXCEPT {
+  result_type operator()(const argument_type& value) const CORTEX_NOEXCEPT {
     return cortex::_hash(value);
   }
 };

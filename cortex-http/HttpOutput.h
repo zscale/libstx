@@ -23,7 +23,7 @@ class Filter;
 /**
  * Represents the HTTP response body producer API.
  */
-class XZERO_HTTP_API HttpOutput {
+class CORTEX_HTTP_API HttpOutput {
  public:
   explicit HttpOutput(HttpChannel* channel);
   virtual ~HttpOutput();
@@ -96,7 +96,7 @@ class XZERO_HTTP_API HttpOutput {
    */
   virtual void completed();
 
-  size_t size() const XZERO_NOEXCEPT { return size_; }
+  size_t size() const CORTEX_NOEXCEPT { return size_; }
 
  private:
   HttpChannel* channel_;

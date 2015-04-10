@@ -24,7 +24,7 @@ class Connector;
 /**
  * General purpose Server.
  */
-class XZERO_API Server {
+class CORTEX_API Server {
  public:
   /**
    * Minimally initializes a Server without any listener.

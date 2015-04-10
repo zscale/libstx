@@ -16,7 +16,7 @@
 
 namespace cortex {
 
-struct XZERO_API CustomData {
+struct CORTEX_API CustomData {
   CustomData(const CustomData&) = delete;
   CustomData& operator=(const CustomData&) = delete;
   CustomData() = default;

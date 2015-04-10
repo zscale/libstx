@@ -11,10 +11,10 @@
 #include <cortex-base/Defines.h>
 
 // libcortex-flow exports
-#if defined(BUILD_XZERO_FLOW)
-#define XZERO_FLOW_API XZERO_EXPORT
+#if defined(BUILD_CORTEX_FLOW)
+#define CORTEX_FLOW_API CORTEX_EXPORT
 #else
-#define XZERO_FLOW_API XZERO_IMPORT
+#define CORTEX_FLOW_API CORTEX_IMPORT
 #endif
 
 

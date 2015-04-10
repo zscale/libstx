@@ -39,7 +39,7 @@ namespace vm {
 class Program;
 }
 
-class XZERO_FLOW_API TargetCodeGenerator : public InstructionVisitor {
+class CORTEX_FLOW_API TargetCodeGenerator : public InstructionVisitor {
  public:
   TargetCodeGenerator();
   ~TargetCodeGenerator();

@@ -11,7 +11,7 @@
 #include <string.h>
 #include <glob.h>
 
-//#define TRACE(level, msg...) XZERO_DEBUG("FlowLexer", (level), msg)
+//#define TRACE(level, msg...) CORTEX_DEBUG("FlowLexer", (level), msg)
 #define TRACE(level, msg...) do {} while (0)
 
 namespace cortex {

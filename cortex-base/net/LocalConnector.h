@@ -44,13 +44,13 @@ class LocalEndPoint : public ByteArrayEndPoint {
  *
  * @note The LocalConnector is always performing single threaded blocking I/O.
  */
-class XZERO_API LocalConnector : public Connector {
+class CORTEX_API LocalConnector : public Connector {
  public:
   explicit LocalConnector(Executor* executor = nullptr);
   ~LocalConnector();
 
   void start() override;
-  bool isStarted() const XZERO_NOEXCEPT override;
+  bool isStarted() const CORTEX_NOEXCEPT override;
   void stop() override;
   std::list<RefPtr<EndPoint>> connectedEndPoints() override;
 
@@ -74,7 +74,7 @@ class XZERO_API LocalConnector : public Connector {
   std::list<RefPtr<LocalEndPoint>> connectedEndPoints_;
 };
 
-inline bool LocalConnector::isStarted() const XZERO_NOEXCEPT {
+inline bool LocalConnector::isStarted() const CORTEX_NOEXCEPT {
   return isStarted_;
 }
 
