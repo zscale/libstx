@@ -57,6 +57,16 @@ class XZERO_FLOW_API Program {
   int indexOf(const Handler* handler) const;
   Handler* findHandler(const std::string& name) const;
 
+  /**
+   * Convenience method to run a handler.
+   *
+   * @param handlerName The handler's name that is going to be run.
+   * @param u1 Opaque userdata value 1.
+   * @param u2 Opaque userdata value 2.
+   */
+  bool run(const std::string& handlerName,
+      void* u1 = nullptr, void* u2 = nullptr);
+
   bool link(Runtime* runtime);
 
   void dump();
