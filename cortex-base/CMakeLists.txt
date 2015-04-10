@@ -202,8 +202,8 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 
 # test-base
 file(GLOB_RECURSE cortex_base_test_SRC "*-test.cc")
-add_executable(test-base ../test-main.cc ${cortex_base_test_SRC})
-target_link_libraries(test-base cortex-base gtest)
+add_executable(test-base ${cortex_base_test_SRC})
+target_link_libraries(test-base cortex-base gtest gtest_main)
 
 # pkg-config target
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cortex-base.pc.cmake
