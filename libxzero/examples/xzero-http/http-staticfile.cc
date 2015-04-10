@@ -34,7 +34,7 @@ int main(int argc, const char* argv[]) {
      .defineIPAddress("bind", 0, "<IP>", "Bind listener to given IP.",
          xzero::IPAddress("0.0.0.0"))
      .defineString("mimetypes", 0, "<PATH>", "Path to mime.types file.",
-         "/etc/mime.types")
+         "/etc/mime.types", nullptr)
      .defineNumber("port", 'p', "<PORT>", "Port number to listen to.",
          3000)
      .defineNumber("backlog", 0, "<COUNT>", "Listener backlog.",
@@ -46,7 +46,7 @@ int main(int argc, const char* argv[]) {
          "You can use it, but it will not produce or cause you anything "
          "but a word-wrapped help text in the help output. "
          "Have fun reading.",
-         "rather long")
+         "rather long", nullptr)
      .defineBool("tcp-nodelay", 0, "Enables TCP_NODELAY.")
      .defineBool("tcp-quickack", 0, "Enables TCP_QUICKACK.")
      .enableParameters("<garbage>", "Defines a list of unparsed arguments.")

@@ -38,7 +38,7 @@ using namespace xzero;
 
 TEST(CLI, defaults) {
   CLI cli;
-  cli.defineString("some", 's', "<text>", "Something", "some value");
+  cli.defineString("some", 's', "<text>", "Something", "some value", nullptr);
   cli.defineBool("bool", 'b', "some boolean");
 
   Flags flags = cli.evaluate({});
