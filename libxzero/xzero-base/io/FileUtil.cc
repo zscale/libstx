@@ -218,8 +218,42 @@ void FileUtil::mkdir(const std::string& path, int mode) {
     RAISE_ERRNO(errno);
 }
 
-void FileUtil::mkdir_p(const std::string& path, int mode) {
-  RAISE_STATUS(NotImplementedError);
+void FileUtil::mkdir_p(const std::string& dirname, int mode) {
+  char const* begin = dirname.c_str();
+  char const* cur = begin;
+
+  if (exists(dirname)) {
+    if (isDirectory(dirname)) {
+      return;
+    } else {
+      RAISE(
+          IOError,
+          "file '%s' exists but is not a directory",
+          dirname.c_str());
+    }
+  }
+
+  for (cur = begin; *cur == '/'; ++cur);
+
+  while ((cur = strchr(cur, '/'))) {
+    std::string path(begin, cur);
+    cur++;
+
+    if (exists(path)) {
+      if (isDirectory(path)) {
+        continue;
+      } else {
+        RAISE(
+            IOError,
+            "file '%s' exists but is not a directory",
+            path.c_str());
+      }
+    }
+
+    mkdir(path);
+  }
+
+  mkdir(dirname);
 }
 
 void FileUtil::rm(const std::string& path) {
