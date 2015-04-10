@@ -68,8 +68,8 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 
 # test-http
 file(GLOB_RECURSE cortex_http_test_SRC "*-test.cc")
-add_executable(test-http ../test-main.cc ${cortex_http_test_SRC})
-target_link_libraries(test-http cortex-http cortex-base gtest)
+add_executable(test-http ${cortex_http_test_SRC})
+target_link_libraries(test-http cortex-http cortex-base gtest gtest_main)
 
 # pkg-config target
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cortex-http.pc.cmake

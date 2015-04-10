@@ -77,8 +77,8 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 
 # test-flow
 file(GLOB_RECURSE cortex_flow_test_SRC "*-test.cc")
-add_executable(test-flow ${CMAKE_CURRENT_SOURCE_DIR}/../test-main.cc ${cortex_flow_test_SRC})
-target_link_libraries(test-flow cortex-flow cortex-base gtest)
+add_executable(test-flow ${cortex_flow_test_SRC})
+target_link_libraries(test-flow cortex-flow cortex-base gtest gtest_main)
 
 # pkg-config target
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cortex-flow.pc.cmake
