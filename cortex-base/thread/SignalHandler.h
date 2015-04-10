@@ -14,7 +14,7 @@
 namespace cortex {
 namespace thread {
 
-class XZERO_API SignalHandler {
+class CORTEX_API SignalHandler {
  public:
   static void ignore(int signum);
 

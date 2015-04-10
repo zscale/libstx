@@ -21,7 +21,7 @@ namespace cortex {
 /**
  * Represents an HTTP request message.
  */
-class XZERO_HTTP_API HttpRequest {
+class CORTEX_HTTP_API HttpRequest {
  public:
   HttpRequest();
   explicit HttpRequest(std::unique_ptr<HttpInput>&& input);
@@ -30,33 +30,33 @@ class XZERO_HTTP_API HttpRequest {
               std::unique_ptr<HttpInput>&& input);
 
 
-  HttpMethod method() const XZERO_NOEXCEPT { return method_; }
-  const std::string& unparsedMethod() const XZERO_NOEXCEPT { return unparsedMethod_; }
+  HttpMethod method() const CORTEX_NOEXCEPT { return method_; }
+  const std::string& unparsedMethod() const CORTEX_NOEXCEPT { return unparsedMethod_; }
   void setMethod(const std::string& value);
 
   bool setUri(const std::string& uri);
-  const std::string& unparsedUri() const XZERO_NOEXCEPT { return unparsedUri_; }
-  const std::string& path() const XZERO_NOEXCEPT { return path_; }
-  const std::string& query() const XZERO_NOEXCEPT { return query_; }
-  int directoryDepth() const XZERO_NOEXCEPT { return directoryDepth_; }
+  const std::string& unparsedUri() const CORTEX_NOEXCEPT { return unparsedUri_; }
+  const std::string& path() const CORTEX_NOEXCEPT { return path_; }
+  const std::string& query() const CORTEX_NOEXCEPT { return query_; }
+  int directoryDepth() const CORTEX_NOEXCEPT { return directoryDepth_; }
 
-  HttpVersion version() const XZERO_NOEXCEPT { return version_; }
+  HttpVersion version() const CORTEX_NOEXCEPT { return version_; }
   void setVersion(HttpVersion version) { version_ = version; }
 
-  const HeaderFieldList& headers() const XZERO_NOEXCEPT { return headers_; }
+  const HeaderFieldList& headers() const CORTEX_NOEXCEPT { return headers_; }
   HeaderFieldList& headers() { return headers_; }
 
-  const std::string& host() const XZERO_NOEXCEPT { return host_; }
+  const std::string& host() const CORTEX_NOEXCEPT { return host_; }
   void setHost(const std::string& value);
 
-  bool isSecure() const XZERO_NOEXCEPT { return secure_; }
+  bool isSecure() const CORTEX_NOEXCEPT { return secure_; }
   void setSecure(bool secured) { secure_ = secured; }
 
   HttpInput* input() const { return input_.get(); }
   void setInput(std::unique_ptr<HttpInput>&& input) { input_ = std::move(input); }
 
-  bool expect100Continue() const XZERO_NOEXCEPT { return expect100Continue_; }
-  void setExpect100Continue(bool value) XZERO_NOEXCEPT { expect100Continue_ = value; }
+  bool expect100Continue() const CORTEX_NOEXCEPT { return expect100Continue_; }
+  void setExpect100Continue(bool value) CORTEX_NOEXCEPT { expect100Continue_ = value; }
 
   void recycle();
 

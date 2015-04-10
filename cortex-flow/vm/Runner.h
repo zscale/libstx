@@ -27,7 +27,7 @@ namespace vm {
 
 // ExecutionEngine
 // VM
-class XZERO_FLOW_API Runner : public CustomData {
+class CORTEX_FLOW_API Runner : public CustomData {
  public:
   enum State {
     Inactive,   //!< No handler running nor suspended.

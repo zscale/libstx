@@ -19,7 +19,7 @@ namespace cortex {
 class UdpConnector;
 class IPAddress;
 
-class XZERO_API UdpEndPoint : public DatagramEndPoint {
+class CORTEX_API UdpEndPoint : public DatagramEndPoint {
  public:
   UdpEndPoint(
       UdpConnector* connector, Buffer&& msg,

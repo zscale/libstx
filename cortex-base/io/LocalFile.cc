@@ -38,19 +38,19 @@ LocalFile::LocalFile(LocalFileRepository& repo,
 LocalFile::~LocalFile() {
 }
 
-size_t LocalFile::size() const XZERO_NOEXCEPT {
+size_t LocalFile::size() const CORTEX_NOEXCEPT {
   return stat_.st_size;
 }
 
-time_t LocalFile::mtime() const XZERO_NOEXCEPT {
+time_t LocalFile::mtime() const CORTEX_NOEXCEPT {
   return stat_.st_mtime;
 }
 
-size_t LocalFile::inode() const XZERO_NOEXCEPT {
+size_t LocalFile::inode() const CORTEX_NOEXCEPT {
   return stat_.st_ino;
 }
 
-bool LocalFile::isRegular() const XZERO_NOEXCEPT {
+bool LocalFile::isRegular() const CORTEX_NOEXCEPT {
   return S_ISREG(stat_.st_mode);
 }
 

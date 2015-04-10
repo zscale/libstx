@@ -13,7 +13,7 @@
 namespace cortex {
 namespace flow {
 
-class XZERO_FLOW_API Constant : public Value {
+class CORTEX_FLOW_API Constant : public Value {
  public:
   Constant(FlowType ty, const std::string& name) : Value(ty, name) {}
 

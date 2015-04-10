@@ -23,7 +23,7 @@ namespace cortex {
 /**
  * Standard thread-safe thread pool.
  */
-class XZERO_API ThreadPool : public Scheduler {
+class CORTEX_API ThreadPool : public Scheduler {
  public:
   /**
    * Initializes this thread pool as many threads as CPU cores are available.

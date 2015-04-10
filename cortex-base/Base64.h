@@ -18,7 +18,7 @@ namespace cortex {
 /**
  * @brief Implements a Base64 encoder/decoder.
  */
-class XZERO_API Base64 {
+class CORTEX_API Base64 {
  private:
   static const char base64_[];
   static const unsigned char pr2six_[256];

@@ -20,7 +20,7 @@ namespace cortex {
  * General purpose string tokenizer.
  */
 template <typename T, typename U = T>
-class XZERO_API Tokenizer {
+class CORTEX_API Tokenizer {
  private:
   const U& input_;
   T token_;

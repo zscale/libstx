@@ -16,7 +16,7 @@
 namespace cortex {
 namespace flow {
 
-class XZERO_FLOW_API ConstantArray : public Constant {
+class CORTEX_FLOW_API ConstantArray : public Constant {
  public:
   ConstantArray(const std::vector<Constant*>& elements,
                 const std::string& name = "")

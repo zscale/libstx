@@ -24,16 +24,16 @@ class LogTarget;
 /**
  * Logging Aggregator Service.
  */
-class XZERO_API LogAggregator {
+class CORTEX_API LogAggregator {
  public:
   LogAggregator();
   LogAggregator(LogLevel logLevel, LogTarget* logTarget);
   ~LogAggregator();
 
-  LogLevel logLevel() const XZERO_NOEXCEPT { return logLevel_; }
+  LogLevel logLevel() const CORTEX_NOEXCEPT { return logLevel_; }
   void setLogLevel(LogLevel level) { logLevel_ = level; }
 
-  LogTarget* logTarget() const XZERO_NOEXCEPT { return target_; }
+  LogTarget* logTarget() const CORTEX_NOEXCEPT { return target_; }
   void setLogTarget(LogTarget* target);
 
   void registerSource(LogSource* source);

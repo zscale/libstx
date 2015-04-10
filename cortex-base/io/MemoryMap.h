@@ -13,7 +13,7 @@
 
 namespace cortex {
 
-class XZERO_API MemoryMap : public FixedBuffer {
+class CORTEX_API MemoryMap : public FixedBuffer {
  public:
   MemoryMap(int fd, off_t ofs, size_t size, bool rw);
   MemoryMap(MemoryMap&& mm);

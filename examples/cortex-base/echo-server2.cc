@@ -82,7 +82,7 @@ class ThreadedScheduler { // {{{
   /** Stops the server as well as the I/O worker threads. */
   void stop();
 
-  cortex::Server* server() XZERO_NOEXCEPT { return &server_; }
+  cortex::Server* server() CORTEX_NOEXCEPT { return &server_; }
 
  private:
   cortex::ThreadedExecutor threadedExecutor_;

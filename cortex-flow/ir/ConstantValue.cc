@@ -10,12 +10,12 @@
 namespace cortex {
 namespace flow {
 
-template class XZERO_EXPORT ConstantValue<int64_t, FlowType::Number>;
-template class XZERO_EXPORT ConstantValue<bool, FlowType::Boolean>;
-template class XZERO_EXPORT ConstantValue<std::string, FlowType::String>;
-template class XZERO_EXPORT ConstantValue<IPAddress, FlowType::IPAddress>;
-template class XZERO_EXPORT ConstantValue<Cidr, FlowType::Cidr>;
-template class XZERO_EXPORT ConstantValue<RegExp, FlowType::RegExp>;
+template class CORTEX_EXPORT ConstantValue<int64_t, FlowType::Number>;
+template class CORTEX_EXPORT ConstantValue<bool, FlowType::Boolean>;
+template class CORTEX_EXPORT ConstantValue<std::string, FlowType::String>;
+template class CORTEX_EXPORT ConstantValue<IPAddress, FlowType::IPAddress>;
+template class CORTEX_EXPORT ConstantValue<Cidr, FlowType::Cidr>;
+template class CORTEX_EXPORT ConstantValue<RegExp, FlowType::RegExp>;
 
 }  // namespace flow
 }  // namespace cortex

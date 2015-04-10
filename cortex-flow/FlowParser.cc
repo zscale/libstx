@@ -60,7 +60,7 @@ struct fntrace {
     fmt[i++] = ' ';
     strcpy(fmt + i, msg_.c_str());
 
-    XZERO_DEBUG("FlowParser", 5, "%s", fmt);
+    CORTEX_DEBUG("FlowParser", 5, "%s", fmt);
     ++fnd;
   }
 
@@ -79,12 +79,12 @@ struct fntrace {
     fmt[i++] = ' ';
     strcpy(fmt + i, msg_.c_str());
 
-    XZERO_DEBUG("FlowParser", 5, "%s", fmt);
+    CORTEX_DEBUG("FlowParser", 5, "%s", fmt);
   }
 };
 // }}}
 #define FNTRACE() fntrace _(__PRETTY_FUNCTION__)
-#define TRACE(level, msg...) XZERO_DEBUG("FlowParser", (level), msg)
+#define TRACE(level, msg...) CORTEX_DEBUG("FlowParser", (level), msg)
 #else
 #define FNTRACE()            do {} while (0)
 #define TRACE(level, msg...) do {} while (0)

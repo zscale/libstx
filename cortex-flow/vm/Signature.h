@@ -15,7 +15,7 @@ namespace cortex {
 namespace flow {
 namespace vm {
 
-class XZERO_FLOW_API Signature {
+class CORTEX_FLOW_API Signature {
  private:
   std::string name_;
   FlowType returnType_;

@@ -19,7 +19,7 @@ class TimeSpan;
 /**
  * Abstract API for retrieving the current system time.
  */
-class XZERO_API WallClock {
+class CORTEX_API WallClock {
  public:
   virtual ~WallClock() {}
 

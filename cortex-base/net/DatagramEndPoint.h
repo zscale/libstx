@@ -18,7 +18,7 @@ namespace cortex {
 
 class DatagramConnector;
 
-class XZERO_API DatagramEndPoint : public RefCounted {
+class CORTEX_API DatagramEndPoint : public RefCounted {
  public:
   DatagramEndPoint(DatagramConnector* connector, Buffer&& msg)
     : connector_(connector), message_(std::move(msg)) {}

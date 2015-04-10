@@ -13,10 +13,10 @@
 #include <cortex-base/Defines.h>
 
 // libcortex exports
-#if defined(BUILD_XZERO_BASE)
-#define XZERO_API XZERO_EXPORT
+#if defined(BUILD_CORTEX_BASE)
+#define CORTEX_API CORTEX_EXPORT
 #else
-#define XZERO_API XZERO_IMPORT
+#define CORTEX_API CORTEX_IMPORT
 #endif
 
 #endif

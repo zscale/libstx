@@ -13,7 +13,7 @@
 
 namespace cortex {
 
-EndPoint::EndPoint() XZERO_NOEXCEPT
+EndPoint::EndPoint() CORTEX_NOEXCEPT
     : connection_(nullptr) {
 }
 

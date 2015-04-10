@@ -30,7 +30,7 @@ enum FlagStyle {
   UnnamedParameter
 };
 
-class XZERO_API Flag {
+class CORTEX_API Flag {
  public:
   Flag(
       const std::string& opt,
@@ -56,7 +56,7 @@ class XZERO_API Flag {
 
 typedef std::pair<FlagType, std::string> FlagValue;
 
-class XZERO_API Flags {
+class CORTEX_API Flags {
  public:
   Flags();
 
@@ -87,6 +87,6 @@ class XZERO_API Flags {
 };
 
 // maybe via CLI / FlagBuilder
-XZERO_API std::string inspect(const Flags& flags);
+CORTEX_API std::string inspect(const Flags& flags);
 
 }  // namespace cortex

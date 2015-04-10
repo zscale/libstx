@@ -18,7 +18,7 @@ namespace flow {
 //! \addtogroup Flow
 //@{
 
-struct XZERO_FLOW_API FlowToken {
+struct CORTEX_FLOW_API FlowToken {
   enum _ {
     Unknown,
 
@@ -123,7 +123,7 @@ struct XZERO_FLOW_API FlowToken {
   int value_;
 };
 
-class XZERO_FLOW_API FlowTokenTraits {
+class CORTEX_FLOW_API FlowTokenTraits {
  public:
   static bool isKeyword(FlowToken t);
   static bool isReserved(FlowToken t);

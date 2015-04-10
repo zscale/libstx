@@ -61,7 +61,7 @@ void HttpResponse::setCommitted(bool value) {
   committed_ = value;
 }
 
-HttpVersion HttpResponse::version() const XZERO_NOEXCEPT {
+HttpVersion HttpResponse::version() const CORTEX_NOEXCEPT {
   return version_;
 }
 

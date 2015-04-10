@@ -21,7 +21,7 @@ namespace cortex {
  *
  * @note Not thread-safe.
  */
-class XZERO_API DirectExecutor : public Executor {
+class CORTEX_API DirectExecutor : public Executor {
  public:
   DirectExecutor(
     bool recursive = false,

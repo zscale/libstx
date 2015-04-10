@@ -23,7 +23,7 @@ namespace cortex {
  *
  * @see HttpParser
  */
-class XZERO_HTTP_API HttpListener {
+class CORTEX_HTTP_API HttpListener {
  public:
   virtual ~HttpListener() {}
 

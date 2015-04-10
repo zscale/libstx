@@ -24,7 +24,7 @@ class LocalConnector;
  * @see LocalEndPoint
  * @see InetEndPoint
  */
-class XZERO_API ByteArrayEndPoint : public EndPoint {
+class CORTEX_API ByteArrayEndPoint : public EndPoint {
  public:
   explicit ByteArrayEndPoint(LocalConnector* connector);
   ~ByteArrayEndPoint();

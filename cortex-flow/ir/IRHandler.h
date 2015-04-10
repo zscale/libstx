@@ -21,7 +21,7 @@ class BasicBlock;
 class IRProgram;
 class IRBuilder;
 
-class XZERO_FLOW_API IRHandler : public Constant {
+class CORTEX_FLOW_API IRHandler : public Constant {
  public:
   explicit IRHandler(const std::string& name);
   ~IRHandler();

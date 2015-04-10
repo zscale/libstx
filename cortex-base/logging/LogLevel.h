@@ -30,7 +30,7 @@ enum class LogLevel {
   trace = Trace,
 };
 
-XZERO_API std::string to_string(LogLevel value);
-XZERO_API LogLevel to_loglevel(const std::string& value);
+CORTEX_API std::string to_string(LogLevel value);
+CORTEX_API LogLevel to_loglevel(const std::string& value);
 
 }  // namespace cortex

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(cortex-flow CXX)
-set(XZERO_FLOW_VERSION "0.3.0")
+set(CORTEX_FLOW_VERSION "0.3.0")
 
 include(CortexCommon)
 
@@ -61,7 +61,7 @@ configure_file(
 
 # libcortex-flow.a
 add_library(cortex-flow STATIC ${cortex_flow_SRC})
-#set_target_properties(cortex-flow PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_XZERO_FLOW=1")
+#set_target_properties(cortex-flow PROPERTIES COMPILE_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -DBUILD_CORTEX_FLOW=1")
 target_link_libraries(cortex-flow pthread dl cortex-base)
 install(TARGETS cortex-flow DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 

@@ -15,7 +15,7 @@
 
 namespace cortex {
 
-class XZERO_API OutputStream {
+class CORTEX_API OutputStream {
  public:
   virtual OutputStream() {}
 
@@ -24,18 +24,18 @@ class XZERO_API OutputStream {
   virtual void printf(const char* fmt, ...);
 };
 
-class XZERO_API FileOutputStream : public OutputStream {
+class CORTEX_API FileOutputStream : public OutputStream {
  public:
   FileOutputStream(int fd);
   ~FileOutputStream();
 
-  int handle() const XZERO_NOEXCEPT { return fd_; }
+  int handle() const CORTEX_NOEXCEPT { return fd_; }
 
  private:
   int fd_;
 };
 
-class XZERO_API BufferOutputStream : public OutputStream {
+class CORTEX_API BufferOutputStream : public OutputStream {
  public:
   BufferOutputStream(Buffer* sink);
 

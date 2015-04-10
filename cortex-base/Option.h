@@ -26,7 +26,7 @@ struct None {};
  * Option<> type class.
  */
 template <typename T>
-class XZERO_API Option {
+class CORTEX_API Option {
  public:
   Option() : value_(), valid_(false) {}
   Option(const None&) : value_(), valid_(false) {}

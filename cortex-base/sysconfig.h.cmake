@@ -12,13 +12,13 @@
 
 //#include <base/sysconfig.h>
 
-#cmakedefine LIBXZERO_VERSION "@LIBXZERO_VERSION@"
+#cmakedefine LIBCORTEX_VERSION "@LIBCORTEX_VERSION@"
 
 // --------------------------------------------------------------------------
 // feature tests
 
 // Build with inotify support
-#cmakedefine XZERO_ENABLE_INOTIFY
+#cmakedefine CORTEX_ENABLE_INOTIFY
 
 #cmakedefine ENABLE_ACCEPT4
 #cmakedefine ENABLE_PIPE2
@@ -34,12 +34,12 @@
 
 // Try to open temporary files with O_TMPFILE flag before falling back
 // to the standard behaviour.
-#cmakedefine XZERO_ENABLE_O_TMPFILE
+#cmakedefine CORTEX_ENABLE_O_TMPFILE
 
-#cmakedefine XZERO_ENABLE_NOEXCEPT
+#cmakedefine CORTEX_ENABLE_NOEXCEPT
 
 // Builds with support for opportunistic write() calls to client sockets
-#cmakedefine XZERO_OPPORTUNISTIC_WRITE 1
+#cmakedefine CORTEX_OPPORTUNISTIC_WRITE 1
 
 // --------------------------------------------------------------------------
 // header tests

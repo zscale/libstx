@@ -26,12 +26,12 @@ class Wakeup;
 /**
  * Interface for scheduling tasks.
  */
-class XZERO_API Scheduler : public Executor {
+class CORTEX_API Scheduler : public Executor {
  public:
   /**
    * It basically supports 2 actions, fire and cancellation.
    */
-  class XZERO_API Handle {
+  class CORTEX_API Handle {
    public:
     Handle(Task onFire, std::function<void(Handle*)> onCancel);
 

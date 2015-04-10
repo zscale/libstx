@@ -15,7 +15,7 @@
 
 namespace cortex {
 
-class XZERO_API StackTrace {
+class CORTEX_API StackTrace {
  public:
   StackTrace();
   StackTrace(StackTrace&&);

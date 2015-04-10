@@ -17,7 +17,7 @@ namespace cortex {
 /**
  * Represents a list of headers (key/value pairs) for an HTTP message.
  */
-class XZERO_HTTP_API HeaderFieldList {
+class CORTEX_HTTP_API HeaderFieldList {
  public:
   HeaderFieldList() = default;
   HeaderFieldList(HeaderFieldList&&) = default;

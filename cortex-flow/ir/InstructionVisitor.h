@@ -66,8 +66,8 @@ enum class BinaryOperator {
   PInCidr,
 };
 
-XZERO_FLOW_API const char* cstr(BinaryOperator op);
-XZERO_FLOW_API const char* cstr(UnaryOperator op);
+CORTEX_FLOW_API const char* cstr(BinaryOperator op);
+CORTEX_FLOW_API const char* cstr(UnaryOperator op);
 
 class NopInstr;
 class AllocaInstr;
@@ -137,7 +137,7 @@ typedef BinaryInstr<BinaryOperator::PCmpEQ, FlowType::Boolean> PCmpEQInstr;
 typedef BinaryInstr<BinaryOperator::PCmpNE, FlowType::Boolean> PCmpNEInstr;
 typedef BinaryInstr<BinaryOperator::PInCidr, FlowType::Boolean> PInCidrInstr;
 
-class XZERO_FLOW_API InstructionVisitor {
+class CORTEX_FLOW_API InstructionVisitor {
  public:
   virtual ~InstructionVisitor() {};
 

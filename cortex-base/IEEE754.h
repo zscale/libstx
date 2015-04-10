@@ -23,7 +23,7 @@
 
 namespace cortex {
 
-class XZERO_API IEEE754 {
+class CORTEX_API IEEE754 {
  public:
   static uint64_t toBytes(double value);
   static double fromBytes(uint64_t bytes);

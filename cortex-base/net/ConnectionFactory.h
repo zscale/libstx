@@ -37,7 +37,7 @@ class EndPoint;
  * @see Connector
  * @see Connection
  */
-class XZERO_API ConnectionFactory {
+class CORTEX_API ConnectionFactory {
  private:
   ConnectionFactory(ConnectionFactory&) = delete;
   ConnectionFactory& operator=(ConnectionFactory&) = delete;

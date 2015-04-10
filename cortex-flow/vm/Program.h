@@ -31,7 +31,7 @@ class MatchDef;
 class NativeCallback;
 class ConstantPool;
 
-class XZERO_FLOW_API Program {
+class CORTEX_FLOW_API Program {
  public:
   explicit Program(ConstantPool&& cp);
   Program(Program&) = delete;

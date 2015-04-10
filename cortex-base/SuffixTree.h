@@ -15,7 +15,7 @@
 namespace cortex {
 
 template <typename K, typename V>
-class XZERO_API SuffixTree {
+class CORTEX_API SuffixTree {
  public:
   typedef K Key;
   typedef typename Key::value_type Elem;

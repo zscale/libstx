@@ -15,7 +15,7 @@ namespace cortex {
 /**
  * Represents a single HTTP message header name/value pair.
  */
-class XZERO_HTTP_API HeaderField {
+class CORTEX_HTTP_API HeaderField {
  public:
   HeaderField() = default;
   HeaderField(HeaderField&&) = default;

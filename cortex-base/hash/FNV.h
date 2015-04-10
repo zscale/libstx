@@ -23,7 +23,7 @@ namespace hash {
  * @see http://en.wikipedia.org/wiki/Fowler-Noll-Vo_hash_function
  */
 template<typename T>
-class XZERO_API FNV {
+class CORTEX_API FNV {
  public:
   FNV();
   FNV(T basis, T prime) : basis_(basis), prime_(prime) {}

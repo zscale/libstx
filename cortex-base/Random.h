@@ -19,7 +19,7 @@ namespace cortex {
 /**
  * Random Value Generator.
  */
-class XZERO_API Random {
+class CORTEX_API Random {
  public:
   Random();
 

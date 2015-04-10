@@ -187,11 +187,11 @@ constexpr Operand operandC(Instruction instr) {
   return static_cast<Operand>((instr >> 48) & 0xFFFF);
 }
 
-XZERO_FLOW_API InstructionSig operandSignature(Opcode opc);
-XZERO_FLOW_API const char* mnemonic(Opcode opc);
-XZERO_FLOW_API size_t computeRegisterCount(const Instruction* code, size_t size);
-XZERO_FLOW_API size_t registerMax(Instruction instr);
-XZERO_FLOW_API FlowType resultType(Opcode opc);
+CORTEX_FLOW_API InstructionSig operandSignature(Opcode opc);
+CORTEX_FLOW_API const char* mnemonic(Opcode opc);
+CORTEX_FLOW_API size_t computeRegisterCount(const Instruction* code, size_t size);
+CORTEX_FLOW_API size_t registerMax(Instruction instr);
+CORTEX_FLOW_API FlowType resultType(Opcode opc);
 
 }  // namespace vm
 }  // namespace flow

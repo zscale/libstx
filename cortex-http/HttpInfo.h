@@ -21,33 +21,33 @@ namespace cortex {
  * @see HttpRequestInfo
  * @see HttpResponseInfo
  */
-class XZERO_HTTP_API HttpInfo {
+class CORTEX_HTTP_API HttpInfo {
  public:
   HttpInfo(HttpVersion version, size_t contentLength,
            const HeaderFieldList& headers,
            const HeaderFieldList& trailers);
 
   /** Retrieves the HTTP message version. */
-  HttpVersion version() const XZERO_NOEXCEPT { return version_; }
+  HttpVersion version() const CORTEX_NOEXCEPT { return version_; }
 
   /** Retrieves the HTTP response headers. */
-  const HeaderFieldList& headers() const XZERO_NOEXCEPT { return headers_; }
+  const HeaderFieldList& headers() const CORTEX_NOEXCEPT { return headers_; }
 
   /** Retrieves the HTTP response headers. */
-  HeaderFieldList& headers() XZERO_NOEXCEPT { return headers_; }
+  HeaderFieldList& headers() CORTEX_NOEXCEPT { return headers_; }
 
   void setContentLength(size_t size);
-  size_t contentLength() const XZERO_NOEXCEPT { return contentLength_; }
+  size_t contentLength() const CORTEX_NOEXCEPT { return contentLength_; }
 
-  bool hasContentLength() const XZERO_NOEXCEPT {
+  bool hasContentLength() const CORTEX_NOEXCEPT {
     return contentLength_ != static_cast<size_t>(-1);
   }
 
   /** Tests whether HTTP message will send trailers. */
-  bool hasTrailers() const XZERO_NOEXCEPT { return !trailers_.empty(); }
+  bool hasTrailers() const CORTEX_NOEXCEPT { return !trailers_.empty(); }
 
   /** Retrieves the HTTP response trailers. */
-  const HeaderFieldList& trailers() const XZERO_NOEXCEPT { return trailers_; }
+  const HeaderFieldList& trailers() const CORTEX_NOEXCEPT { return trailers_; }
 
   void setTrailers(const HeaderFieldList& list) { trailers_ = list; }
 

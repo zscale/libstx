@@ -24,7 +24,7 @@ class Scheduler;
  *
  * @see DatagramConnector, DatagramEndPoint
  */
-class XZERO_API UdpConnector : public DatagramConnector {
+class CORTEX_API UdpConnector : public DatagramConnector {
  public:
   /**
    * Initializes the UDP connector.

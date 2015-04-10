@@ -22,7 +22,7 @@ class SslConnector;
 /**
  * SSL EndPoint, aka SSL socket.
  */
-class XZERO_API SslEndPoint : public EndPoint {
+class CORTEX_API SslEndPoint : public EndPoint {
  public:
   SslEndPoint(int socket, SslConnector* connector, Scheduler* scheduler);
   ~SslEndPoint();

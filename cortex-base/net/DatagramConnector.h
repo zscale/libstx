@@ -26,7 +26,7 @@ typedef std::function<void(RefPtr<DatagramEndPoint>)> DatagramHandler;
  *
  * @see DatagramConnector, DatagramEndPoint
  */
-class XZERO_API DatagramConnector {
+class CORTEX_API DatagramConnector {
  public:
   /**
    * Initializes the UDP connector.

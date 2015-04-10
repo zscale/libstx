@@ -26,7 +26,7 @@ namespace cortex {
  * Unhandled exceptions will be caught and passed to the exception handler,
  * i.e. to log them.
  */
-class XZERO_API SafeCall {
+class CORTEX_API SafeCall {
  public:
   SafeCall();
   explicit SafeCall(std::function<void(const std::exception&)> eh);
@@ -43,14 +43,14 @@ class XZERO_API SafeCall {
    *
    * @see setExceptionHandler(std::function<void(const std::exception&)>)
    */
-  void safeCall(std::function<void()> callee) XZERO_NOEXCEPT;
+  void safeCall(std::function<void()> callee) CORTEX_NOEXCEPT;
 
   /**
    * Convinience call operator.
    *
    * @see void safeCall(std::function<void()> callee)
    */
-  void operator()(std::function<void()> callee) XZERO_NOEXCEPT {
+  void operator()(std::function<void()> callee) CORTEX_NOEXCEPT {
     safeCall(callee);
   }
 
@@ -58,7 +58,7 @@ class XZERO_API SafeCall {
   /**
    * Handles uncaught exception.
    */
-  void handleException(const std::exception& e) XZERO_NOEXCEPT;
+  void handleException(const std::exception& e) CORTEX_NOEXCEPT;
 
  private:
   std::function<void(const std::exception&)> exceptionHandler_;

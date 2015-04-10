@@ -26,7 +26,7 @@ namespace cortex {
 /**
  * IPv4 or IPv6 network address.
  */
-class XZERO_API IPAddress {
+class CORTEX_API IPAddress {
  public:
   static const int V4 = AF_INET;
   static const int V6 = AF_INET6;

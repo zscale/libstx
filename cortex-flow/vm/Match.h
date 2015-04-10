@@ -23,7 +23,7 @@ namespace cortex {
 namespace flow {
 namespace vm {
 
-struct XZERO_FLOW_API MatchCaseDef {
+struct CORTEX_FLOW_API MatchCaseDef {
   //!< offset into the string pool (or regexp pool) of the associated program.
   uint64_t label;
   //!< program offset into the associated handler
@@ -33,7 +33,7 @@ struct XZERO_FLOW_API MatchCaseDef {
   MatchCaseDef(uint64_t l, uint64_t p) : label(l), pc(p) {}
 };
 
-struct XZERO_FLOW_API MatchDef {
+struct CORTEX_FLOW_API MatchDef {
   size_t handlerId;
   MatchClass op;  // == =^ =$ =~
   uint64_t elsePC;
@@ -44,7 +44,7 @@ class Program;
 class Handler;
 class Runner;
 
-class XZERO_FLOW_API Match {
+class CORTEX_FLOW_API Match {
  public:
   Match(const MatchDef& def, Program* program);
   virtual ~Match();
@@ -65,7 +65,7 @@ class XZERO_FLOW_API Match {
 };
 
 /** Implements SMATCHEQ instruction. */
-class XZERO_FLOW_API MatchSame : public Match {
+class CORTEX_FLOW_API MatchSame : public Match {
  public:
   MatchSame(const MatchDef& def, Program* program);
   ~MatchSame();
@@ -77,7 +77,7 @@ class XZERO_FLOW_API MatchSame : public Match {
 };
 
 /** Implements SMATCHBEG instruction. */
-class XZERO_FLOW_API MatchHead : public Match {
+class CORTEX_FLOW_API MatchHead : public Match {
  public:
   MatchHead(const MatchDef& def, Program* program);
   ~MatchHead();
@@ -89,7 +89,7 @@ class XZERO_FLOW_API MatchHead : public Match {
 };
 
 /** Implements SMATCHBEG instruction. */
-class XZERO_FLOW_API MatchTail : public Match {
+class CORTEX_FLOW_API MatchTail : public Match {
  public:
   MatchTail(const MatchDef& def, Program* program);
   ~MatchTail();
@@ -101,7 +101,7 @@ class XZERO_FLOW_API MatchTail : public Match {
 };
 
 /** Implements SMATCHR instruction. */
-class XZERO_FLOW_API MatchRegEx : public Match {
+class CORTEX_FLOW_API MatchRegEx : public Match {
  public:
   MatchRegEx(const MatchDef& def, Program* program);
   ~MatchRegEx();

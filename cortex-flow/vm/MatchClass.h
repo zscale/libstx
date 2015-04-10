@@ -16,7 +16,7 @@ namespace vm {
 
 enum class MatchClass { Same, Head, Tail, RegExp, };
 
-XZERO_FLOW_API std::string tos(MatchClass c);
+CORTEX_FLOW_API std::string tos(MatchClass c);
 
 }  // namespace vm
 }  // namespace flow

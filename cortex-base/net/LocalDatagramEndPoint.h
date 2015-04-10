@@ -23,7 +23,7 @@ class LocalDatagramConnector;
  *
  * @see LocalDatagramConnector.
  */
-class XZERO_API LocalDatagramEndPoint : public DatagramEndPoint {
+class CORTEX_API LocalDatagramEndPoint : public DatagramEndPoint {
  public:
   LocalDatagramEndPoint(LocalDatagramConnector* connector, Buffer&& msg);
   ~LocalDatagramEndPoint();

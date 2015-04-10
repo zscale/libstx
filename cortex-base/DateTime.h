@@ -30,7 +30,7 @@ namespace cortex {
  * ... that understands unix timestamps as well as HTTP conform dates
  * as used in Date/Last-Modified and other headers.
  */
-class XZERO_API DateTime {
+class CORTEX_API DateTime {
  private:
   double value_;
   mutable Buffer http_;
@@ -86,16 +86,16 @@ class XZERO_API DateTime {
   static int compare(const DateTime& a, const DateTime& b);
 };
 
-XZERO_API bool operator==(const DateTime& a, const DateTime& b);
-XZERO_API bool operator!=(const DateTime& a, const DateTime& b);
-XZERO_API bool operator<=(const DateTime& a, const DateTime& b);
-XZERO_API bool operator>=(const DateTime& a, const DateTime& b);
-XZERO_API bool operator<(const DateTime& a, const DateTime& b);
-XZERO_API bool operator>(const DateTime& a, const DateTime& b);
+CORTEX_API bool operator==(const DateTime& a, const DateTime& b);
+CORTEX_API bool operator!=(const DateTime& a, const DateTime& b);
+CORTEX_API bool operator<=(const DateTime& a, const DateTime& b);
+CORTEX_API bool operator>=(const DateTime& a, const DateTime& b);
+CORTEX_API bool operator<(const DateTime& a, const DateTime& b);
+CORTEX_API bool operator>(const DateTime& a, const DateTime& b);
 
-XZERO_API TimeSpan operator-(const DateTime& a, const DateTime& b);
-XZERO_API DateTime operator+(const DateTime& a, const TimeSpan& b);
-XZERO_API DateTime operator-(const DateTime& a, const TimeSpan& b);
+CORTEX_API TimeSpan operator-(const DateTime& a, const DateTime& b);
+CORTEX_API DateTime operator+(const DateTime& a, const TimeSpan& b);
+CORTEX_API DateTime operator-(const DateTime& a, const TimeSpan& b);
 
 // {{{ impl
 inline time_t DateTime::mktime(const char* v) {
@@ -202,8 +202,8 @@ inline bool operator>(const DateTime& a, const DateTime& b) {
 namespace std {
 template <> class numeric_limits<cortex::DateTime> {
 public:
-  static XZERO_API cortex::DateTime max();
-  static XZERO_API cortex::DateTime min();
+  static CORTEX_API cortex::DateTime max();
+  static CORTEX_API cortex::DateTime min();
 };
 }
 

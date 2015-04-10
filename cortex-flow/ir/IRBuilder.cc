@@ -22,7 +22,7 @@ using namespace vm;
 //#define FLOW_DEBUG_IR 1
 
 #if defined(FLOW_DEBUG_IR)
-#define TRACE(level, msg...) XZERO_DEBUG("IR", (level), msg)
+#define TRACE(level, msg...) CORTEX_DEBUG("IR", (level), msg)
 #else
 #define TRACE(level, msg...) do {} while (0)
 #endif

@@ -32,7 +32,7 @@ class Flag;
  *   <li>program parameters</li>
  * </ul>
  */
-class XZERO_API CLI {
+class CORTEX_API CLI {
  public:
   struct FlagDef;
   class TypeMismatchError;
@@ -153,28 +153,28 @@ class XZERO_API CLI {
   std::string parametersHelpText_;
 };
 
-class XZERO_API CLI::TypeMismatchError : public RuntimeError {
+class CORTEX_API CLI::TypeMismatchError : public RuntimeError {
  public:
   explicit TypeMismatchError(const RuntimeError& v) : RuntimeError(v) {}
   TypeMismatchError()
     : RuntimeError((int) Status::CliTypeMismatchError, StatusCategory::get()) {}
 };
 
-class XZERO_API CLI::UnknownOptionError : public RuntimeError {
+class CORTEX_API CLI::UnknownOptionError : public RuntimeError {
  public:
   explicit UnknownOptionError(const RuntimeError& v) : RuntimeError(v) {}
   UnknownOptionError()
     : RuntimeError((int) Status::CliUnknownOptionError, StatusCategory::get()) {}
 };
 
-class XZERO_API CLI::MissingOptionError : public RuntimeError {
+class CORTEX_API CLI::MissingOptionError : public RuntimeError {
  public:
   explicit MissingOptionError(const RuntimeError& v) : RuntimeError(v) {}
   MissingOptionError()
     : RuntimeError((int) Status::CliMissingOptionError, StatusCategory::get()) {}
 };
 
-class XZERO_API CLI::MissingOptionValueError : public RuntimeError {
+class CORTEX_API CLI::MissingOptionValueError : public RuntimeError {
  public:
   explicit MissingOptionValueError(const RuntimeError& v) : RuntimeError(v) {}
   MissingOptionValueError()
@@ -182,7 +182,7 @@ class XZERO_API CLI::MissingOptionValueError : public RuntimeError {
 };
 
 
-class XZERO_API FlagBuilder {
+class CORTEX_API FlagBuilder {
  public:
   FlagBuilder(CLI& cli) : cli_(cli) {}
 
@@ -192,7 +192,7 @@ class XZERO_API FlagBuilder {
   CLI& cli_;
 };
 
-struct XZERO_API CLI::FlagDef {
+struct CORTEX_API CLI::FlagDef {
   FlagType type;
   std::string longOption;
   char shortOption;

@@ -13,7 +13,7 @@ namespace cortex {
 namespace http1 {
 
 #if 0 //!defined(NDEBUG)
-#define TRACE(level, fmt...) XZERO_DEBUG("http-parser", level, fmt)
+#define TRACE(level, fmt...) CORTEX_DEBUG("http-parser", level, fmt)
 #else
 #define TRACE(level, msg...) \
   do {                       \

@@ -20,7 +20,7 @@ namespace thread {
  * A queue is threadsafe
  */
 template <typename T>
-class XZERO_API Queue {
+class CORTEX_API Queue {
 public:
   void insert(const T& job);
   T pop();

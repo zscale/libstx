@@ -29,7 +29,7 @@ class Http1Channel;
 /**
  * @brief Implements a HTTP/1.1 transport connection.
  */
-class XZERO_HTTP_API HttpConnection : public HttpTransport {
+class CORTEX_HTTP_API HttpConnection : public HttpTransport {
  public:
   HttpConnection(EndPoint* endpoint,
                  Executor* executor,

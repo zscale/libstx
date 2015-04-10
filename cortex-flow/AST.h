@@ -36,7 +36,7 @@ class FlowBackend;
 class SymbolTable;
 class Expr;
 
-class XZERO_FLOW_API ASTNode  // {{{
+class CORTEX_FLOW_API ASTNode  // {{{
     {
  protected:
   FlowLocation location_;
@@ -54,7 +54,7 @@ class XZERO_FLOW_API ASTNode  // {{{
 };
 // }}}
 // {{{ Symbols
-class XZERO_FLOW_API Symbol : public ASTNode {
+class CORTEX_FLOW_API Symbol : public ASTNode {
  public:
   enum Type { Variable = 1, Handler, BuiltinFunction, BuiltinHandler, Unit, };
 
@@ -88,7 +88,7 @@ inline bool operator&(Lookup a, Lookup b) {
   return static_cast<unsigned>(a) & static_cast<unsigned>(b);
 }
 
-class XZERO_FLOW_API SymbolTable {
+class CORTEX_FLOW_API SymbolTable {
  public:
   typedef std::vector<Symbol*> list_type;
   typedef list_type::iterator iterator;
@@ -128,7 +128,7 @@ class XZERO_FLOW_API SymbolTable {
   std::string name_;
 };
 
-class XZERO_FLOW_API ScopedSymbol : public Symbol {
+class CORTEX_FLOW_API ScopedSymbol : public Symbol {
  protected:
   std::unique_ptr<SymbolTable> scope_;
 
@@ -149,7 +149,7 @@ class XZERO_FLOW_API ScopedSymbol : public Symbol {
   }
 };
 
-class XZERO_FLOW_API Variable : public Symbol {
+class CORTEX_FLOW_API Variable : public Symbol {
  private:
   std::unique_ptr<Expr> initializer_;
 
@@ -174,7 +174,7 @@ class XZERO_FLOW_API Variable : public Symbol {
 
 class ParamList;
 
-class XZERO_FLOW_API Callable : public Symbol {
+class CORTEX_FLOW_API Callable : public Symbol {
  protected:
   const vm::NativeCallback* nativeCallback_;
   vm::Signature sig_;
@@ -209,7 +209,7 @@ class XZERO_FLOW_API Callable : public Symbol {
   bool tryMatch(ParamList& params, Buffer* errorMessage) const;
 };
 
-class XZERO_FLOW_API Handler : public Callable {
+class CORTEX_FLOW_API Handler : public Callable {
  private:
   std::unique_ptr<SymbolTable> scope_;
   std::unique_ptr<Stmt> body_;
@@ -236,7 +236,7 @@ class XZERO_FLOW_API Handler : public Callable {
   virtual void visit(ASTVisitor& v);
 };
 
-class XZERO_FLOW_API BuiltinFunction : public Callable {
+class CORTEX_FLOW_API BuiltinFunction : public Callable {
  public:
   explicit BuiltinFunction(const vm::NativeCallback* cb)
       : Callable(Symbol::BuiltinFunction, cb, FlowLocation()) {}
@@ -244,7 +244,7 @@ class XZERO_FLOW_API BuiltinFunction : public Callable {
   virtual void visit(ASTVisitor& v);
 };
 
-class XZERO_FLOW_API BuiltinHandler : public Callable {
+class CORTEX_FLOW_API BuiltinHandler : public Callable {
  public:
   explicit BuiltinHandler(const vm::NativeCallback* cb)
       : Callable(Symbol::BuiltinHandler, cb, FlowLocation()) {}
@@ -252,7 +252,7 @@ class XZERO_FLOW_API BuiltinHandler : public Callable {
   virtual void visit(ASTVisitor& v);
 };
 
-class XZERO_FLOW_API Unit : public ScopedSymbol {
+class CORTEX_FLOW_API Unit : public ScopedSymbol {
  private:
   std::vector<std::pair<std::string, std::string>> modules_;
 
@@ -276,7 +276,7 @@ class XZERO_FLOW_API Unit : public ScopedSymbol {
 };
 // }}}
 // {{{ Expr
-class XZERO_FLOW_API Expr : public ASTNode {
+class CORTEX_FLOW_API Expr : public ASTNode {
  protected:
   explicit Expr(const FlowLocation& loc) : ASTNode(loc) {}
 
@@ -284,7 +284,7 @@ class XZERO_FLOW_API Expr : public ASTNode {
   virtual FlowType getType() const = 0;
 };
 
-class XZERO_FLOW_API UnaryExpr : public Expr {
+class CORTEX_FLOW_API UnaryExpr : public Expr {
  private:
   vm::Opcode operator_;
   std::unique_ptr<Expr> subExpr_;
@@ -301,7 +301,7 @@ class XZERO_FLOW_API UnaryExpr : public Expr {
   virtual FlowType getType() const;
 };
 
-class XZERO_FLOW_API BinaryExpr : public Expr {
+class CORTEX_FLOW_API BinaryExpr : public Expr {
  private:
   vm::Opcode operator_;
   std::unique_ptr<Expr> lhs_;
@@ -319,7 +319,7 @@ class XZERO_FLOW_API BinaryExpr : public Expr {
   virtual FlowType getType() const;
 };
 
-class XZERO_FLOW_API ArrayExpr : public Expr {
+class CORTEX_FLOW_API ArrayExpr : public Expr {
  private:
   std::vector<std::unique_ptr<Expr>> values_;
 
@@ -336,7 +336,7 @@ class XZERO_FLOW_API ArrayExpr : public Expr {
 };
 
 template <typename T>
-class XZERO_FLOW_API LiteralExpr : public Expr {
+class CORTEX_FLOW_API LiteralExpr : public Expr {
  private:
   T value_;
 
@@ -354,7 +354,7 @@ class XZERO_FLOW_API LiteralExpr : public Expr {
   virtual void visit(ASTVisitor& v) { v.accept(*this); }
 };
 
-class XZERO_FLOW_API ParamList {
+class CORTEX_FLOW_API ParamList {
  private:
   bool isNamed_;
   std::vector<std::string> names_;
@@ -409,7 +409,7 @@ class XZERO_FLOW_API ParamList {
  * @see Callable
  * @see ParamList
  */
-class XZERO_FLOW_API CallExpr : public Expr {
+class CORTEX_FLOW_API CallExpr : public Expr {
  private:
   Callable* callee_;
   ParamList args_;
@@ -427,7 +427,7 @@ class XZERO_FLOW_API CallExpr : public Expr {
   virtual FlowType getType() const;
 };
 
-class XZERO_FLOW_API VariableExpr : public Expr {
+class CORTEX_FLOW_API VariableExpr : public Expr {
  private:
   Variable* variable_;
 
@@ -442,7 +442,7 @@ class XZERO_FLOW_API VariableExpr : public Expr {
   virtual FlowType getType() const;
 };
 
-class XZERO_FLOW_API HandlerRefExpr : public Expr {
+class CORTEX_FLOW_API HandlerRefExpr : public Expr {
  private:
   Handler* handler_;
 
@@ -458,12 +458,12 @@ class XZERO_FLOW_API HandlerRefExpr : public Expr {
 };
 // }}}
 // {{{ Stmt
-class XZERO_FLOW_API Stmt : public ASTNode {
+class CORTEX_FLOW_API Stmt : public ASTNode {
  protected:
   explicit Stmt(const FlowLocation& loc) : ASTNode(loc) {}
 };
 
-class XZERO_FLOW_API ExprStmt : public Stmt {
+class CORTEX_FLOW_API ExprStmt : public Stmt {
  private:
   std::unique_ptr<Expr> expression_;
 
@@ -479,7 +479,7 @@ class XZERO_FLOW_API ExprStmt : public Stmt {
   virtual void visit(ASTVisitor&);
 };
 
-class XZERO_FLOW_API CompoundStmt : public Stmt {
+class CORTEX_FLOW_API CompoundStmt : public Stmt {
  private:
   std::list<std::unique_ptr<Stmt>> statements_;
 
@@ -499,7 +499,7 @@ class XZERO_FLOW_API CompoundStmt : public Stmt {
   virtual void visit(ASTVisitor&);
 };
 
-class XZERO_FLOW_API AssignStmt : public Stmt {
+class CORTEX_FLOW_API AssignStmt : public Stmt {
  private:
   Variable* variable_;
   std::unique_ptr<Expr> expr_;
@@ -517,7 +517,7 @@ class XZERO_FLOW_API AssignStmt : public Stmt {
   virtual void visit(ASTVisitor&);
 };
 
-class XZERO_FLOW_API CondStmt : public Stmt {
+class CORTEX_FLOW_API CondStmt : public Stmt {
  private:
   std::unique_ptr<Expr> cond_;
   std::unique_ptr<Stmt> thenStmt_;
@@ -546,7 +546,7 @@ class XZERO_FLOW_API CondStmt : public Stmt {
 typedef std::pair<std::list<std::unique_ptr<Expr>>, std::unique_ptr<Stmt>>
 MatchCase;
 
-class XZERO_FLOW_API MatchStmt : public Stmt {
+class CORTEX_FLOW_API MatchStmt : public Stmt {
  public:
   typedef std::list<MatchCase> CaseList;
 

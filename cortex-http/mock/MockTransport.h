@@ -36,7 +36,7 @@ class Executor;
  * @see HttpHandler
  * @see Executor
  */
-class XZERO_HTTP_API MockTransport : public HttpTransport {
+class CORTEX_HTTP_API MockTransport : public HttpTransport {
  public:
   /**
    * Initializes the mock transport object.
@@ -80,16 +80,16 @@ class XZERO_HTTP_API MockTransport : public HttpTransport {
            const std::string& body = "");
 
   /** Retrieves the response message status line and headers. */
-  const HttpResponseInfo& responseInfo() const XZERO_NOEXCEPT;
+  const HttpResponseInfo& responseInfo() const CORTEX_NOEXCEPT;
 
   /** Retrieves the response message body. */
-  const Buffer& responseBody() const XZERO_NOEXCEPT;
+  const Buffer& responseBody() const CORTEX_NOEXCEPT;
 
   /** Tests whether this transport was aborted in last request handling. */
-  bool isAborted() const XZERO_NOEXCEPT;
+  bool isAborted() const CORTEX_NOEXCEPT;
 
   /** Tests whether last message was completed. */
-  bool isCompleted() const XZERO_NOEXCEPT;
+  bool isCompleted() const CORTEX_NOEXCEPT;
 
  private:
   // HttpTransport overrides
@@ -128,19 +128,19 @@ class XZERO_HTTP_API MockTransport : public HttpTransport {
 };
 
 // {{{ inlines
-inline const HttpResponseInfo& MockTransport::responseInfo() const XZERO_NOEXCEPT {
+inline const HttpResponseInfo& MockTransport::responseInfo() const CORTEX_NOEXCEPT {
   return responseInfo_;
 }
 
-inline const Buffer& MockTransport::responseBody() const XZERO_NOEXCEPT {
+inline const Buffer& MockTransport::responseBody() const CORTEX_NOEXCEPT {
   return responseBody_;
 }
 
-inline bool MockTransport::isAborted() const XZERO_NOEXCEPT {
+inline bool MockTransport::isAborted() const CORTEX_NOEXCEPT {
   return isAborted_;
 }
 
-inline bool MockTransport::isCompleted() const XZERO_NOEXCEPT {
+inline bool MockTransport::isCompleted() const CORTEX_NOEXCEPT {
   return isCompleted_;
 }
 // }}}

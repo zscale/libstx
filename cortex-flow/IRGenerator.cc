@@ -39,7 +39,7 @@ struct fntrace3 {
     fmt[i++] = ' ';
     strcpy(fmt + i, msg_.c_str());
 
-    XZERO_DEBUG("IRGenerator", 5, "%s", fmt);
+    CORTEX_DEBUG("IRGenerator", 5, "%s", fmt);
     ++fnd;
   }
 
@@ -58,12 +58,12 @@ struct fntrace3 {
     fmt[i++] = ' ';
     strcpy(fmt + i, msg_.c_str());
 
-    XZERO_DEBUG("IRGenerator", 5, "%s", fmt);
+    CORTEX_DEBUG("IRGenerator", 5, "%s", fmt);
   }
 };
 // }}}
 #define FNTRACE() fntrace3 _(__PRETTY_FUNCTION__)
-#define TRACE(level, msg...) XZERO_DEBUG("IRGenerator", (level), msg)
+#define TRACE(level, msg...) CORTEX_DEBUG("IRGenerator", (level), msg)
 #else
 #define FNTRACE()            do {} while (0)
 #define TRACE(level, msg...) do {} while (0)

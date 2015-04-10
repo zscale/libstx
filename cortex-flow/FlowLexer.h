@@ -25,7 +25,7 @@ namespace flow {
 //! \addtogroup Flow
 //@{
 
-class XZERO_FLOW_API FlowLexer {
+class CORTEX_FLOW_API FlowLexer {
  public:
   FlowLexer();
   ~FlowLexer();

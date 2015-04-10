@@ -24,7 +24,7 @@
 #include <inttypes.h>
 
 #if 0 // !defined(NDEBUG)
-#define TRACE(level, msg...) XZERO_DEBUG("vm", (level), msg)
+#define TRACE(level, msg...) CORTEX_DEBUG("vm", (level), msg)
 #else
 #define TRACE(msg...) do {} while (0)
 #endif

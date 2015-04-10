@@ -26,7 +26,7 @@ namespace http1 {
  *
  * @see HttpListener
  */
-class XZERO_HTTP_API HttpParser {
+class CORTEX_HTTP_API HttpParser {
  public:
   // {{{ enums
   /**
@@ -146,7 +146,7 @@ class XZERO_HTTP_API HttpParser {
   bool isProcessingHeader() const;
   bool isProcessingBody() const;
 
-  bool isContentExpected() const XZERO_NOEXCEPT {
+  bool isContentExpected() const CORTEX_NOEXCEPT {
     return contentLength_ > 0 || chunked_ ||
            (contentLength_ < 0 && mode_ != REQUEST);
   }
@@ -203,7 +203,7 @@ class XZERO_HTTP_API HttpParser {
   ssize_t contentLength_;  //!< content length of whole content or current chunk
 };
 
-XZERO_HTTP_API std::string to_string(http1::HttpParser::State state);
+CORTEX_HTTP_API std::string to_string(http1::HttpParser::State state);
 
 }  // namespace http1
 
