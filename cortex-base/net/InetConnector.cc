@@ -39,16 +39,10 @@
 #define SO_REUSEPORT 15
 #endif
 
-#if 0 // !defined(NDEBUG)
-static std::mutex m;
-#define TRACE(msg...)  do { \
-    m.lock(); \
-    printf("InetConnector: " msg); \
-    printf("\n"); \
-    m.unlock(); \
-  } while (0);
+#if !defined(NDEBUG)
+#define TRACE(msg...) logTrace("InetConnector", msg)
 #else
-#define TRACE(msg...) do { } while (0)
+#define TRACE(msg...) do {} while (0)
 #endif
 
 namespace cortex {
@@ -61,6 +55,8 @@ InetConnector::InetConnector(const std::string& name, Executor* executor,
     : Connector(name, executor, clock),
       scheduler_(scheduler),
       schedulerHandle_(),
+      bindAddress_(),
+      port_(-1),
       safeCall_(eh),
       connectedEndPoints_(),
       mutex_(),
@@ -69,7 +65,7 @@ InetConnector::InetConnector(const std::string& name, Executor* executor,
       typeMask_(0),
       flags_(0),
       blocking_(true),
-      backlog_(256),
+      backlog_(128),
       multiAcceptCount_(1),
       idleTimeout_(idleTimeout),
       tcpFinTimeout_(tcpFinTimeout),
@@ -95,10 +91,16 @@ void InetConnector::open(const IPAddress& ipaddress, int port, int backlog,
     RAISE_STATUS(IllegalStateError);
 
   socket_ = ::socket(ipaddress.family(), SOCK_STREAM, 0);
-  addressFamily_ = ipaddress.family();
+
+  TRACE("open: ip=%s, port=%d, backlog=%d, reuseAddr=%s, reusePort=%s",
+      ipaddress.str().c_str(), port, backlog,
+      reuseAddr ? "true" : "false",
+      reusePort ? "true" : "false");
 
   if (socket_ < 0)
     RAISE_ERRNO(errno);
+
+  setBacklog(backlog);
 
   if (reusePort)
     setReusePort(reusePort);
@@ -146,9 +148,36 @@ void InetConnector::bind(const IPAddress& ipaddr, int port) {
     RAISE_ERRNO(errno);
 
   addressFamily_ = ipaddr.family();
+  bindAddress_ = ipaddr;
+  port_ = port;
 }
 
 void InetConnector::listen(int backlog) {
+  int somaxconn = SOMAXCONN;
+
+#if defined(CORTEX_OS_LINUX)
+  somaxconn = FileUtil::read("/proc/sys/net/core/somaxconn").toInt();
+#endif
+
+  if (backlog > somaxconn) {
+    RAISE(
+        RuntimeError,
+        "Listener %s:%d configured with a backlog higher than the system"
+        " permits (%ld > %ld)."
+#if defined(CORTEX_OS_LINUX)
+        " See /proc/sys/net/core/somaxconn for your system limits."
+#endif
+        ,
+        bindAddress_.str().c_str(),
+        port_,
+        backlog,
+        somaxconn);
+  }
+
+  if (backlog <= 0) {
+    backlog = somaxconn;
+  }
+
   int rv = ::listen(socket_, backlog);
   if (rv < 0)
     RAISE_ERRNO(errno);
