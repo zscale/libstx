@@ -48,6 +48,7 @@ class CORTEX_API File {
   virtual time_t mtime() const CORTEX_NOEXCEPT = 0;
   virtual size_t inode() const CORTEX_NOEXCEPT = 0;
   virtual bool isRegular() const CORTEX_NOEXCEPT = 0;
+  virtual bool isDirectory() const CORTEX_NOEXCEPT = 0;
 
   /**
    * Flags that can be passed when creating a system file handle.
