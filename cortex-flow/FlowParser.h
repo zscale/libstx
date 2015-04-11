@@ -38,11 +38,18 @@ class CORTEX_FLOW_API FlowParser {
   vm::Runtime* runtime_;
 
  public:
-  std::function<void(const std::string&)> errorHandler;
-  std::function<bool(const std::string&, const std::string&,
-                     std::vector<vm::NativeCallback*>*)> importHandler;
+  typedef std::function<void(const std::string&)> ErrorHandler;
+  typedef std::function<bool(const std::string&, const std::string&,
+                     std::vector<vm::NativeCallback*>*)> ImportHandler;
 
-  explicit FlowParser(vm::Runtime* runtime);
+  ErrorHandler errorHandler;
+  ImportHandler importHandler;
+
+  explicit FlowParser(
+      vm::Runtime* runtime,
+      ImportHandler importHandler = nullptr,
+      ErrorHandler errorHandler = nullptr);
+
   ~FlowParser();
 
   void openString(const std::string& filename);
