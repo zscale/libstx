@@ -18,7 +18,6 @@ namespace cortex {
 class HttpRequest;
 class HttpResponse;
 class File;
-class FileRepository;
 class MimeTypes;
 
 /**
@@ -30,20 +29,16 @@ class CORTEX_HTTP_API HttpFileHandler {
  public:
   /**
    * Initializes static file handler.
-   *
-   * @param repo file repository to serve from.
    */
-  explicit HttpFileHandler(FileRepository& repo);
+  explicit HttpFileHandler();
 
   /**
    * Initializes static file handler.
    *
-   * @param repo               file repository to serve from.
    * @param generateBoundaryID boundary-ID generator function that generates
    *                           response-local unique boundary IDs.
    */
-  HttpFileHandler(FileRepository& repo,
-                  std::function<std::string()> generateBoundaryID);
+  HttpFileHandler(std::function<std::string()> generateBoundaryID);
 
   ~HttpFileHandler();
 
@@ -56,10 +51,8 @@ class CORTEX_HTTP_API HttpFileHandler {
    *
    * @param request the request to handle.
    * @param response the response to generate.
-   * @param docroot request's document root into the local file system.
    */
-  bool handle(HttpRequest* request, HttpResponse* response,
-              const std::string& docroot);
+  bool handle(HttpRequest* request, HttpResponse* response);
 
  private:
   /**
@@ -95,7 +88,6 @@ class CORTEX_HTTP_API HttpFileHandler {
                           HttpRequest* request, HttpResponse* response);
 
  private:
-  FileRepository& fileRepository_;
   std::function<std::string()> generateBoundaryID_;
 
   // TODO stat cache
