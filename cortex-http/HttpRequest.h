@@ -10,6 +10,7 @@
 #include <cortex-http/Api.h>
 #include <cortex-base/sysconfig.h>
 #include <cortex-base/Buffer.h>
+#include <cortex-base/io/File.h>
 #include <cortex-http/HeaderFieldList.h>
 #include <cortex-http/HttpVersion.h>
 #include <cortex-http/HttpMethod.h>
@@ -57,6 +58,15 @@ class CORTEX_HTTP_API HttpRequest {
   bool expect100Continue() const CORTEX_NOEXCEPT { return expect100Continue_; }
   void setExpect100Continue(bool value) CORTEX_NOEXCEPT { expect100Continue_ = value; }
 
+  const std::string& username() const noexcept { return username_; }
+  void setUserName(const std::string& value) { username_ = value; }
+
+  const std::string& documentRoot() const noexcept { return documentRoot_; }
+  void setDocumentRoot(const std::string& path) { documentRoot_ = path; }
+
+  void setFile(std::shared_ptr<File> file) { file_ = file; }
+  std::shared_ptr<File> file() const { return file_; }
+
   void recycle();
 
  private:
@@ -75,8 +85,11 @@ class CORTEX_HTTP_API HttpRequest {
   std::string host_;
 
   HeaderFieldList headers_;
-
   std::unique_ptr<HttpInput> input_;
+
+  std::string username_; // the client's username, if authenticated
+  std::string documentRoot_; // document-root associated with this request
+  std::shared_ptr<File> file_; // requested file, if any
 };
 
 }  // namespace cortex
