@@ -271,6 +271,9 @@ class CORTEX_API InetConnector : public Connector {
   Scheduler* scheduler_;
   Scheduler::HandleRef schedulerHandle_;
 
+  IPAddress bindAddress_;
+  int port_;
+
   /** Hook invokation wrapper to catch unhandled exceptions. */
   SafeCall safeCall_;
 
