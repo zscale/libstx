@@ -12,7 +12,6 @@
 #include <cortex-http/HttpRangeDef.h>
 #include <cortex-http/HeaderFieldList.h>
 #include <cortex-base/io/File.h>
-#include <cortex-base/io/FileRepository.h>
 #include <cortex-base/io/FileRef.h>
 #include <cortex-base/DateTime.h>
 #include <cortex-base/Tokenizer.h>
@@ -71,23 +70,19 @@ static std::string generateDefaultBoundaryID() {
 }
 // }}}
 
-HttpFileHandler::HttpFileHandler(FileRepository& repo)
-    : HttpFileHandler(repo, std::bind(&generateDefaultBoundaryID)) {
+HttpFileHandler::HttpFileHandler()
+    : HttpFileHandler(std::bind(&generateDefaultBoundaryID)) {
 }
 
-HttpFileHandler::HttpFileHandler(
-    FileRepository& repo,
-    std::function<std::string()> generateBoundaryID)
-    : fileRepository_(repo),
-      generateBoundaryID_(generateBoundaryID) {
+HttpFileHandler::HttpFileHandler(std::function<std::string()> generateBoundaryID)
+    : generateBoundaryID_(generateBoundaryID) {
 }
 
 HttpFileHandler::~HttpFileHandler() {
 }
 
-bool HttpFileHandler::handle(HttpRequest* request, HttpResponse* response,
-                             const std::string& docroot) {
-  auto transferFile = fileRepository_.getFile(request->path(), docroot);
+bool HttpFileHandler::handle(HttpRequest* request, HttpResponse* response) {
+  auto transferFile = request->file();
 
   if (!transferFile->isRegular())
     return false;

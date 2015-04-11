@@ -29,12 +29,14 @@ static std::string generateBoundaryID() {
 }
 
 void staticfileHandler(HttpRequest* request, HttpResponse* response) {
-  const std::string docroot = FileUtil::realpath(".");
   MimeTypes mimetypes;
   LocalFileRepository repo(mimetypes, "/", true, true, true);
-  HttpFileHandler staticfile(repo, &generateBoundaryID);
+  HttpFileHandler staticfile(&generateBoundaryID);
 
-  if (staticfile.handle(request, response, docroot))
+  request->setDocumentRoot(FileUtil::realpath("."));
+  request->setFile(repo.getFile(request->path(), request->documentRoot()));
+
+  if (staticfile.handle(request, response))
     return;
 
   response->setStatus(HttpStatus::NotFound);
