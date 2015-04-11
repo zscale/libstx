@@ -130,12 +130,14 @@ class FlowParser::Scope {
   for (FlowParser::Scope _(this, (SCOPED_SYMBOL)); _.flip();)
 // }}}
 
-FlowParser::FlowParser(vm::Runtime* runtime)
+FlowParser::FlowParser(vm::Runtime* runtime,
+                       ImportHandler importHandler,
+                       ErrorHandler errorHandler)
     : lexer_(new FlowLexer()),
       scopeStack_(nullptr),
       runtime_(runtime),
-      errorHandler(),
-      importHandler() {
+      errorHandler(errorHandler),
+      importHandler(importHandler) {
   // enter(new SymbolTable(nullptr, "global"));
 }
 
