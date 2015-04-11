@@ -33,6 +33,7 @@ class CORTEX_API MemoryFile : public File {
   time_t mtime() const CORTEX_NOEXCEPT override;
   size_t inode() const CORTEX_NOEXCEPT override;
   bool isRegular() const CORTEX_NOEXCEPT override;
+  bool isDirectory() const CORTEX_NOEXCEPT override;
   int createPosixChannel(OpenFlags flags) override;
   std::unique_ptr<std::istream> createInputChannel() override;
   std::unique_ptr<std::ostream> createOutputChannel() override;

@@ -125,6 +125,10 @@ bool MemoryFile::isRegular() const CORTEX_NOEXCEPT {
   return true;
 }
 
+bool MemoryFile::isDirectory() const CORTEX_NOEXCEPT {
+  return false;
+}
+
 int MemoryFile::createPosixChannel(OpenFlags oflags) {
 #if defined(CORTEX_MEMORYFILE_USE_TMPFILE)
   if (fd_ < 0) {

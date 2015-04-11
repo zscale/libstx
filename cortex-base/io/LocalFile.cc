@@ -54,6 +54,10 @@ bool LocalFile::isRegular() const CORTEX_NOEXCEPT {
   return S_ISREG(stat_.st_mode);
 }
 
+bool LocalFile::isDirectory() const CORTEX_NOEXCEPT {
+  return S_ISDIR(stat_.st_mode);
+}
+
 const std::string& LocalFile::etag() const {
   // compute ETag response header value on-demand
   if (etag_.empty()) {
