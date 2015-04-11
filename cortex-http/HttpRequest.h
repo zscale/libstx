@@ -29,7 +29,6 @@ class CORTEX_HTTP_API HttpRequest {
               HttpVersion version, bool secure, const HeaderFieldList& headers,
               std::unique_ptr<HttpInput>&& input);
 
-
   HttpMethod method() const CORTEX_NOEXCEPT { return method_; }
   const std::string& unparsedMethod() const CORTEX_NOEXCEPT { return unparsedMethod_; }
   void setMethod(const std::string& value);
