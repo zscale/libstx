@@ -49,6 +49,7 @@ class CORTEX_API File {
   virtual size_t inode() const CORTEX_NOEXCEPT = 0;
   virtual bool isRegular() const CORTEX_NOEXCEPT = 0;
   virtual bool isDirectory() const CORTEX_NOEXCEPT = 0;
+  virtual bool isExecutable() const CORTEX_NOEXCEPT = 0;
 
   /**
    * Flags that can be passed when creating a system file handle.
@@ -100,6 +101,12 @@ class CORTEX_API File {
    * Retrieves errno-compatible error code for the validity of the entity.
    */
   int errorCode() const CORTEX_NOEXCEPT { return errno_; }
+
+  /**
+   * Tests wheather this file exists, that is, no error had occurred during
+   * vfs_stat() operation.
+   */
+  bool exists() const noexcept { return errno_ == 0; }
 
  private:
   std::string path_;

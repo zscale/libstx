@@ -58,6 +58,10 @@ bool LocalFile::isDirectory() const CORTEX_NOEXCEPT {
   return S_ISDIR(stat_.st_mode);
 }
 
+bool LocalFile::isExecutable() const CORTEX_NOEXCEPT {
+  return stat_.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH);
+}
+
 const std::string& LocalFile::etag() const {
   // compute ETag response header value on-demand
   if (etag_.empty()) {
