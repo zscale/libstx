@@ -42,6 +42,7 @@ HttpRequest::HttpRequest(const std::string& method, const std::string& path,
       input_(std::move(input)),
       username_(),
       documentRoot_(),
+      pathInfo_(),
       file_() {
   // .
 }
@@ -64,6 +65,7 @@ void HttpRequest::recycle() {
   input_->recycle();
   username_.clear();
   documentRoot_.clear();
+  pathInfo_.clear();
   file_.reset();
 }
 
