@@ -81,6 +81,18 @@ class CORTEX_HTTP_API HttpResponse {
   const HeaderFieldList& trailers() const CORTEX_NOEXCEPT { return trailers_; }
 
   /**
+   * Installs a callback to be invoked right before serialization of response
+   * headers.
+   */
+  void onPostProcess(std::function<void()> callback);
+
+  /**
+   * Installs a callback to be invoked right after the last response message
+   * byte has been fully sent.
+   */
+  void onResponseSent(std::function<void()> callback);
+
+  /**
    * Invoke to mark this response as complete.
    *
    * Further access to this object is undefined.

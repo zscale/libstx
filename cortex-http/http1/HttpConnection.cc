@@ -122,6 +122,9 @@ void HttpConnection::onResponseComplete(bool succeed) {
       endpoint()->setCorking(false);
     }
 
+    // tell channel that we finished fully transmitting the response
+    channel_->responseSent();
+
     if (inputOffset_ < inputBuffer_.size()) {
       // have some request pipelined
       TRACE("%p completed.onComplete: pipelined read", this);

@@ -194,6 +194,8 @@ HttpResponseInfo HttpChannel::commitInline() {
   if (!response_->status())
     RAISE(IllegalStateError, "No HTTP response status set yet.");
 
+  onPostProcess_();
+
   if (request_->expect100Continue())
     response_->send100Continue(nullptr /* FIXME */);
 
@@ -347,6 +349,19 @@ void HttpChannel::completed() {
   }
 
   transport_->completed();
+}
+
+void HttpChannel::onPostProcess(std::function<void()> callback) {
+  // TODO: ensure we can still add us
+  onPostProcess_.connect(callback);
+}
+
+void HttpChannel::onResponseSent(std::function<void()> callback) {
+  onResponseSent_.connect(callback);
+}
+
+void HttpChannel::responseSent() {
+  onResponseSent_();
 }
 
 }  // namespace cortex
