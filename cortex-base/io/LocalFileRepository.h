@@ -54,6 +54,10 @@ class CORTEX_API LocalFileRepository : public FileRepository {
    */
   void configureETag(bool mtime, bool size, bool inode);
 
+  bool etagConsiderMTime() const noexcept { return etagConsiderMTime_; }
+  bool etagConsiderSize() const noexcept { return etagConsiderSize_; }
+  bool etagConsiderINode() const noexcept { return etagConsiderINode_; }
+
  private:
   friend class LocalFile;
 
