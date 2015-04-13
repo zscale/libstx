@@ -28,7 +28,7 @@ class Http1Channel : public cortex::HttpChannel {
   bool isPersistent() const CORTEX_NOEXCEPT { return persistent_; }
   void setPersistent(bool value) CORTEX_NOEXCEPT { persistent_ = value; }
 
-  virtual void reset();
+  void reset() override;
 
  protected:
   bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
