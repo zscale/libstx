@@ -74,11 +74,12 @@ int main(int argc, const char* argv[]) {
   compressor->setMinSize(5);
 
   cortex::MimeTypes mimetypes("/etc/mime.types", "application/octet-stream");
-  cortex::LocalFileRepository localFiles(mimetypes, "/", true, true, true);
-  cortex::HttpFileHandler fileHandler(localFiles);
+  cortex::LocalFileRepository vfs(mimetypes, "/", true, true, true);
+  cortex::HttpFileHandler fileHandler;
 
   http->setHandler([&](cortex::HttpRequest* request, cortex::HttpResponse* response) {
-    if (!fileHandler.handle(request, response, docroot)) {
+    request->setFile(vfs.getFile(request->path(), docroot));
+    if (!fileHandler.handle(request, response)) {
       response->setStatus(cortex::HttpStatus::NotFound);
       response->completed();
     }
