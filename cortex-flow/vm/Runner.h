@@ -12,6 +12,7 @@
 #include <cortex-flow/vm/Handler.h>
 #include <cortex-flow/vm/Instruction.h>
 #include <cortex-base/CustomDataMgr.h>
+#include <cortex-base/RegExp.h>
 #include <utility>
 #include <list>
 #include <memory>
@@ -41,6 +42,8 @@ class CORTEX_FLOW_API Runner : public CustomData {
 
   //! pointer to the currently evaluated HttpRequest/HttpResponse our case
   std::pair<void*,void*> userdata_;
+
+  RegExpContext regexpContext_;
 
   State state_;     //!< current VM state
   size_t pc_;       //!< last saved program execution offset
@@ -77,6 +80,9 @@ class CORTEX_FLOW_API Runner : public CustomData {
   inline void setUserData(std::pair<P, Q> udata) {
     setUserData(udata.first, udata.second);
   }
+
+  const RegExpContext* regexpContext() const noexcept { return &regexpContext_; }
+  RegExpContext* regexpContext() noexcept { return &regexpContext_; }
 
   const Register* data() const { return data_; }
 

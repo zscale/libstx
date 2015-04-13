@@ -46,6 +46,7 @@ Runner::Runner(Handler* handler)
     : handler_(handler),
       program_(handler->program()),
       userdata_(nullptr, nullptr),
+      regexpContext_(),
       state_(Inactive),
       pc_(0),
       stringGarbage_() {
@@ -642,17 +643,15 @@ bool Runner::loop() {
   // }}}
   // {{{ regex
   instr(SREGMATCH) {  // A = B =~ C
-    RegExpContext* cx = (RegExpContext*)userdata();
     data_[A] = program_->constants().getRegExp(C).match(
-        toString(B), cx ? cx->regexMatch() : nullptr);
+        toString(B), regexpContext_.regexMatch());
 
     next;
   }
 
   instr(SREGGROUP) {  // A = regex.group(B)
     FlowNumber position = toNumber(B);
-    RegExpContext* cx = (RegExpContext*)userdata();
-    RegExp::Result* rr = cx->regexMatch();
+    RegExp::Result* rr = regexpContext_.regexMatch();
     const auto& match = rr->at(position);
 
     data_[A] = (Register)newString(match.first, match.second);
