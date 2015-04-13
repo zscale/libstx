@@ -40,10 +40,7 @@ HttpRequest::HttpRequest(const std::string& method, const std::string& path,
       expect100Continue_(false),
       headers_(headers),
       input_(std::move(input)),
-      username_(),
-      documentRoot_(),
-      pathInfo_(),
-      file_() {
+      username_() {
   // .
 }
 
@@ -64,9 +61,6 @@ void HttpRequest::recycle() {
   host_.clear();
   input_->recycle();
   username_.clear();
-  documentRoot_.clear();
-  pathInfo_.clear();
-  file_.reset();
 }
 
 bool HttpRequest::setUri(const std::string& uri) {
