@@ -81,8 +81,10 @@ HttpFileHandler::HttpFileHandler(std::function<std::string()> generateBoundaryID
 HttpFileHandler::~HttpFileHandler() {
 }
 
-bool HttpFileHandler::handle(HttpRequest* request, HttpResponse* response) {
-  auto transferFile = request->file();
+bool HttpFileHandler::handle(
+    HttpRequest* request,
+    HttpResponse* response,
+    std::shared_ptr<File> transferFile) {
 
   if (!transferFile->isRegular())
     return false;

@@ -61,15 +61,6 @@ class CORTEX_HTTP_API HttpRequest {
   const std::string& username() const noexcept { return username_; }
   void setUserName(const std::string& value) { username_ = value; }
 
-  const std::string& documentRoot() const noexcept { return documentRoot_; }
-  void setDocumentRoot(const std::string& path) { documentRoot_ = path; }
-
-  const std::string& pathInfo() const noexcept { return pathInfo_; }
-  void setPathInfo(const std::string& value) { pathInfo_ = value; }
-
-  void setFile(std::shared_ptr<File> file) { file_ = file; }
-  std::shared_ptr<File> file() const { return file_; }
-
   void recycle();
 
  private:
@@ -91,9 +82,6 @@ class CORTEX_HTTP_API HttpRequest {
   std::unique_ptr<HttpInput> input_;
 
   std::string username_; // the client's username, if authenticated
-  std::string documentRoot_; // document-root associated with this request
-  std::string pathInfo_; // computed path info part
-  std::shared_ptr<File> file_; // requested file, if any
 };
 
 }  // namespace cortex

@@ -52,7 +52,8 @@ class CORTEX_HTTP_API HttpFileHandler {
    * @param request the request to handle.
    * @param response the response to generate.
    */
-  bool handle(HttpRequest* request, HttpResponse* response);
+  bool handle(HttpRequest* request, HttpResponse* response,
+              std::shared_ptr<File> transferFile);
 
  private:
   /**

@@ -33,10 +33,11 @@ void staticfileHandler(HttpRequest* request, HttpResponse* response) {
   LocalFileRepository repo(mimetypes, "/", true, true, true);
   HttpFileHandler staticfile(&generateBoundaryID);
 
-  request->setDocumentRoot(FileUtil::realpath("."));
-  request->setFile(repo.getFile(request->path(), request->documentRoot()));
 
-  if (staticfile.handle(request, response))
+  auto docroot = FileUtil::realpath(".");
+  auto file = repo.getFile(request->path(), docroot);
+
+  if (staticfile.handle(request, response, file))
     return;
 
   response->setStatus(HttpStatus::NotFound);
