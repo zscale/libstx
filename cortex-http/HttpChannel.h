@@ -8,6 +8,7 @@
 #pragma once
 
 #include <cortex-http/Api.h>
+#include <cortex-base/Signal.h>
 #include <cortex-base/CompletionHandler.h>
 #include <cortex-http/HttpListener.h>
 #include <cortex-http/HttpHandler.h>
@@ -150,6 +151,13 @@ class CORTEX_HTTP_API HttpChannel : public HttpListener {
   HttpChannelState state() const noexcept { return state_; }
   void setState(HttpChannelState newState);
 
+  // hooks
+  void onPostProcess(std::function<void()> callback);
+  void onResponseSent(std::function<void()> callback);
+
+  // event, only to be invoked by transport implementors
+  void responseSent(); // no, via cb functor instead
+
  protected:
   virtual std::unique_ptr<HttpOutput> createOutput();
   void handleRequest();
@@ -166,6 +174,9 @@ class CORTEX_HTTP_API HttpChannel : public HttpListener {
   std::list<std::shared_ptr<Filter>> outputFilters_;
   HttpOutputCompressor* outputCompressor_;
   HttpHandler handler_;
+
+  Signal<void()> onPostProcess_;
+  Signal<void()> onResponseSent_;
 };
 
 }  // namespace cortex

@@ -229,6 +229,14 @@ void HttpResponse::setTrailer(const std::string& name, const std::string& value)
 }
 // }}}
 
+void HttpResponse::onPostProcess(std::function<void()> callback) {
+  channel_->onPostProcess(callback);
+}
+
+void HttpResponse::onResponseSent(std::function<void()> callback) {
+  channel_->onResponseSent(callback);
+}
+
 void HttpResponse::completed() {
   output_->completed();
 }
