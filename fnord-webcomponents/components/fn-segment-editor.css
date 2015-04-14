@@ -182,9 +182,37 @@ fn-segment-header.segment-error fn-segment-error-message {
   display: none;
 }
 
+/*****************
+  Group Menu
+*****************/
+fn-menu.segment-group-menu {
+  display: block;
+  width: 150px;
+  position: fixed;
+  height: calc(100% - 120px);
+  border-radius: 0;
+  border-right: 1px solid rgba(39, 41, 43, 0.15);
+  box-shadow: none;
+}
+
+fn-menu.segment-group-menu ~ fn-segment-option {
+  margin-left: 150px;
+  display: none;
+}
+
+fn-menu.segment-group-menu ~ fn-segment-option[data-active] {
+  display: block;
+}
+
 /******************
   Segment Option
 ******************/
+fn-segment-options {
+  display: block;
+  overflow: visible;
+  min-height: 100px;
+}
+
 fn-segment,
 fn-segment-option {
   display: block;
@@ -212,15 +240,26 @@ fn-segment-option > fn-checkbox {
   margin-top: .8em;
 }
 
-fn-segment-option fn-checkbox ~ fn-dropdown fn-dropdown-header {
+fn-segment-option fn-checkbox ~ fn-dropdown fn-dropdown-header,
+fn-segment-option fn-checkbox ~ fn-input input {
   opacity: 0.6;
 }
 
-fn-segment-option fn-checkbox[data-active] ~ fn-dropdown fn-dropdown-header {
+fn-segment-option fn-checkbox[data-active] ~ fn-dropdown fn-dropdown-header,
+fn-segment-option fn-checkbox[data-active] ~ fn-input input {
   opacity: 1;
 }
 
 fn-checkbox + fn-segment-title {
+  margin-left: 5px;
+}
+
+fn-segment-option fn-input input {
+  line-height: 1.3em;
+  padding: 0.58em 1em;
+  outline: 0;
+  box-sizing: border-box;
+  float: left;
   margin-left: 5px;
 }
 
