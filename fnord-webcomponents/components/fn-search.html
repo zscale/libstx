@@ -128,7 +128,7 @@
 
             if (visibleScrollbar) {
               var ul = this.querySelector("ul");
-              ul.scrollTop = ul.scrollTop + (ul.scrollHeight / elems.length);
+              ul.scrollTop = ul.scrollTop + (ul.offsetHeight / elems.length);
             }
           }
 
@@ -148,7 +148,7 @@
 
             if (visibleScrollbar) {
               var ul = this.querySelector("ul");
-              ul.scrollTop = ul.scrollTop - (ul.scrollHeight / elems.length);
+              ul.scrollTop = ul.scrollTop - (ul.offsetHeight / elems.length);
             }
           }
         }
