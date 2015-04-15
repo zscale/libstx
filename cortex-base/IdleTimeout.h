@@ -35,6 +35,7 @@ class CORTEX_API IdleTimeout {
   void clearCallback();
 
   void activate();
+  void activate(TimeSpan timeout);
   void deactivate();
   bool isActive() const;
 
@@ -66,5 +67,10 @@ class CORTEX_API IdleTimeout {
   std::function<void()> onTimeout_;
   Scheduler::HandleRef handle_;
 };
+
+inline void IdleTimeout::activate(TimeSpan timeout) {
+  setTimeout(timeout);
+  activate();
+}
 
 } // namespace cortex
