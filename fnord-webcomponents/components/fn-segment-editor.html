@@ -329,16 +329,14 @@
 
         segment.forEach(function(s) {
           segments.push(s);
-          _this.fireNewSegmentEvent(s);
         });
 
       } else {
         segments.push(segment);
-        this.fireNewSegmentEvent(segment);
       }
 
-
       this.setAttribute('data-segments', JSON.stringify(segments));
+      this.fireNewSegmentEvent(segment);
       this.changeView("fn-segment-overview");
       this.renderSegments();
       this.renderPreviewValues();
@@ -896,6 +894,7 @@
 
       this.dispatchEvent(ev);
     };
+
 
     this.fireRemoveSegmentEvent = function(name) {
       this.fireSegmentsChangedEvent();
