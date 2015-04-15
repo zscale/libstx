@@ -48,7 +48,8 @@ class CORTEX_HTTP_API HttpService {
    * @param executor the executor service to run tasks on.
    * @param scheduler where to schedule timed tasks on.
    * @param clock The wall clock that may be used for timeout management.
-   * @param idleTimeout timespan indicating how long a connection may be idle.
+   * @param readTimeout timespan indicating how long a connection may be idle for read.
+   * @param writeTimeout timespan indicating how long a connection may be idle for write.
    * @param tcpFinTimeout Timespan to leave client sockets in FIN_WAIT2 state.
    *                      A value of 0 means to leave it at system default.
    * @param ipaddress the TCP/IP bind address.
@@ -56,11 +57,15 @@ class CORTEX_HTTP_API HttpService {
    * @param backlog the number of connections allowed to be queued in kernel.
    *
    */
-  InetConnector* configureInet(Executor* executor, Scheduler* scheduler,
+  InetConnector* configureInet(Executor* executor,
+                               Scheduler* scheduler,
                                WallClock* clock,
-                               TimeSpan idleTimeout, TimeSpan tcpFinTimeout,
+                               TimeSpan readTimeout,
+                               TimeSpan writeTimeout,
+                               TimeSpan tcpFinTimeout,
                                const IPAddress& ipaddress,
-                               int port, int backlog = 128);
+                               int port,
+                               int backlog = 128);
 
   /** Configures a local connector. */
   LocalConnector* configureLocal();
