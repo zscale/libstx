@@ -341,4 +341,8 @@ void InetEndPoint::setWriteTimeout(TimeSpan timeout) {
   writeTimeout_ = timeout;
 }
 
+Option<IPAddress> InetEndPoint::remoteIP() const {
+  return Some(remoteAddress().first);
+}
+
 } // namespace cortex

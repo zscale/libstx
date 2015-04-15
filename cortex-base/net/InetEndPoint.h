@@ -57,6 +57,7 @@ class CORTEX_API InetEndPoint : public EndPoint {
   TimeSpan writeTimeout() override;
   void setReadTimeout(TimeSpan timeout) override;
   void setWriteTimeout(TimeSpan timeout) override;
+  Option<IPAddress> remoteIP() const override;
 
  private:
   void onReadable() CORTEX_NOEXCEPT;
