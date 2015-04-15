@@ -68,8 +68,10 @@ class CORTEX_API SslEndPoint : public EndPoint {
    */
   void wantFlush() override;
 
-  TimeSpan idleTimeout() override;
-  void setIdleTimeout(TimeSpan timeout) override;
+  TimeSpan readTimeout() override;
+  TimeSpan writeTimeout() override;
+  void setReadTimeout(TimeSpan timeout) override;
+  void setWriteTimeout(TimeSpan timeout) override;
   bool isBlocking() const override;
   void setBlocking(bool enable) override;
   bool isCorking() const override;
@@ -107,6 +109,8 @@ class CORTEX_API SslEndPoint : public EndPoint {
   SSL* ssl_;
   Desire bioDesire_;
   Scheduler::HandleRef io_;
+  TimeSpan readTimeout_;
+  TimeSpan writeTimeout_;
   IdleTimeout idleTimeout_;
 };
 

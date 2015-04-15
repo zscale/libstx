@@ -45,11 +45,12 @@ SslEndPoint::SslEndPoint(
       ssl_(nullptr),
       bioDesire_(Desire::None),
       io_(),
+      readTimeout_(connector->readTimeout()),
+      writeTimeout_(connector->writeTimeout()),
       idleTimeout_(connector->clock(), scheduler) {
   TRACE("%p SslEndPoint() ctor", this);
 
   idleTimeout_.setCallback(std::bind(&SslEndPoint::onTimeout, this));
-  idleTimeout_.setTimeout(connector->idleTimeout());
 
   ssl_ = SSL_new(connector->defaultContext()->get());
   SSL_set_fd(ssl_, socket);
@@ -266,12 +267,20 @@ void SslEndPoint::wantFlush() {
   }
 }
 
-TimeSpan SslEndPoint::idleTimeout() {
-  return idleTimeout_.timeout();
+TimeSpan SslEndPoint::readTimeout() {
+  return readTimeout_;
 }
 
-void SslEndPoint::setIdleTimeout(TimeSpan timeout) {
-  idleTimeout_.setTimeout(timeout);
+TimeSpan SslEndPoint::writeTimeout() {
+  return writeTimeout_;
+}
+
+void SslEndPoint::setReadTimeout(TimeSpan timeout) {
+  readTimeout_ = timeout;
+}
+
+void SslEndPoint::setWriteTimeout(TimeSpan timeout) {
+  writeTimeout_ = timeout;
 }
 
 bool SslEndPoint::isBlocking() const {

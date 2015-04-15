@@ -29,12 +29,13 @@ namespace cortex {
 
 SslConnector::SslConnector(const std::string& name, Executor* executor,
                            Scheduler* scheduler, WallClock* clock,
-                           TimeSpan idleTimeout, TimeSpan tcpFinTimeout,
+                           TimeSpan readTimeout, TimeSpan writeTimeout,
+                           TimeSpan tcpFinTimeout,
                            std::function<void(const std::exception&)> eh,
                            const IPAddress& ipaddress, int port, int backlog,
                            bool reuseAddr, bool reusePort)
     : InetConnector(name, executor, scheduler, clock,
-                    idleTimeout, tcpFinTimeout, eh,
+                    readTimeout, writeTimeout, tcpFinTimeout, eh,
                     ipaddress, port, backlog, reuseAddr, reusePort),
       contexts_() {
 }

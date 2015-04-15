@@ -35,7 +35,10 @@ class CORTEX_API SslConnector : public InetConnector {
    * @param executor Executor service to run handlers on
    * @param scheduler Scheduler service to use for scheduling tasks
    * @param clock Wall clock used for timeout management.
-   * @param idleTimeout timespan indicating how long a connection may be idle.
+   * @param readTimeout timespan indicating how long a connection may be idle
+   *                    for read operations.
+   * @param writeTimeout timespan indicating how long a connection may be idle
+   *                     for read operations.
    * @param tcpFinTimeout Timespan to leave client sockets in FIN_WAIT2 state.
    *                      A value of 0 means to leave it at system default.
    * @param eh exception handler for errors in hooks or during events.
@@ -49,7 +52,8 @@ class CORTEX_API SslConnector : public InetConnector {
    */
   SslConnector(const std::string& name, Executor* executor,
                Scheduler* scheduler, WallClock* clock,
-               TimeSpan idleTimeout, TimeSpan tcpFinTimeout,
+               TimeSpan readTimeout, TimeSpan writeTimeout,
+               TimeSpan tcpFinTimeout,
                std::function<void(const std::exception&)> eh,
                const IPAddress& ipaddress, int port, int backlog,
                bool reuseAddr, bool reusePort);

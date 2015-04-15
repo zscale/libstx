@@ -41,7 +41,10 @@ class CORTEX_API InetConnector : public Connector {
    * @param executor Executor service to run handlers on
    * @param scheduler Scheduler service to use for scheduling tasks
    * @param clock Wall clock used for timeout management.
-   * @param idleTimeout timespan indicating how long a connection may be idle.
+   * @param readTimeout timespan indicating how long a connection may for read
+   *                    readiness.
+   * @param writeTimeout timespan indicating how long a connection wait for
+   *                     write readiness.
    * @param tcpFinTimeout Timespan to leave client sockets in FIN_WAIT2 state.
    *                      A value of 0 means to leave it at system default.
    * @param eh exception handler for errors in hooks or during events.
@@ -55,7 +58,8 @@ class CORTEX_API InetConnector : public Connector {
    */
   InetConnector(const std::string& name, Executor* executor,
                 Scheduler* scheduler, WallClock* clock,
-                TimeSpan idleTimeout, TimeSpan tcpFinTimeout,
+                TimeSpan readTimeout, TimeSpan writeTimeout,
+                TimeSpan tcpFinTimeout,
                 std::function<void(const std::exception&)> eh,
                 const IPAddress& ipaddress, int port, int backlog,
                 bool reuseAddr, bool reusePort);
@@ -67,14 +71,18 @@ class CORTEX_API InetConnector : public Connector {
    * @param executor Executor service to run on
    * @param scheduler Scheduler service to use for timeout management
    * @param clock Wall clock used for timeout management.
-   * @param idleTimeout timespan indicating how long a connection may be idle.
+   * @param readTimeout timespan indicating how long a connection may for read
+   *                    readiness.
+   * @param writeTimeout timespan indicating how long a connection wait for
+   *                     write readiness.
    * @param tcpFinTimeout Timespan to leave client sockets in FIN_WAIT2 state.
    *                      A value of 0 means to leave it at system default.
    * @param eh exception handler for errors in hooks or during events.
    */
   InetConnector(const std::string& name, Executor* executor,
                 Scheduler* scheduler, WallClock* clock,
-                TimeSpan idleTimeout, TimeSpan tcpFinTimeout,
+                TimeSpan readTimeout, TimeSpan writeTimeout,
+                TimeSpan tcpFinTimeout,
                 std::function<void(const std::exception&)> eh);
 
   ~InetConnector();
@@ -191,12 +199,22 @@ class CORTEX_API InetConnector : public Connector {
   /**
    * Retrieves the timespan a connection may be idle within an I/O operation.
    */
-  TimeSpan idleTimeout() const CORTEX_NOEXCEPT;
+  TimeSpan readTimeout() const CORTEX_NOEXCEPT;
 
   /**
-   * Sets the timespan a connection may be idle within an I/O operation.
+   * Retrieves the timespan a connection may be idle within an I/O operation.
    */
-  void setIdleTimeout(TimeSpan value);
+  TimeSpan writeTimeout() const CORTEX_NOEXCEPT;
+
+  /**
+   * Sets the timespan a connection may be idle within a read-operation.
+   */
+  void setReadTimeout(TimeSpan value);
+
+  /**
+   * Sets the timespan a connection may be idle within a write-operation.
+   */
+  void setWriteTimeout(TimeSpan value);
 
   /**
    * Timespan for FIN_WAIT2 states of the client sockets.
@@ -286,7 +304,8 @@ class CORTEX_API InetConnector : public Connector {
   bool blocking_;
   size_t backlog_;
   size_t multiAcceptCount_;
-  TimeSpan idleTimeout_;
+  TimeSpan readTimeout_;
+  TimeSpan writeTimeout_;
   TimeSpan tcpFinTimeout_;
   bool isStarted_;
 };
@@ -295,12 +314,16 @@ inline Scheduler* InetConnector::scheduler() const CORTEX_NOEXCEPT {
   return scheduler_;
 }
 
-inline TimeSpan InetConnector::idleTimeout() const CORTEX_NOEXCEPT {
-  return idleTimeout_;
+inline TimeSpan InetConnector::readTimeout() const CORTEX_NOEXCEPT {
+  return readTimeout_;
+}
+
+inline TimeSpan InetConnector::writeTimeout() const CORTEX_NOEXCEPT {
+  return writeTimeout_;
 }
 
 inline TimeSpan InetConnector::tcpFinTimeout() const CORTEX_NOEXCEPT {
-  return idleTimeout_;
+  return tcpFinTimeout_;
 }
 
 }  // namespace cortex

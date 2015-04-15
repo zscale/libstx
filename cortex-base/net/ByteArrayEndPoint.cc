@@ -141,11 +141,19 @@ void ByteArrayEndPoint::wantFlush() {
   }
 }
 
-TimeSpan ByteArrayEndPoint::idleTimeout() {
+TimeSpan ByteArrayEndPoint::readTimeout() {
   return TimeSpan::Zero; // TODO
 }
 
-void ByteArrayEndPoint::setIdleTimeout(TimeSpan timeout) {
+TimeSpan ByteArrayEndPoint::writeTimeout() {
+  return TimeSpan::Zero; // TODO
+}
+
+void ByteArrayEndPoint::setReadTimeout(TimeSpan timeout) {
+  // TODO
+}
+
+void ByteArrayEndPoint::setWriteTimeout(TimeSpan timeout) {
   // TODO
 }
 
