@@ -20,6 +20,8 @@ namespace http1 {
  */
 class CORTEX_HTTP_API Http1ConnectionFactory : public HttpConnectionFactory {
  public:
+  Http1ConnectionFactory();
+
   Http1ConnectionFactory(
       WallClock* clock,
       size_t maxRequestUriLength,

@@ -8,9 +8,18 @@
 #include <cortex-http/http1/Http1ConnectionFactory.h>
 #include <cortex-http/http1/HttpConnection.h>
 #include <cortex-base/net/Connector.h>
+#include <cortex-base/WallClock.h>
 
 namespace cortex {
 namespace http1 {
+
+Http1ConnectionFactory::Http1ConnectionFactory()
+    : Http1ConnectionFactory(WallClock::system(),
+                             4096,
+                             4 * 1024 * 1024,
+                             100,
+                             TimeSpan::fromSeconds(8)) {
+}
 
 Http1ConnectionFactory::Http1ConnectionFactory(
     WallClock* clock,
