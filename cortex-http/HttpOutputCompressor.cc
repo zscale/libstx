@@ -77,7 +77,8 @@ bool tryEncode(const std::string& encoding,
 
 void HttpOutputCompressor::inject(HttpRequest* request,
                                   HttpResponse* response) {
-  // TODO: ensure postProcess() gets invoked right before response commit
+  response->onPostProcess(std::bind(
+      &HttpOutputCompressor::postProcess, this, request, response));
 }
 
 void HttpOutputCompressor::postProcess(HttpRequest* request,
