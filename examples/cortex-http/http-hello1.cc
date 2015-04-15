@@ -25,6 +25,7 @@ std::unique_ptr<cortex::SslConnector> createSslConnector( // {{{
   std::unique_ptr<cortex::SslConnector> connector(
       new cortex::SslConnector(name, executor, scheduler, clock,
                               cortex::TimeSpan::fromSeconds(30),
+                              cortex::TimeSpan::fromSeconds(30),
                               cortex::TimeSpan::Zero,
                               [](const std::exception& e) {
                                   cortex::logError("hello", e); },
@@ -44,6 +45,7 @@ int main() {
 
   auto inet = server.addConnector<cortex::InetConnector>(
       "http", &scheduler, &scheduler,  clock,
+      cortex::TimeSpan::fromSeconds(60),
       cortex::TimeSpan::fromSeconds(60),
       cortex::TimeSpan::Zero,
       &cortex::logAndPass,
