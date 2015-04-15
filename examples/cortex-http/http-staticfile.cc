@@ -64,6 +64,7 @@ int main(int argc, const char* argv[]) {
   auto inet = server.addConnector<cortex::InetConnector>(
       "http", &scheduler, &scheduler, clock,
       cortex::TimeSpan::fromSeconds(30),
+      cortex::TimeSpan::fromSeconds(30),
       cortex::TimeSpan::Zero,
       &cortex::logAndPass,
       cortex::IPAddress("0.0.0.0"), 3000, 128, true, false);
@@ -78,8 +79,8 @@ int main(int argc, const char* argv[]) {
   cortex::HttpFileHandler fileHandler;
 
   http->setHandler([&](cortex::HttpRequest* request, cortex::HttpResponse* response) {
-    request->setFile(vfs.getFile(request->path(), docroot));
-    if (!fileHandler.handle(request, response)) {
+    auto file = vfs.getFile(request->path(), docroot);
+    if (!fileHandler.handle(request, response, file)) {
       response->setStatus(cortex::HttpStatus::NotFound);
       response->completed();
     }

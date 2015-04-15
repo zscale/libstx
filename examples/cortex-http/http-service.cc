@@ -141,6 +141,7 @@ int main(int argc, const char* argv[]) {
 
   httpService.configureInet(&scheduler, &scheduler, clock,
                             cortex::TimeSpan::fromSeconds(10),
+                            cortex::TimeSpan::fromSeconds(10),
                             cortex::TimeSpan::Zero,
                             cortex::IPAddress("0.0.0.0"), 3000);
   httpService.addHandler(&myHandler);

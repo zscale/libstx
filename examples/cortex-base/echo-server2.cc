@@ -247,6 +247,7 @@ int main(int argc, char* argv[]) {
     auto inet = std::unique_ptr<cortex::InetConnector>(new cortex::InetConnector(
         "echo", ew->executor(), ew->scheduler(), ew->clock(),
         cortex::TimeSpan::fromSeconds(30),
+        cortex::TimeSpan::fromSeconds(30),
         cortex::TimeSpan::Zero,
         &cortex::logAndPass,
         cortex::IPAddress("0.0.0.0"), 3000, 128, true, true));

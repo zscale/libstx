@@ -72,7 +72,9 @@ std::unique_ptr<cortex::InetConnector> createInetConnector( // {{{
 
   std::unique_ptr<cortex::InetConnector> inetConnector(
       new cortex::InetConnector(name, executor, scheduler, clock,
-        cortex::TimeSpan::fromSeconds(30), cortex::TimeSpan::Zero,
+        cortex::TimeSpan::fromSeconds(30),
+        cortex::TimeSpan::fromSeconds(30),
+        cortex::TimeSpan::Zero,
         &cortex::logAndPass));
 
   inetConnector->open(IPAddress("0.0.0.0"), port, 128, true, true);
@@ -91,6 +93,7 @@ std::unique_ptr<cortex::SslConnector> createSslConnector( // {{{
 
   std::unique_ptr<cortex::SslConnector> connector(
       new cortex::SslConnector(name, executor, scheduler, clock,
+                              cortex::TimeSpan::fromSeconds(30),
                               cortex::TimeSpan::fromSeconds(30),
                               cortex::TimeSpan::Zero,
                               &cortex::logAndPass,
