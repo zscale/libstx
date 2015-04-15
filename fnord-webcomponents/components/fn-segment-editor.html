@@ -320,7 +320,7 @@
 
     /******************************** Save ********************************/
 
-    this.addNewSegment = function(segment) {
+    this.addNewSegment = function(segment, recent) {
       var segments = JSON.parse(this.getAttribute('data-segments'));
       var _this = this;
 
@@ -336,7 +336,13 @@
       }
 
       this.setAttribute('data-segments', JSON.stringify(segments));
-      this.fireNewSegmentEvent(segment);
+
+      if (recent) {
+        this.fireAddRecentSegmentEvent(segment);
+      } else {
+        this.fireNewSegmentEvent(segment);
+      }
+
       this.changeView("fn-segment-overview");
       this.renderSegments();
       this.renderPreviewValues();
@@ -884,8 +890,6 @@
     };
 
     this.fireNewSegmentEvent = function(segment) {
-      this.fireSegmentsChangedEvent();
-
       var ev = new CustomEvent('fn-segment-new', {
         'detail' : {'segment' : JSON.stringify(segment)},
         'bubbles': true,
@@ -893,6 +897,8 @@
       });
 
       this.dispatchEvent(ev);
+
+      this.fireSegmentsChangedEvent();
     };
 
 
@@ -907,6 +913,19 @@
 
       this.dispatchEvent(ev);
     };
+
+
+    this.fireAddRecentSegmentEvent = function(segment) {
+      var ev = new CustomEvent('fn-segment-recent-add', {
+        'detail' : {'segment' : JSON.stringify(segment)},
+        'bubbles': true,
+        'cancelable' : true
+      });
+
+      this.dispatchEvent(ev);
+
+      this.fireSegmentsChangedEvent();
+    }
 
     this.fireEditSegmentEvent = function(old_segment, new_segment) {
       this.fireSegmentsChangedEvent();
