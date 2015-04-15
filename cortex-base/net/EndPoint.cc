@@ -26,4 +26,8 @@ void EndPoint::setConnection(Connection* connection) {
   connection_ = connection;
 }
 
+Option<IPAddress> EndPoint::remoteIP() const {
+  return None();
+}
+
 }  // namespace cortex

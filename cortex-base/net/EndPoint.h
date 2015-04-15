@@ -14,6 +14,8 @@
 #include <cortex-base/Buffer.h>
 #include <cortex-base/TimeSpan.h>
 #include <cortex-base/RefCounted.h>
+#include <cortex-base/Option.h>
+#include <cortex-base/net/IPAddress.h>
 #include <string>
 
 namespace cortex {
@@ -169,6 +171,8 @@ class EndPoint : public RefCounted {
    * String representation of the object for introspection.
    */
   virtual std::string toString() const = 0;
+
+  virtual Option<IPAddress> remoteIP() const;
 
  private:
   Connection* connection_;
