@@ -42,13 +42,14 @@ InetEndPoint::InetEndPoint(int socket,
     : EndPoint(),
       connector_(connector),
       scheduler_(scheduler),
+      readTimeout_(connector->readTimeout()),
+      writeTimeout_(connector->writeTimeout()),
       idleTimeout_(connector->clock(), connector->scheduler()),
       io_(),
       handle_(socket),
       isCorking_(false) {
 
   idleTimeout_.setCallback(std::bind(&InetEndPoint::onTimeout, this));
-  idleTimeout_.setTimeout(connector->idleTimeout());
 }
 
 void InetEndPoint::onTimeout() {
@@ -275,7 +276,7 @@ void InetEndPoint::wantFill() {
   TRACE("%p wantFill()", this);
   // TODO: abstract away the logic of TCP_DEFER_ACCEPT
 
-  //idleTimeout_.activate();
+  idleTimeout_.activate(readTimeout());
   if (!io_) {
     io_ = scheduler_->executeOnReadable(
         handle(),
@@ -300,7 +301,7 @@ void InetEndPoint::fillable() {
 
 void InetEndPoint::wantFlush() {
   TRACE("%p wantFlush() %s", this, io_.get() ? "again" : "first time");
-  //idleTimeout_.activate();
+  idleTimeout_.activate(writeTimeout());
 
   if (!io_) {
     io_ = scheduler_->executeOnWritable(
@@ -324,12 +325,20 @@ void InetEndPoint::flushable() {
   }
 }
 
-TimeSpan InetEndPoint::idleTimeout() {
-  return idleTimeout_.timeout();
+TimeSpan InetEndPoint::readTimeout() {
+  return readTimeout_;
 }
 
-void InetEndPoint::setIdleTimeout(TimeSpan timeout) {
-  idleTimeout_.setTimeout(timeout);
+TimeSpan InetEndPoint::writeTimeout() {
+  return writeTimeout_;
+}
+
+void InetEndPoint::setReadTimeout(TimeSpan timeout) {
+  readTimeout_ = timeout;
+}
+
+void InetEndPoint::setWriteTimeout(TimeSpan timeout) {
+  writeTimeout_ = timeout;
 }
 
 } // namespace cortex

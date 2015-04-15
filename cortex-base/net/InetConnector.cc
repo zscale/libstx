@@ -49,7 +49,8 @@ namespace cortex {
 
 InetConnector::InetConnector(const std::string& name, Executor* executor,
                              Scheduler* scheduler, WallClock* clock,
-                             TimeSpan idleTimeout,
+                             TimeSpan readTimeout,
+                             TimeSpan writeTimeout,
                              TimeSpan tcpFinTimeout,
                              std::function<void(const std::exception&)> eh)
     : Connector(name, executor, clock),
@@ -67,20 +68,22 @@ InetConnector::InetConnector(const std::string& name, Executor* executor,
       blocking_(true),
       backlog_(128),
       multiAcceptCount_(1),
-      idleTimeout_(idleTimeout),
+      readTimeout_(readTimeout),
+      writeTimeout_(writeTimeout),
       tcpFinTimeout_(tcpFinTimeout),
       isStarted_(false) {
 }
 
 InetConnector::InetConnector(const std::string& name, Executor* executor,
                              Scheduler* scheduler, WallClock* clock,
-                             TimeSpan idleTimeout,
+                             TimeSpan readTimeout,
+                             TimeSpan writeTimeout,
                              TimeSpan tcpFinTimeout,
                              std::function<void(const std::exception&)> eh,
                              const IPAddress& ipaddress, int port, int backlog,
                              bool reuseAddr, bool reusePort)
     : InetConnector(name, executor, scheduler, clock,
-                    idleTimeout, tcpFinTimeout, eh) {
+                    readTimeout, writeTimeout, tcpFinTimeout, eh) {
 
   open(ipaddress, port, backlog, reuseAddr, reusePort);
 }
@@ -369,8 +372,12 @@ void InetConnector::setMultiAcceptCount(size_t value) CORTEX_NOEXCEPT {
   multiAcceptCount_ = value;
 }
 
-void InetConnector::setIdleTimeout(TimeSpan value) {
-  idleTimeout_ = value;
+void InetConnector::setReadTimeout(TimeSpan value) {
+  readTimeout_ = value;
+}
+
+void InetConnector::setWriteTimeout(TimeSpan value) {
+  writeTimeout_ = value;
 }
 
 void InetConnector::setTcpFinTimeout(TimeSpan value) {
@@ -427,8 +434,6 @@ void InetConnector::onConnect() {
         std::lock_guard<std::mutex> _lk(mutex_);
         connectedEndPoints_.push_back(endpoint);
       }
-
-      endpoint->setIdleTimeout(idleTimeout_);
 
       onEndPointCreated(endpoint);
     }

@@ -124,12 +124,23 @@ class EndPoint : public RefCounted {
    * Retrieves the timeout before a TimeoutError is thrown when I/O
    * interest cannot be * fullfilled.
    */
-  virtual TimeSpan idleTimeout() = 0;
+  virtual TimeSpan readTimeout() = 0;
 
   /**
-   * Sets the timeout to wait for the interest before an TimeoutError is thrown.
+   * Retrieves the timeout before a TimeoutError is thrown when I/O
+   * interest cannot be * fullfilled.
    */
-  virtual void setIdleTimeout(TimeSpan timeout) = 0;
+  virtual TimeSpan writeTimeout() = 0;
+
+  /**
+   * Sets the timeout to wait for the read-interest before an TimeoutError is thrown.
+   */
+  virtual void setReadTimeout(TimeSpan timeout) = 0;
+
+  /**
+   * Sets the timeout to wait for the read-interest before an TimeoutError is thrown.
+   */
+  virtual void setWriteTimeout(TimeSpan timeout) = 0;
 
   /**
    * Tests whether this endpoint is blocking on I/O.

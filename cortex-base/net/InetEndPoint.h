@@ -53,8 +53,10 @@ class CORTEX_API InetEndPoint : public EndPoint {
   size_t flush(int fd, off_t offset, size_t size) override;
   void wantFill() override;
   void wantFlush() override;
-  TimeSpan idleTimeout() override;
-  void setIdleTimeout(TimeSpan timeout) override;
+  TimeSpan readTimeout() override;
+  TimeSpan writeTimeout() override;
+  void setReadTimeout(TimeSpan timeout) override;
+  void setWriteTimeout(TimeSpan timeout) override;
 
  private:
   void onReadable() CORTEX_NOEXCEPT;
@@ -67,6 +69,8 @@ class CORTEX_API InetEndPoint : public EndPoint {
  private:
   InetConnector* connector_;
   Scheduler* scheduler_;
+  TimeSpan readTimeout_;
+  TimeSpan writeTimeout_;
   IdleTimeout idleTimeout_;
   Scheduler::HandleRef io_;
   int handle_;
