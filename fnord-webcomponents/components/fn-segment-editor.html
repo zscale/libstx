@@ -23,6 +23,7 @@
     <fn-modal>
       <fn-modal-close-icon></fn-modal-close-icon>
 
+      <!-- View: Segments -->
       <fn-segment-overview class='segment-active'>
         <fn-segment-header>
           <fn-segment-header-title>Segments</fn-segment-header-title>
@@ -32,9 +33,27 @@
 
         <fn-segment-footer>
           <fn-button data-action='add-segment'>Add Segment</fn-button>
+          <fn-button data-action='browse-recent-segments'>Recent Segments</fn-button>
         </fn-segment-footer>
       </fn-segment-overview>
 
+      <!-- View: Recent Segments -->
+      <fn-segment-recent>
+        <fn-segment-header>
+          <fn-segment-header-title>Recent Segments</fn-segment-header-title>
+        </fn-segment-header>
+
+        <fn-segments></fn-segments>
+        <fn-tooltip>Add to Segments</fn-tooltip>
+
+        <fn-segment-footer>
+          <fn-button data-action='cancel-segment'>Back To Segments</fn-button>
+          <fn-button data-action='add-recent-segments'>Add All To Segments</fn-button>
+        </fn-segment-footer>
+      </fn-segment-recent>
+
+
+      <!-- View: Create New Segment -->
       <fn-segment-select>
       </fn-segment-select>
 
@@ -60,6 +79,8 @@
         </fn-segment-select>
       </template>
 
+
+      <!-- View: Edit Exisiting Segment -->
       <fn-segment-edit>
         <fn-segment-header>
           <fn-segment-header-title>Name</fn-segment-header-title>
@@ -289,7 +310,6 @@
         });
       }
 
-      console.log(segment.rules);
       segment.removable = this.isRemovable(segment);
       segment.editable = this.isEditable(segment);
       segment.color = this.getSegmentColor(segment);
@@ -299,6 +319,30 @@
 
 
     /******************************** Save ********************************/
+
+    this.addNewSegment = function(segment) {
+      var segments = JSON.parse(this.getAttribute('data-segments'));
+      var _this = this;
+
+      //multiple new segments
+      if (segment.constructor === Array) {
+
+        segment.forEach(function(s) {
+          segments.push(s);
+          _this.fireNewSegmentEvent(s);
+        });
+
+      } else {
+        segments.push(segment);
+        this.fireNewSegmentEvent(segment);
+      }
+
+
+      this.setAttribute('data-segments', JSON.stringify(segments));
+      this.changeView("fn-segment-overview");
+      this.renderSegments();
+      this.renderPreviewValues();
+    }
 
     this.onSaveSegment = function() {
       this.removeErrorMessages();
@@ -310,14 +354,7 @@
         return;
       }
 
-      var segments = JSON.parse(this.getAttribute('data-segments'));
-      segments.push(segment);
-
-      this.setAttribute('data-segments', JSON.stringify(segments));
-      this.changeView("fn-segment-overview");
-      this.renderSegments();
-      this.renderPreviewValues();
-      this.fireNewSegmentEvent(segment);
+      this.addNewSegment(segment);
     };
 
     /****************************** Remove ***********************************/
@@ -370,7 +407,7 @@
       var fn_segment_options = select_tpl.content.querySelector("fn-segment-options");
       var tpl = this.querySelector("template[name='fn-segment-options']");
 
-      if (tpl.content.querySelector("fn-segment-browse")) {
+      if (tpl.content.querySelector("fn-segment-erowse")) {
         return this.renderSegmentGroupOptions(tpl, fn_segment_options);
       }
 
@@ -480,13 +517,14 @@
       * Renders the segments based on data-segments attribute
       */
     this.renderSegments = function() {
+      var fn_segments = this.querySelector("fn-segments");
       var segments = JSON.parse(this.getAttribute('data-segments'));
       var _this = this;
 
       this.querySelector("fn-segments").innerHTML = "";
 
       segments.forEach(function(segment) {
-        _this.addSegment(segment);
+        fn_segments.appendChild(_this.createSegment(segment));
       }, false);
     };
 
@@ -548,8 +586,7 @@
       *
       * @param {object} segment
       */
-    this.addSegment = function(segment) {
-      var fn_segments = this.querySelector("fn-segments");
+    this.createFnSegment = function(segment) {
       var fn_segment = document.createElement("fn-segment");
       var _this = this;
 
@@ -562,23 +599,41 @@
 
       fn_segment.innerHTML = html.join("");
 
+      fn_segment.setAttribute('data-name', segment.name);
+
+      return fn_segment;
+    };
+
+    this.createSegment = function(segment) {
+      var fn_segment = this.createFnSegment(segment);
+
       //LATER
       if (segment.removable || true) {
         var icon = document.createElement("fn-segment-remove-icon");
         fn_segment.appendChild(icon);
-        _this.observeRemovableSegment(icon, segment.name);
+        this.observeRemovableSegment(icon, segment.name);
       }
 
       //LATER
       if (segment.editable || true) {
         var icon = document.createElement("fn-segment-edit-icon");
         fn_segment.appendChild(icon);
-        _this.observeEditableSegment(icon, fn_segment, segment);
+        this.observeEditableSegment(icon, fn_segment, segment);
       }
 
-      fn_segment.setAttribute('data-name', segment.name);
-      fn_segments.appendChild(fn_segment);
-    };
+      return fn_segment;
+    }
+
+    this.createRecentSegment = function(segment) {
+      var fn_segment = this.createFnSegment(segment);
+
+      var icon = document.createElement("fn-segment-add-icon");
+      fn_segment.appendChild(icon);
+
+      this.observeAddRecentSegment(icon, segment);
+
+      return fn_segment;
+    }
 
     /********************** Render Edit View ********************************/
 
@@ -734,6 +789,28 @@
       }
     };
 
+
+    this.renderRecentSegments = function(segments) {
+      var _this = this;
+      var fn_segment_recent = this.querySelector("fn-segment-recent");
+      var fn_segments = fn_segment_recent.querySelector("fn-segments");
+
+      fn_segments.innerHTML = "";
+
+      segments.forEach(function(segment) {
+        fn_segments.appendChild(_this.createRecentSegment(segment));
+      });
+
+      fn_segment_recent.querySelector("[data-action='add-recent-segments']")
+        .onclick = function() {
+          _this.addNewSegment(segments, true);
+      };
+
+      _this.changeView('fn-segment-recent');
+    };
+
+
+
     this.changeView = function(selector) {
       var view = this.querySelector(selector);
 
@@ -747,6 +824,7 @@
 
     this.handleViewVisibility = function() {
       var add_btn = this.querySelector("[data-action='add-segment']");
+      var recent_btn = this.querySelector("[data-action='browse-recent-segments']");
       var cancel_btns = this.querySelectorAll("[data-action='cancel-segment']");
       var _this = this;
 
@@ -755,6 +833,16 @@
         _this.showSegmentSelect();
       }
 
+      if (this.hasAttribute('data-show-recent')) {
+        recent_btn.onclick = function(e) {
+          e.stopPropagation();
+          _this.loadRecentSegments(function(segments) {
+            _this.renderRecentSegments(segments);
+          });
+        }
+      } else {
+        recent_btn.classList.add('segment-hidden');
+      }
 
       for (var i = 0; i < cancel_btns.length; i++) {
         cancel_btns[i].onclick = function(e) {
@@ -786,6 +874,16 @@
       }, false);
     };
 
+    this.observeAddRecentSegment = function(icon, segment) {
+      var tooltip = this.querySelector("fn-segment-recent fn-tooltip");
+      var _this = this;
+
+      tooltip.init(icon);
+
+      icon.onclick = function() {
+        _this.addNewSegment(segment);
+      }
+    };
 
     this.fireNewSegmentEvent = function(segment) {
       this.fireSegmentsChangedEvent();
