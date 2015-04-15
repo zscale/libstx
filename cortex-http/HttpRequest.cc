@@ -44,6 +44,14 @@ HttpRequest::HttpRequest(const std::string& method, const std::string& path,
   // .
 }
 
+void HttpRequest::setRemoteIP(const Option<IPAddress>& ip) {
+  remoteIP_ = ip;
+}
+
+Option<IPAddress> HttpRequest::remoteIP() const {
+  return remoteIP_;
+}
+
 void HttpRequest::setMethod(const std::string& value) {
   unparsedMethod_ = value;
   method_ = to_method(value);

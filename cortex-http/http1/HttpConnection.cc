@@ -58,6 +58,8 @@ HttpConnection::HttpConnection(EndPoint* endpoint,
       requestCount_(0),
       requestMax_(maxRequestCount) {
 
+  channel_->request()->setRemoteIP(endpoint->remoteIP());
+
   parser_.setListener(channel_.get());
   TRACE("%p ctor", this);
 }

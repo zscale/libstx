@@ -15,6 +15,8 @@
 #include <cortex-http/HttpVersion.h>
 #include <cortex-http/HttpMethod.h>
 #include <cortex-http/HttpInput.h>
+#include <cortex-base/net/IPAddress.h>
+#include <cortex-base/Option.h>
 #include <memory>
 
 namespace cortex {
@@ -29,6 +31,9 @@ class CORTEX_HTTP_API HttpRequest {
   HttpRequest(const std::string& method, const std::string& path,
               HttpVersion version, bool secure, const HeaderFieldList& headers,
               std::unique_ptr<HttpInput>&& input);
+
+  void setRemoteIP(const Option<IPAddress>& ip);
+  Option<IPAddress> remoteIP() const;
 
   HttpMethod method() const CORTEX_NOEXCEPT { return method_; }
   const std::string& unparsedMethod() const CORTEX_NOEXCEPT { return unparsedMethod_; }
@@ -64,6 +69,8 @@ class CORTEX_HTTP_API HttpRequest {
   void recycle();
 
  private:
+  Option<IPAddress> remoteIP_;
+
   HttpMethod method_;
   std::string unparsedMethod_;
 
