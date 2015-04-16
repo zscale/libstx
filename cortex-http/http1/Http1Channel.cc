@@ -6,6 +6,7 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <cortex-http/http1/Http1Channel.h>
+#include <cortex-http/http1/HttpConnection.h>
 #include <cortex-http/HttpResponse.h>
 #include <cortex-http/HttpRequest.h>
 #include <cortex-http/HttpTransport.h>
@@ -14,7 +15,7 @@
 namespace cortex {
 namespace http1 {
 
-Http1Channel::Http1Channel(HttpTransport* transport,
+Http1Channel::Http1Channel(HttpConnection* transport,
                          const HttpHandler& handler,
                          std::unique_ptr<HttpInput>&& input,
                          size_t maxRequestUriLength,
@@ -38,6 +39,7 @@ void Http1Channel::reset() {
 bool Http1Channel::onMessageBegin(const BufferRef& method,
                                  const BufferRef& entity,
                                  HttpVersion version) {
+  request_->setBytesReceived(bytesReceived());
 
   switch (version) {
     case HttpVersion::VERSION_1_1:
@@ -54,8 +56,14 @@ bool Http1Channel::onMessageBegin(const BufferRef& method,
   return cortex::HttpChannel::onMessageBegin(method, entity, version);
 }
 
+size_t Http1Channel::bytesReceived() const noexcept {
+  return static_cast<HttpConnection*>(transport_)->bytesReceived();
+}
+
 bool Http1Channel::onMessageHeader(const BufferRef& name,
                                   const BufferRef& value) {
+  request_->setBytesReceived(bytesReceived());
+
   if (!iequals(name, "Connection"))
     return cortex::HttpChannel::onMessageHeader(name, value);
 
@@ -74,6 +82,8 @@ bool Http1Channel::onMessageHeader(const BufferRef& name,
 }
 
 bool Http1Channel::onMessageHeaderEnd() {
+  request_->setBytesReceived(bytesReceived());
+
   // hide transport-level header fields
   request_->headers().remove("Connection");
   for (const auto& name: connectionOptions_)
@@ -83,6 +93,8 @@ bool Http1Channel::onMessageHeaderEnd() {
 }
 
 void Http1Channel::onProtocolError(HttpStatus code, const std::string& message) {
+  request_->setBytesReceived(bytesReceived());
+
   if (!response_->isCommitted()) {
     persistent_ = false;
 

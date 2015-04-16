@@ -117,15 +117,18 @@ void HttpConnection::onResponseComplete(bool succeed) {
 
   if (channel_->isPersistent()) {
     TRACE("%p completed.onComplete", this);
+
+    channel_->response()->setBytesTransmitted(generator_.bytesTransmitted());
+
+    // tell channel that we finished fully transmitting the response
+    channel_->responseSent();
+
     // re-use on keep-alive
     channel_->reset();
 
     if (endpoint()->isCorking()) {
       endpoint()->setCorking(false);
     }
-
-    // tell channel that we finished fully transmitting the response
-    channel_->responseSent();
 
     if (inputOffset_ < inputBuffer_.size()) {
       // have some request pipelined

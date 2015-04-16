@@ -61,6 +61,8 @@ class CORTEX_HTTP_API HttpConnection : public HttpTransport {
 
   void setInputBufferSize(size_t size) override;
 
+  size_t bytesReceived() const noexcept { return parser_.bytesReceived(); }
+
  private:
   void patchResponseInfo(HttpResponseInfo& info);
   void onFillable() override;

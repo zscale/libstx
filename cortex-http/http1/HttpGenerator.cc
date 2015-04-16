@@ -19,7 +19,8 @@ namespace http1 {
 
 HttpGenerator::HttpGenerator(HttpDateGenerator* dateGenerator,
                              EndPointWriter* output)
-    : dateGenerator_(dateGenerator),
+    : bytesTransmitted_(0),
+      dateGenerator_(dateGenerator),
       contentLength_(Buffer::npos),
       chunked_(false),
       buffer_(),
@@ -28,6 +29,7 @@ HttpGenerator::HttpGenerator(HttpDateGenerator* dateGenerator,
 
 void HttpGenerator::recycle() {
   buffer_.clear();
+  bytesTransmitted_ = 0;
 }
 
 void HttpGenerator::generateRequest(const HttpRequestInfo& info,
@@ -240,6 +242,7 @@ void HttpGenerator::generateHeaders(const HttpInfo& info) {
 
 void HttpGenerator::flushBuffer() {
   if (!buffer_.empty()) {
+    bytesTransmitted_ += buffer_.size();
     writer_->write(std::move(buffer_));
     buffer_.clear();
   }

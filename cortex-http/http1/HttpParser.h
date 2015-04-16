@@ -154,6 +154,8 @@ class CORTEX_HTTP_API HttpParser {
   void setListener(HttpListener* listener) { listener_ = listener; }
   HttpListener* listener() const { return listener_; }
 
+  size_t bytesReceived() const noexcept { return bytesReceived_; }
+
  private:
   static inline bool isChar(char value);
   static inline bool isControl(char value);
@@ -179,6 +181,9 @@ class CORTEX_HTTP_API HttpParser {
   ParseMode mode_;          //!< parsing mode (request/response/something)
   HttpListener* listener_;  //!< HTTP message component listener
   State state_;             //!< the current parser/processing state
+
+  // stats
+  size_t bytesReceived_;
 
   // implicit LWS handling
   State lwsNext_;  //!< state to apply on successfull LWS

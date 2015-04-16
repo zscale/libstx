@@ -35,6 +35,9 @@ class CORTEX_HTTP_API HttpRequest {
   void setRemoteIP(const Option<IPAddress>& ip);
   Option<IPAddress> remoteIP() const;
 
+  size_t bytesReceived() const noexcept { return bytesReceived_; }
+  void setBytesReceived(size_t n) { bytesReceived_ = n; }
+
   HttpMethod method() const CORTEX_NOEXCEPT { return method_; }
   const std::string& unparsedMethod() const CORTEX_NOEXCEPT { return unparsedMethod_; }
   void setMethod(const std::string& value);
@@ -70,6 +73,7 @@ class CORTEX_HTTP_API HttpRequest {
 
  private:
   Option<IPAddress> remoteIP_;
+  size_t bytesReceived_;
 
   HttpMethod method_;
   std::string unparsedMethod_;
