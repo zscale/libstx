@@ -8,6 +8,7 @@ include(CortexCommon)
 set(cortex_http_SRC
   # common
   BadMessage.cc
+  Cookies.cc
   HeaderField.cc
   HeaderFieldList.cc
   HttpBufferedInput.cc
