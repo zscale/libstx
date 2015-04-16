@@ -8,6 +8,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <cortex-base/DateTime.h>
+#include <cortex-base/RuntimeError.h>
 #include <pthread.h>
 
 namespace cortex {
@@ -69,6 +70,24 @@ std::string DateTime::to_s() const {
     throw 0;
 
   return buf;
+}
+
+std::string DateTime::format(const char* fmt) const {
+  std::time_t ts = unixtime();
+  struct tm* tm = gmtime(&ts);
+  if (!tm)
+    RAISE(RuntimeError, "DateTime.format: gmtime() failed");
+
+  char buf[256];
+  size_t n = strftime(buf, sizeof(buf), fmt, tm);
+  if (n == 0)
+    RAISE(RuntimeError, "DateTime.format: strftime() failed");
+
+  return buf;
+}
+
+DateTime DateTime::epoch() {
+  return DateTime(static_cast<double>(0.0));
 }
 
 }  // namespace cortex
