@@ -115,13 +115,13 @@ void HttpConnection::onResponseComplete(bool succeed) {
     return;
   }
 
+  channel_->response()->setBytesTransmitted(generator_.bytesTransmitted());
+
+  // tell channel that we finished fully transmitting the response
+  channel_->responseSent();
+
   if (channel_->isPersistent()) {
     TRACE("%p completed.onComplete", this);
-
-    channel_->response()->setBytesTransmitted(generator_.bytesTransmitted());
-
-    // tell channel that we finished fully transmitting the response
-    channel_->responseSent();
 
     // re-use on keep-alive
     channel_->reset();
