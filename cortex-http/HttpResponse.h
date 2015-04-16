@@ -122,6 +122,9 @@ class CORTEX_HTTP_API HttpResponse {
 
   bool isCommitted() const CORTEX_NOEXCEPT { return committed_; }
 
+  void setBytesTransmitted(size_t n) { bytesTransmitted_ = n; }
+  size_t bytesTransmitted() const noexcept { return bytesTransmitted_; }
+
  private:
   friend class HttpChannel;
   void setCommitted(bool value);
@@ -141,6 +144,7 @@ class CORTEX_HTTP_API HttpResponse {
   HeaderFieldList headers_;
   HeaderFieldList trailers_;
   bool committed_;
+  size_t bytesTransmitted_;
 };
 
 }  // namespace cortex

@@ -23,7 +23,8 @@ HttpResponse::HttpResponse(HttpChannel* channel,
       contentLength_(static_cast<size_t>(-1)),
       headers_(),
       trailers_(),
-      committed_(false) {
+      committed_(false),
+      bytesTransmitted_(0) {
   //.
 }
 
@@ -36,6 +37,7 @@ void HttpResponse::recycle() {
   headers_.reset();
   trailers_.reset();
   output_->recycle();
+  bytesTransmitted_ = 0;
 }
 
 void HttpResponse::requireMutableInfo() {

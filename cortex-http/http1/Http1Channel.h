@@ -15,9 +15,11 @@
 namespace cortex {
 namespace http1 {
 
+class HttpConnection;
+
 class Http1Channel : public cortex::HttpChannel {
  public:
-  Http1Channel(HttpTransport* transport,
+  Http1Channel(HttpConnection* transport,
               const HttpHandler& handler,
               std::unique_ptr<HttpInput>&& input,
               size_t maxRequestUriLength,
@@ -29,6 +31,8 @@ class Http1Channel : public cortex::HttpChannel {
   void setPersistent(bool value) CORTEX_NOEXCEPT { persistent_ = value; }
 
   void reset() override;
+
+  size_t bytesReceived() const noexcept;
 
  protected:
   bool onMessageBegin(const BufferRef& method, const BufferRef& entity,

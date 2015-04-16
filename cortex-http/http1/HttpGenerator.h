@@ -99,6 +99,8 @@ class CORTEX_HTTP_API HttpGenerator {
    */
   bool isChunked() const CORTEX_NOEXCEPT { return chunked_; }
 
+  size_t bytesTransmitted() const noexcept { return bytesTransmitted_; }
+
  private:
   void generateRequestLine(const HttpRequestInfo& info);
   void generateResponseLine(const HttpResponseInfo& info);
@@ -107,6 +109,7 @@ class CORTEX_HTTP_API HttpGenerator {
   void flushBuffer();
 
  private:
+  size_t bytesTransmitted_;
   HttpDateGenerator* dateGenerator_;
   size_t contentLength_;
   bool chunked_;
