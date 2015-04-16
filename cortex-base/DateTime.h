@@ -76,6 +76,8 @@ class CORTEX_API DateTime {
   const Buffer& htlog_str() const;
   std::string to_s() const;
 
+  std::string format(const char* fmt = "%Y-%m-%d %H:%M:%S") const;
+
   void update();
   void update(double vvalue);
   DateTime& operator=(double value);
@@ -84,6 +86,11 @@ class CORTEX_API DateTime {
   bool valid() const;
 
   static int compare(const DateTime& a, const DateTime& b);
+
+  /**
+   * Return a new DateTime instance with time 00:00:00 UTC, 1 January 1970.
+   */
+  static DateTime epoch();
 };
 
 CORTEX_API bool operator==(const DateTime& a, const DateTime& b);
