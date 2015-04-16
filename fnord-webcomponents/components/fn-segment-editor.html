@@ -44,7 +44,15 @@
         </fn-segment-header>
 
         <fn-segments></fn-segments>
+
         <fn-tooltip>Add to Segments</fn-tooltip>
+
+        <template name='fn-segments-empty'>
+          <fn-segments-empty>
+            <div class='segment-text'>No Segments Found</div>
+            <div class='segment-link'>Add a new Segment</div>
+          </fn-segments-empty>
+        </template>
 
         <fn-segment-footer>
           <fn-button data-action='cancel-segment'>Back To Segments</fn-button>
@@ -411,7 +419,7 @@
       var fn_segment_options = select_tpl.content.querySelector("fn-segment-options");
       var tpl = this.querySelector("template[name='fn-segment-options']");
 
-      if (tpl.content.querySelector("fn-segment-erowse")) {
+      if (tpl.content.querySelector("fn-segment-browse")) {
         return this.renderSegmentGroupOptions(tpl, fn_segment_options);
       }
 
@@ -798,19 +806,35 @@
       var _this = this;
       var fn_segment_recent = this.querySelector("fn-segment-recent");
       var fn_segments = fn_segment_recent.querySelector("fn-segments");
+      var add_all_btn = fn_segment_recent.querySelector(
+        "[data-action='add-recent-segments']");
 
       fn_segments.innerHTML = "";
+
+      _this.changeView('fn-segment-recent');
+
+      if (segments.length == 0) {
+        var tpl = this.querySelector("template[name='fn-segments-empty']");
+        var segments_empty = tpl.content.querySelector("fn-segments-empty");
+        fn_segments.innerHTML = (segments_empty.innerHTML);
+
+        fn_segments.querySelector('.segment-link').onclick = function() {
+           _this.showSegmentSelect();
+        };
+
+        add_all_btn.classList.add('segment-hidden');
+        return;
+      }
 
       segments.forEach(function(segment) {
         fn_segments.appendChild(_this.createRecentSegment(segment));
       });
 
-      fn_segment_recent.querySelector("[data-action='add-recent-segments']")
-        .onclick = function() {
-          _this.addNewSegment(segments, true);
-      };
+      add_all_btn.classList.remove('segment-hidden');
 
-      _this.changeView('fn-segment-recent');
+      add_all_btn.onclick = function() {
+        _this.addNewSegment(segments, true);
+      };
     };
 
 
