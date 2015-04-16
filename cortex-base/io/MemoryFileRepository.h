@@ -32,7 +32,7 @@ class CORTEX_API MemoryFileRepository : public FileRepository {
 
   std::shared_ptr<File> getFile(
       const std::string& requestPath,
-      const std::string& docroot) override;
+      const std::string& docroot = "/") override;
 
   void listFiles(std::function<bool(const std::string&)> callback) override;
   void deleteAllFiles() override;
