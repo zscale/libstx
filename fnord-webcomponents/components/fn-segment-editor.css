@@ -80,7 +80,8 @@ fn-loader.segment-editor-loader /deep/ .spinner {
 *******************/
 fn-segment-overview,
 fn-segment-select,
-fn-segment-edit {
+fn-segment-edit,
+fn-segment-recent {
   display: none;
   background: #ffffff;
   border: none;
@@ -90,12 +91,17 @@ fn-segment-edit {
 
 fn-segment-overview.segment-active,
 fn-segment-select.segment-active,
-fn-segment-edit.segment-active {
+fn-segment-edit.segment-active,
+fn-segment-recent.segment-active {
   display: block;
 }
 
 .segment-clickable:hover {
   cursor: pointer;
+}
+
+.segment-hidden {
+  display: none;
 }
 
 /****************
@@ -134,6 +140,29 @@ fn-segment-text-value {
 fn-segment-text-title {
   display: inline-block;
   margin: 0 2px 0 0;
+}
+
+.segment-text {
+  padding-top: 2.3em;
+  line-height: 1.3em;
+  font-style: italic;
+  text-align: center;
+}
+
+.segment-link {
+  font-style: normal;
+  color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  margin-top: 3em;
+  margin-bottom: 2em;
+  font-size: 0.9em;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: underline;
+}
+
+.segment-link:hover {
+  color: rgba(0,0,0,0.8);
 }
 
 /*****************
