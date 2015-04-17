@@ -30,7 +30,7 @@ std::shared_ptr<File> LocalFileRepository::getFile(
     const std::string& requestPath,
     const std::string& docroot) {
 
-  std::string path = basedir_ + docroot + requestPath;
+  std::string path = FileUtil::joinPaths(FileUtil::joinPaths(basedir_, docroot), requestPath);
 
   return std::shared_ptr<File>(new LocalFile(
         *this, path, mimetypes_.getMimeType(requestPath)));
