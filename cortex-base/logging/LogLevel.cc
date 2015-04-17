@@ -8,6 +8,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <cortex-base/logging/LogLevel.h>
+#include <cortex-base/RuntimeError.h>
 #include <stdexcept>
 #include <string>
 
@@ -21,6 +22,8 @@ std::string to_string(LogLevel value) {
       return "error";
     case LogLevel::Warning:
       return "warning";
+    case LogLevel::Notice:
+      return "notice";
     case LogLevel::Info:
       return "info";
     case LogLevel::Debug:
@@ -28,7 +31,7 @@ std::string to_string(LogLevel value) {
     case LogLevel::Trace:
       return "trace";
     default:
-      throw std::runtime_error("Invalid State. Unknown LogLevel.");
+      RAISE(IllegalStateError, "Invalid State. Unknown LogLevel.");
   }
 }
 
@@ -42,6 +45,9 @@ LogLevel to_loglevel(const std::string& value) {
   if (value == "warning")
     return LogLevel::Warning;
 
+  if (value == "notice")
+    return LogLevel::Notice;
+
   if (value == "info")
     return LogLevel::Info;
 
@@ -51,7 +57,7 @@ LogLevel to_loglevel(const std::string& value) {
   if (value == "trace")
     return LogLevel::Trace;
 
-  throw std::runtime_error("Invalid State. Unknown LogLevel.");
+  RAISE(IllegalStateError, "Invalid State. Unknown LogLevel.");
 }
 
 } // namespace cortex

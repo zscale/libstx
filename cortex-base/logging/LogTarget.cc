@@ -34,6 +34,11 @@ class ConsoleLogger : public LogTarget {
     fprintf(stderr, "[thread:%d] [info] %s\n", threadId(), msg.c_str());
   }
 
+  void notice(const std::string& msg) override {
+    std::lock_guard<std::mutex> _lg(lock_);
+    fprintf(stderr, "[thread:%d] [notice] %s\n", threadId(), msg.c_str());
+  }
+
   void warn(const std::string& msg) override {
     std::lock_guard<std::mutex> _lg(lock_);
     fprintf(stderr, "[thread:%d] [warning] %s\n", threadId(), msg.c_str());
@@ -78,6 +83,10 @@ class SyslogLogger : public LogTarget {
 
   void info(const std::string& msg) override {
     ::syslog(LOG_INFO, "[thread:%d] %s\n", threadId(), msg.c_str());
+  }
+
+  void notice(const std::string& msg) override {
+    ::syslog(LOG_NOTICE, "[thread:%d] %s\n", threadId(), msg.c_str());
   }
 
   void warn(const std::string& msg) override {
