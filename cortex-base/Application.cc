@@ -69,6 +69,9 @@ std::string Application::groupName() {
 
 void Application::dropPrivileges(const std::string& username,
                                  const std::string& groupname) {
+  if (username == Application::userName() && groupname == Application::groupName())
+    return;
+
   logDebug("application", "dropping privileges to %s:%s",
       username.c_str(), groupname.c_str());
 
