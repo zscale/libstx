@@ -16,8 +16,8 @@
 #include <cortex-base/DateTime.h>
 #include <cortex-base/Tokenizer.h>
 #include <cortex-base/Buffer.h>
+#include <cortex-base/RuntimeError.h>
 #include <cortex-base/sysconfig.h>
-#include <system_error>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -105,7 +105,7 @@ bool HttpFileHandler::handle(
       response->completed();
       return true;
     default:
-      throw std::system_error(transferFile->errorCode(), std::system_category());
+      RAISE_ERRNO(transferFile->errorCode());
   }
 
   int fd = -1;
@@ -113,7 +113,7 @@ bool HttpFileHandler::handle(
     fd = transferFile->createPosixChannel(File::Read | File::NonBlocking);
     if (fd < 0) {
       if (errno != EPERM && errno != EACCES)
-        throw std::system_error(transferFile->errorCode(), std::system_category());
+        RAISE_ERRNO(transferFile->errorCode());
 
       response->setStatus(HttpStatus::Forbidden);
       response->completed();
