@@ -276,7 +276,7 @@ void InetEndPoint::wantFill() {
   TRACE("%p wantFill()", this);
   // TODO: abstract away the logic of TCP_DEFER_ACCEPT
 
-  idleTimeout_.activate(readTimeout());
+  //FIXME: idleTimeout_.activate(readTimeout());
   if (!io_) {
     io_ = scheduler_->executeOnReadable(
         handle(),
@@ -301,7 +301,7 @@ void InetEndPoint::fillable() {
 
 void InetEndPoint::wantFlush() {
   TRACE("%p wantFlush() %s", this, io_.get() ? "again" : "first time");
-  idleTimeout_.activate(writeTimeout());
+  //FIXME: idleTimeout_.activate(writeTimeout());
 
   if (!io_) {
     io_ = scheduler_->executeOnWritable(
