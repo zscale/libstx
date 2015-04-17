@@ -69,7 +69,7 @@ int File::to_posix(OpenFlags oflags) {
   flags |= O_LARGEFILE;
 #endif
 
-  if (oflags & ReadWrite)
+  if ((oflags & ReadWrite) == ReadWrite)
     flags |= O_RDWR;
   else if (oflags & Read)
     flags |= O_RDONLY;
