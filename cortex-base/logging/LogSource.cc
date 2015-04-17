@@ -81,6 +81,10 @@ void LogSource::warn(const char* fmt, ...) {
   LOG_SOURCE_MSG(warn, fmt);
 }
 
+void LogSource::notice(const char* fmt, ...) {
+  LOG_SOURCE_MSG(notice, fmt);
+}
+
 void LogSource::error(const char* fmt, ...) {
   LOG_SOURCE_MSG(error, fmt);
 }

@@ -28,6 +28,11 @@ CORTEX_API void logWarning(const char* component, const char* fmt, Args... args)
 }
 
 template<typename... Args>
+CORTEX_API void logNotice(const char* component, const char* fmt, Args... args) {
+  LogAggregator::get().getSource(component)->notice(fmt, args...);
+}
+
+template<typename... Args>
 CORTEX_API void logInfo(const char* component, const char* fmt, Args... args) {
   LogAggregator::get().getSource(component)->info(fmt, args...);
 }
