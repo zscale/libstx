@@ -235,8 +235,8 @@ void HttpResponse::onPostProcess(std::function<void()> callback) {
   channel_->onPostProcess(callback);
 }
 
-void HttpResponse::onResponseSent(std::function<void()> callback) {
-  channel_->onResponseSent(callback);
+void HttpResponse::onResponseEnd(std::function<void()> callback) {
+  channel_->onResponseEnd(callback);
 }
 
 void HttpResponse::completed() {
