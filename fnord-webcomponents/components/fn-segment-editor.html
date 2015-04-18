@@ -20,7 +20,7 @@
 
 
   <fn-modal-dimmer>
-    <fn-modal>
+    <fn-modal class='segment-editor'>
       <fn-modal-close-icon></fn-modal-close-icon>
 
       <!-- View: Segments -->
@@ -30,6 +30,9 @@
         </fn-segment-header>
 
         <fn-segments></fn-segments>
+
+        <fn-tooltip data-name='edit'>Edit Segment</fn-tooltip>
+        <fn-tooltip data-name='remove'>Remove Segment</fn-tooltip>
 
         <fn-segment-footer>
           <fn-button data-action='add-segment'>Add Segment</fn-button>
@@ -45,7 +48,8 @@
 
         <fn-segments></fn-segments>
 
-        <fn-tooltip>Add to Segments</fn-tooltip>
+        <fn-tooltip data-name='add'>Add to Segments</fn-tooltip>
+        <fn-tooltip data-name='remove'>Remove This Segment</fn-tooltip>
 
         <template name='fn-segments-empty'>
           <fn-segments-empty>
@@ -56,7 +60,6 @@
 
         <fn-segment-footer>
           <fn-button data-action='cancel-segment'>Back To Segments</fn-button>
-          <fn-button data-action='add-recent-segments'>Add All To Segments</fn-button>
         </fn-segment-footer>
       </fn-segment-recent>
 
@@ -556,7 +559,7 @@
         segments_attr.push(segment);
       }, false) 
 
-      this.addPreviewValues(segments);
+      this.renderPreviewValues(segments);
       this.setAttribute('data-segments', JSON.stringify(segments_attr));
     };
 
@@ -639,6 +642,7 @@
       fn_segment.innerHTML = html.join("");
 
       fn_segment.setAttribute('data-name', segment.name);
+      fn_segment.setAttribute('data-key', segment.key);
 
       return fn_segment;
     };
@@ -649,6 +653,7 @@
       //LATER
       if (segment.removable || true) {
         var icon = document.createElement("fn-segment-remove-icon");
+        icon.classList.add('segment-icon');
         fn_segment.appendChild(icon);
         this.observeRemovableSegment(icon, segment.name);
       }
@@ -656,6 +661,7 @@
       //LATER
       if (segment.editable || true) {
         var icon = document.createElement("fn-segment-edit-icon");
+        icon.classList.add('segment-icon');
         fn_segment.appendChild(icon);
         this.observeEditableSegment(icon, fn_segment, segment);
       }
@@ -666,10 +672,16 @@
     this.createRecentSegment = function(segment) {
       var fn_segment = this.createFnSegment(segment);
 
-      var icon = document.createElement("fn-segment-add-icon");
-      fn_segment.appendChild(icon);
+      var add_icon = document.createElement("fn-segment-add-icon");
+      var remove_icon = document.createElement("fn-segment-remove-icon");
 
-      this.observeAddRecentSegment(icon, segment);
+      add_icon.classList.add('segment-icon');
+      remove_icon.classList.add('segment-icon');
+
+      fn_segment.appendChild(remove_icon);
+      fn_segment.appendChild(add_icon);
+
+      this.observeRecentSegment(add_icon, remove_icon, segment);
 
       return fn_segment;
     }
@@ -751,12 +763,15 @@
 
     /************************** Render Preview ******************************/
 
-    this.addPreviewValues = function(segments) {
-      var field = this.querySelector("fn-segment-editor-field-values");
+    this.renderPreviewValues = function(segments) {
+      var segments = segments;
 
-      if (field.innerHTML.length > 0) {
-        field.appendChild(document.createElement("fn-segment-separator"));
+      if (!segments) {
+        var segments = JSON.parse(this.getAttribute('data-segments'));
       }
+
+      var field = this.querySelector("fn-segment-editor-field-values");
+      field.innerHTML = "";
 
       for (var i = 0; i < segments.length; i++) {
         var elem = document.createElement("fn-segment-field-value");
@@ -778,17 +793,13 @@
         elem.appendChild(title);
 
         field.appendChild(elem);
+
+        //preview wider than field
+        if (field.scrollWidth - field.offsetWidth > (elem.offsetWidth / 2)) {
+            elem.innerHTML = "...";
+            return;
+        }
       }
-    };
-
-
-    this.renderPreviewValues = function() {
-      var segments = JSON.parse(this.getAttribute('data-segments'));
-      var _this = this;
-
-      this.querySelector("fn-segment-editor-field-values").innerHTML = "";
-
-      this.addPreviewValues(segments);
     };
 
     /*********************** Visibility & Views *******************************/
@@ -842,8 +853,6 @@
       var _this = this;
       var fn_segment_recent = this.querySelector("fn-segment-recent");
       var fn_segments = fn_segment_recent.querySelector("fn-segments");
-      var add_all_btn = fn_segment_recent.querySelector(
-        "[data-action='add-recent-segments']");
 
       fn_segments.innerHTML = "";
 
@@ -858,7 +867,6 @@
            _this.showSegmentSelect();
         };
 
-        add_all_btn.classList.add('segment-hidden');
         return;
       }
 
@@ -866,11 +874,6 @@
         fn_segments.appendChild(_this.createRecentSegment(segment));
       });
 
-      add_all_btn.classList.remove('segment-hidden');
-
-      add_all_btn.onclick = function() {
-        _this.addNewSegment(segments, true);
-      };
     };
 
 
@@ -916,10 +919,50 @@
       }
     };
 
+    /*************************** Tooltips **********************************/
+
+    this.getTooltipLeftValue = function(elem) {
+      var fn_segment = elem.parentElement;
+      var padding = window.getComputedStyle(fn_segment, null)
+        .getPropertyValue('padding-right');
+      var previousSibling = elem.previousSibling;
+      var left;
+
+      padding = parseInt(padding.substr(0, padding.length - 2), 10);
+      left = fn_segment.offsetWidth - (2* padding) + 5;
+
+      if (previousSibling.classList.contains('segment-icon')) {
+        //margin-right = 10px
+        left = left - previousSibling.offsetWidth - 10;
+      }
+
+      return left;
+    };
+
+    this.getTooltipTopValue = function(elem) {
+      var fn_segment = elem.parentElement;
+      var first_segment_top = this.querySelector(".segment-active fn-segment")
+        .getBoundingClientRect()
+        .top
+
+      var padding = window.getComputedStyle(fn_segment, null)
+        .getPropertyValue('padding-top');
+
+      return (parseInt(padding.substr(0, padding.length - 2), 10) +
+        fn_segment.getBoundingClientRect().top - first_segment_top + 18);
+    };
+
+
     /*************************** Events ************************************/
 
     this.observeRemovableSegment = function(icon, segment_name) {
       var _this = this;
+      var tooltip = this.querySelector(
+        "fn-segment-overview fn-tooltip[data-name='remove']");
+
+      tooltip.getLeftValue = this.getTooltipLeftValue;
+      tooltip.getTopValue = this.getTooltipTopValue.bind(this);
+      tooltip.init(icon);
 
       icon.onclick = function(e) {
         e.stopPropagation();
@@ -931,6 +974,13 @@
 
     this.observeEditableSegment = function(icon, fn_segment, segment) {
       var _this = this;
+      var tooltip = this.querySelector(
+        "fn-segment-overview fn-tooltip[data-name='edit']");
+
+      tooltip.getLeftValue = this.getTooltipLeftValue;
+      tooltip.getTopValue = this.getTooltipTopValue.bind(this);
+      tooltip.init(icon);
+
 
       icon.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -938,38 +988,45 @@
       }, false);
     };
 
-    this.observeAddRecentSegment = function(icon, segment) {
-      var tooltip = this.querySelector("fn-segment-recent fn-tooltip");
+
+    this.observeRecentSegment = function(add_icon, remove_icon, segment) {
+      var fn_segment_recent = this.querySelector("fn-segment-recent");
+      var add_tooltip = fn_segment_recent.querySelector(
+        "fn-tooltip[data-name='add']");
+      var remove_tooltip = fn_segment_recent.querySelector(
+        "fn-tooltip[data-name='remove']");
       var _this = this;
 
-      tooltip.getLeftValue = function(elem) {
-        var fn_segment = elem.parentElement;
-        var padding = window.getComputedStyle(fn_segment, null)
-          .getPropertyValue('padding-right');
-        padding = parseInt(padding.substr(0, padding.length - 2), 10);
+      add_tooltip.getLeftValue = this.getTooltipLeftValue;
+      add_tooltip.getTopValue = this.getTooltipTopValue.bind(this);
+      add_tooltip.init(add_icon);
 
-        return fn_segment.offsetWidth - (2* padding) + 5;
-      }
-
-      tooltip.getTopValue = function(elem) {
-        var fn_segment = elem.parentElement;
-        var first_segment_top = _this.querySelector("fn-segment-recent fn-segment")
-          .getBoundingClientRect()
-          .top
-
-        var padding = window.getComputedStyle(fn_segment, null)
-          .getPropertyValue('padding-top');
-
-        return (parseInt(padding.substr(0, padding.length - 2), 10) +
-          fn_segment.getBoundingClientRect().top - first_segment_top + 3);
-      }
-
-
-      tooltip.init(icon);
-
-      icon.onclick = function() {
+      add_icon.onclick = function() {
         _this.addNewSegment(segment);
       }
+
+      remove_tooltip.getLeftValue = this.getTooltipLeftValue;
+      remove_tooltip.getTopValue = this.getTooltipTopValue.bind(this);
+      remove_tooltip.init(remove_icon);
+
+      remove_icon.onclick = function() {
+        _this.fireRemoveRecentEvent(segment);
+
+        _this.loadRecentSegments(function(segments) {
+          _this.renderRecentSegments(segments);
+        });
+      }
+    };
+
+
+    this.fireRemoveRecentEvent = function(segment) {
+      var ev = new CustomEvent('fn-segment-recent-remove', {
+        'detail' : {'segment' : JSON.stringify(segment)},
+        'bubbles': true,
+        'cancelable' : true
+      });
+
+      this.dispatchEvent(ev);
     };
 
     this.fireNewSegmentEvent = function(segment) {
@@ -1011,8 +1068,6 @@
     }
 
     this.fireEditSegmentEvent = function(old_segment, new_segment) {
-      this.fireSegmentsChangedEvent();
-
       var ev = new CustomEvent('fn-segment-edit', {
         'detail' : {
           'old_segment' : JSON.stringify(old_segment),
@@ -1023,6 +1078,7 @@
       });
 
       this.dispatchEvent(ev);
+      this.fireSegmentsChangedEvent();
     };
 
     this.fireSegmentsChangedEvent = function() {
