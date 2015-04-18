@@ -88,9 +88,9 @@ class CORTEX_HTTP_API HttpResponse {
 
   /**
    * Installs a callback to be invoked right after the last response message
-   * byte has been fully sent.
+   * byte has been fully sent or transmission has been aborted.
    */
-  void onResponseSent(std::function<void()> callback);
+  void onResponseEnd(std::function<void()> callback);
 
   /**
    * Invoke to mark this response as complete.

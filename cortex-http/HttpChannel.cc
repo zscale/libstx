@@ -356,12 +356,14 @@ void HttpChannel::onPostProcess(std::function<void()> callback) {
   onPostProcess_.connect(callback);
 }
 
-void HttpChannel::onResponseSent(std::function<void()> callback) {
-  onResponseSent_.connect(callback);
+void HttpChannel::onResponseEnd(std::function<void()> callback) {
+  onResponseEnd_.connect(callback);
 }
 
-void HttpChannel::responseSent() {
-  onResponseSent_();
+void HttpChannel::responseEnd() {
+  auto cb = std::move(onResponseEnd_);
+  onResponseEnd_.clear();
+  cb();
 }
 
 }  // namespace cortex

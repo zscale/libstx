@@ -89,6 +89,10 @@ void HttpConnection::onClose() {
 }
 
 void HttpConnection::abort() {
+  TRACE("%p abort()");
+  channel_->response()->setBytesTransmitted(generator_.bytesTransmitted());
+  channel_->responseEnd();
+
   TRACE("%p abort", this);
   endpoint()->close();
 }
@@ -110,15 +114,14 @@ void HttpConnection::completed() {
 }
 
 void HttpConnection::onResponseComplete(bool succeed) {
+  TRACE("%p onResponseComplete(%s)", this, succeed ? "succeed" : "failure");
+  channel_->response()->setBytesTransmitted(generator_.bytesTransmitted());
+  channel_->responseEnd();
+
   if (!succeed) {
     // writing trailer failed. do not attempt to do anything on the wire.
     return;
   }
-
-  channel_->response()->setBytesTransmitted(generator_.bytesTransmitted());
-
-  // tell channel that we finished fully transmitting the response
-  channel_->responseSent();
 
   if (channel_->isPersistent()) {
     TRACE("%p completed.onComplete", this);
@@ -126,9 +129,7 @@ void HttpConnection::onResponseComplete(bool succeed) {
     // re-use on keep-alive
     channel_->reset();
 
-    if (endpoint()->isCorking()) {
-      endpoint()->setCorking(false);
-    }
+    endpoint()->setCorking(false);
 
     if (inputOffset_ < inputBuffer_.size()) {
       // have some request pipelined

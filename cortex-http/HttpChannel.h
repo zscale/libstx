@@ -153,10 +153,10 @@ class CORTEX_HTTP_API HttpChannel : public HttpListener {
 
   // hooks
   void onPostProcess(std::function<void()> callback);
-  void onResponseSent(std::function<void()> callback);
+  void onResponseEnd(std::function<void()> callback);
 
   // event, only to be invoked by transport implementors
-  void responseSent(); // no, via cb functor instead
+  void responseEnd(); // no, via cb functor instead
 
  protected:
   virtual std::unique_ptr<HttpOutput> createOutput();
@@ -176,7 +176,7 @@ class CORTEX_HTTP_API HttpChannel : public HttpListener {
   HttpHandler handler_;
 
   Signal<void()> onPostProcess_;
-  Signal<void()> onResponseSent_;
+  Signal<void()> onResponseEnd_;
 };
 
 }  // namespace cortex

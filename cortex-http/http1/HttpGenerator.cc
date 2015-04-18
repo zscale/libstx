@@ -12,6 +12,7 @@
 #include <cortex-http/HttpStatus.h>
 #include <cortex-base/net/EndPointWriter.h>
 #include <cortex-base/io/FileRef.h>
+#include <cortex-base/RuntimeError.h>
 #include <cortex-base/sysconfig.h>
 
 namespace cortex {
@@ -145,16 +146,18 @@ void HttpGenerator::generateBody(FileRef&& chunk) {
 
     if (chunk.size() > 0) {
       n = snprintf(buf, sizeof(buf), "%zx\r\n", chunk.size());
+      bytesTransmitted_ += n + chunk.size() + 2;
       writer_->write(BufferRef(buf, static_cast<size_t>(n)));
       writer_->write(std::move(chunk));
       writer_->write(BufferRef("\r\n"));
     }
   } else {
     if (chunk.size() <= contentLength_) {
+      bytesTransmitted_ += chunk.size();
       contentLength_ -= chunk.size();
       writer_->write(std::move(chunk));
     } else {
-      throw std::runtime_error("HTTP body chunk exceeds content length.");
+      RAISE(RuntimeError, "HTTP body chunk exceeds content length.");
     }
   }
 }
