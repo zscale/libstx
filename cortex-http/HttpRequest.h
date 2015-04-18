@@ -33,7 +33,7 @@ class CORTEX_HTTP_API HttpRequest {
               std::unique_ptr<HttpInput>&& input);
 
   void setRemoteIP(const Option<IPAddress>& ip);
-  Option<IPAddress> remoteIP() const;
+  const Option<IPAddress>& remoteIP() const;
 
   size_t bytesReceived() const noexcept { return bytesReceived_; }
   void setBytesReceived(size_t n) { bytesReceived_ = n; }
