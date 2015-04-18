@@ -48,7 +48,7 @@ void HttpRequest::setRemoteIP(const Option<IPAddress>& ip) {
   remoteIP_ = ip;
 }
 
-Option<IPAddress> HttpRequest::remoteIP() const {
+const Option<IPAddress>& HttpRequest::remoteIP() const {
   return remoteIP_;
 }
 
