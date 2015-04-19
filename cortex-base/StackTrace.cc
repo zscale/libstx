@@ -103,16 +103,11 @@ StackTrace::~StackTrace() {
 
 std::string StackTrace::demangleSymbol(const char* symbol) {
   int status = 0;
-  size_t len = 512;
-
-  std::shared_ptr<char> buf(
-      (char*) malloc(len),
-      std::bind(&free, std::placeholders::_1));
-
-  char* demangled = abi::__cxa_demangle(symbol, buf.get(), &len, &status);
+  char* demangled = abi::__cxa_demangle(symbol, nullptr, 0, &status);
 
   if (demangled) {
     std::string result(demangled, strlen(demangled));
+    free(demangled);
     return result;
   } else {
     return symbol;
