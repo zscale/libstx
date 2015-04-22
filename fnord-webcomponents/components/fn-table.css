@@ -85,11 +85,13 @@ fn-table thead th.sortable:after {
   opacity: 0.5;
 }
 
-fn-table thead th.sortable.desc:after {
+fn-table thead th.sortable.desc:after,
+fn-table thead th.sortable.numdsc:after {
   content: "\f0d7";
 }
 
-fn-table thead th.sortable.asc:after {
+fn-table thead th.sortable.asc:after,
+fn-table thead th.sortable.numasc:after {
   content: "\f0d8";
 }
 
