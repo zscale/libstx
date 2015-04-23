@@ -1230,6 +1230,8 @@ struct MDB_env {
 #endif
 	void		*me_userctx;	 /**< User-settable context */
 	MDB_assert_func *me_assert_func; /**< Callback for assertion failures */
+  const char* data_filename;
+  const char* lock_filename;
 };
 
 	/** Nested transaction */
@@ -4579,10 +4581,6 @@ fail:
 	return rc;
 }
 
-	/** The name of the lock file in the DB environment */
-#define LOCKNAME	"/lock.mdb"
-	/** The name of the data file in the DB environment */
-#define DATANAME	"/data.mdb"
 	/** The suffix of the lock file when no subdir is used */
 #define LOCKSUFF	"-lock"
 	/** Only a subset of the @ref mdb_env flags can be changed
@@ -4598,10 +4596,18 @@ fail:
 #endif
 
 int ESECT
-mdb_env_open(MDB_env *env, const char *path, unsigned int flags, mdb_mode_t mode)
-{
+mdb_env_open(
+    MDB_env *env,
+    const char *path,
+    unsigned int flags,
+    mdb_mode_t mode,
+    const char* data_filename,
+    const char* lock_filename) {
 	int		oflags, rc, len, excl = -1;
 	char *lpath, *dpath;
+
+  env->data_filename = data_filename;
+  env->lock_filename = lock_filename;
 
 	if (env->me_fd!=INVALID_HANDLE_VALUE || (flags & ~(CHANGEABLE|CHANGELESS)))
 		return EINVAL;
@@ -4610,7 +4616,7 @@ mdb_env_open(MDB_env *env, const char *path, unsigned int flags, mdb_mode_t mode
 	if (flags & MDB_NOSUBDIR) {
 		rc = len + sizeof(LOCKSUFF) + len + 1;
 	} else {
-		rc = len + sizeof(LOCKNAME) + len + sizeof(DATANAME);
+		rc = len + strlen(lock_filename) + 1 + len + strlen(data_filename) + 1;
 	}
 	lpath = malloc(rc);
 	if (!lpath)
@@ -4620,9 +4626,9 @@ mdb_env_open(MDB_env *env, const char *path, unsigned int flags, mdb_mode_t mode
 		sprintf(lpath, "%s" LOCKSUFF, path);
 		strcpy(dpath, path);
 	} else {
-		dpath = lpath + len + sizeof(LOCKNAME);
-		sprintf(lpath, "%s" LOCKNAME, path);
-		sprintf(dpath, "%s" DATANAME, path);
+		dpath = lpath + len + strlen(env->lock_filename) + 1;
+		sprintf(lpath, "%s%s", path, lock_filename);
+		sprintf(dpath, "%s%s", path, data_filename);
 	}
 
 	rc = MDB_SUCCESS;
@@ -5044,20 +5050,6 @@ mdb_node_search(MDB_cursor *mc, MDB_val *key, int *exactp)
 	/* nodeptr is fake for LEAF2 */
 	return node;
 }
-
-#if 0
-static void
-mdb_cursor_adjust(MDB_cursor *mc, func)
-{
-	MDB_cursor *m2;
-
-	for (m2 = mc->mc_txn->mt_cursors[mc->mc_dbi]; m2; m2=m2->mc_next) {
-		if (m2->mc_pg[m2->mc_top] == mc->mc_pg[mc->mc_top]) {
-			func(mc, m2);
-		}
-	}
-}
-#endif
 
 /** Pop a page off the top of the cursor's stack. */
 static void
@@ -8943,11 +8935,11 @@ mdb_env_copy2(MDB_env *env, const char *path, unsigned int flags)
 		lpath = (char *)path;
 	} else {
 		len = strlen(path);
-		len += sizeof(DATANAME);
+		len += strlen(env->data_filename) + 1;
 		lpath = malloc(len);
 		if (!lpath)
 			return ENOMEM;
-		sprintf(lpath, "%s" DATANAME, path);
+		sprintf(lpath, "%s%s", path, env->data_filename);
 	}
 
 	/* The destination path must exist, but the destination file must not.
