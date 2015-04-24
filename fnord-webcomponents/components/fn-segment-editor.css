@@ -27,7 +27,7 @@ fn-segment-editor-field-values {
 
 .segment-field-fixed fn-segment-editor-field-values {
   /* 10px padding on each side */
-  width: calc(100% - 20px);
+  width: calc(100% - 22px);
   overflow: hidden;
 }
 
@@ -86,6 +86,18 @@ fn-loader.segment-editor-loader /deep/ .spinner {
   height: 2em;
 }
 
+
+/******************
+  Segments Loader
+******************/
+fn-segment-recent fn-loader {
+  height: 70%;
+}
+
+fn-segment-recent fn-loader /deep/ .loader {
+  background: transparent;
+}
+
 /*******************
   Segment Views
 *******************/
@@ -100,11 +112,77 @@ fn-segment-recent {
   overflow: hidden;
 }
 
-fn-segment-overview.segment-active,
+fn-segment-flyout.segment-active,
 fn-segment-select.segment-active,
 fn-segment-edit.segment-active,
 fn-segment-recent.segment-active {
   display: block;
+}
+
+fn-segment-flyout {
+  position: absolute;
+  background: #fff;
+  margin-top: 12px;
+  width: 300px;
+  height: 380px;
+  display: none;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border: 1px solid #bbb;
+  box-shadow: 0px 1px 2px rgba(0,0,0,.09);
+  z-index: 20;
+}
+
+fn-segment-flyout:before,
+fn-segment-flyout:after {
+  content: ' ';
+  height: 0;
+  position: absolute;
+  width: 0;
+  border: 15px solid transparent;
+}
+
+fn-segment-flyout:before {
+  border-bottom-color: #F4F4F4;
+  position: absolute;
+  top: -29px;
+  left: 142px;
+  z-index: 2;
+}
+
+fn-segment-flyout:after {
+  border-bottom-color: #bbb;
+  position: absolute;
+  top: -30px;
+  left: 142px;
+  z-index: 1;
+}
+
+fn-segment-flyout fn-segment-footer {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  box-shadow: none;
+  height: 41px;
+  overflow: hidden;
+}
+
+
+fn-segment-flyout fn-segments {
+  font-size: 90%;
+  height: calc(100% - 75px);
+}
+
+fn-segment-flyout fn-segment {
+  padding: 1.2em 2em;
+}
+
+fn-segment-flyout fn-segment:hover {
+  background: rgba(0, 0, 50, 0.03);
+  cursor: pointer;
+}
+
+fn-segment-flyout fn-button {
+  margin-left: 109px;
 }
 
 .segment-clickable:hover {
@@ -120,7 +198,7 @@ fn-segment-recent.segment-active {
 ****************/
 fn-segments {
   display: block;
-  height: 70%;
+  height: 100%;
   overflow: auto;
 }
 
@@ -129,11 +207,7 @@ fn-segments:empty {
 }
 
 fn-segment {
-  border-top: 1px solid rgba(39, 41, 43, 0.15);
-}
-
-fn-segment:first-child {
-  border-top: none;
+  border-bottom: 1px solid rgba(39, 41, 43, 0.15);
 }
 
 /*******************
@@ -143,6 +217,10 @@ fn-segment-title {
   font-weight: 500;
   display: inline-block;
   margin-right: 1em;
+}
+
+fn-segment-circle + fn-segment-title {
+  margin-left: 4px;
 }
 
 fn-segment-text-value {
@@ -182,23 +260,65 @@ fn-segment-text-title {
   Segment Header
 *****************/
 fn-segment-header,
-.fn-segment-header {
+fn-segment-footer {
   display: block;
-  background-color: rgba(0, 0, 0, 0.02);
-  margin: 0em;
-  padding: 1em 2em;
   box-shadow: 0px 1px 2px 0 rgba(0, 0, 0, 0.05);
   border-bottom: 1px solid rgba(39, 41, 43, 0.15);
+  margin: 0em;
+  font-size: 100%;
+  padding: 5px 0;
+  font-weight: 500;
   overflow: auto;
+  text-align:center;
+  background-color: #F4F4F4;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f4f4f4), to(#e9e9e9));
+  background-image: -webkit-linear-gradient(top, #f4f4f4, #e9e9e9);
+  background-image: -moz-linear-gradient(top, #f4f4f4, #e9e9e9);
+  background-image: -ms-linear-gradient(top, #f4f4f4, #e9e9e9);
+  background-image: -o-linear-gradient(top, #f4f4f4, #e9e9e9);
+  background-image: linear-gradient(top, #f4f4f4, #e9e9e9);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#f4f4f4', EndColorStr='#e9e9e9');
+}
+
+fn-segment-footer {
+  padding: 3px 0;
+}
+
+fn-segment-select fn-segment-header,
+fn-segment-recent fn-segment-header {
+  padding: 8px 0;
+}
+
+fn-segment-recent fn-segment-footer {
+  height: 30px;
+  border-top: none;
+}
+
+fn-segment-header fn-segment-error-message {
+  float: left;
 }
 
 fn-segment-header-title,
 .fn-segment-header-title {
-  font-size: 1.3em;
   line-height: 1.8em;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.85);
   float:left;
+  margin: 3px 2em 0;
+}
+
+fn-segment-header fn-button {
+  font-size: 90%;
+  margin-right: 2em;
+  float: right;
+}
+
+fn-segment-select fn-segment-header fn-button:last-child {
+  margin-right: 5px;
+}
+
+fn-button fn-segment-add-icon {
+  margin-left: 4px;
 }
 
 fn-segment-header input,
@@ -208,8 +328,9 @@ fn-segment-header input.fn-input,
   display: inline-block;
   float: left;
   margin-left: 1em;
-  width: 70%;
+  width: 300px;
   font-weight: normal;
+  font-size: 90%;
 }
 
 fn-segment-header.segment-error fn-segment-error-message {
@@ -224,6 +345,7 @@ fn-segment-header.segment-error fn-segment-error-message {
   display: none;
 }
 
+
 /*****************
   Group Menu
 *****************/
@@ -231,10 +353,11 @@ fn-menu.segment-group-menu {
   display: block;
   width: 150px;
   position: fixed;
-  height: calc(100% - 120px);
+  height: calc(100% - 51px);
   border-radius: 0;
   border-right: 1px solid rgba(39, 41, 43, 0.15);
   box-shadow: none;
+  border-bottom-left-radius: 0.2857em;
 }
 
 fn-menu.segment-group-menu ~ fn-segment-option {
@@ -252,13 +375,13 @@ fn-menu.segment-group-menu ~ fn-segment-option[data-active] {
 fn-segment-options {
   display: block;
   overflow: visible;
-  min-height: 100px;
+  min-height: 300px;
 }
 
 fn-segment,
 fn-segment-option {
   display: block;
-  padding: 1.5em 2em;
+  padding: 1.2em 2em;
   line-height: 1.3em;
   background-color: #fff;
 }
@@ -313,7 +436,8 @@ fn-segment-option fn-input input {
 
 fn-segment-add-icon,
 fn-segment-edit-icon,
-fn-segment-remove-icon {
+fn-segment-remove-icon,
+fn-segment-open-icon {
   cursor: pointer;
   font-size: 1em;
   height: 1em;
@@ -322,10 +446,12 @@ fn-segment-remove-icon {
 }
 
 fn-segment-add-icon,
+fn-segment-open-icon,
 fn-segment fn-segment-edit-icon,
-fn-segment fn-segment-remove-icon {
+fn-segment-flyout fn-segment-remove-icon {
   float: right;
 }
+
 
 fn-segment-add-icon:hover,
 fn-segment-edit-icon:hover,
@@ -348,12 +474,24 @@ fn-segment-add-icon:after {
 
 fn-segment-remove-icon:after {
   font-family: FontAwesome;
-  content: "\f00d";
+  content: "\f014";
+}
+
+fn-segment-open-icon:after {
+  font-family: FontAwesome;
+  content: "\f078";
 }
 
 fn-segment-edit-icon:after {
   font-family: FontAwesome;
   content: "\f044";
+}
+
+fn-segment fn-segment-remove-icon {
+  position: relative;
+  top: 0px;
+  left: 0px;
+  font-size: 13px;
 }
 
 
@@ -370,10 +508,8 @@ fn-segment-editor fn-tooltip {
 fn-segment-footer {
   width: 100%;
   display:block;
-  padding: 0.7em 2em;
   border-top: 1px solid rgba(39, 41, 43, 0.15);
   overflow: auto;
-  box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.3);
 }
 
 fn-segment-footer fn-button {
