@@ -608,7 +608,13 @@ int  mdb_env_create(MDB_env **env);
 	 *	<li>EAGAIN - the environment was locked by another process.
 	 * </ul>
 	 */
-int  mdb_env_open(MDB_env *env, const char *path, unsigned int flags, mdb_mode_t mode);
+int mdb_env_open(
+    MDB_env *env,
+    const char *path,
+    unsigned int flags,
+    mdb_mode_t mode,
+    const char* data_filename,
+    const char* lock_filename);
 
 	/** @brief Copy an LMDB environment to the specified path.
 	 *
