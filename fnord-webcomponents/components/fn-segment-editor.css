@@ -122,7 +122,7 @@ fn-segment-recent.segment-active {
 fn-segment-flyout {
   position: absolute;
   background: #fff;
-  margin-top: 13px;
+  margin-top: 12px;
   width: 300px;
   height: 380px;
   display: none;
@@ -133,20 +133,30 @@ fn-segment-flyout {
   z-index: 20;
 }
 
-fn-segment-flyout-icon {
-  display: inline-block;
-  position:absolute;
-  top: -15px;
-  left: 142px;
-  width: 0; 
-  height: 0; 
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid #F4F4F4;
-  border-top: none;
+fn-segment-flyout:before,
+fn-segment-flyout:after {
+  content: ' ';
+  height: 0;
+  position: absolute;
+  width: 0;
+  border: 15px solid transparent;
 }
 
+fn-segment-flyout:before {
+  border-bottom-color: #F4F4F4;
+  position: absolute;
+  top: -29px;
+  left: 142px;
+  z-index: 2;
+}
 
+fn-segment-flyout:after {
+  border-bottom-color: #bbb;
+  position: absolute;
+  top: -30px;
+  left: 142px;
+  z-index: 1;
+}
 
 fn-segment-flyout fn-segment-footer {
   border-bottom-left-radius: 4px;
