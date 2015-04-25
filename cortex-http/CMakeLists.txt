@@ -30,6 +30,7 @@ set(cortex_http_SRC
 
   # transport: mock
   mock/MockTransport.cc
+  mock/MockInput.cc
 
   # transport: http/1.1
   http1/Http1Channel.cc
