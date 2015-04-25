@@ -114,6 +114,8 @@ class CORTEX_HTTP_API MockTransport : public HttpTransport {
   void onFlushable() override;
   bool onReadTimeout() override;
 
+  HttpChannel* channel() const noexcept { return channel_.get(); }
+
  private:
   HttpHandler handler_;
   size_t maxRequestUriLength_;

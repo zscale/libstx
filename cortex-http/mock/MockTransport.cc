@@ -6,6 +6,7 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <cortex-http/mock/MockTransport.h>
+#include <cortex-http/mock/MockInput.h>
 #include <cortex-http/HttpHandler.h>
 #include <cortex-http/HttpResponseInfo.h>
 #include <cortex-http/HttpResponse.h>
@@ -19,48 +20,6 @@
 #include <system_error>
 
 namespace cortex {
-
-// {{{ MockInput
-class MockInput : public HttpInput {
- public:
-  MockInput();
-  int read(Buffer* result) override;
-  size_t readLine(Buffer* result) override;
-  bool empty() const noexcept override;
-  void onContent(const BufferRef& chunk) override;
-  void recycle() override;
-
- private:
-  Buffer buffer_;
-};
-
-MockInput::MockInput()
-    : buffer_() {
-}
-
-int MockInput::read(Buffer* result) {
-  size_t n = buffer_.size();
-  result->push_back(buffer_);
-  buffer_.clear();
-  return n;
-}
-
-size_t MockInput::readLine(Buffer* result) {
-  return 0; // TODO
-}
-
-void MockInput::onContent(const BufferRef& chunk) {
-  buffer_ += chunk;
-}
-
-bool MockInput::empty() const noexcept {
-  return buffer_.empty();
-}
-
-void MockInput::recycle() {
-  buffer_.clear();
-}
-// }}}
 
 MockTransport::MockTransport(Executor* executor, const HttpHandler& handler)
     : MockTransport(executor, handler, 32, 64, nullptr) {
