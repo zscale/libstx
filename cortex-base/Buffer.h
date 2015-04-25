@@ -117,33 +117,33 @@ class CORTEX_API BufferBase {
   size_t size_;
 
  public:
-  BufferBase() : data_(), size_(0) {}
-  BufferBase(data_type data, size_t size) : data_(data), size_(size) {}
-  BufferBase(const BufferBase<T>& v) : data_(v.data_), size_(v.size_) {}
+  constexpr BufferBase() : data_(), size_(0) {}
+  constexpr BufferBase(data_type data, size_t size) : data_(data), size_(size) {}
+  constexpr BufferBase(const BufferBase<T>& v) : data_(v.data_), size_(v.size_) {}
 
   // properties
   pointer_type data() { return data_; }
-  const pointer_type data() const {
+  constexpr const pointer_type data() const {
     return const_cast<BufferBase<T>*>(this)->data_;
   }
   reference_type at(size_t offset) { return data()[offset]; }
-  const reference_type at(size_t offset) const { return data()[offset]; }
-  size_t size() const { return size_; }
+  constexpr const reference_type at(size_t offset) const { return data()[offset]; }
+  constexpr size_t size() const { return size_; }
 
-  bool empty() const { return size_ == 0; }
-  operator bool() const { return size_ != 0; }
-  bool operator!() const { return size_ == 0; }
+  constexpr bool empty() const { return size_ == 0; }
+  constexpr operator bool() const { return size_ != 0; }
+  constexpr bool operator!() const { return size_ == 0; }
 
   void clear() { size_ = 0; }
 
   // iterator access
-  iterator begin() const { return const_cast<BufferBase<T>*>(this)->data_; }
-  iterator end() const {
+  constexpr iterator begin() const { return const_cast<BufferBase<T>*>(this)->data_; }
+  constexpr iterator end() const {
     return const_cast<BufferBase<T>*>(this)->data_ + size_;
   }
 
-  const_iterator cbegin() const { return data(); }
-  const_iterator cend() const { return data() + size(); }
+  constexpr const_iterator cbegin() const { return data(); }
+  constexpr const_iterator cend() const { return data() + size(); }
 
   // find
   template <typename PodType, size_t N>
@@ -272,7 +272,7 @@ bool operator!=(PodType (&b)[N], const BufferBase<T>& a) {
 class CORTEX_API BufferRef : public BufferBase<char*> {
  public:
   /** Initializes an empty buffer reference. */
-  BufferRef() : BufferBase<char*>() {}
+  constexpr BufferRef() : BufferBase<char*>() {}
 
   /**
    * Initializes buffer reference with given vector.
@@ -280,22 +280,22 @@ class CORTEX_API BufferRef : public BufferBase<char*> {
    * @param data buffer start
    * @param size number of bytes this buffer holds
    */
-  BufferRef(const char* data, size_t size)
+  constexpr BufferRef(const char* data, size_t size)
       : BufferBase<char*>((data_type)data, size) {}
 
   /**
    * Initializes buffer reference with pointer to given std::string.
    */
-  explicit BufferRef(const std::string& v)
+  explicit constexpr BufferRef(const std::string& v)
       : BufferBase<char*>((data_type)v.data(), v.size()) {}
 
-  BufferRef(const BufferRef& v) : BufferBase<char*>(v) {}
+  constexpr BufferRef(const BufferRef& v) : BufferBase<char*>(v) {}
 
   /**
    * Initializes buffer reference with given POD string literal.
    */
   template <typename PodType, size_t N>
-  BufferRef(PodType (&value)[N])
+  constexpr BufferRef(PodType (&value)[N])
       : BufferBase<char*>((data_type)value, N - 1) {}
 
   BufferRef& operator=(const BufferRef& v);
@@ -305,7 +305,7 @@ class CORTEX_API BufferRef : public BufferBase<char*> {
   /**
    * Random access operator.
    */
-  const_reference_type operator[](size_t index) const;
+  constexpr const_reference_type operator[](size_t index) const;
 
   /**
    * Shifts the (left) start pointer by given @p offset bytes to the left.
@@ -1175,9 +1175,9 @@ inline void BufferRef::swap(cortex::BufferRef& other) {
   std::swap(size_, other.size_);
 }
 
-inline BufferRef::const_reference_type BufferRef::operator[](
+inline constexpr BufferRef::const_reference_type BufferRef::operator[](
     size_t index) const {
-  assert(index < size_);
+  //assert(index < size_);
 
   return data_[index];
 }
