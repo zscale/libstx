@@ -32,6 +32,14 @@ set(cortex_http_SRC
   mock/MockTransport.cc
   mock/MockInput.cc
 
+  # transport: fastcgi
+  fastcgi/bits.cc
+  fastcgi/Connection.cc
+  fastcgi/ConnectionFactory.cc
+  fastcgi/Generator.cc
+  fastcgi/Parser.cc
+  fastcgi/Stream.cc
+
   # transport: http/1.1
   http1/Http1Channel.cc
   http1/Http1ConnectionFactory.cc
