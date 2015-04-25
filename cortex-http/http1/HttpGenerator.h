@@ -8,11 +8,10 @@
 #pragma once
 
 #include <cortex-http/Api.h>
-#include <cortex-base/sysconfig.h>
-#include <cortex-http/HttpVersion.h>
-#include <cortex-http/HttpStatus.h>
-#include <cortex-http/HttpOutput.h>
 #include <cortex-http/HeaderFieldList.h>
+#include <cortex-base/io/FileRef.h>
+#include <cortex-base/Buffer.h>
+#include <cortex-base/sysconfig.h>
 #include <memory>
 
 namespace cortex {
