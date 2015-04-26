@@ -434,7 +434,9 @@
       }
 
       for (var i = 0; i < options.length; i++) {
-        fn_segment_options.appendChild(this.createSegmentOption(options[i]));
+        var option = this.createSegmentOption(options[i]);
+        console.log(option);
+        fn_segment_options.appendChild(option);
       }
     };
 
@@ -445,7 +447,6 @@
       var fn_segment_option = document.createElement("fn-segment-option");
       fn_segment_option.setAttribute('data-key', option.getAttribute('data-key'));
       fn_segment_option.setAttribute('data-title', option.getAttribute('data-title'));
-
       var html = [
         "<fn-checkbox></fn-checkbox><fn-segment-title>",
         option.getAttribute('data-title'),
@@ -454,7 +455,6 @@
       ];
 
       fn_segment_option.innerHTML = html.join("");
-
       return fn_segment_option;
     }
 
