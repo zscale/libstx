@@ -426,7 +426,13 @@
         return this.renderSegmentGroupOptions(tpl, fn_segment_options);
       }
 
+
       var options = tpl.content.querySelectorAll("fn-segment-option");
+      var title = tpl.content.querySelector("fn-segment-options-title");
+      if (title) {
+        fn_segment_options.appendChild(title);
+      }
+      console.log(title);
 
       for (var i = 0; i < options.length; i++) {
         fn_segment_options.appendChild(this.createSegmentOption(options[i]));
@@ -865,8 +871,6 @@
         fn_segments.querySelector('.segment-link').onclick = function() {
            _this.showSegmentSelect();
         };
-
-        return;
       }
 
       segments.forEach(function(segment) {
