@@ -34,6 +34,8 @@
           <div class='subtitle'>Segment your users by language and device information</div>
         </fn-segment-options-title>
         <fn-segment-option data-key='lang' data-title='Language'>
+          <i class='fa fa-question-circle' data-action='help'></i>
+          <fn-tooltip data-action='help'>User's Language</fn-tooltip>
           <fn-dropdown class='input' data-resolved data-segment-option>
             <fn-dropdown-header data-blank></fn-dropdown-header>
             <fn-dropdown-items>
@@ -48,6 +50,7 @@
         </fn-segment-option>
 
         <fn-segment-option data-key='device_type' data-title='Device Type'>
+          <fn-tooltip data-action='help'>User's Device Type</fn-tooltip>
           <fn-dropdown class='input checkbox' data-resolved data-segment-option>
             <fn-dropdown-items>
               <fn-dropdown-item data-value='desktop' data-title='Desktop'>
