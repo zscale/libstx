@@ -112,6 +112,10 @@ fn-segment-recent {
   overflow: hidden;
 }
 
+fn-segment-select {
+  overflow: visible;
+}
+
 fn-segment-flyout.segment-active,
 fn-segment-select.segment-active,
 fn-segment-edit.segment-active,
@@ -376,6 +380,18 @@ fn-segment-options {
   display: block;
   overflow: visible;
   min-height: 300px;
+}
+
+fn-segment-options-title {
+  display: block;
+  padding: 0.8em 2em;
+}
+
+fn-segment-options-title h1,
+fn-segment-options-title h2,
+fn-segment-options-title h3,
+fn-segment-options-title h4 {
+  margin: 0;
 }
 
 fn-segment,
