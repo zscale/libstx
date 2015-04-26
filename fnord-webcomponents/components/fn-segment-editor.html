@@ -40,7 +40,7 @@
         <fn-segment-header>
           <fn-segment-header-title>Recent Segments</fn-segment-header-title>
           <fn-button data-action='segment-select'>
-            <fn-segment-add-icon></fn-segment-add-icon>New Segment
+            <i class='fa fa-plus'></i> New Segment
           </fn-button>
         </fn-segment-header>
 
@@ -435,7 +435,6 @@
 
       for (var i = 0; i < options.length; i++) {
         var option = this.createSegmentOption(options[i]);
-        console.log(option);
         fn_segment_options.appendChild(option);
       }
     };
@@ -448,10 +447,11 @@
       fn_segment_option.setAttribute('data-key', option.getAttribute('data-key'));
       fn_segment_option.setAttribute('data-title', option.getAttribute('data-title'));
       var html = [
-        "<fn-checkbox></fn-checkbox><fn-segment-title>",
+        "<div class='segment-option-cell first'><fn-checkbox></fn-checkbox><fn-segment-title>",
         option.getAttribute('data-title'),
-        "</fn-segment-title>",
-        option.innerHTML
+        "</fn-segment-title></div><div class='segment-option-cell second'>",
+        option.innerHTML,
+        "</div>"
       ];
 
       fn_segment_option.innerHTML = html.join("");
@@ -794,6 +794,7 @@
 
 
     this.showFlyout = function() {
+      Fnord.closeOpenItems();
       this.renderSegments();
       this.changeView("fn-segment-flyout", false);
       this.setAttribute('data-active', 'active');
@@ -827,11 +828,21 @@
       var segment_tpl = tpl.content.querySelector("fn-segment-select");
       var segment_select = this.querySelector("fn-segment-select");
       var _this = this;
-
       segment_select.innerHTML = segment_tpl.innerHTML;
 
       this.changeView("fn-segment-select");
       this.removeErrorMessages();
+
+      var tooltips = segment_select.querySelectorAll("fn-tooltip");
+      for (var i = 0; i < tooltips.length; i++) {
+        var help = tooltips[i].getAttribute('data-help');
+        var elem = segment_select.querySelector("[data-help='" + help + "']");
+        if (elem) {
+          tooltips[i].init(elem);
+          tooltips[i].getTopValue = _this.getTooltipTopValue.bind(_this);
+          tooltips[i].getLeftValue = _this.getTooltipLeftValue.bind(_this);
+        }
+      }
 
       if (typeof this.customOptionHandling === 'function') {
         this.customOptionHandling(segment_select);

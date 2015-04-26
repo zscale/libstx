@@ -1,8 +1,14 @@
+/*************************
+  Modal
+*************************/
+fn-modal.segment-editor {
+  height: 400px;
+}
+
 
 /*************************
   Segment Editor Field
 *************************/
-
 fn-segment-editor-field {
   display: inline-block;
   text-align: left;
@@ -91,7 +97,7 @@ fn-loader.segment-editor-loader /deep/ .spinner {
   Segments Loader
 ******************/
 fn-segment-recent fn-loader {
-  height: 70%;
+  height: 320px;
 }
 
 fn-segment-recent fn-loader /deep/ .loader {
@@ -407,18 +413,36 @@ fn-segment-option {
 }
 
 fn-segment-option fn-segment-title,
-fn-segment-option > fn-checkbox,
-fn-segment-option fn-dropdown {
+.segment-option-cell > fn-checkbox,
+fn-segment-option fn-dropdown,
+.segment-option-cell > i[data-help] {
   display: block;
   float: left;
 }
 
-fn-segment-option fn-segment-title {
-  margin-top: .65em;
+.segment-option-cell {
+  display:inline-block;
+  height: 40px;
+  vertical-align: top;
 }
 
-fn-segment-option > fn-checkbox {
+.segment-option-cell.first {
+  width: 175px;
+}
+
+fn-segment-option i[data-help] {
+  margin-left: -0.7em;
   margin-top: .8em;
+  margin-right: 1em;
+  opacity: .7;
+}
+
+fn-segment-option fn-segment-title {
+  margin-top: 9px;
+}
+
+.segment-option-cell > fn-checkbox {
+  margin-top: 8px;
 }
 
 fn-segment-option fn-checkbox ~ fn-dropdown fn-dropdown-header,
