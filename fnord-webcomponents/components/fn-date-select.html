@@ -226,6 +226,7 @@
       if (this.hasAttribute('data-active')) {
         this.removeAttribute('data-active');
       } else {
+        Fnord.closeOpenItems();
         this.setAttribute('data-active', 'active');
       }
     };
