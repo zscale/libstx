@@ -662,12 +662,17 @@
 
     this.createSegment = function(segment) {
       var fn_segment = this.createFnSegment(segment, false);
-      var icon = document.createElement("fn-segment-remove-icon");
 
-      icon.classList.add('segment-icon');
-      fn_segment.appendChild(icon);
-      this.observeRemovableSegment(icon, segment.name);
-      this.observeEditableSegment(fn_segment, segment);
+      //TODO add removable/editable properties
+      if (segment.key != 'all_traffic') {
+        var icon = document.createElement("fn-segment-remove-icon");
+        icon.classList.add('segment-icon');
+        fn_segment.appendChild(icon);
+        this.observeRemovableSegment(icon, segment.name);
+        this.observeEditableSegment(fn_segment, segment);
+      } else {
+        fn_segment.classList.add('static-segment');
+      }
 
       return fn_segment;
     }
@@ -979,7 +984,6 @@
 
       icon.onclick = function(e) {
         e.stopPropagation();
-
         _this.removeSegment(segment_name);
         _this.fireRemoveSegmentEvent(segment_name);
       }
@@ -1049,8 +1053,6 @@
 
 
     this.fireRemoveSegmentEvent = function(name) {
-      this.fireSegmentsChangedEvent();
-
       var ev = new CustomEvent('fn-segment-remove', {
         'detail' : {'segment_name' : name},
         'bubbles': true,
@@ -1058,6 +1060,7 @@
       });
 
       this.dispatchEvent(ev);
+      this.fireSegmentsChangedEvent();
     };
 
 
