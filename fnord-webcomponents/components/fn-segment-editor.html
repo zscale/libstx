@@ -789,8 +789,7 @@
       field.innerHTML = "";
 
       var field_text = document.createElement("fn-segment-field-text");
-      field_text.innerHTML = (segments.length < 2) ? "Segment (" : "Segments (";
-      field_text.innerHTML += segments.length + ")";
+      field_text.innerHTML = "Segments (" + segments.length + ")";
       field.appendChild(field_text);
 
       for (var i = 0; i < segments.length; i++) {
