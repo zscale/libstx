@@ -1,10 +1,21 @@
+/************************
+  Editor
+************************/
+fn-segment-editor {
+  display: none;
+}
+
+fn-segment-editor[data-loading],
+fn-segment-editor[data-resolved] {
+  display: block;
+}
+
 /*************************
   Modal
 *************************/
 fn-modal.segment-editor {
   height: 400px;
 }
-
 
 /*************************
   Segment Editor Field
