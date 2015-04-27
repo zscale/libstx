@@ -263,9 +263,14 @@
 
     this.observeRangeDropdown = function() {
       var _this = this;
+      var dropdown = this.querySelector("fn-dropdown");
+      dropdown.closeActiveItems = function(callback) {
+        callback();
+      }
 
-      this.querySelector("fn-dropdown")
-        .addEventListener('fn-dropdown-item-click', function(e) {
+
+      dropdown.addEventListener('fn-dropdown-item-click', function(e) {
+          e.stopPropagation();
           var target = e.target || e.srcElement;
 
           _this.onRangeDropdownSelect(target.getAttribute('data-value'));
