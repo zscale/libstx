@@ -1,7 +1,7 @@
 fn-date-select-field {
   display: inline-block;
   line-height: 1.3em;
-  padding: 0.5em 1em;
+  padding: 0.5em 10px;
   margin: 0;
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
   text-align: left;
@@ -11,6 +11,21 @@ fn-date-select-field {
   border-radius: 0.2857rem;
   box-shadow: none;
   cursor: pointer;
+}
+
+fn-date-select-field i {
+  opacity: 0.7;
+  height: 1em;
+  vertical-align: top;
+  margin-top: 2px;
+}
+
+fn-date-select-field i.fa-calendar {
+  margin-right: 1px;
+}
+
+fn-date-select-field i.fa-chevron-down {
+  margin-left: 1px;
 }
 
 fn-date-select-widget {
