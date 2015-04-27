@@ -33,18 +33,28 @@ fn-segment-editor-field {
   min-width: 150px;
   overflow: hidden;
   white-space: nowrap;
+}
 
+fn-segment-editor-field i.fa-filter {
+  display: inline-block;
+  float: left;
+  margin-right: 2px;
+  margin-top: 1px;
+  opacity: 0.7;
+  font-size: 1em;
+  height: 1em;
+  vertical-align: bottom;
 }
 
 fn-segment-editor-field-values {
-  margin-right: 8px;
+  margin-right: 5px;
   font-size: 0.9em;
   display: inline-block;
 }
 
 .segment-field-fixed fn-segment-editor-field-values {
   /* 10px padding on each side */
-  width: calc(100% - 22px);
+  width: calc(100% - 34px);
   overflow: hidden;
 }
 
