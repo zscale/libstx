@@ -186,7 +186,7 @@ fn-segment-flyout fn-segment {
   padding: 1.2em 2em;
 }
 
-fn-segment-flyout fn-segment:hover {
+fn-segment-flyout fn-segment:hover:not(.static-segment) {
   background: rgba(0, 0, 50, 0.03);
   cursor: pointer;
 }
