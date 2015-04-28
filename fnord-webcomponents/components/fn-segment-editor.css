@@ -178,7 +178,7 @@ fn-segment-flyout:before {
   position: absolute;
   top: -29px;
   left: 142px;
-  z-inde7: 2;
+  z-index: 2;
 }
 
 fn-segment-flyout:after {
@@ -560,6 +560,7 @@ fn-segment-open-icon {
 
 fn-segment-add-icon,
 fn-segment-open-icon,
+fn-segment fn-segment-remove-icon,
 fn-segment fn-segment-edit-icon,
 fn-segment-flyout fn-segment-remove-icon {
   float: right;
@@ -574,6 +575,10 @@ fn-segment-remove-icon:hover {
 
 fn-segment-remove-icon + fn-segment-edit-icon {
   margin-right: 10px;
+}
+
+fn-segment-add-icon + fn-segment-remove-icon {
+  margin-right: 40px;
 }
 
 fn-segment-remove-icon + fn-segment-add-icon {
@@ -600,12 +605,12 @@ fn-segment-edit-icon:after {
   content: "\f044";
 }
 
-fn-segment fn-segment-remove-icon {
+/*fn-segment fn-segment-remove-icon {
   position: relative;
   top: 0px;
   left: 0px;
   font-size: 13px;
-}
+}*/
 
 
 /*****************
