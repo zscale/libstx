@@ -18,10 +18,12 @@ fn-dropdown,
   outline: none;
   text-align: left;
   color: rgba(0,0,0,.8);
-  tap-highlight-color: rgba(0, 0, 0, 0);
+  tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent;
   -webkit-transition: border-radius 0.1s ease, width 0.2s ease;
           transition: border-radius 0.1s ease, width 0.2s ease;
 }
+
 
 /*******************************
         Content
@@ -32,6 +34,23 @@ fn-dropdown,
 fn-dropdown-header {
   display: block;
 }
+
+fn-dropdown-header::-moz-selection {
+  background: transparent;
+}
+
+fn-dropdown-header::selection {
+  background: transparent;
+}
+
+fn-dropdown-header-value::-moz-selection {
+  background: transparent;
+}
+
+fn-dropdown-header-value::selection {
+  background: transparent;
+}
+
 
 fn-dropdown-header-icon,
 .fn-dropdown-header-icon {
