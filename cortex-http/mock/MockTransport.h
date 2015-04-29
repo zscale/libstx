@@ -91,6 +91,8 @@ class CORTEX_HTTP_API MockTransport : public HttpTransport {
   /** Tests whether last message was completed. */
   bool isCompleted() const CORTEX_NOEXCEPT;
 
+  HttpChannel* channel() const noexcept { return channel_.get(); }
+
  private:
   // HttpTransport overrides
   void abort() override;
@@ -113,8 +115,6 @@ class CORTEX_HTTP_API MockTransport : public HttpTransport {
   void onFillable() override;
   void onFlushable() override;
   bool onReadTimeout() override;
-
-  HttpChannel* channel() const noexcept { return channel_.get(); }
 
  private:
   HttpHandler handler_;
