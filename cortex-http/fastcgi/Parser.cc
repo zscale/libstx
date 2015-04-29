@@ -115,6 +115,7 @@ void Parser::process(const fastcgi::Record* record) {
 }
 
 void Parser::beginRequest(const fastcgi::BeginRequestRecord* record) {
+  TRACE("Parser.beginRequest\n");
   StreamState& stream = streams_[record->requestId()];
   stream.totalBytesReceived += record->size();
   stream.listener = onCreateChannel_(record->requestId());

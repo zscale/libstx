@@ -63,7 +63,7 @@ struct CORTEX_PACKED Record {
   uint8_t reserved_;
 
  public:
-  constexpr Record(Type type,
+  Record(Type type,
          uint16_t requestId,
          uint16_t contentLength,
          uint8_t paddingLength);

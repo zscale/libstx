@@ -2,7 +2,10 @@
 #include <vector>
 #include <gtest/gtest.h>
 #include <cortex-http/fastcgi/Parser.h>
-#include <cortex-http/mock/MockTransport.h>
+#include <cortex-http/mock/MockInput.h>
+#include <cortex-http/HttpRequest.h>
+#include <cortex-http/HttpResponse.h>
+#include <cortex-http/HttpChannel.h>
 #include <cortex-base/executor/DirectExecutor.h>
 
 using namespace cortex;
@@ -42,16 +45,21 @@ TEST(http_fastcgi_Parser, simpleRequest) {
   Buffer parsedContent;
   std::vector<std::pair<std::string, std::string>> parsedHeaders;
 
+  DirectExecutor executor;
+  auto handler = [&](cortex::HttpRequest* req, cortex::HttpResponse* resp) { };
   auto onCreateChannel = [&](int requestId) -> HttpListener* {
     parsedRequestId = requestId;
-    return nullptr;
+    return new HttpChannel(
+        nullptr, // transport
+        handler,
+        new MockInput(),
+        1024, // maxRequestUriLength,
+        1024, // maxRequestBodyLength
+        nullptr); // outputCompressor
   };
   auto onUnknownPacket = [&](int requestId, int recordId) { };
   auto onAbortRequest = [&](int requestId) { };
 
-  DirectExecutor executor;
-  auto handler = [&](HttpRequest* req, HttpResponse* resp) { };
-  MockTransport transport(&executor, handler);
   http::fastcgi::Parser p(onCreateChannel, onUnknownPacket, onAbortRequest);
 
   size_t n = p.parseFragment<http::fastcgi::BeginRequestRecord>(

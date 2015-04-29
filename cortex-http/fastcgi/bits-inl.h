@@ -19,7 +19,7 @@ namespace fastcgi {
 //}
 //}}}
 
-inline constexpr Record::Record(
+inline Record::Record(
     Type type,
     uint16_t requestId,
     uint16_t contentLength,
