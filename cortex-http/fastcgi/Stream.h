@@ -7,7 +7,7 @@
 #pragma once
 
 #include <cortex-http/Api.h>
-#include <cortex-http/fastcgi/Parser.h>
+#include <cortex-http/fastcgi/RequestParser.h>
 #include <cortex-http/fastcgi/Generator.h>
 #include <cortex-http/HttpTransport.h>
 #include <cortex-http/HttpHandler.h>

@@ -7,7 +7,7 @@
 #pragma once
 
 #include <cortex-http/Api.h>
-#include <cortex-http/fastcgi/Parser.h>
+#include <cortex-http/fastcgi/RequestParser.h>
 #include <cortex-http/fastcgi/Generator.h>
 #include <cortex-base/net/EndPointWriter.h>
 #include <cortex-http/HttpTransport.h>
@@ -74,7 +74,7 @@ class CORTEX_HTTP_API Connection : public HttpTransport {
  private:
   Buffer inputBuffer_;
   size_t inputOffset_;
-  Parser parser;
+  RequestParser parser;
 
   std::unordered_map<int, std::unique_ptr<Stream>> streams_;
 
