@@ -26,6 +26,8 @@ class HttpChannel;
 namespace http {
 namespace fastcgi {
 
+class Stream;
+
 /**
  * @brief Implements a HTTP/1.1 transport connection.
  */

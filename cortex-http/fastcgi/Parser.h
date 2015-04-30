@@ -26,14 +26,30 @@ class HttpListener;
 namespace http {
 namespace fastcgi {
 
-class Stream;
-
 /**
  * Parses a client FastCGI stream (upstream & downstream side).
  */
 class CORTEX_HTTP_API Parser {
  private:
-  struct StreamState;
+  struct StreamState : public CgiParamStreamReader { // {{{
+    HttpListener* listener;
+    size_t totalBytesReceived;
+    bool paramsFullyReceived;
+    bool contentFullyReceived;
+    std::list<std::pair<std::string, std::string>> params;
+    HeaderFieldList headers;
+
+    // keeps the body at least as long as params haven't been fully parsed.
+    Buffer body;
+
+    StreamState();
+    ~StreamState();
+
+    void reset();
+
+    void onParam(const char *name, size_t nameLen,
+                 const char *value, size_t valueLen) override;
+  }; // }}}
 
  public:
   Parser(std::function<HttpListener*(int requestId)> onCreateChannel,
@@ -54,7 +70,8 @@ class CORTEX_HTTP_API Parser {
     return parseFragment(RecordType(args...));
   }
 
- private:
+ protected:
+  StreamState& getStream(int requestId);
   void process(const fastcgi::Record* record);
   void beginRequest(const fastcgi::BeginRequestRecord* record);
   void streamParams(const fastcgi::Record* record);
@@ -64,36 +81,13 @@ class CORTEX_HTTP_API Parser {
   void streamData(const fastcgi::Record* record);
   void abortRequest(const fastcgi::AbortRequestRecord* record);
 
-  void onMessageHeaderEnd(StreamState& stream);
-
- private:
+ protected:
   std::function<HttpListener*(int requestId)> onCreateChannel_;
   std::function<void(int requestId, int recordId)> onUnknownPacket_;
   std::function<void(int requestId)> onAbortRequest_;
   std::function<void(int requestId, const BufferRef& content)> onStdErr_;
 
   std::unordered_map<int, StreamState> streams_;
-};
-
-struct Parser::StreamState : public CgiParamStreamReader {
-  HttpListener* listener;
-  size_t expectedContentLength;
-  size_t actualContentLength;
-  size_t totalBytesReceived;
-  bool paramsFullyReceived;
-  std::list<std::pair<std::string, std::string>> params;
-  HeaderFieldList headers;
-
-  // keeps the body at least as long as params haven't been fully parsed.
-  Buffer body;
-
-  StreamState();
-  ~StreamState();
-
-  void reset();
-
-  void onParam(const char *name, size_t nameLen,
-               const char *value, size_t valueLen) override;
 };
 
 } // namespace fastcgi
