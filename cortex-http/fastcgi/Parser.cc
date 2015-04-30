@@ -20,6 +20,7 @@ Parser::StreamState::StreamState()
       totalBytesReceived(0),
       paramsFullyReceived(false),
       params(),
+      headers(),
       body() {
 }
 
@@ -33,7 +34,48 @@ void Parser::StreamState::reset() {
   totalBytesReceived = 0;
   paramsFullyReceived = false;
   params.clear();
+  headers.reset();
   body.clear();
+}
+
+void Parser::StreamState::onParam(
+    const char *name, size_t nameLen,
+    const char *value, size_t valueLen) {
+  std::string nam(name, nameLen);
+  std::string val(value, valueLen);
+
+  if (StringUtil::beginsWith(nam, "HTTP_")) {
+    // strip off "HTTP_" prefix and replace all '_' with '-'
+    nam = nam.substr(5);
+    StringUtil::replaceAll(&nam, "_", "-");
+
+    headers.push_back(nam, val);
+    return;
+  }
+ 
+  // non-HTTP-header parameters
+  params.emplace_back(nam, val);
+
+  // SERVER_PORT
+  // SERVER_ADDR
+  // SERVER_PROTOCOL
+  // SERVER_SOFTWARE
+  // SERVER_NAME (aka. Host header)
+  //
+  // REMOTE_ADDR
+  // REMOTE_PORT
+  // REMOTE_IDENT
+  //
+  // HTTPS
+  // CONTENT_TYPE
+  // CONTENT_LENGTH
+  // DOCUMENT_ROOT
+  // SCRIPT_FILENAME
+  // AUTH_TYPE
+  // QUERY_STRING
+  // REQUEST_URI
+  // PATH_TRANSLATED
+  // PATH_INFO
 }
 // }}}
 
@@ -53,19 +95,19 @@ void Parser::removeStreamState(int requestId) {
   }
 }
 
-void Parser::StreamState::onParam(
-    const char *name, size_t nameLen,
-    const char *value, size_t valueLen) {
-  params.emplace_back(std::string(name, nameLen), std::string(value, valueLen));
-}
-
 Parser::Parser(
     std::function<HttpListener*(int requestId)> onCreateChannel,
     std::function<void(int requestId, int recordId)> onUnknownPacket,
-    std::function<void(int requestId)> onAbortRequest)
+    std::function<void(int requestId)> onAbortRequest,
+    std::function<void(int requestId, const BufferRef& content)> onStdErr)
     : onCreateChannel_(onCreateChannel),
       onUnknownPacket_(onUnknownPacket),
-      onAbortRequest_(onAbortRequest) {
+      onAbortRequest_(onAbortRequest),
+      onStdErr_(onStdErr) {
+}
+
+void Parser::reset() {
+  streams_.clear();
 }
 
 size_t Parser::parseFragment(const Record& record) {
@@ -115,28 +157,46 @@ void Parser::process(const fastcgi::Record* record) {
 }
 
 void Parser::beginRequest(const fastcgi::BeginRequestRecord* record) {
-  TRACE("Parser.beginRequest\n");
+  TRACE("Parser.beginRequest");
   StreamState& stream = streams_[record->requestId()];
   stream.totalBytesReceived += record->size();
   stream.listener = onCreateChannel_(record->requestId());
 }
 
 void Parser::streamParams(const fastcgi::Record* record) {
+  TRACE("Parser.streamParams: size=%zu", record->contentLength());
   StreamState& stream = streams_[record->requestId()];
   stream.totalBytesReceived += record->size();
 
   if (record->contentLength()) {
     stream.processParams(record->content(), record->contentLength());
-  } else {
-    stream.paramsFullyReceived = true;
-    if (stream.actualContentLength <= stream.expectedContentLength) {
-      // an empty record marks the end of the param-stream.
-      // so we should hand over the request unless a request body is expected.
-      handleRequest(stream);
-    } else {
-      //TRACE("streamParams: ignoring (%lu, %lu)",
-      //      r->requestContentLength_, r->requestContent_.size());
+    return;
+  }
+
+  TRACE("Parser.streamParams: fully received!");
+  stream.paramsFullyReceived = true;
+
+  BufferRef method;
+  BufferRef entity;
+  HttpVersion version = HttpVersion::VERSION_1_0;
+
+  if (!stream.listener->onMessageBegin(method, entity, version))
+    return;
+
+  for (const auto& header: stream.headers) {
+    if (!stream.listener->onMessageHeader(
+        BufferRef(header.name()),
+        BufferRef(header.value()))) {
+      return;
     }
+  }
+
+  if (!stream.listener->onMessageHeaderEnd()) {
+    return;
+  }
+
+  if (!stream.body.empty()) {
+    stream.listener->onMessageContent(stream.body);
   }
 }
 
@@ -164,11 +224,18 @@ void Parser::streamStdOut(const fastcgi::Record* record) {
 void Parser::streamStdErr(const fastcgi::Record* record) {
   StreamState& stream = streams_[record->requestId()];
   stream.totalBytesReceived += record->size();
+
+  if (onStdErr_) {
+    BufferRef content(record->content(), record->contentLength());
+    onStdErr_(record->requestId(), content);
+  }
 }
 
 void Parser::streamData(const fastcgi::Record* record) {
   StreamState& stream = streams_[record->requestId()];
   stream.totalBytesReceived += record->size();
+
+  // ignore data-stream, as we've no association in HTTP-layer for it.
 }
 
 void Parser::abortRequest(const fastcgi::AbortRequestRecord* record) {
@@ -180,29 +247,8 @@ void Parser::abortRequest(const fastcgi::AbortRequestRecord* record) {
   removeStreamState(record->requestId());
 }
 
-void Parser::handleRequest(StreamState& stream) {
-  BufferRef method;
-  BufferRef entity;
-  HttpVersion version = HttpVersion::VERSION_1_0;
-
-  if (!stream.listener->onMessageBegin(method, entity, version))
-    return;
-
-  for (const auto& param: stream.params) {
-    if (!stream.listener->onMessageHeader(
-        BufferRef(param.first),
-        BufferRef(param.second))) {
-      return;
-    }
-  }
-
-  if (!stream.listener->onMessageHeaderEnd()) {
-    return;
-  }
-
-  if (!stream.body.empty()) {
-    stream.listener->onMessageContent(stream.body);
-  }
+void Parser::onMessageHeaderEnd(StreamState& stream) {
+  TRACE("Parser.onMessageHeaderEnd");
 }
 
 } // namespace fastcgi

@@ -11,6 +11,7 @@
 
 #include <cortex-http/Api.h>
 #include <cortex-http/fastcgi/bits.h>
+#include <cortex-http/HeaderFieldList.h>
 #include <cortex-base/Buffer.h>
 #include <unordered_map>
 #include <functional>
@@ -32,28 +33,13 @@ class Stream;
  */
 class CORTEX_HTTP_API Parser {
  private:
-  struct StreamState : public CgiParamStreamReader {
-    HttpListener* listener;
-    size_t expectedContentLength;
-    size_t actualContentLength;
-    size_t totalBytesReceived;
-    bool paramsFullyReceived;
-    std::list<std::pair<std::string, std::string>> params;
-    Buffer body;
-
-    StreamState();
-    ~StreamState();
-
-    void reset();
-
-    void onParam(const char *name, size_t nameLen,
-                 const char *value, size_t valueLen);
-  };
+  struct StreamState;
 
  public:
   Parser(std::function<HttpListener*(int requestId)> onCreateChannel,
          std::function<void(int requestId, int recordId)> onUnknownPacket,
-         std::function<void(int requestId)> onAbortRequest);
+         std::function<void(int requestId)> onAbortRequest,
+         std::function<void(int requestId, const BufferRef&)> onStdErr);
 
   void reset();
 
@@ -78,14 +64,36 @@ class CORTEX_HTTP_API Parser {
   void streamData(const fastcgi::Record* record);
   void abortRequest(const fastcgi::AbortRequestRecord* record);
 
-  void handleRequest(StreamState& stream);
+  void onMessageHeaderEnd(StreamState& stream);
 
  private:
   std::function<HttpListener*(int requestId)> onCreateChannel_;
   std::function<void(int requestId, int recordId)> onUnknownPacket_;
   std::function<void(int requestId)> onAbortRequest_;
+  std::function<void(int requestId, const BufferRef& content)> onStdErr_;
 
   std::unordered_map<int, StreamState> streams_;
+};
+
+struct Parser::StreamState : public CgiParamStreamReader {
+  HttpListener* listener;
+  size_t expectedContentLength;
+  size_t actualContentLength;
+  size_t totalBytesReceived;
+  bool paramsFullyReceived;
+  std::list<std::pair<std::string, std::string>> params;
+  HeaderFieldList headers;
+
+  // keeps the body at least as long as params haven't been fully parsed.
+  Buffer body;
+
+  StreamState();
+  ~StreamState();
+
+  void reset();
+
+  void onParam(const char *name, size_t nameLen,
+               const char *value, size_t valueLen) override;
 };
 
 } // namespace fastcgi
