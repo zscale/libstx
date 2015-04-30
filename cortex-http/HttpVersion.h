@@ -24,5 +24,6 @@ enum class HttpVersion {
 };
 
 CORTEX_HTTP_API const std::string& to_string(HttpVersion value);
+CORTEX_HTTP_API HttpVersion make_version(const std::string& value);
 
 } // namespace cortex

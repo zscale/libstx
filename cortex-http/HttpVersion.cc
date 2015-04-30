@@ -24,4 +24,23 @@ const std::string& to_string(HttpVersion version) {
   }
 }
 
+HttpVersion make_version(const std::string& value) {
+  if (value.size() != 3 || value[1] != '.')
+    return HttpVersion::UNKNOWN;
+
+  if (value[0] == '1') {
+    if (value[2] == '1') {
+      return HttpVersion::VERSION_1_1;
+    } else if (value[2] == '0') {
+      return HttpVersion::VERSION_1_0;
+    } else {
+      return HttpVersion::UNKNOWN;
+    }
+  } else if (value[0] == '0' && value[2] == '9') {
+    return HttpVersion::VERSION_0_9;
+  } else {
+    return HttpVersion::UNKNOWN;
+  }
+}
+
 } // namespace cortex
