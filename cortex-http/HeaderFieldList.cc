@@ -88,6 +88,8 @@ const std::string& HeaderFieldList::get(const std::string& name) const {
   return notfound;
 }
 
-void HeaderFieldList::reset() { entries_.clear(); }
+void HeaderFieldList::reset() {
+  entries_.clear();
+}
 
 }  // namespace cortex
