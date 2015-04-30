@@ -239,9 +239,7 @@ bool HttpChannel::onMessageBegin(const BufferRef& method,
   request_->setVersion(version);
   request_->setMethod(method.str());
   if (!request_->setUri(entity.str())) {
-    setState(HttpChannelState::HANDLING);
-    response_->sendError(HttpStatus::BadRequest);
-    return false;
+    RAISE_EXCEPTION(BadMessage, HttpStatus::BadRequest);
   }
 
   TRACE("onMessageBegin(%s, %s, %s)", request_->unparsedMethod().c_str(),
