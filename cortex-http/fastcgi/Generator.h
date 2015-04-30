@@ -26,8 +26,20 @@ class EndPointWriter;
 namespace http {
 namespace fastcgi {
 
+/**
+ * FastCGI Request/Response stream generator.
+ *
+ * Generates the binary stream for an HTTP request or response.
+ */
 class CORTEX_HTTP_API Generator {
  public:
+  /**
+   * Generates an HTTP request or HTTP response for given FastCGI request-ID.
+   *
+   * @param requestId FastCGI's requestId that is associated for the generated message.
+   * @param dateGenerator used for creating the Date message header.
+   * @param writer endpoint writer to write the binary stream to.
+   */
   Generator(
       int requestId,
       HttpDateGenerator* dateGenerator,
