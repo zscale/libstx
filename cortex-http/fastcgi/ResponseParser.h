@@ -6,18 +6,15 @@
 // the terms of the GNU Affero General Public License v3.0.
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 #pragma once
 
 #include <cortex-http/Api.h>
 #include <cortex-http/fastcgi/bits.h>
-#include <cortex-http/HeaderFieldList.h>
+#include <cortex-http/http1/HttpParser.h>
 #include <cortex-base/Buffer.h>
 #include <unordered_map>
 #include <functional>
 #include <utility>
-#include <string>
-#include <list>
 
 namespace cortex {
 
@@ -29,33 +26,25 @@ namespace fastcgi {
 /**
  * Parses a client FastCGI stream (upstream & downstream side).
  */
-class CORTEX_HTTP_API Parser {
+class CORTEX_HTTP_API ResponseParser {
  private:
-  struct StreamState : public CgiParamStreamReader { // {{{
+  struct StreamState { // {{{
     HttpListener* listener;
     size_t totalBytesReceived;
-    bool paramsFullyReceived;
     bool contentFullyReceived;
-    std::list<std::pair<std::string, std::string>> params;
-    HeaderFieldList headers;
-
-    // keeps the body at least as long as params haven't been fully parsed.
-    Buffer body;
+    http1::HttpParser http1Parser;
 
     StreamState();
     ~StreamState();
-
     void reset();
-
-    void onParam(const char *name, size_t nameLen,
-                 const char *value, size_t valueLen) override;
+    void setListener(HttpListener* listener);
   }; // }}}
 
  public:
-  Parser(std::function<HttpListener*(int requestId)> onCreateChannel,
-         std::function<void(int requestId, int recordId)> onUnknownPacket,
-         std::function<void(int requestId)> onAbortRequest,
-         std::function<void(int requestId, const BufferRef&)> onStdErr);
+  ResponseParser(
+      std::function<HttpListener*(int requestId)> onCreateChannel,
+      std::function<void(int requestId, int recordId)> onUnknownPacket,
+      std::function<void(int requestId, const BufferRef&)> onStdErr);
 
   void reset();
 
@@ -73,13 +62,8 @@ class CORTEX_HTTP_API Parser {
  protected:
   StreamState& getStream(int requestId);
   void process(const fastcgi::Record* record);
-  void beginRequest(const fastcgi::BeginRequestRecord* record);
-  void streamParams(const fastcgi::Record* record);
-  void streamStdIn(const fastcgi::Record* record);
   void streamStdOut(const fastcgi::Record* record);
   void streamStdErr(const fastcgi::Record* record);
-  void streamData(const fastcgi::Record* record);
-  void abortRequest(const fastcgi::AbortRequestRecord* record);
 
  protected:
   std::function<HttpListener*(int requestId)> onCreateChannel_;

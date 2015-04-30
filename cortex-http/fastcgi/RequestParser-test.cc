@@ -1,7 +1,8 @@
 #include <initializer_list>
 #include <vector>
 #include <gtest/gtest.h>
-#include <cortex-http/fastcgi/Parser.h>
+#include <cortex-http/fastcgi/RequestParser.h>
+#include <cortex-http/fastcgi/ResponseParser.h>
 #include <cortex-http/mock/MockInput.h>
 #include <cortex-http/HttpRequest.h>
 #include <cortex-http/HttpResponse.h>
@@ -9,7 +10,7 @@
 
 using namespace cortex;
 
-class TestListener : public HttpListener { // {{{
+class RequestListener : public HttpListener { // {{{
  public:
   bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
                       HttpVersion version) override;
@@ -38,7 +39,7 @@ class TestListener : public HttpListener { // {{{
   Buffer body;
 };
 
-bool TestListener::onMessageBegin(const BufferRef& method, const BufferRef& entity,
+bool RequestListener::onMessageBegin(const BufferRef& method, const BufferRef& entity,
                     HttpVersion version) {
   this->method = method;
   this->entity = entity;
@@ -48,7 +49,7 @@ bool TestListener::onMessageBegin(const BufferRef& method, const BufferRef& enti
   return true;
 }
 
-bool TestListener::onMessageBegin(HttpVersion version, HttpStatus code,
+bool RequestListener::onMessageBegin(HttpVersion version, HttpStatus code,
                     const BufferRef& text) {
   this->version = version;
   this->status = code;
@@ -58,33 +59,33 @@ bool TestListener::onMessageBegin(HttpVersion version, HttpStatus code,
   return true;
 }
 
-bool TestListener::onMessageBegin() {
+bool RequestListener::onMessageBegin() {
   this->genericMessageBeginCount++;
 
   return true;
 }
 
-bool TestListener::onMessageHeader(const BufferRef& name, const BufferRef& value) {
+bool RequestListener::onMessageHeader(const BufferRef& name, const BufferRef& value) {
   this->headers.push_back(name.str(), value.str());
   return true;
 }
 
-bool TestListener::onMessageHeaderEnd() {
+bool RequestListener::onMessageHeaderEnd() {
   this->headersEnd++;
   return true;
 }
 
-bool TestListener::onMessageContent(const BufferRef& chunk) {
+bool RequestListener::onMessageContent(const BufferRef& chunk) {
   this->body.push_back(chunk);
   return true;
 }
 
-bool TestListener::onMessageEnd() {
+bool RequestListener::onMessageEnd() {
   this->messageEnd++;
   return true;
 }
 
-void TestListener::onProtocolError(HttpStatus code, const std::string& message) {
+void RequestListener::onProtocolError(HttpStatus code, const std::string& message) {
   this->protocolErrors++;
 }
 // }}}
@@ -124,16 +125,15 @@ TEST(http_fastcgi_Parser, simpleRequest) {
   int parsedRequestId = -1;
   std::vector<std::pair<std::string, std::string>> parsedHeaders;
 
-  TestListener httpListener;
+  RequestListener httpListener;
   auto onCreateChannel = [&](int requestId) -> HttpListener* {
                             parsedRequestId = requestId;
                             return &httpListener; };
   auto onUnknownPacket = [&](int requestId, int recordId) { };
   auto onAbortRequest = [&](int requestId) { };
-  auto onStdErr = [&](int requestId, const BufferRef& content) { };
 
-  http::fastcgi::Parser p(onCreateChannel, onUnknownPacket, onAbortRequest,
-                          onStdErr);
+  http::fastcgi::RequestParser p(
+      onCreateChannel, onUnknownPacket, onAbortRequest);
 
   size_t n = p.parseFragment<http::fastcgi::BeginRequestRecord>(
       http::fastcgi::Role::Responder, 42, false);
@@ -174,78 +174,16 @@ TEST(http_fastcgi_Parser, simpleRequest) {
   n = p.parseFragment(fcgistream);
 
   EXPECT_EQ(fcgistream.size(), n);
+
+  EXPECT_EQ(1, httpListener.requestMessageBeginCount);
+  EXPECT_EQ("GET", httpListener.method);
+  EXPECT_EQ("/index.html", httpListener.entity);
+  EXPECT_EQ(HttpVersion::VERSION_1_1, httpListener.version);
+
   EXPECT_EQ("cortex-test", httpListener.headers.get("User-Agent"));
   EXPECT_EQ("text/plain", httpListener.headers.get("Content-Type"));
-  EXPECT_EQ(1, httpListener.requestMessageBeginCount);
   EXPECT_EQ(1, httpListener.headersEnd);
+
   EXPECT_EQ(1, httpListener.messageEnd);
   EXPECT_EQ(0, httpListener.protocolErrors);
-}
-
-class ResponseParser : public http::fastcgi::Parser {
- public:
-  ResponseParser(
-      std::function<HttpListener*(int requestId)> onCreateChannel,
-      std::function<void(int requestId, int recordId)> onUnknownPacket,
-      std::function<void(int requestId)> onAbortRequest,
-      std::function<void(int requestId, const BufferRef&)> onStdErr);
-};
-
-TEST(http_fastcgi_Parser, simpleResponse) {
-  // Tests the following example from the FastCGI spec:
-  //
-  // {FCGI_STDOUT,      1, "Content-type: text/html\r\n\r\n<html>\n<head> ... "}
-  // {FCGI_STDOUT,      1, ""}
-  // {FCGI_END_REQUEST, 1, {0, FCGI_REQUEST_COMPLETE}}
-
-  // --------------------------------------------------------------------------
-  // generate response bitstream
-
-  constexpr BufferRef content =
-      "Content-Type: text/html\r\n"
-      "\r\n"
-      "<html>\n<head> ...";
-
-  Buffer fcgistream;
-  fcgistream.reserve(1024);
-
-  // StdOut-header with payload
-  new(fcgistream.data()) http::fastcgi::Record(
-      http::fastcgi::Type::StdOut, 1, content.size(), 0);
-  fcgistream.resize(sizeof(http::fastcgi::Record));
-  fcgistream.push_back(content);
-
-  // StdOut-header (EOS)
-  new(fcgistream.end()) http::fastcgi::Record(
-      http::fastcgi::Type::StdOut, 1, 0, 0);
-  fcgistream.resize(fcgistream.size() + sizeof(http::fastcgi::Record));
-
-  // EndRequest-header
-  new(fcgistream.end()) http::fastcgi::EndRequestRecord(
-      1, // requestId
-      0, // appStatus
-      http::fastcgi::ProtocolStatus::RequestComplete);
-  fcgistream.resize(fcgistream.size() + sizeof(http::fastcgi::EndRequestRecord));
-
-  // --------------------------------------------------------------------------
-  // parse the response bitstream
-
-  int parsedRequestId = -1;
-  TestListener httpListener;
-  auto onCreateChannel = [&](int requestId) -> HttpListener* {
-                            parsedRequestId = requestId;
-                            return &httpListener; };
-  auto onUnknownPacket = [&](int requestId, int recordId) { };
-  auto onAbortRequest = [&](int requestId) { };
-  auto onStdErr = [&](int requestId, const BufferRef& content) { };
-
-  http::fastcgi::Parser parser(
-      onCreateChannel, onUnknownPacket, onAbortRequest, onStdErr);
-
-  size_t n = parser.parseFragment(fcgistream);
-
-  EXPECT_EQ(fcgistream.size(), n);
-  EXPECT_EQ(0, httpListener.protocolErrors);
-  EXPECT_EQ(1, parsedRequestId);
-  EXPECT_EQ(content, httpListener.body);
 }
