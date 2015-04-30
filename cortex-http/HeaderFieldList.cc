@@ -21,7 +21,7 @@ HeaderFieldList::HeaderFieldList(
 
 void HeaderFieldList::push_back(const std::string& name,
                                 const std::string& value) {
-  entries_.push_back(HeaderField(name, value));
+  entries_.emplace_back(name, value);
 }
 
 void HeaderFieldList::overwrite(const std::string& name,
