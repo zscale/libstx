@@ -53,12 +53,14 @@ class CORTEX_HTTP_API MockTransport : public HttpTransport {
    * @param handler The handler to run for incoming HTTP request messages.
    * @param maxRequestUriLength Maximum request URI length.
    * @param maxRequestBodyLength Maximum request body length.
+   * @param dateGenerator Date response header generator.
    * @param outputCompressor HTTP response body compression service.
    */
   MockTransport(Executor* executor,
                 const HttpHandler& handler,
                 size_t maxRequestUriLength,
                 size_t maxRequestBodyLength,
+                HttpDateGenerator* dateGenerator,
                 HttpOutputCompressor* outputCompressor);
 
   ~MockTransport();
@@ -93,33 +95,25 @@ class CORTEX_HTTP_API MockTransport : public HttpTransport {
 
   HttpChannel* channel() const noexcept { return channel_.get(); }
 
+  Executor* executor() const noexcept { return executor_; }
+
  private:
   // HttpTransport overrides
   void abort() override;
   void completed() override;
-
-  void send(HttpResponseInfo&& responseInfo, const BufferRef& chunk,
-            CompletionHandler onComplete) override;
-  void send(HttpResponseInfo&& responseInfo, Buffer&& chunk,
-            CompletionHandler onComplete) override;
-  void send(HttpResponseInfo&& responseInfo, FileRef&& chunk,
-            CompletionHandler onComplete) override;
-
+  void send(HttpResponseInfo&& responseInfo, const BufferRef& chunk, CompletionHandler onComplete) override;
+  void send(HttpResponseInfo&& responseInfo, Buffer&& chunk, CompletionHandler onComplete) override;
+  void send(HttpResponseInfo&& responseInfo, FileRef&& chunk, CompletionHandler onComplete) override;
   void send(const BufferRef& chunk, CompletionHandler onComplete) override;
   void send(Buffer&& chunk, CompletionHandler onComplete) override;
   void send(FileRef&& chunk, CompletionHandler onComplete) override;
 
-  // Connection overrides
-  void onOpen() override;
-  void onClose() override;
-  void onFillable() override;
-  void onFlushable() override;
-  bool onReadTimeout() override;
-
  private:
+  Executor* executor_;
   HttpHandler handler_;
   size_t maxRequestUriLength_;
   size_t maxRequestBodyLength_;
+  HttpDateGenerator* dateGenerator_;
   HttpOutputCompressor* outputCompressor_;
 
   bool isAborted_;

@@ -26,6 +26,7 @@ class HttpResponse;
 class HttpInput;
 class HttpOutput;
 class HttpOutputCompressor;
+class HttpDateGenerator;
 
 enum class HttpChannelState {
   READING,  //!< currently reading request info
@@ -50,6 +51,7 @@ class CORTEX_HTTP_API HttpChannel : public HttpListener {
               std::unique_ptr<HttpInput>&& input,
               size_t maxRequestUriLength,
               size_t maxRequestBodyLength,
+              HttpDateGenerator* dateGenerator,
               HttpOutputCompressor* outputCompressor);
   ~HttpChannel();
 
@@ -171,6 +173,7 @@ class CORTEX_HTTP_API HttpChannel : public HttpListener {
   HttpTransport* transport_;
   std::unique_ptr<HttpRequest> request_;
   std::unique_ptr<HttpResponse> response_;
+  HttpDateGenerator* dateGenerator_;
   std::list<std::shared_ptr<Filter>> outputFilters_;
   HttpOutputCompressor* outputCompressor_;
   HttpHandler handler_;

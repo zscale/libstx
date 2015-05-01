@@ -20,16 +20,16 @@ class FileRef;
 class HttpResponseInfo;
 
 /**
- * HTTP transport layer API.
+ * HTTP transport layer interface.
  *
  * Implemements the wire transport protocol for HTTP messages without
  * any semantics.
  *
  * For HTTP/1 for example it is <b>RFC 7230</b>.
  */
-class CORTEX_HTTP_API HttpTransport : public Connection {
+class CORTEX_HTTP_API HttpTransport {
  public:
-  HttpTransport(EndPoint* endpoint, Executor* executor);
+  virtual ~HttpTransport();
 
   /**
    * Cancels communication completely.
@@ -97,10 +97,5 @@ class CORTEX_HTTP_API HttpTransport : public Connection {
    */
   virtual void send(const BufferRef& chunk, CompletionHandler onComplete) = 0;
 };
-
-inline HttpTransport::HttpTransport(EndPoint* endpoint,
-                                    Executor* executor)
-    : Connection(endpoint, executor) {
-}
 
 }  // namespace cortex2

@@ -6,7 +6,7 @@
 // the terms of the GNU Affero General Public License v3.0.
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
-
+#if 0
 #include <initializer_list>
 #include <vector>
 #include <gtest/gtest.h>
@@ -196,3 +196,4 @@ TEST(http_fastcgi_Parser, simpleRequest) {
   EXPECT_EQ(1, httpListener.messageEnd);
   EXPECT_EQ(0, httpListener.protocolErrors);
 }
+#endif

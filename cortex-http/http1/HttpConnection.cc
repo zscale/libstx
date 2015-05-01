@@ -44,16 +44,17 @@ HttpConnection::HttpConnection(EndPoint* endpoint,
                                size_t maxRequestBodyLength,
                                size_t maxRequestCount,
                                TimeSpan maxKeepAlive)
-    : HttpTransport(endpoint, executor),
+    : Connection(endpoint, executor),
       parser_(HttpParser::REQUEST),
       inputBuffer_(),
       inputOffset_(0),
       writer_(),
       onComplete_(),
-      generator_(dateGenerator, &writer_),
+      generator_(&writer_),
       channel_(new Http1Channel(
           this, handler, std::unique_ptr<HttpInput>(new HttpBufferedInput()),
-          maxRequestUriLength, maxRequestBodyLength, outputCompressor)),
+          maxRequestUriLength, maxRequestBodyLength,
+          dateGenerator, outputCompressor)),
       maxKeepAlive_(maxKeepAlive),
       requestCount_(0),
       requestMax_(maxRequestCount) {
@@ -70,7 +71,7 @@ HttpConnection::~HttpConnection() {
 
 void HttpConnection::onOpen() {
   TRACE("%p onOpen", this);
-  HttpTransport::onOpen();
+  Connection::onOpen();
 
   // TODO support TCP_DEFER_ACCEPT here
 #if 0
@@ -85,7 +86,7 @@ void HttpConnection::onOpen() {
 
 void HttpConnection::onClose() {
   TRACE("%p onClose", this);
-  HttpTransport::onClose();
+  Connection::onClose();
 }
 
 void HttpConnection::abort() {

@@ -28,12 +28,12 @@ class HttpChannel;
 namespace http {
 namespace fastcgi {
 
-class Stream;
+class HttpFastCgiChannel;
 
 /**
  * @brief Implements a HTTP/1.1 transport connection.
  */
-class CORTEX_HTTP_API Connection : public HttpTransport {
+class CORTEX_HTTP_API Connection : public cortex::Connection {
  public:
   Connection(EndPoint* endpoint,
              Executor* executor,
@@ -44,41 +44,37 @@ class CORTEX_HTTP_API Connection : public HttpTransport {
              size_t maxRequestBodyLength);
   ~Connection();
 
+  HttpChannel* createChannel(int request);
+  void removeChannel(int request);
+
+  // cortex::net::Connection overrides
   void onOpen() override;
   void onClose() override;
-
-  void abort() override;
-  void completed() override;
-
-  void send(HttpResponseInfo&& responseInfo, Buffer&& chunk,
-            CompletionHandler onComplete) override;
-  void send(HttpResponseInfo&& responseInfo, const BufferRef& chunk,
-            CompletionHandler onComplete) override;
-  void send(HttpResponseInfo&& responseInfo, FileRef&& chunk,
-            CompletionHandler onComplete) override;
-
-  void send(Buffer&& chunk, CompletionHandler onComplete) override;
-  void send(const BufferRef& chunk, CompletionHandler onComplete) override;
-  void send(FileRef&& chunk, CompletionHandler onComplete) override;
-
   void setInputBufferSize(size_t size) override;
 
-  size_t bytesReceived() const noexcept;// { return parser_.bytesReceived(); }
-
  private:
-  void patchResponseInfo(HttpResponseInfo& info);
-  void onFillable() override;
   void parseFragment();
+
+  void onFillable() override;
   void onFlushable() override;
   void onInterestFailure(const std::exception& error) override;
   void onResponseComplete(bool succeed);
 
+  HttpListener* onCreateChannel(int request);
+  void onUnknownPacket(int request, int record);
+  void onAbortRequest(int request);
+
  private:
+  HttpHandler handler_;
+  size_t maxRequestUriLength_;
+  size_t maxRequestBodyLength_;
+  HttpDateGenerator* dateGenerator_;
+  HttpOutputCompressor* outputCompressor_;
   Buffer inputBuffer_;
   size_t inputOffset_;
-  RequestParser parser;
+  RequestParser parser_;
 
-  std::unordered_map<int, std::unique_ptr<Stream>> streams_;
+  std::unordered_map<int, std::unique_ptr<HttpFastCgiChannel>> channels_;
 
   EndPointWriter writer_;
   CompletionHandler onComplete_;

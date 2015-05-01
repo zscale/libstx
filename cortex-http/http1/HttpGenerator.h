@@ -38,7 +38,7 @@ class CORTEX_HTTP_API HttpGenerator {
   };
 
  public:
-  HttpGenerator(HttpDateGenerator* dateGenerator, EndPointWriter* output);
+  explicit HttpGenerator(EndPointWriter* output);
 
   /** resets any runtime state. */
   void recycle();
@@ -109,7 +109,6 @@ class CORTEX_HTTP_API HttpGenerator {
 
  private:
   size_t bytesTransmitted_;
-  HttpDateGenerator* dateGenerator_;
   size_t contentLength_;
   bool chunked_;
   Buffer buffer_;

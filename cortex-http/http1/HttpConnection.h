@@ -29,7 +29,8 @@ class Http1Channel;
 /**
  * @brief Implements a HTTP/1.1 transport connection.
  */
-class CORTEX_HTTP_API HttpConnection : public HttpTransport {
+class CORTEX_HTTP_API HttpConnection : public Connection,
+                                       public HttpTransport {
  public:
   HttpConnection(EndPoint* endpoint,
                  Executor* executor,
@@ -42,34 +43,34 @@ class CORTEX_HTTP_API HttpConnection : public HttpTransport {
                  TimeSpan maxKeepAlive);
   ~HttpConnection();
 
-  void onOpen() override;
-  void onClose() override;
+  size_t bytesReceived() const noexcept { return parser_.bytesReceived(); }
+  size_t bytesTransmitted() const noexcept { return generator_.bytesTransmitted(); }
 
+  // HttpTransport overrides
   void abort() override;
   void completed() override;
-
   void send(HttpResponseInfo&& responseInfo, Buffer&& chunk,
             CompletionHandler onComplete) override;
   void send(HttpResponseInfo&& responseInfo, const BufferRef& chunk,
             CompletionHandler onComplete) override;
   void send(HttpResponseInfo&& responseInfo, FileRef&& chunk,
             CompletionHandler onComplete) override;
-
   void send(Buffer&& chunk, CompletionHandler onComplete) override;
   void send(const BufferRef& chunk, CompletionHandler onComplete) override;
   void send(FileRef&& chunk, CompletionHandler onComplete) override;
 
-  void setInputBufferSize(size_t size) override;
-
-  size_t bytesReceived() const noexcept { return parser_.bytesReceived(); }
-
  private:
   void patchResponseInfo(HttpResponseInfo& info);
-  void onFillable() override;
   void parseFragment();
+  void onResponseComplete(bool succeed);
+
+  // Connection overrides
+  void onOpen() override;
+  void onClose() override;
+  void setInputBufferSize(size_t size) override;
+  void onFillable() override;
   void onFlushable() override;
   void onInterestFailure(const std::exception& error) override;
-  void onResponseComplete(bool succeed);
 
  private:
   HttpParser parser_;
