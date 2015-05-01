@@ -39,7 +39,6 @@ set(cortex_http_SRC
   fastcgi/Generator.cc
   fastcgi/RequestParser.cc
   fastcgi/ResponseParser.cc
-  fastcgi/Stream.cc
 
   # transport: http/1.1
   http1/Http1Channel.cc

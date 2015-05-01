@@ -8,7 +8,6 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <cortex-http/fastcgi/Connection.h>
-#include <cortex-http/fastcgi/Stream.h>
 #include <cortex-http/HttpChannel.h>
 #include <cortex-http/HttpBufferedInput.h>
 #include <cortex-http/HttpDateGenerator.h>
@@ -31,13 +30,98 @@ namespace cortex {
 namespace http {
 namespace fastcgi {
 
+/* TODO
+ *
+ * - how to handle BadMessage exceptions
+ * - test this class for multiplexed requests
+ * - test this class for multiplexed responses
+ * - test this class for early client aborts
+ * - test this class for early server aborts
+ */
+
 #ifndef NDEBUG
 #define TRACE(msg...) logTrace("fastcgi", msg)
 #else
 #define TRACE(msg...) do {} while (0)
 #endif
 
-#if 0
+class HttpFastCgiTransport : public HttpTransport { // {{{
+ public:
+  HttpFastCgiTransport(int id, EndPointWriter* writer);
+  virtual ~HttpFastCgiTransport();
+
+  void abort() override;
+  void completed() override;
+  void send(HttpResponseInfo&& responseInfo, const BufferRef& chunk, CompletionHandler onComplete) override;
+  void send(HttpResponseInfo&& responseInfo, Buffer&& chunk, CompletionHandler onComplete) override;
+  void send(HttpResponseInfo&& responseInfo, FileRef&& chunk, CompletionHandler onComplete) override;
+  void send(Buffer&& chunk, CompletionHandler onComplete) override;
+  void send(FileRef&& chunk, CompletionHandler onComplete) override;
+  void send(const BufferRef& chunk, CompletionHandler onComplete) override;
+
+ private:
+  Generator generator_;
+};
+
+HttpFastCgiTransport::HttpFastCgiTransport(int id, EndPointWriter* writer)
+    : generator_(id, nullptr, writer) {
+}
+
+HttpFastCgiTransport::~HttpFastCgiTransport() {
+}
+
+void HttpFastCgiTransport::abort() { // TODO
+  // channel_->response()->setBytesTransmitted(generator_.bytesTransmitted());
+  // channel_->responseEnd();
+  // endpoint()->close();
+}
+
+void HttpFastCgiTransport::completed() {
+  // TODO: generator_.generateTrailer(channel_->response()->trailers());
+}
+
+void HttpFastCgiTransport::send(HttpResponseInfo&& responseInfo, const BufferRef& chunk, CompletionHandler onComplete) {
+  generator_.generateResponse(responseInfo, chunk);
+}
+
+void HttpFastCgiTransport::send(HttpResponseInfo&& responseInfo, Buffer&& chunk, CompletionHandler onComplete) {
+  generator_.generateResponse(responseInfo, std::move(chunk));
+}
+
+void HttpFastCgiTransport::send(HttpResponseInfo&& responseInfo, FileRef&& chunk, CompletionHandler onComplete) {
+  generator_.generateResponse(responseInfo, std::move(chunk));
+}
+
+void HttpFastCgiTransport::send(Buffer&& chunk, CompletionHandler onComplete) {
+  generator_.generateBody(std::move(chunk));
+}
+
+void HttpFastCgiTransport::send(FileRef&& chunk, CompletionHandler onComplete) {
+  generator_.generateBody(std::move(chunk));
+}
+
+void HttpFastCgiTransport::send(const BufferRef& chunk, CompletionHandler onComplete) {
+  generator_.generateBody(chunk);
+}
+// }}}
+class HttpFastCgiChannel : public HttpChannel { // {{{
+ public:
+  HttpFastCgiChannel(HttpTransport* transport,
+                     const HttpHandler& handler,
+                     std::unique_ptr<HttpInput>&& input,
+                     size_t maxRequestUriLength,
+                     size_t maxRequestBodyLength,
+                     HttpDateGenerator* dateGenerator,
+                     HttpOutputCompressor* outputCompressor);
+  ~HttpFastCgiChannel();
+};
+
+HttpFastCgiChannel::~HttpFastCgiChannel() {
+  // we own the transport
+  delete transport_;
+}
+// }}}
+
 Connection::Connection(EndPoint* endpoint,
                        Executor* executor,
                        const HttpHandler& handler,
@@ -45,21 +129,22 @@ Connection::Connection(EndPoint* endpoint,
                        HttpOutputCompressor* outputCompressor,
                        size_t maxRequestUriLength,
                        size_t maxRequestBodyLength)
-    : HttpTransport(endpoint, executor),
-      //parser_(Parser::REQUEST),
+    : cortex::Connection(endpoint, executor),
+      handler_(handler),
+      maxRequestUriLength_(maxRequestUriLength),
+      maxRequestBodyLength_(maxRequestBodyLength),
+      dateGenerator_(dateGenerator),
+      outputCompressor_(outputCompressor),
       inputBuffer_(),
       inputOffset_(0),
+      parser_(
+          std::bind(&Connection::onCreateChannel, this, std::placeholders::_1),
+          std::bind(&Connection::onUnknownPacket, this, std::placeholders::_1, std::placeholders::_2),
+          std::bind(&Connection::onAbortRequest, this, std::placeholders::_1)),
+      channels_(),
       writer_(),
-      onComplete_(),
-      //generator_(dateGenerator, &writer_),
-      channel_(new HttpChannel(
-          this, handler, std::unique_ptr<Input>(new HttpBufferedInput()),
-          maxRequestUriLength, maxRequestBodyLength, outputCompressor)),
-      streams_() {
+      onComplete_() {
 
-  channel_->request()->setRemoteIP(endpoint->remoteIP());
-
-  parser_.setListener(channel_.get());
   TRACE("%p ctor", this);
 }
 
@@ -69,7 +154,7 @@ Connection::~Connection() {
 
 void Connection::onOpen() {
   TRACE("%p onOpen", this);
-  HttpTransport::onOpen();
+  cortex::Connection::onOpen();
 
   // TODO support TCP_DEFER_ACCEPT here
 #if 0
@@ -84,188 +169,7 @@ void Connection::onOpen() {
 
 void Connection::onClose() {
   TRACE("%p onClose", this);
-  HttpTransport::onClose();
-}
-
-void Connection::abort() {
-  TRACE("%p abort()");
-  channel_->response()->setBytesTransmitted(generator_.bytesTransmitted());
-  channel_->responseEnd();
-
-  TRACE("%p abort", this);
-  endpoint()->close();
-}
-
-void Connection::completed() {
-  TRACE("%p completed", this);
-
-  if (onComplete_)
-    RAISE(IllegalStateError, "there is still another completion hook.");
-
-  if (!generator_.isChunked() && generator_.pendingContentLength() > 0)
-    RAISE(IllegalStateError, "Invalid State. Response not fully written but completed() invoked.");
-
-  onComplete_ = std::bind(&Connection::onResponseComplete, this,
-                          std::placeholders::_1);
-
-  generator_.generateTrailer(channel_->response()->trailers());
-  wantFlush();
-}
-
-void Connection::onResponseComplete(bool succeed) {
-  TRACE("%p onResponseComplete(%s)", this, succeed ? "succeed" : "failure");
-  channel_->response()->setBytesTransmitted(generator_.bytesTransmitted());
-  channel_->responseEnd();
-
-  if (!succeed) {
-    // writing trailer failed. do not attempt to do anything on the wire.
-    return;
-  }
-
-  if (channel_->isPersistent()) {
-    TRACE("%p completed.onComplete", this);
-
-    // re-use on keep-alive
-    channel_->reset();
-
-    endpoint()->setCorking(false);
-
-    if (inputOffset_ < inputBuffer_.size()) {
-      // have some request pipelined
-      TRACE("%p completed.onComplete: pipelined read", this);
-      executor()->execute(std::bind(&Connection::parseFragment, this));
-    } else {
-      // wait for next request
-      TRACE("%p completed.onComplete: keep-alive read", this);
-      wantFill();
-    }
-  } else {
-    endpoint()->close();
-  }
-}
-
-void Connection::send(HttpResponseInfo&& responseInfo,
-                          const BufferRef& chunk,
-                          CompletionHandler onComplete) {
-  if (onComplete && onComplete_)
-    // "there is still another completion hook."
-    RAISE(IllegalStateError);
-
-  TRACE("%p send(BufferRef, status=%d, persistent=%s, chunkSize=%zu)",
-        this, responseInfo.status(), channel_->isPersistent() ? "yes" : "no",
-        chunk.size());
-
-  patchResponseInfo(responseInfo);
-
-  const bool corking_ = true;  // TODO(TCP_CORK): part of HttpResponseInfo?
-  if (corking_)
-    endpoint()->setCorking(true);
-
-  generator_.generateResponse(responseInfo, chunk);
-  onComplete_ = std::move(onComplete);
-  wantFlush();
-}
-
-void Connection::send(HttpResponseInfo&& responseInfo,
-                          Buffer&& chunk,
-                          CompletionHandler onComplete) {
-  if (onComplete && onComplete_)
-    // "there is still another completion hook."
-    RAISE(IllegalStateError);
-
-  TRACE("%p send(Buffer, status=%d, persistent=%s, chunkSize=%zu)",
-        this, responseInfo.status(), channel_->isPersistent() ? "yes" : "no",
-        chunk.size());
-
-  patchResponseInfo(responseInfo);
-
-  const bool corking_ = true;  // TODO(TCP_CORK): part of HttpResponseInfo?
-  if (corking_)
-    endpoint()->setCorking(true);
-
-  generator_.generateResponse(responseInfo, std::move(chunk));
-  onComplete_ = std::move(onComplete);
-  wantFlush();
-}
-
-void Connection::send(HttpResponseInfo&& responseInfo,
-                          FileRef&& chunk,
-                          CompletionHandler onComplete) {
-  if (onComplete && onComplete_)
-    // "there is still another completion hook."
-    RAISE(IllegalStateError);
-
-  TRACE("%p send(FileRef, status=%d, persistent=%s, fileRef.fd=%d, chunkSize=%zu)",
-        this, responseInfo.status(), channel_->isPersistent() ? "yes" : "no",
-        chunk.handle(), chunk.size());
-
-  patchResponseInfo(responseInfo);
-
-  const bool corking_ = true;  // TODO(TCP_CORK): part of HttpResponseInfo?
-  if (corking_)
-    endpoint()->setCorking(true);
-
-  generator_.generateResponse(responseInfo, std::move(chunk));
-  onComplete_ = std::move(onComplete);
-  wantFlush();
-}
-
-void Connection::patchResponseInfo(HttpResponseInfo& responseInfo) {
-  if (static_cast<int>(responseInfo.status()) >= 200) {
-    // patch in HTTP transport-layer headers
-    if (channel_->isPersistent() && requestCount_ < requestMax_) {
-      ++requestCount_;
-
-      char keepAlive[64];
-      snprintf(keepAlive, sizeof(keepAlive), "timeout=%lu, max=%zu",
-               maxKeepAlive_.totalSeconds(), requestMax_ - requestCount_);
-
-      responseInfo.headers().push_back("Connection", "Keep-Alive");
-      responseInfo.headers().push_back("Keep-Alive", keepAlive);
-    } else {
-      channel_->setPersistent(false);
-      responseInfo.headers().push_back("Connection", "closed");
-    }
-  }
-}
-
-void Connection::send(Buffer&& chunk, CompletionHandler onComplete) {
-  if (onComplete && onComplete_)
-    // "there is still another completion hook."
-    RAISE(IllegalStateError);
-
-  TRACE("%p send(Buffer, chunkSize=%zu)", this, chunk.size());
-
-  generator_.generateBody(std::move(chunk));
-  onComplete_ = std::move(onComplete);
-
-  wantFlush();
-}
-
-void Connection::send(const BufferRef& chunk,
-                          CompletionHandler onComplete) {
-  if (onComplete && onComplete_)
-    // "there is still another completion hook."
-    RAISE(IllegalStateError);
-
-  TRACE("%p send(BufferRef, chunkSize=%zu)", this, chunk.size());
-
-  generator_.generateBody(chunk);
-  onComplete_ = std::move(onComplete);
-
-  wantFlush();
-}
-
-void Connection::send(FileRef&& chunk, CompletionHandler onComplete) {
-  if (onComplete && onComplete_)
-    // "there is still another completion hook."
-    RAISE(IllegalStateError);
-
-  TRACE("%p send(FileRef, chunkSize=%zu)", this, chunk.size());
-
-  generator_.generateBody(std::move(chunk));
-  onComplete_ = std::move(onComplete);
-  wantFlush();
+  cortex::Connection::onClose();
 }
 
 void Connection::setInputBufferSize(size_t size) {
@@ -280,7 +184,7 @@ void Connection::onFillable() {
   if (endpoint()->fill(&inputBuffer_) == 0) {
     TRACE("%p onFillable: fill() returned 0", this);
     // RAISE("client EOF");
-    abort();
+    endpoint()->close();
     return;
   }
 
@@ -288,30 +192,21 @@ void Connection::onFillable() {
 }
 
 void Connection::parseFragment() {
-  try {
-    TRACE("parseFragment: calling parseFragment (%zu into %zu)",
-          inputOffset_, inputBuffer_.size());
-    size_t n = parser_.parseFragment(inputBuffer_.ref(inputOffset_));
-    TRACE("parseFragment: called (%zu into %zu) => %zu",
-          inputOffset_, inputBuffer_.size(), n);
-    inputOffset_ += n;
-  } catch (const BadMessage& e) {
-    TRACE("%p parseFragment: BadMessage caught. %s", this, e.what());
-    channel_->response()->sendError(e.httpCode(), e.what());
-  }
+  TRACE("parseFragment: calling parseFragment (%zu into %zu)",
+        inputOffset_, inputBuffer_.size());
+  size_t n = parser_.parseFragment(inputBuffer_.ref(inputOffset_));
+  TRACE("parseFragment: called (%zu into %zu) => %zu",
+        inputOffset_, inputBuffer_.size(), n);
+  inputOffset_ += n;
 }
 
 void Connection::onFlushable() {
   TRACE("%p onFlushable", this);
 
-  if (channel_->state() != ChannelState::SENDING)
-    channel_->setState(ChannelState::SENDING);
-
   const bool complete = writer_.flush(endpoint());
 
   if (complete) {
     TRACE("%p onFlushable: completed. (%s)", this, (onComplete_ ? "onComplete cb set" : "onComplete cb not set"));
-    channel_->setState(ChannelState::HANDLING);
 
     if (onComplete_) {
       TRACE("%p onFlushable: invoking completion callback", this);
@@ -341,9 +236,53 @@ void Connection::onInterestFailure(const std::exception& error) {
     callback(false);
   }
 
-  abort();
+  endpoint()->close();
 }
-#endif
+
+HttpListener* Connection::onCreateChannel(int request) {
+  return createChannel(request);
+}
+
+void Connection::onUnknownPacket(int request, int record) {
+}
+
+void Connection::onAbortRequest(int request) {
+  removeChannel(request);
+}
+
+HttpChannel* Connection::createChannel(int request) {
+  if (channels_.find(request) != channels_.end()) {
+    RAISE(IllegalStateError,
+          "FastCGI channel with ID %i already present.",
+          request);
+  }
+
+  try {
+    std::unique_ptr<HttpFastCgiChannel> channel(new HttpFastCgiChannel(
+       new HttpFastCgiTransport(request, &writer_),
+       handler_,
+       std::unique_ptr<HttpInput>(new HttpBufferedInput()),
+       maxRequestUriLength_,
+       maxRequestBodyLength_,
+       dateGenerator_,
+       outputCompressor_));
+
+    channel->request()->setRemoteIP(endpoint()->remoteIP());
+
+    return (channels_[request] = std::move(channel)).get();
+  } catch (...) {
+    removeChannel(request);
+    throw;
+  }
+}
+
+void Connection::removeChannel(int request) {
+  auto i = channels_.find(request);
+  if (i != channels_.end()) {
+    channels_.erase(i);
+  }
+}
+
 } // namespace fastcgi
 } // namespace http
 } // namespace cortex

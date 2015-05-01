@@ -10,6 +10,7 @@
 #include <cortex-http/HttpRequest.h>
 #include <cortex-http/HttpResponse.h>
 #include <cortex-http/HttpResponseInfo.h>
+#include <cortex-http/HttpDateGenerator.h>
 #include <cortex-http/HttpOutput.h>
 #include <cortex-http/HttpOutputCompressor.h>
 #include <cortex-http/HttpVersion.h>
@@ -50,6 +51,7 @@ HttpChannel::HttpChannel(HttpTransport* transport, const HttpHandler& handler,
                          std::unique_ptr<HttpInput>&& input,
                          size_t maxRequestUriLength,
                          size_t maxRequestBodyLength,
+                         HttpDateGenerator* dateGenerator,
                          HttpOutputCompressor* outputCompressor)
     : maxRequestUriLength_(maxRequestUriLength),
       maxRequestBodyLength_(maxRequestBodyLength),
@@ -57,6 +59,7 @@ HttpChannel::HttpChannel(HttpTransport* transport, const HttpHandler& handler,
       transport_(transport),
       request_(new HttpRequest(std::move(input))),
       response_(new HttpResponse(this, createOutput())),
+      dateGenerator_(dateGenerator),
       outputFilters_(),
       outputCompressor_(outputCompressor),
       handler_(handler) {
@@ -197,7 +200,7 @@ HttpResponseInfo HttpChannel::commitInline() {
   onPostProcess_();
 
   if (request_->expect100Continue())
-    response_->send100Continue(nullptr /* FIXME */);
+    response_->send100Continue(nullptr);
 
   response_->setCommitted(true);
 
@@ -210,6 +213,12 @@ HttpResponseInfo HttpChannel::commitInline() {
 
   if (!info.headers().contains("Server"))
     info.headers().push_back("Server", "cortex-base/" CORTEX_HTTP_VERSION);
+
+  if (dateGenerator_ && static_cast<int>(response_->status()) >= 200) {
+    Buffer date;
+    dateGenerator_->fill(&date);
+    info.headers().push_back("Date", date.str());
+  }
 
   return info;
 }

@@ -20,10 +20,11 @@ Http1Channel::Http1Channel(HttpConnection* transport,
                          std::unique_ptr<HttpInput>&& input,
                          size_t maxRequestUriLength,
                          size_t maxRequestBodyLength,
+                         HttpDateGenerator* dateGenerator,
                          HttpOutputCompressor* outputCompressor)
     : cortex::HttpChannel(transport, handler, std::move(input),
                          maxRequestUriLength, maxRequestBodyLength,
-                         outputCompressor),
+                         dateGenerator, outputCompressor),
       persistent_(false),
       connectionOptions_() {
 }

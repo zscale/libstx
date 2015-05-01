@@ -22,18 +22,20 @@
 namespace cortex {
 
 MockTransport::MockTransport(Executor* executor, const HttpHandler& handler)
-    : MockTransport(executor, handler, 32, 64, nullptr) {
+    : MockTransport(executor, handler, 32, 64, nullptr, nullptr) {
 }
 
 MockTransport::MockTransport(Executor* executor,
                              const HttpHandler& handler,
                              size_t maxRequestUriLength,
                              size_t maxRequestBodyLength,
+                             HttpDateGenerator* dateGenerator,
                              HttpOutputCompressor* outputCompressor)
-    : HttpTransport(nullptr /*endpoint*/, executor),
+    : executor_(executor),
       handler_(handler),
       maxRequestUriLength_(maxRequestUriLength),
       maxRequestBodyLength_(maxRequestBodyLength),
+      dateGenerator_(dateGenerator),
       outputCompressor_(outputCompressor),
       isAborted_(false),
       isCompleted_(false),
@@ -55,6 +57,7 @@ void MockTransport::run(HttpVersion version, const std::string& method,
   std::unique_ptr<MockInput> input(new MockInput());
   channel_.reset(new HttpChannel(this, handler_, std::move(input),
                                  maxRequestUriLength_, maxRequestBodyLength_,
+                                 dateGenerator_,
                                  outputCompressor_));
 
 
@@ -159,24 +162,6 @@ void MockTransport::send(FileRef&& chunk, CompletionHandler onComplete) {
       onComplete(true);
     });
   }
-}
-
-void MockTransport::onOpen() {
-  HttpTransport::onOpen();
-}
-
-void MockTransport::onClose() {
-  HttpTransport::onClose();
-}
-
-void MockTransport::onFillable() {
-}
-
-void MockTransport::onFlushable() {
-}
-
-bool MockTransport::onReadTimeout() {
-  return HttpTransport::onReadTimeout();
 }
 
 } // namespace mock

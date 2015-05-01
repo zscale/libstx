@@ -24,6 +24,7 @@ class Http1Channel : public cortex::HttpChannel {
               std::unique_ptr<HttpInput>&& input,
               size_t maxRequestUriLength,
               size_t maxRequestBodyLength,
+              HttpDateGenerator* dateGenerator,
               HttpOutputCompressor* outputCompressor);
   ~Http1Channel();
 

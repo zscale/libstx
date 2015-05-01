@@ -9,4 +9,7 @@
 
 namespace cortex {
 
+HttpTransport::~HttpTransport() {
+}
+
 }  // namespace cortex

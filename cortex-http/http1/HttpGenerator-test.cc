@@ -19,14 +19,14 @@ using namespace cortex;
 
 // TEST(HttpGenerator, recycle) {
 // }
-// 
+//
 // TEST(HttpGenerator, generateRequest) {
 // }
 
 // XXX No headers, no body.
 TEST(HttpGenerator, generateResponse_empty) {
   EndPointWriter writer;
-  http1::HttpGenerator generator(nullptr, &writer);
+  http1::HttpGenerator generator(&writer);
 
   HttpResponseInfo info(HttpVersion::VERSION_1_1, HttpStatus::Ok, "my",
                         false, 0, {}, {});
@@ -43,7 +43,7 @@ TEST(HttpGenerator, generateResponse_empty) {
 // XXX some headers, no body.
 TEST(HttpGenerator, generateResponse_headers) {
   EndPointWriter writer;
-  http1::HttpGenerator generator(nullptr, &writer);
+  http1::HttpGenerator generator(&writer);
 
   HeaderFieldList headers = {
     {"Foo", "the-foo"},
@@ -65,7 +65,7 @@ TEST(HttpGenerator, generateResponse_headers) {
 // XXX no headers, static (fixed-size) body.
 TEST(HttpGenerator, generateResponse_static_body) {
   EndPointWriter writer;
-  http1::HttpGenerator generator(nullptr, &writer);
+  http1::HttpGenerator generator(&writer);
 
   HeaderFieldList headers;
   HeaderFieldList trailers;
@@ -85,7 +85,7 @@ TEST(HttpGenerator, generateResponse_static_body) {
 // XXX no headers, dynamic (chunked) body
 TEST(HttpGenerator, generateResponse_chunked) {
   EndPointWriter writer;
-  http1::HttpGenerator generator(nullptr, &writer);
+  http1::HttpGenerator generator(&writer);
 
   HeaderFieldList headers;
   HeaderFieldList trailers;
@@ -105,7 +105,7 @@ TEST(HttpGenerator, generateResponse_chunked) {
 // XXX no headers, dynamic (chunked) body with trailers
 TEST(HttpGenerator, generateResponse_chunked_trailer) {
   EndPointWriter writer;
-  http1::HttpGenerator generator(nullptr, &writer);
+  http1::HttpGenerator generator(&writer);
 
   HeaderFieldList headers;
   HeaderFieldList trailers = {
@@ -128,7 +128,7 @@ TEST(HttpGenerator, generateResponse_chunked_trailer) {
 // XXX no headers, static (fixed-size) body with trailers (triggers chunking)
 TEST(HttpGenerator, generateResponse_chunked_trailer2) {
   EndPointWriter writer;
-  http1::HttpGenerator generator(nullptr, &writer);
+  http1::HttpGenerator generator(&writer);
 
   HeaderFieldList headers;
   HeaderFieldList trailers = {

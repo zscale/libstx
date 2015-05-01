@@ -1,3 +1,4 @@
+#if 0
 // This file is part of the "libcortex" project
 //   (c) 2009-2015 Christian Parpart <https://github.com/christianparpart>
 //   (c) 2014-2015 Paul Asmuth <https://github.com/paulasmuth>
@@ -158,3 +159,4 @@ TEST(http_fastcgi_Parser, simpleResponse) {
   EXPECT_EQ("text/html", httpListener.headers.get("Content-Type"));
   EXPECT_EQ("<html>\n<head> ...", httpListener.body);
 }
+#endif

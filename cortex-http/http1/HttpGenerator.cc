@@ -18,10 +18,8 @@
 namespace cortex {
 namespace http1 {
 
-HttpGenerator::HttpGenerator(HttpDateGenerator* dateGenerator,
-                             EndPointWriter* output)
+HttpGenerator::HttpGenerator(EndPointWriter* output)
     : bytesTransmitted_(0),
-      dateGenerator_(dateGenerator),
       contentLength_(Buffer::npos),
       chunked_(false),
       buffer_(),
@@ -73,12 +71,6 @@ void HttpGenerator::generateResponseInfo(const HttpResponseInfo& info) {
   generateResponseLine(info);
 
   if (static_cast<int>(info.status()) >= 200) {
-    if (dateGenerator_) {
-      buffer_.push_back("Date: ");
-      dateGenerator_->fill(&buffer_);
-      buffer_.push_back("\r\n");
-    }
-
     generateHeaders(info);
   } else {
     buffer_.push_back("\r\n");
