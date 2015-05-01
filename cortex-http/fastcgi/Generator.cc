@@ -13,7 +13,10 @@ namespace cortex {
 namespace http {
 namespace fastcgi {
 
-//.
+// THOUGHTS:
+//
+// - maybe splitup generator into request/response generator, too
+// - ResponseGenerator: use the HttpGenerator to create the HTTP-message
 
 } // namespace fastcgi
 } // namespace http

@@ -47,6 +47,7 @@ class CORTEX_HTTP_API Generator {
 
   void generateRequest(const HttpRequestInfo& info, Buffer&& chunk);
   void generateRequest(const HttpRequestInfo& info, const BufferRef& chunk);
+  void generateResponse(const HttpResponseInfo& info);
   void generateResponse(const HttpResponseInfo& info, const BufferRef& chunk);
   void generateResponse(const HttpResponseInfo& info, Buffer&& chunk);
   void generateResponse(const HttpResponseInfo& info, FileRef&& chunk);
