@@ -20,6 +20,7 @@
 #include <utility>
 #include <unordered_map>
 
+#include <cortex-http/Api.h>
 #include <cortex-base/Buffer.h>
 
 namespace cortex {
@@ -39,6 +40,8 @@ enum class Type {
   GetValuesResult = 10,
   UnknownType = 11
 };
+
+CORTEX_HTTP_API std::string to_string(Type t);
 
 enum class Role {
   Responder = 1,
@@ -115,11 +118,11 @@ struct CORTEX_PACKED BeginRequestRecord : public Record {
     memset(reserved_, 0, sizeof(reserved_));
   }
 
-  Role role() const { return static_cast<Role>(ntohs(role_)); }
+  Role role() const noexcept { return static_cast<Role>(ntohs(role_)); }
 
-  bool isKeepAlive() const { return flags_ & 0x01; }
+  bool isKeepAlive() const noexcept { return flags_ & 0x01; }
 
-  const char *role_str() {
+  const char *role_str() const noexcept {
     switch (role()) {
       case Role::Responder:
         return "responder";
@@ -146,17 +149,40 @@ class CgiParamStreamWriter {
   static Buffer encode(
       const std::list<std::pair<std::string, std::string>>& params);
 
-  void encode(const char *name, size_t nameLength, const char *value,
-              size_t valueLength);
-  void encode(const char *name, size_t nameLength, const char *v1, size_t l1,
+  /**
+   * Encodes a request header and value into the PARAM stream.
+   *
+   * The header name is properly and effeciently prefixed with "HTTP_",
+   * uppercased, and dashes replaced with underscores.
+   */
+  void encodeHeader(const char *name, size_t nameLength,
+                    const char *value, size_t valueLength);
+
+  /**
+   * Encodes a request header and value into the PARAM stream.
+   *
+   * The header name is properly and effeciently prefixed with "HTTP_",
+   * uppercased, and dashes replaced with underscores.
+   */
+  void encodeHeader(const std::string& name, const std::string& value) {
+    encodeHeader(name.data(), name.size(), value.data(), value.size());
+  }
+
+  void encode(const char *name, size_t nameLength,
+              const char *value, size_t valueLength);
+
+  void encode(const char *name, size_t nameLength,
+              const char *v1, size_t l1,
               const char *v2, size_t l2);
 
   void encode(const std::string &name, const std::string &value) {
     encode(name.data(), name.size(), value.data(), value.size());
   }
+
   void encode(const cortex::BufferRef &name, const cortex::BufferRef &value) {
     encode(name.data(), name.size(), value.data(), value.size());
   }
+
   void encode(const std::string &name, const cortex::BufferRef &value) {
     encode(name.data(), name.size(), value.data(), value.size());
   }

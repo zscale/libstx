@@ -19,7 +19,11 @@ namespace cortex {
 namespace http {
 namespace fastcgi {
 
+#ifndef NDEBUG
 #define TRACE(msg...) logTrace("http.fastcgi.Generator", msg)
+#else
+#define TRACE(msg...) do {} while (0)
+#endif
 
 // THOUGHTS:
 //
@@ -63,18 +67,7 @@ void Generator::generateRequest(const HttpRequestInfo& info) {
   // paramsWriter.encode("SERVER_PORT", "");
 
   for (const HeaderField& header: info.headers()) {
-    std::string name;
-    name.reserve(6 + header.name().size());
-    name += "HTTP_";
-    for (char ch: header.name()) {
-      if (ch == '-') {
-        name += '_';
-      } else {
-        name += std::toupper(ch);
-      }
-    }
-
-    paramsWriter.encode(name, header.value());
+    paramsWriter.encodeHeader(header.name(), header.value());
   }
 
   const Buffer& params = paramsWriter.output();
@@ -93,6 +86,10 @@ void Generator::generateRequest(const HttpRequestInfo& info, const BufferRef& ch
 }
 
 void Generator::generateResponse(const HttpResponseInfo& info) {
+  TRACE("generateResponse! status=%d %s",
+        static_cast<int>(info.status()),
+        to_string(info.status()).c_str());
+
   mode_ = GenerateResponse;
 
   Buffer payload;
@@ -102,6 +99,7 @@ void Generator::generateResponse(const HttpResponseInfo& info) {
   payload.push_back("\r\n");
 
   for (const HeaderField& header: info.headers()) {
+    TRACE("  %s: %s", header.name().c_str(), header.value().c_str());
     payload.push_back(header.name());
     payload.push_back(": ");
     payload.push_back(header.value());
@@ -155,7 +153,7 @@ void Generator::generateBody(FileRef&& chunk) {
 
     // header
     Record header(bodyType, requestId_, clen, 0);
-    write(&header, sizeof(header));
+    buffer_.push_back(&header, sizeof(header));
     flushBuffer();
 
     // body
@@ -176,25 +174,40 @@ void Generator::generateBody(FileRef&& chunk) {
 }
 
 void Generator::generateEnd() {
-  constexpr BufferRef EOS;
-  generateBody(EOS);
+  TRACE("generateEnd()");
+
+  // exit mark for request/response stream
+  switch (mode_) {
+    case GenerateRequest: {
+      Record eos(Type::StdIn, requestId_, 0, 0);
+      buffer_.push_back(&eos, sizeof(eos));
+      break;
+    }
+    case GenerateResponse: {
+      Record eos(Type::StdOut, requestId_, 0, 0);
+      buffer_.push_back(&eos, sizeof(eos));
+
+      int appStatus = 0;
+      ProtocolStatus protocolStatus = ProtocolStatus::RequestComplete;
+      EndRequestRecord endRequest(requestId_, appStatus, protocolStatus);
+      buffer_.push_back(&endRequest, sizeof(endRequest));
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+
   flushBuffer();
 }
 
-void Generator::write(const Record* record) {
-  buffer_.push_back(record->data(), record->size());
-}
-
-void Generator::write(const void* buf, size_t len) {
-  buffer_.push_back(buf, len);
-}
-
 void Generator::write(Type type, int requestId, const char* buf, size_t len) {
+  TRACE("write<%s>(rid=%zu, len=%zu)", to_string(type).c_str(), requestId, len);
   constexpr size_t chunkSizeCap = 0xFFFF;
   constexpr char padding[8] = {0};
 
   if (len == 0) {
-    write<Record>(type, requestId, 0, 0);
+    write(type, requestId, "", 0);
     return;
   }
 
@@ -204,15 +217,16 @@ void Generator::write(Type type, int requestId, const char* buf, size_t len) {
         clen % sizeof(padding) ? sizeof(padding) - clen % sizeof(padding) : 0;
 
     Record header(type, requestId, clen, plen);
-    write(&header, sizeof(header));
-    write(buf + offset, clen);
-    write(padding, plen);
+    buffer_.push_back(&header, sizeof(header));
+    buffer_.push_back(buf + offset, clen);
+    buffer_.push_back(padding, plen);
 
     offset += clen;
   }
 }
 
 void Generator::flushBuffer() {
+  TRACE("flushBuffer: %zu bytes", buffer_.size());
   if (!buffer_.empty()) {
     bytesTransmitted_ += buffer_.size();
     writer_->write(std::move(buffer_));

@@ -53,13 +53,14 @@ class CORTEX_HTTP_API RequestParser {
 
  public:
   RequestParser(
-      std::function<HttpListener*(int requestId)> onCreateChannel,
+      std::function<HttpListener*(int requestId, bool keepAlive)> onCreateChannel,
       std::function<void(int requestId, int recordId)> onUnknownPacket,
       std::function<void(int requestId)> onAbortRequest);
 
   void reset();
 
-  StreamState& registerStreamState(int requestId);
+  StreamState* registerStreamState(int requestId);
+  StreamState* getStream(int requestId);
   void removeStreamState(int requestId);
 
   size_t parseFragment(const BufferRef& chunk);
@@ -71,7 +72,6 @@ class CORTEX_HTTP_API RequestParser {
   }
 
  protected:
-  StreamState& getStream(int requestId);
   void process(const fastcgi::Record* record);
   void beginRequest(const fastcgi::BeginRequestRecord* record);
   void streamParams(const fastcgi::Record* record);
@@ -82,7 +82,7 @@ class CORTEX_HTTP_API RequestParser {
   void abortRequest(const fastcgi::AbortRequestRecord* record);
 
  protected:
-  std::function<HttpListener*(int requestId)> onCreateChannel_;
+  std::function<HttpListener*(int requestId, bool keepAlive)> onCreateChannel_;
   std::function<void(int requestId, int recordId)> onUnknownPacket_;
   std::function<void(int requestId)> onAbortRequest_;
 
