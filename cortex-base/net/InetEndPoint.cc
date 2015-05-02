@@ -50,6 +50,7 @@ InetEndPoint::InetEndPoint(int socket,
       isCorking_(false) {
 
   idleTimeout_.setCallback(std::bind(&InetEndPoint::onTimeout, this));
+  TRACE("%p ctor", this);
 }
 
 void InetEndPoint::onTimeout() {
@@ -61,6 +62,7 @@ void InetEndPoint::onTimeout() {
 }
 
 InetEndPoint::~InetEndPoint() {
+  TRACE("%p dtor", this);
   if (isOpen()) {
     close();
   }
