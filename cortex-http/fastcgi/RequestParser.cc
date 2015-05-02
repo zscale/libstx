@@ -17,9 +17,11 @@ namespace cortex {
 namespace http {
 namespace fastcgi {
 
-#define TRACE(msg...) do { \
-  logTrace("fastcgi", "RequestParser: " msg); \
-} while (0)
+#ifndef NDEBUG
+#define TRACE(msg...) logTrace("http.fastcgi.RequestParser",  msg)
+#else
+#define TRACE(msg...) do {} while (0)
+#endif
 
 // {{{ RequestParser::StreamState impl
 RequestParser::StreamState::StreamState()
@@ -91,13 +93,21 @@ void RequestParser::StreamState::onParam(
 }
 // }}}
 
-RequestParser::StreamState& RequestParser::registerStreamState(int requestId) {
+RequestParser::StreamState* RequestParser::registerStreamState(int requestId) {
   if (streams_.find(requestId)  != streams_.end())
     RAISE(RuntimeError,
           "FastCGI stream with requestID %d already available.",
           requestId);
 
-  return streams_[requestId];
+  return &streams_[requestId];
+}
+
+RequestParser::StreamState* RequestParser::getStream(int requestId) {
+  auto s = streams_.find(requestId);
+  if (s != streams_.end())
+    return &s->second;
+
+  return nullptr;
 }
 
 void RequestParser::removeStreamState(int requestId) {
@@ -108,7 +118,7 @@ void RequestParser::removeStreamState(int requestId) {
 }
 
 RequestParser::RequestParser(
-    std::function<HttpListener*(int requestId)> onCreateChannel,
+    std::function<HttpListener*(int requestId, bool keepAlive)> onCreateChannel,
     std::function<void(int requestId, int recordId)> onUnknownPacket,
     std::function<void(int requestId)> onAbortRequest)
     : onCreateChannel_(onCreateChannel),
@@ -143,16 +153,6 @@ size_t RequestParser::parseFragment(const BufferRef& chunk) {
   return readOffset;
 }
 
-RequestParser::StreamState& RequestParser::getStream(int requestId) {
-  auto s = streams_.find(requestId);
-  if (s != streams_.end())
-    return s->second;
-
-  StreamState& stream = streams_[requestId];
-  stream.listener = onCreateChannel_(requestId);
-  return stream;
-}
-
 void RequestParser::process(const fastcgi::Record* record) {
   switch (record->type()) {
     case fastcgi::Type::BeginRequest:
@@ -174,77 +174,105 @@ void RequestParser::process(const fastcgi::Record* record) {
 }
 
 void RequestParser::beginRequest(const fastcgi::BeginRequestRecord* record) {
-  TRACE("beginRequest");
-  StreamState& stream = getStream(record->requestId());
-  stream.totalBytesReceived += record->size();
+  TRACE("BeginRequest(role=%s, rid=%d, keepalive=%s)",
+        record->role_str(),
+        record->requestId(),
+        record->isKeepAlive() ? "yes" : "no");
+
+  if (auto stream = registerStreamState(record->requestId())) {
+    stream->totalBytesReceived += record->size();
+
+    stream->listener =
+        onCreateChannel_(record->requestId(), record->isKeepAlive());
+  }
 }
 
 void RequestParser::streamParams(const fastcgi::Record* record) {
-  TRACE("streamParams: size=%zu", record->contentLength());
-  StreamState& stream = getStream(record->requestId());
-  stream.totalBytesReceived += record->size();
+  TRACE("Params(size=%zu)", record->contentLength());
+  StreamState* stream = getStream(record->requestId());
+  if (!stream)
+    return;
+
+  stream->totalBytesReceived += record->size();
 
   if (record->contentLength()) {
-    stream.processParams(record->content(), record->contentLength());
+    stream->processParams(record->content(), record->contentLength());
     return;
   }
 
-  TRACE("streamParams: fully received!");
-  stream.paramsFullyReceived = true;
+  TRACE("Params: fully received!");
+  stream->paramsFullyReceived = true;
 
-  BufferRef method(stream.params.get("REQUEST_METHOD"));
-  BufferRef entity(stream.params.get("REQUEST_URI"));
-  HttpVersion version = make_version(stream.params.get("SERVER_PROTOCOL"));
+  for (const auto& param: stream->params)
+    TRACE("  %s: %s", param.name().c_str(), param.value().c_str());
 
-  if (!stream.listener->onMessageBegin(method, entity, version))
+  BufferRef method(stream->params.get("REQUEST_METHOD"));
+  BufferRef entity(stream->params.get("REQUEST_URI"));
+
+  HttpVersion version = HttpVersion::UNKNOWN;
+  const std::string& serverProtocol = stream->params.get("SERVER_PROTOCOL");
+  if (serverProtocol == "HTTP/1.1")
+    version = HttpVersion::VERSION_1_1;
+  else if (serverProtocol == "HTTP/1.0")
+    version = HttpVersion::VERSION_1_0;
+  else if (serverProtocol == "HTTP/0.9")
+    version = HttpVersion::VERSION_0_9;
+
+  if (!stream->listener->onMessageBegin(method, entity, version))
     return;
 
-  for (const auto& header: stream.headers) {
-    stream.listener->onMessageHeader(BufferRef(header.name()),
+  for (const auto& header: stream->headers) {
+    stream->listener->onMessageHeader(BufferRef(header.name()),
                                      BufferRef(header.value()));
   }
 
-  if (!stream.listener->onMessageHeaderEnd()) {
-    TRACE("streamParams: onMessageHeaderEnd returned false. Bailing out.");
+  if (!stream->listener->onMessageHeaderEnd()) {
+    TRACE("Params: onMessageHeaderEnd returned false. Bailing out.");
     return;
   }
 
-  if (!stream.body.empty()) {
-    TRACE("streamParams: onMessageContent");
-    stream.listener->onMessageContent(stream.body);
+  if (!stream->body.empty()) {
+    TRACE("Params: onMessageContent");
+    stream->listener->onMessageContent(stream->body);
   }
 
-  if (stream.paramsFullyReceived && stream.contentFullyReceived) {
-    TRACE("streamParams: onMessageEnd");
-    stream.listener->onMessageEnd();
+  if (stream->paramsFullyReceived && stream->contentFullyReceived) {
+    TRACE("Params: onMessageEnd");
+    stream->listener->onMessageEnd();
   }
 }
 
 void RequestParser::streamStdIn(const fastcgi::Record* record) {
-  StreamState& stream = getStream(record->requestId());
-  stream.totalBytesReceived += record->size();
+  StreamState* stream = getStream(record->requestId());
+  if (!stream)
+    return;
+
+  stream->totalBytesReceived += record->size();
 
   TRACE("streamStdIn: payload:%zu, paramsEOS:%s",
       record->contentLength(),
-      stream.paramsFullyReceived ? "true" : "false");
+      stream->paramsFullyReceived ? "true" : "false");
 
   BufferRef content(record->content(), record->contentLength());
-  stream.listener->onMessageContent(content);
+  stream->listener->onMessageContent(content);
 
   if (record->contentLength() == 0)
-    stream.contentFullyReceived = true;
+    stream->contentFullyReceived = true;
 
-  if (stream.paramsFullyReceived && stream.contentFullyReceived) {
+  if (stream->paramsFullyReceived && stream->contentFullyReceived) {
     TRACE("streamStdIn: onMessageEnd");
-    stream.listener->onMessageEnd();
+    stream->listener->onMessageEnd();
   }
 }
 
 void RequestParser::streamData(const fastcgi::Record* record) {
   TRACE("streamData: %zu", record->contentLength());
 
-  StreamState& stream = getStream(record->requestId());
-  stream.totalBytesReceived += record->size();
+  StreamState* stream = getStream(record->requestId());
+  if (!stream)
+    return;
+
+  stream->totalBytesReceived += record->size();
 
   // ignore data-stream, as we've no association in HTTP-layer for it.
 }
@@ -252,8 +280,11 @@ void RequestParser::streamData(const fastcgi::Record* record) {
 void RequestParser::abortRequest(const fastcgi::AbortRequestRecord* record) {
   TRACE("abortRequest");
 
-  StreamState& stream = getStream(record->requestId());
-  stream.totalBytesReceived += record->size();
+  StreamState* stream = getStream(record->requestId());
+  if (!stream)
+    return;
+
+  stream->totalBytesReceived += record->size();
 
   onAbortRequest_(record->requestId());
 

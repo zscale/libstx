@@ -8,10 +8,28 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <cortex-http/fastcgi/bits.h>
+#include <string>
 
 namespace cortex {
 namespace http {
 namespace fastcgi {
+
+CORTEX_HTTP_API std::string to_string(Type t) {
+  switch (t) {
+    case Type::BeginRequest: return "BeginRequest";
+    case Type::AbortRequest: return "AbortRequest";
+    case Type::EndRequest: return "EndRequest";
+    case Type::Params: return "Params";
+    case Type::StdIn: return "StdIn";
+    case Type::StdOut: return "StdOut";
+    case Type::StdErr: return "StdErr";
+    case Type::Data: return "Data";
+    case Type::GetValues: return "GetValues";
+    case Type::GetValuesResult: return "GetValuesResult";
+    case Type::UnknownType: return "UnknownType";
+    default: return std::to_string(static_cast<int>(t));
+  }
+}
 
 void CgiParamStreamReader::processParams(const char *buf,
                                          size_t length) {
@@ -67,6 +85,25 @@ void CgiParamStreamReader::processParams(const char *buf,
 
     onParam(name, nameLength, value, valueLength);
   }
+}
+
+void CgiParamStreamWriter::encodeHeader(const char *name,
+                                        size_t nameLength,
+                                        const char *value,
+                                        size_t valueLength) {
+  encodeLength(5 + nameLength);
+  encodeLength(valueLength);
+
+  buffer_.push_back("HTTP_");
+  for (size_t i = 0; i < nameLength; ++i) {
+    const char ch = name[i];
+    if (ch == '-') {
+      buffer_ << '_';
+    } else {
+      buffer_ << std::toupper(ch);
+    }
+  }
+  buffer_.push_back(value, valueLength);
 }
 
 void CgiParamStreamWriter::encode(

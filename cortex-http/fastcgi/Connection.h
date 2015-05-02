@@ -18,6 +18,7 @@
 #include <cortex-base/TimeSpan.h>
 #include <memory>
 #include <unordered_map>
+#include <list>
 
 namespace cortex {
 
@@ -29,11 +30,13 @@ namespace http {
 namespace fastcgi {
 
 class HttpFastCgiChannel;
+class HttpFastCgiTransport;
 
 /**
  * @brief Implements a HTTP/1.1 transport connection.
  */
 class CORTEX_HTTP_API Connection : public cortex::Connection {
+  friend class HttpFastCgiTransport;
  public:
   Connection(EndPoint* endpoint,
              Executor* executor,
@@ -46,6 +49,9 @@ class CORTEX_HTTP_API Connection : public cortex::Connection {
 
   HttpChannel* createChannel(int request);
   void removeChannel(int request);
+
+  bool isPersistent() const noexcept { return persistent_; }
+  void setPersistent(bool enable) { persistent_ = enable; }
 
   // cortex::net::Connection overrides
   void onOpen() override;
@@ -60,7 +66,7 @@ class CORTEX_HTTP_API Connection : public cortex::Connection {
   void onInterestFailure(const std::exception& error) override;
   void onResponseComplete(bool succeed);
 
-  HttpListener* onCreateChannel(int request);
+  HttpListener* onCreateChannel(int request, bool keepAlive);
   void onUnknownPacket(int request, int record);
   void onAbortRequest(int request);
 
@@ -72,12 +78,13 @@ class CORTEX_HTTP_API Connection : public cortex::Connection {
   HttpOutputCompressor* outputCompressor_;
   Buffer inputBuffer_;
   size_t inputOffset_;
+  bool persistent_;
   RequestParser parser_;
 
   std::unordered_map<int, std::unique_ptr<HttpFastCgiChannel>> channels_;
 
   EndPointWriter writer_;
-  CompletionHandler onComplete_;
+  std::list<CompletionHandler> onComplete_;
 };
 
 } // namespace fastcgi

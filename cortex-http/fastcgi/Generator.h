@@ -56,14 +56,12 @@ class CORTEX_HTTP_API Generator {
   void generateBody(FileRef&& chunk);
   void generateEnd();
 
- private:
-  template<typename T, typename... Args>
-  void write(Args... args);
-  void write(const Record* record);
-  void write(Type type, int requestId, const char* buf, size_t len);
-  void write(const void* buf, size_t len);
-
   void flushBuffer();
+
+  size_t bytesTransmitted() const noexcept { return bytesTransmitted_; }
+
+ private:
+  void write(Type type, int requestId, const char* buf, size_t len);
 
  private:
   enum Mode { Nothing, GenerateRequest, GenerateResponse } mode_;
@@ -72,12 +70,6 @@ class CORTEX_HTTP_API Generator {
   Buffer buffer_;
   EndPointWriter* writer_;
 };
-
-template<typename T, typename... Args>
-inline void Generator::write(Args... args) {
-  T frame(args...);
-  write(&frame);
-}
 
 } // namespace fastcgi
 } // namespace http

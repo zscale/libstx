@@ -19,6 +19,14 @@
 
 using namespace cortex;
 
+/*
+ * TODO:
+ *
+ * - BeginRequest: test flag keepAlive true/false properly exposed
+ * - ...
+ *
+ */
+
 class RequestListener : public HttpListener { // {{{
  public:
   bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
@@ -135,7 +143,7 @@ TEST(http_fastcgi_Parser, simpleRequest) {
   std::vector<std::pair<std::string, std::string>> parsedHeaders;
 
   RequestListener httpListener;
-  auto onCreateChannel = [&](int requestId) -> HttpListener* {
+  auto onCreateChannel = [&](int requestId, bool keepAlive) -> HttpListener* {
                             parsedRequestId = requestId;
                             return &httpListener; };
   auto onUnknownPacket = [&](int requestId, int recordId) { };
