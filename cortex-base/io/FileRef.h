@@ -81,6 +81,7 @@ class CORTEX_API FileRef {
   off_t offset() const CORTEX_NOEXCEPT { return offset_; }
   void setOffset(off_t n) { offset_ = n; }
 
+  bool empty() const noexcept { return size_ == 0; }
   size_t size() const CORTEX_NOEXCEPT { return size_; }
   void setSize(size_t n) { size_ = n; }
 
