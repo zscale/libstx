@@ -14,13 +14,13 @@
 #include <cortex-http/HttpInfo.h>
 #include <cortex-http/HttpRequestInfo.h>
 #include <cortex-http/HttpResponseInfo.h>
+#include <cortex-http/fastcgi/bits.h>
 #include <cortex-base/io/FileRef.h>
 #include <cortex-base/Buffer.h>
 #include <cortex-base/sysconfig.h>
 
 namespace cortex {
 
-class HttpDateGenerator;
 class EndPointWriter;
 
 namespace http {
@@ -42,9 +42,9 @@ class CORTEX_HTTP_API Generator {
    */
   Generator(
       int requestId,
-      HttpDateGenerator* dateGenerator,
       EndPointWriter* writer);
 
+  void generateRequest(const HttpRequestInfo& info);
   void generateRequest(const HttpRequestInfo& info, Buffer&& chunk);
   void generateRequest(const HttpRequestInfo& info, const BufferRef& chunk);
   void generateResponse(const HttpResponseInfo& info);
@@ -54,23 +54,30 @@ class CORTEX_HTTP_API Generator {
   void generateBody(Buffer&& chunk);
   void generateBody(const BufferRef& chunk);
   void generateBody(FileRef&& chunk);
-  void generateTrailer(const HeaderFieldList& trailers);
+  void generateEnd();
 
  private:
-  void generateRequestLine(const HttpRequestInfo& info);
-  void generateResponseLine(const HttpResponseInfo& info);
-  void generateHeaders(const HttpInfo& info);
-  void generateResponseInfo(const HttpResponseInfo& info);
+  template<typename T, typename... Args>
+  void write(Args... args);
+  void write(const Record* record);
+  void write(Type type, int requestId, const char* buf, size_t len);
+  void write(const void* buf, size_t len);
+
   void flushBuffer();
 
  private:
+  enum Mode { Nothing, GenerateRequest, GenerateResponse } mode_;
   int requestId_;
   size_t bytesTransmitted_;
-  HttpDateGenerator* dateGenerator_;
-  size_t contentLength_;
   Buffer buffer_;
   EndPointWriter* writer_;
 };
+
+template<typename T, typename... Args>
+inline void Generator::write(Args... args) {
+  T frame(args...);
+  write(&frame);
+}
 
 } // namespace fastcgi
 } // namespace http

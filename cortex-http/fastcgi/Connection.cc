@@ -64,7 +64,7 @@ class HttpFastCgiTransport : public HttpTransport { // {{{
 };
 
 HttpFastCgiTransport::HttpFastCgiTransport(int id, EndPointWriter* writer)
-    : generator_(id, nullptr, writer) {
+    : generator_(id, writer) {
 }
 
 HttpFastCgiTransport::~HttpFastCgiTransport() {
