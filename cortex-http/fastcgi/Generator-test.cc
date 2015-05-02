@@ -10,31 +10,53 @@
 #include <cortex-http/fastcgi/Generator.h>
 #include <cortex-base/net/EndPointWriter.h>
 #include <cortex-base/net/ByteArrayEndPoint.h>
+#include <cortex-base/logging.h>
 #include <gtest/gtest.h>
 
 using namespace cortex;
 
-#if 1 == 0
-TEST(http_fastcgi_Generator, simpleResponse) {
-  EndPointWriter writer;
-
+TEST(http_fastcgi_Generator, simpleRequest) {
   constexpr BufferRef content = "hello, world";
   HeaderFieldList headers = {
     {"Foo", "the-foo"},
     {"Bar", "the-bar"}
   };
-  HeaderFieldList trailers;
-  HttpResponseInfo info(HttpVersion::VERSION_1_1, HttpStatus::Ok, "my",
-      false, content.size(), headers, trailers);
+  HttpRequestInfo info(HttpVersion::VERSION_1_1, "PUT", "/index.html",
+                       content.size(), headers);
 
-  http::fastcgi::Generator generator(1, nullptr, &writer);
-  generator.generateResponse(info);
+  EndPointWriter writer;
+  http::fastcgi::Generator generator(1, &writer);
+  generator.generateRequest(info);
   generator.generateBody(content);
-  generator.generateTrailer(trailers);
+  generator.generateEnd();
 
   ByteArrayEndPoint ep(nullptr);
   writer.flush(&ep);
 
+  //printf("%s\n", ep.output().hexdump(HexDumpMode::PrettyAscii).c_str());
+
   //...
 }
-#endif
+
+TEST(http_fastcgi_Generator, simpleResponse) {
+  BufferRef content = "hello, world";
+  HeaderFieldList headers = {
+    {"Foo", "the-foo"},
+    {"Bar", "the-bar"}
+  };
+  HttpResponseInfo info(HttpVersion::VERSION_1_1, HttpStatus::Ok, "my",
+      false, content.size(), headers, {});
+
+  EndPointWriter writer;
+  http::fastcgi::Generator generator(1, &writer);
+  generator.generateResponse(info);
+  generator.generateBody(content);
+  generator.generateEnd();
+
+  ByteArrayEndPoint ep(nullptr);
+  writer.flush(&ep);
+
+  //printf("%s\n", ep.output().hexdump(HexDumpMode::PrettyAscii).c_str());
+
+  // TODO: verify
+}

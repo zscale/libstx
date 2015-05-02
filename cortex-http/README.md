@@ -77,5 +77,12 @@ HttpChannel(Connector, EndPoint, HttpTransport)
   Http1Channel(Connector, Http1Connection)
   FastCgiChannel(Connector, EndPoint, HttpTransport)
 
+cortex::http::fastcgi::
+  ConnectionFactory
+  Connection
+  RequestParser
+  ResponseParser
+  Generator
+
 ```
 
