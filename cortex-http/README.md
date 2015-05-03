@@ -59,30 +59,11 @@ xzero::http::
 ### Little Multiplex-Refactor
 
 ```
-EndPoint
-  ByteArrayEndPoint
-  InetEndPoint
-Connector
-  ByteArrayConnector
-  InetConnector
-Connection
-  Http1Connection(Connector, EndPoint) < HttpTransport
-  Http2Connection < HttpTransport
-  HttpFastCgiConnection
-  HttpMockConnection < HttpTransport
-HttpTransport
-  Http1Connection < Connection
-  FastCgiTransport(int rid, Flusher)
-HttpChannel(Connector, EndPoint, HttpTransport)
-  Http1Channel(Connector, Http1Connection)
-  FastCgiChannel(Connector, EndPoint, HttpTransport)
-
 cortex::http::fastcgi::
   ConnectionFactory
   Connection
   RequestParser
   ResponseParser
   Generator
-
 ```
 
