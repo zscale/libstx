@@ -14,6 +14,7 @@
 #include <cortex-base/io/FileUtil.h>
 #include <cortex-base/MimeTypes.h>
 #include <cortex-base/cli/CLI.h>
+#include <cortex-base/cli/Flags.h>
 
 #include <cortex-base/io/LocalFileRepository.h>
 #include <cortex-http/HttpRequest.h>
@@ -22,8 +23,11 @@
 #include <cortex-http/HttpOutputCompressor.h>
 #include <cortex-http/HttpFileHandler.h>
 #include <cortex-http/http1/Http1ConnectionFactory.h>
+#include <cortex-http/fastcgi/ConnectionFactory.h>
 
 #include <iostream>
+
+using namespace cortex;
 
 int main(int argc, const char* argv[]) {
   cortex::NativeScheduler scheduler;
@@ -31,50 +35,52 @@ int main(int argc, const char* argv[]) {
 
   cortex::CLI cli;
   cli.defineBool("help", 'h', "Prints this help and terminates.")
-     .defineIPAddress("bind", 0, "<IP>", "Bind listener to given IP.",
-         cortex::IPAddress("0.0.0.0"))
-     .defineString("mimetypes", 0, "<PATH>", "Path to mime.types file.",
-         "/etc/mime.types", nullptr)
-     .defineNumber("port", 'p', "<PORT>", "Port number to listen to.",
-         3000)
-     .defineNumber("backlog", 0, "<COUNT>", "Listener backlog.",
-         128)
-     .defineNumber("timeout", 't', "<SECONDS>", "I/O timeout in seconds.",
-         30)
-     .defineString("very-long", 'L', "<TEXT>",
-         "A very very long help text for the rather short long option. "
-         "You can use it, but it will not produce or cause you anything "
-         "but a word-wrapped help text in the help output. "
-         "Have fun reading.",
-         "rather long", nullptr)
+     .defineIPAddress("bind", 0, "<IP>", "Bind listener to given IP.", cortex::IPAddress("0.0.0.0"))
+     .defineNumber("port", 'p', "<PORT>", "Port number to listen to.", 3000)
+     .defineNumber("backlog", 0, "<COUNT>", "Listener backlog.", 128)
+     .defineNumber("timeout", 't', "<SECONDS>", "I/O timeout in seconds.", 30)
+     .defineString("mimetypes", 0, "<PATH>", "Path to mime.types file.", "/etc/mime.types", nullptr)
+     .defineString("docroot", 'R', "<PATH>", "Path to document root.", FileUtil::realpath("."), nullptr)
      .defineBool("tcp-nodelay", 0, "Enables TCP_NODELAY.")
      .defineBool("tcp-quickack", 0, "Enables TCP_QUICKACK.")
-     .enableParameters("<garbage>", "Defines a list of unparsed arguments.")
+     .defineBool("fastcgi", 0, "Use FastCGI instead of HTTP/1 as transport protocol.")
      ;
 
-  std::cerr << "Parameters:" << std::endl
-            << cli.helpText() << std::endl;
+  Flags flags = cli.evaluate(argc, argv);
 
-  return 0;
+  if (flags.getBool("help")) {
+    std::cerr << "Parameters:" << std::endl
+              << cli.helpText() << std::endl;
+    return 0;
+  }
 
-  std::string docroot = argc == 2 ? argv[1] : ".";
-  docroot = cortex::FileUtil::realpath(docroot);
+  std::string docroot = cortex::FileUtil::realpath(flags.getString("docroot"));
 
   cortex::Server server;
   auto inet = server.addConnector<cortex::InetConnector>(
       "http", &scheduler, &scheduler, clock,
-      cortex::TimeSpan::fromSeconds(30),
-      cortex::TimeSpan::fromSeconds(30),
+      cortex::TimeSpan::fromSeconds(flags.getNumber("timeout")),
+      cortex::TimeSpan::fromSeconds(flags.getNumber("timeout")),
       cortex::TimeSpan::Zero,
       &cortex::logAndPass,
-      cortex::IPAddress("0.0.0.0"), 3000, 128, true, false);
-  auto http = inet->addConnectionFactory<cortex::http1::Http1ConnectionFactory>(
-      clock, 100, 512, 5, cortex::TimeSpan::fromMinutes(3));
+      flags.getIPAddress("bind"),
+      flags.getNumber("port"),
+      flags.getNumber("backlog"),
+      true,
+      false);
+
+  std::shared_ptr<HttpConnectionFactory> http;
+  if (flags.getBool("fastcgi"))
+    http = inet->addConnectionFactory<cortex::http::fastcgi::ConnectionFactory>(
+        clock, 100, 512, cortex::TimeSpan::fromSeconds(8));
+  else
+    http = inet->addConnectionFactory<cortex::http1::Http1ConnectionFactory>(
+        clock, 100, 512, 5, cortex::TimeSpan::fromSeconds(8));
 
   cortex::HttpOutputCompressor* compressor = http->outputCompressor();
   compressor->setMinSize(5);
 
-  cortex::MimeTypes mimetypes("/etc/mime.types", "application/octet-stream");
+  cortex::MimeTypes mimetypes(flags.getString("mimetypes"), "application/octet-stream");
   cortex::LocalFileRepository vfs(mimetypes, "/", true, true, true);
   cortex::HttpFileHandler fileHandler;
 
