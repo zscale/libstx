@@ -383,7 +383,7 @@ HttpChannel* Connection::createChannel(int request) {
 }
 
 void Connection::removeChannel(int request) {
-  TRACE_CONN("%p removeChannel(%d) %s", this, request,
+  TRACE_CONN("%p removeChannel(%d) %s",
              this, request, isPersistent() ? "keepalive" : "close");
 
   auto i = channels_.find(request);
@@ -401,6 +401,9 @@ void Connection::removeChannel(int request) {
 }
 
 void Connection::setPersistent(bool enable) {
+  TRACE_CONN("setPersistent(%s) (timeout=%ds)",
+      enable ? "yes" : "no",
+      maxKeepAlive_.totalSeconds());
   if (maxKeepAlive_ != TimeSpan::Zero) {
     persistent_ = enable;
   }
