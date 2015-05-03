@@ -39,7 +39,13 @@ class CORTEX_HTTP_API HttpService {
   class Handler;
   class BuiltinAssetHandler;
 
+  enum Protocol {
+    HTTP1,
+    FCGI,
+  };
+
   HttpService();
+  explicit HttpService(Protocol protocol);
   ~HttpService();
 
   /**
@@ -83,13 +89,17 @@ class CORTEX_HTTP_API HttpService {
   void stop();
 
  private:
-  void enableHttp1(Connector* connector);
+  static Protocol getDefaultProtocol();
+  void attachProtocol(Connector* connector);
+  void attachHttp1(Connector* connector);
+  void attachFCGI(Connector* connector);
   void handleRequest(HttpRequest* request, HttpResponse* response);
   void onAllDataRead(HttpRequest* request, HttpResponse* response);
 
   friend class ServiceInputListener;
 
  private:
+  Protocol protocol_;
   Server* server_;
   LocalConnector* localConnector_;
   InetConnector* inetConnector_;
