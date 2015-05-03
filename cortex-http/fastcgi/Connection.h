@@ -44,14 +44,15 @@ class CORTEX_HTTP_API Connection : public cortex::Connection {
              HttpDateGenerator* dateGenerator,
              HttpOutputCompressor* outputCompressor,
              size_t maxRequestUriLength,
-             size_t maxRequestBodyLength);
+             size_t maxRequestBodyLength,
+             TimeSpan maxKeepAlive);
   ~Connection();
 
   HttpChannel* createChannel(int request);
   void removeChannel(int request);
 
   bool isPersistent() const noexcept { return persistent_; }
-  void setPersistent(bool enable) { persistent_ = enable; }
+  void setPersistent(bool enable);
 
   // cortex::net::Connection overrides
   void onOpen() override;
@@ -76,6 +77,7 @@ class CORTEX_HTTP_API Connection : public cortex::Connection {
   size_t maxRequestBodyLength_;
   HttpDateGenerator* dateGenerator_;
   HttpOutputCompressor* outputCompressor_;
+  TimeSpan maxKeepAlive_;
   Buffer inputBuffer_;
   size_t inputOffset_;
   bool persistent_;

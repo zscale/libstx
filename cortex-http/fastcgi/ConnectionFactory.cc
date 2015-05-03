@@ -19,17 +19,20 @@ namespace fastcgi {
 ConnectionFactory::ConnectionFactory()
     : ConnectionFactory(WallClock::system(),
                         4096,
-                        4 * 1024 * 1024) {
+                        4 * 1024 * 1024,
+                        TimeSpan::fromSeconds(8)) {
 }
 
 ConnectionFactory::ConnectionFactory(
     WallClock* clock,
     size_t maxRequestUriLength,
-    size_t maxRequestBodyLength)
+    size_t maxRequestBodyLength,
+    TimeSpan maxKeepAlive)
     : HttpConnectionFactory("fastcgi",
                             clock,
                             maxRequestUriLength,
-                            maxRequestBodyLength) {
+                            maxRequestBodyLength),
+      maxKeepAlive_(maxKeepAlive) {
   setInputBufferSize(16 * 1024);
 }
 
@@ -45,7 +48,8 @@ cortex::Connection* ConnectionFactory::create(
                                   dateGenerator(),
                                   outputCompressor(),
                                   maxRequestUriLength(),
-                                  maxRequestBodyLength()),
+                                  maxRequestBodyLength(),
+                                  maxKeepAlive()),
                    connector);
 }
 

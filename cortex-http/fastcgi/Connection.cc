@@ -216,13 +216,15 @@ Connection::Connection(EndPoint* endpoint,
                        HttpDateGenerator* dateGenerator,
                        HttpOutputCompressor* outputCompressor,
                        size_t maxRequestUriLength,
-                       size_t maxRequestBodyLength)
+                       size_t maxRequestBodyLength,
+                       TimeSpan maxKeepAlive)
     : cortex::Connection(endpoint, executor),
       handler_(handler),
       maxRequestUriLength_(maxRequestUriLength),
       maxRequestBodyLength_(maxRequestBodyLength),
       dateGenerator_(dateGenerator),
       outputCompressor_(outputCompressor),
+      maxKeepAlive_(maxKeepAlive),
       inputBuffer_(),
       inputOffset_(0),
       persistent_(false),
@@ -374,13 +376,15 @@ HttpChannel* Connection::createChannel(int request) {
 
     return (channels_[request] = std::move(channel)).get();
   } catch (...) {
+    persistent_ = false;
     removeChannel(request);
     throw;
   }
 }
 
 void Connection::removeChannel(int request) {
-  TRACE_CONN("%p removeChannel(%d)", this, request);
+  TRACE_CONN("%p removeChannel(%d) %s", this, request,
+             this, request, isPersistent() ? "keepalive" : "close");
 
   auto i = channels_.find(request);
   if (i != channels_.end()) {
@@ -390,11 +394,15 @@ void Connection::removeChannel(int request) {
   parser_.removeStreamState(request);
 
   if (isPersistent()) {
-    TRACE_CONN("%p removeChannel(%d): keepAlive", this, request);
     wantFill();
   } else if (channels_.empty()) {
-    TRACE_CONN("%p removeChannel(%d): closing endpoint", this, request);
     endpoint()->close();
+  }
+}
+
+void Connection::setPersistent(bool enable) {
+  if (maxKeepAlive_ != TimeSpan::Zero) {
+    persistent_ = enable;
   }
 }
 
