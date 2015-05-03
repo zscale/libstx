@@ -330,6 +330,13 @@ void HttpChannel::onProtocolError(HttpStatus code, const std::string& message) {
 void HttpChannel::completed() {
   TRACE("completed!");
 
+  if (response_->hasContentLength() && response_->output()->size() < response_->contentLength()) {
+    RAISE(RuntimeError,
+          "Attempt to complete() a response before having written the full response body (%zu of %zu).",
+          response_->output()->size(),
+          response_->contentLength());
+  }
+
   if (state() != HttpChannelState::HANDLING) {
     RAISE(IllegalStateError);
   }
