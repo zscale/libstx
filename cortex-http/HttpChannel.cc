@@ -67,6 +67,7 @@ HttpChannel::HttpChannel(HttpTransport* transport, const HttpHandler& handler,
 }
 
 HttpChannel::~HttpChannel() {
+  TRACE("%p dtor", this);
   //.
 }
 
@@ -327,34 +328,29 @@ void HttpChannel::onProtocolError(HttpStatus code, const std::string& message) {
 }
 
 void HttpChannel::completed() {
-  if (!response_->isCommitted()) {
-    TRACE("completed(): not committed yet. commit empty-body response");
-    if (!response_->hasContentLength() && request_->method() != HttpMethod::HEAD) {
-      response_->setContentLength(0);
-    }
-    send(BufferRef(), std::bind(&HttpChannel::completed, this));
-    return;
-  }
+  TRACE("completed!");
 
   if (state() != HttpChannelState::HANDLING) {
     RAISE(IllegalStateError);
   }
 
-  setState(HttpChannelState::DONE);
-
-  if (response_->hasContentLength() && response_->output()->size() < response_->contentLength()) {
-    transport_->abort();
-    return;
-  }
-
   if (!outputFilters_.empty()) {
+    TRACE("%p completed: send(applyFilters(EOS))", this);
     Buffer filtered;
     Filter::applyFilters(outputFilters_, "", &filtered, true);
-    transport_->send(std::move(filtered),
-                     std::bind(&HttpTransport::completed, transport_));
-    return;
+    transport_->send(std::move(filtered), nullptr);
+  } else if (!response_->isCommitted()) {
+    TRACE("%p completed: not committed yet. commit empty-body response", this);
+    if (!response_->hasContentLength() && request_->method() != HttpMethod::HEAD) {
+      response_->setContentLength(0);
+    }
+    HttpResponseInfo info(commitInline());
+    transport_->send(std::move(info), BufferRef(), nullptr);
   }
 
+  setState(HttpChannelState::DONE);
+
+  TRACE("%p completed: pass on to transport layer", this);
   transport_->completed();
 }
 
