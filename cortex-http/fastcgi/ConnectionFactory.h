@@ -28,11 +28,18 @@ class CORTEX_HTTP_API ConnectionFactory : public HttpConnectionFactory {
   ConnectionFactory(
       WallClock* clock,
       size_t maxRequestUriLength,
-      size_t maxRequestBodyLength);
+      size_t maxRequestBodyLength,
+      TimeSpan maxKeepAlive);
 
   ~ConnectionFactory();
 
+  TimeSpan maxKeepAlive() const CORTEX_NOEXCEPT { return maxKeepAlive_; }
+  void setMaxKeepAlive(TimeSpan value) { maxKeepAlive_ = value; }
+
   cortex::Connection* create(Connector* connector, EndPoint* endpoint) override;
+
+ private:
+  TimeSpan maxKeepAlive_;
 };
 
 } // namespace fastcgi
