@@ -10,6 +10,7 @@
 #include <cortex-http/HttpResponse.h>
 #include <cortex-http/HttpInputListener.h>
 #include <cortex-http/http1/Http1ConnectionFactory.h>
+#include <cortex-http/fastcgi/ConnectionFactory.h>
 #include <cortex-base/net/LocalConnector.h>
 #include <cortex-base/net/InetConnector.h>
 #include <cortex-base/net/Server.h>
@@ -56,7 +57,34 @@ void HttpService::InputListener::onError(const std::string& errorMessage) {
 // }}}
 
 HttpService::HttpService()
-    : server_(new Server()),
+    : HttpService(getDefaultProtocol()) {
+}
+
+HttpService::Protocol HttpService::getDefaultProtocol() {
+  const char* env = getenv("HTTP_TRANSPORT");
+  if (env == nullptr)
+    return HttpService::HTTP1;
+
+  if (strcmp(env, "fastcgi") == 0)
+    return HttpService::FCGI;
+
+  if (strcmp(env, "fcgi") == 0)
+    return HttpService::FCGI;
+
+  if (strcmp(env, "http") == 0)
+    return HttpService::HTTP1;
+
+  if (strcmp(env, "http1") == 0)
+    return HttpService::HTTP1;
+
+  RAISE(RuntimeError,
+        "Invalid value for environment variable HTTP_TRANSPORT: \"%s\".",
+        env);
+}
+
+HttpService::HttpService(Protocol protocol)
+    : protocol_(protocol),
+      server_(new Server()),
       localConnector_(nullptr),
       inetConnector_(nullptr),
       handlers_() {
@@ -72,7 +100,7 @@ LocalConnector* HttpService::configureLocal() {
 
   localConnector_ = server_->addConnector<LocalConnector>();
 
-  enableHttp1(localConnector_);
+  attachProtocol(localConnector_);
 
   return localConnector_;
 }
@@ -92,18 +120,29 @@ InetConnector* HttpService::configureInet(Executor* executor,
       "http", executor, scheduler, clock, readTimeout, writeTimeout,
       tcpFinTimeout, nullptr, ipaddress, port, backlog, true, false);
 
-  enableHttp1(inetConnector_);
+  attachProtocol(inetConnector_);
 
   return inetConnector_;
 }
 
-void HttpService::enableHttp1(Connector* connector) {
+void HttpService::attachProtocol(Connector* connector) {
+  switch (protocol_) {
+    case HTTP1:
+      attachHttp1(connector);
+      break;
+    case FCGI:
+      attachFCGI(connector);
+      break;
+  }
+}
+
+void HttpService::attachHttp1(Connector* connector) {
   // TODO: make them configurable via ctor
   WallClock* clock = WallClock::system();
   size_t maxRequestUriLength = 1024;
   size_t maxRequestBodyLength = 64 * 1024 * 1024;
   size_t maxRequestCount = 100;
-  TimeSpan maxKeepAlive = TimeSpan::fromSeconds(120);
+  TimeSpan maxKeepAlive = TimeSpan::fromSeconds(8);
 
   auto http = connector->addConnectionFactory<cortex::http1::Http1ConnectionFactory>(
       clock,
@@ -113,6 +152,19 @@ void HttpService::enableHttp1(Connector* connector) {
       maxKeepAlive);
 
   http->setHandler(std::bind(&HttpService::handleRequest, this,
+                   std::placeholders::_1, std::placeholders::_2));
+}
+
+void HttpService::attachFCGI(Connector* connector) {
+  WallClock* clock = WallClock::system();
+  size_t maxRequestUriLength = 1024;
+  size_t maxRequestBodyLength = 64 * 1024 * 1024;
+  TimeSpan maxKeepAlive = TimeSpan::fromSeconds(8);
+
+  auto fcgi = connector->addConnectionFactory<http::fastcgi::ConnectionFactory>(
+      clock, maxRequestUriLength, maxRequestBodyLength, maxKeepAlive);
+
+  fcgi->setHandler(std::bind(&HttpService::handleRequest, this,
                    std::placeholders::_1, std::placeholders::_2));
 }
 
