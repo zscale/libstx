@@ -15,13 +15,16 @@
 #include <cortex-base/io/Filter.h>
 #include <cortex-base/executor/NativeScheduler.h>
 #include <cortex-base/WallClock.h>
+#include <cortex-base/logging.h>
 
 #include <cctype>
 
-class Capslock : public cortex::Filter {
+using namespace cortex;
+
+class Capslock : public Filter {
  public:
-  void filter(const cortex::BufferRef& input,
-              cortex::Buffer* output,
+  void filter(const BufferRef& input,
+              Buffer* output,
               bool last) override {
     printf("Capslock.filter(size=%zu, last=%s)\n",
         input.size(), last ? "true" : "false");
@@ -35,24 +38,26 @@ class Capslock : public cortex::Filter {
 /**
  * Some custom HTTP request demo-handler.
  */
-class MyHandler : public cortex::HttpService::Handler {
+class MyHandler : public HttpService::Handler {
  public:
-  bool handleRequest(cortex::HttpRequest* request, cortex::HttpResponse* response) override {
+  bool handleRequest(HttpRequest* request, HttpResponse* response) override {
+    logTrace("myservice", "MyHandler.handle: %s", request->path().c_str());
+
     if (request->path() == "/") {
-      response->setStatus(cortex::HttpStatus::Found);
+      response->setStatus(HttpStatus::Found);
       response->addHeader("Location", "/welcome");
       response->completed();
       return true;
     }
 
     if (request->path() == "/error") {
-      response->sendError(cortex::HttpStatus::BadRequest, "Custom Error");
+      response->sendError(HttpStatus::BadRequest, "Custom Error");
       return true;
     }
 
     if (request->path() == "/chunked") {
       // not invoking setContentLength() causes the response to be chunked.
-      response->setStatus(cortex::HttpStatus::Ok);
+      response->setStatus(HttpStatus::Ok);
       response->addHeader("Content-Type", "text/plain");
       response->output()->write("Hello!\n");
       response->output()->write("World!\n");
@@ -61,14 +66,14 @@ class MyHandler : public cortex::HttpService::Handler {
     }
 
     if (request->path() == "/trailer") {
-      response->setStatus(cortex::HttpStatus::Ok);
+      response->setStatus(HttpStatus::Ok);
 
       response->addHeader("Content-Type", "text/plain");
 
       response->registerTrailer("Word-Count");
       response->registerTrailer("Mood");
 
-      cortex::BufferRef body = "Hello, World!\n";
+      BufferRef body = "Hello, World!\n";
       response->setContentLength(body.size());
       response->output()->write(body);
 
@@ -80,9 +85,9 @@ class MyHandler : public cortex::HttpService::Handler {
     }
 
     if (request->path() == "/capslock-filter") {
-      response->setStatus(cortex::HttpStatus::Ok);
+      response->setStatus(HttpStatus::Ok);
 
-      cortex::Buffer body;
+      Buffer body;
       for (const auto& field: request->headers())
         body << field.name() << " = " << field.value() << "\n";
 
@@ -94,11 +99,11 @@ class MyHandler : public cortex::HttpService::Handler {
     }
 
     if (request->path() == "/headers") {
-      cortex::Buffer body;
+      Buffer body;
       for (const auto& field: request->headers()) {
         body << field.name() << " = " << field.value() << "\n";
       }
-      response->setStatus(cortex::HttpStatus::Ok);
+      response->setStatus(HttpStatus::Ok);
       response->addHeader("Content-Type", "text/plain");
       response->output()->write(body);
       response->completed();
@@ -106,17 +111,29 @@ class MyHandler : public cortex::HttpService::Handler {
     }
 
     if (request->path() == "/echo") {
-      cortex::Buffer body;
+      Buffer body;
       request->input()->read(&body);
-      response->setStatus(cortex::HttpStatus::Ok);
+      response->setStatus(HttpStatus::Ok);
       response->setContentLength(body.size());
       response->output()->write(std::move(body));
       response->completed();
       return true;
     }
 
+    if (request->path() == "/wait") {
+      WallClock::sleep(TimeSpan::fromSeconds(8));
+
+      response->setStatus(HttpStatus::Ok);
+      response->addHeader("Content-Type", "text/html");
+      response->output()->write("<html>\n"
+                                " <body> <h2>Sleepy World ... </h2> </body>\n"
+                                "</html>\n");
+      response->completed();
+      return true;
+    }
+
     if (request->path() == "/welcome") {
-      response->setStatus(cortex::HttpStatus::Ok);
+      response->setStatus(HttpStatus::Ok);
       response->addHeader("Content-Type", "text/html");
       response->output()->write("<html>\n"
                                 " <head>\n"
@@ -132,18 +149,18 @@ class MyHandler : public cortex::HttpService::Handler {
 };
 
 int main(int argc, const char* argv[]) {
-  cortex::NativeScheduler scheduler;
-  cortex::WallClock* clock = cortex::WallClock::monotonic();
+  NativeScheduler scheduler;
+  WallClock* clock = WallClock::monotonic();
 
   MyHandler myHandler;
-  cortex::HttpService::BuiltinAssetHandler builtinAssets;
-  cortex::HttpService httpService;
+  HttpService::BuiltinAssetHandler builtinAssets;
+  HttpService httpService;
 
   httpService.configureInet(&scheduler, &scheduler, clock,
-                            cortex::TimeSpan::fromSeconds(10),
-                            cortex::TimeSpan::fromSeconds(10),
-                            cortex::TimeSpan::Zero,
-                            cortex::IPAddress("0.0.0.0"), 3000);
+                            TimeSpan::fromSeconds(10),
+                            TimeSpan::fromSeconds(10),
+                            TimeSpan::Zero,
+                            IPAddress("0.0.0.0"), 3000);
   httpService.addHandler(&myHandler);
   httpService.addHandler(&builtinAssets);
 
