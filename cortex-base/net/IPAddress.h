@@ -187,16 +187,20 @@ inline bool operator!=(const IPAddress& a, const IPAddress& b) {
 }  // namespace cortex
 
 namespace std {
+
 template <>
-struct hash<cortex::IPAddress> : public unary_function<cortex::IPAddress, size_t> {
-  size_t operator()(const cortex::IPAddress& v) const {
+struct hash<::cortex::IPAddress>
+    : public unary_function<::cortex::IPAddress, size_t> {
+  size_t operator()(const ::cortex::IPAddress& v) const {
     return *(uint32_t*)(v.data());
   }
 };
 
-inline std::ostream& operator<<(std::ostream& os, const cortex::IPAddress& ipaddr) {
+inline ostream& operator<<(ostream& os, const ::cortex::IPAddress& ipaddr) {
   os << ipaddr.str();
   return os;
 }
-}
+
+} // namespace std
+
 #endif
