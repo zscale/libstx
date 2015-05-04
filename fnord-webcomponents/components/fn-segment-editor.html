@@ -814,11 +814,6 @@
       this.setAttribute('data-active', 'active');
 
       var flyout = this.querySelector("fn-segment-flyout");
-      var field = this.querySelector("fn-segment-editor-field");
-
-      flyout.style.marginLeft =
-        (flyout.offsetWidth / 2 - field.offsetWidth / 2) * -1 + "px";
-
       flyout.onclick = function(e) {
         e.stopPropagation();
       }
@@ -871,7 +866,7 @@
       segment_select.querySelector("[data-action='cancel-segment']")
         .onclick = function(e) {
           e.stopPropagation();
-          _this.changeView("fn-segment-flyout", false);
+          _this.changeView("fn-segment-recent", true);
       }
 
       if (segment_select.querySelector("fn-menu")) {
@@ -914,20 +909,31 @@
 
 
     this.changeView = function(selector, modalView) {
-      var view = this.querySelector(selector);
-      var active_view = this.querySelector(".segment-active");
       var modal = this.querySelector("fn-modal");
-
       if (modalView == false) {
         modal.close();
       } else {
         modal.show();
       }
 
+      if (!selector) {
+        return;
+      }
+
+      var view = this.querySelector(selector);
+      var active_view = this.querySelector(".segment-active");
+
       if (active_view) {
         active_view.classList.remove("segment-active");
       }
+
       view.classList.add("segment-active");
+
+      if (selector == 'fn-segment-flyout') {
+        var field = this.querySelector("fn-segment-editor-field");
+        view.style.marginLeft =
+          (view.offsetWidth / 2 - field.offsetWidth / 2) * -1 + "px";
+      }
     };
 
 
