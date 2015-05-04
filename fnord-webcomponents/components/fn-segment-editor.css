@@ -390,8 +390,8 @@ fn-segment-header input.fn-input,
   font-size: 90%;
 }
 
-fn-segment-header.segment-error fn-segment-error-message,
-.fn-segment-header.segment-error .fn-segment-error-message {
+fn-segment-header fn-segment-error-message.segment-error,
+.fn-segment-header .fn-segment-error-message.segment-error {
   margin-top: 0.8em;
   margin-left: 5px;
   padding: 0;
@@ -399,9 +399,7 @@ fn-segment-header.segment-error fn-segment-error-message,
   display: inline-block;
 }
 
-.segment-error fn-segment-header:not(.segment-error) fn-segment-error-message {
-  display: none;
-}
+
 
 
 /*****************
@@ -674,8 +672,8 @@ fn-segment-error-message,
   font-style: italic;
 }
 
-.segment-error fn-segment-error-message,
-.segment-error .fn-segment-error-message {
+fn-segment-error-message.segment-error ,
+.fn-segment-error-message.segment-error {
   display: block;
   padding: 1em 2em 0em;
 }
