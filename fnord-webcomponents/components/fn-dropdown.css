@@ -393,3 +393,11 @@ fn-dropdown.input .fn-dropdown-header:hover {
   box-shadow: none;
 }
 
+[data-check] {
+  visibility: hidden;
+}
+
+[data-check][data-active] {
+  visibility: visible;
+}
+
