@@ -14,6 +14,9 @@ namespace cortex {
 
 class Buffer;
 class BufferRef;
+
+namespace http {
+
 class HttpInputListener;
 
 /**
@@ -72,4 +75,5 @@ class CORTEX_HTTP_API HttpInput {
   HttpInputListener* listener_;
 };
 
+}  // namespace http
 }  // namespace cortex

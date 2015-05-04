@@ -10,6 +10,7 @@
 #include <cortex-base/WallClock.h>
 
 namespace cortex {
+namespace http {
 
 HttpConnectionFactory::HttpConnectionFactory(
     const std::string& protocolName,
@@ -37,4 +38,5 @@ Connection* HttpConnectionFactory::configure(Connection* connection,
   return ConnectionFactory::configure(connection, connector);
 }
 
+}  // namespace http
 }  // namespace cortex

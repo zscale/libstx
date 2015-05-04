@@ -10,10 +10,12 @@
 #include <functional>
 
 namespace cortex {
+namespace http {
 
 class HttpRequest;
 class HttpResponse;
 
 typedef std::function<void(HttpRequest*, HttpResponse*)> HttpHandler;
 
+}  // namespace http
 }  // namespace cortex

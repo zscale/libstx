@@ -10,6 +10,8 @@
 #include <cortex-base/Buffer.h>
 
 namespace cortex {
+namespace http {
+namespace mock {
 
 class MockInput : public HttpInput {
  public:
@@ -24,4 +26,6 @@ class MockInput : public HttpInput {
   Buffer buffer_;
 };
 
+} // namespace mock
+} // namespace http
 } // namespace cortex

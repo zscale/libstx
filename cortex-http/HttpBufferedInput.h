@@ -11,13 +11,12 @@
 #include <cortex-base/Buffer.h>
 
 namespace cortex {
-
-class HttpConnection;
+namespace http {
 
 /**
  * HTTP/1 message body consumer.
  */
-class HttpBufferedInput : public cortex::HttpInput {
+class HttpBufferedInput : public HttpInput {
  public:
   HttpBufferedInput();
   ~HttpBufferedInput();
@@ -34,4 +33,5 @@ class HttpBufferedInput : public cortex::HttpInput {
   size_t offset_;
 };
 
+}  // namespace http
 }  // namespace cortex

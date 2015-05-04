@@ -14,6 +14,7 @@
 #include <memory>
 
 namespace cortex {
+namespace http {
 
 /**
  * HTTP message observer.
@@ -98,5 +99,5 @@ class CORTEX_HTTP_API HttpListener {
   virtual void onProtocolError(HttpStatus code, const std::string& message) = 0;
 };
 
+}  // namespace http
 }  // namespace cortex
-

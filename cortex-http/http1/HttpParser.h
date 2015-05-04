@@ -14,6 +14,7 @@
 #include <memory>
 
 namespace cortex {
+namespace http {
 
 class HttpListener;
 
@@ -211,5 +212,5 @@ class CORTEX_HTTP_API HttpParser {
 CORTEX_HTTP_API std::string to_string(http1::HttpParser::State state);
 
 }  // namespace http1
-
+}  // namespace http
 }  // namespace cortex

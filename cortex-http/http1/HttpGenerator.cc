@@ -16,6 +16,7 @@
 #include <cortex-base/sysconfig.h>
 
 namespace cortex {
+namespace http {
 namespace http1 {
 
 HttpGenerator::HttpGenerator(EndPointWriter* output)
@@ -244,4 +245,5 @@ void HttpGenerator::flushBuffer() {
 }
 
 }  // namespace http1
-}  // namespace
+}  // namespace http
+}  // namespace cortex

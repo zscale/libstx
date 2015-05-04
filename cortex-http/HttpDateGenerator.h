@@ -16,6 +16,8 @@ namespace cortex {
 
 class WallClock;
 
+namespace http {
+
 /**
  * API to generate an HTTP conform Date response header field value.
  */
@@ -36,4 +38,5 @@ class CORTEX_HTTP_API HttpDateGenerator {
   std::mutex mutex_;
 };
 
+} // namespace http
 } // namespace cortex

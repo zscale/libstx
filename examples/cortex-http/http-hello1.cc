@@ -18,18 +18,21 @@
 #include <cortex-http/http1/Http1ConnectionFactory.h>
 #include <cortex-base/logging.h>
 
-std::unique_ptr<cortex::SslConnector> createSslConnector( // {{{
-    const std::string& name, int port, cortex::Executor* executor,
-    cortex::Scheduler* scheduler, cortex::WallClock* clock) {
+using namespace cortex;
+using namespace cortex::http;
 
-  std::unique_ptr<cortex::SslConnector> connector(
-      new cortex::SslConnector(name, executor, scheduler, clock,
-                              cortex::TimeSpan::fromSeconds(30),
-                              cortex::TimeSpan::fromSeconds(30),
-                              cortex::TimeSpan::Zero,
+std::unique_ptr<SslConnector> createSslConnector( // {{{
+    const std::string& name, int port, Executor* executor,
+    Scheduler* scheduler, WallClock* clock) {
+
+  std::unique_ptr<SslConnector> connector(
+      new SslConnector(name, executor, scheduler, clock,
+                              TimeSpan::fromSeconds(30),
+                              TimeSpan::fromSeconds(30),
+                              TimeSpan::Zero,
                               [](const std::exception& e) {
-                                  cortex::logError("hello", e); },
-                              cortex::IPAddress("0.0.0.0"), port, 128,
+                                 logError("hello", e); },
+                              IPAddress("0.0.0.0"), port, 128,
                               true, true));
 
   connector->addContext("../../server.crt", "../../server.key");
@@ -39,45 +42,45 @@ std::unique_ptr<cortex::SslConnector> createSslConnector( // {{{
 // }}}
 
 int main() {
-  auto clock = cortex::WallClock::monotonic();
-  cortex::NativeScheduler scheduler;
-  cortex::Server server;
+  auto clock = WallClock::monotonic();
+  NativeScheduler scheduler;
+  Server server;
 
-  auto inet = server.addConnector<cortex::InetConnector>(
+  auto inet = server.addConnector<InetConnector>(
       "http", &scheduler, &scheduler,  clock,
-      cortex::TimeSpan::fromSeconds(60),
-      cortex::TimeSpan::fromSeconds(60),
-      cortex::TimeSpan::Zero,
-      &cortex::logAndPass,
-      cortex::IPAddress("0.0.0.0"), 3000, 128, true, false);
+      TimeSpan::fromSeconds(60),
+      TimeSpan::fromSeconds(60),
+      TimeSpan::Zero,
+      &logAndPass,
+      IPAddress("0.0.0.0"), 3000, 128, true, false);
   inet->setBlocking(false);
 
   auto https = createSslConnector("https", 3443, &scheduler, &scheduler, clock);
 
-  auto http = inet->addConnectionFactory<cortex::http1::Http1ConnectionFactory>(
-      clock, 100, 512, 5, cortex::TimeSpan::fromMinutes(3));
+  auto http = inet->addConnectionFactory<http1::Http1ConnectionFactory>(
+      clock, 100, 512, 5, TimeSpan::fromMinutes(3));
 
-  auto handler = [&](cortex::HttpRequest* request,
-                     cortex::HttpResponse* response) {
-    response->setStatus(cortex::HttpStatus::Ok);
+  auto handler = [&](HttpRequest* request,
+                     HttpResponse* response) {
+    response->setStatus(HttpStatus::Ok);
     response->setReason("because");
 
     if (request->path() == "/bye") {
       server.stop();
     }
 
-    cortex::Buffer body;
+    Buffer body;
     body << "Hello " << request->path() << "\n";
     response->setContentLength(body.size());
     response->output()->write(
         std::move(body),
-        std::bind(&cortex::HttpResponse::completed, response));
+        std::bind(&HttpResponse::completed, response));
   };
 
   http->setHandler(handler);
 
-  https->addConnectionFactory<cortex::http1::Http1ConnectionFactory>(
-      clock, 100, 512, 5, cortex::TimeSpan::fromMinutes(3))->setHandler(handler);
+  https->addConnectionFactory<http1::Http1ConnectionFactory>(
+      clock, 100, 512, 5, TimeSpan::fromMinutes(3))->setHandler(handler);
 
   server.addConnector(std::move(https));
 

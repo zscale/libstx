@@ -8,6 +8,7 @@
 #include <cortex-http/HttpListener.h>
 
 namespace cortex {
+namespace http {
 
 bool HttpListener::onMessageBegin(const BufferRef& method, const BufferRef& uri,
                                   HttpVersion version) {
@@ -49,4 +50,5 @@ void HttpListener::onProtocolError(HttpStatus code,
   //.
 }
 
+}  // namespace http
 }  // namespace cortex

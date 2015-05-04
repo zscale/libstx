@@ -23,6 +23,7 @@
 #include <gtest/gtest.h>
 
 using namespace cortex;
+using namespace cortex::http;
 
 static std::string generateBoundaryID() {
   return "HelloBoundaryID";
@@ -46,7 +47,7 @@ void staticfileHandler(HttpRequest* request, HttpResponse* response) {
 
 TEST(HttpFileHandler, GET_FileNotFound) {
   DirectExecutor executor;
-  MockTransport transport(&executor, &staticfileHandler);
+  mock::MockTransport transport(&executor, &staticfileHandler);
   transport.run(HttpVersion::VERSION_1_1, "GET", "/notfound.txt",
       {{"Host", "test"}}, "");
   ASSERT_EQ(HttpVersion::VERSION_1_1, transport.responseInfo().version());

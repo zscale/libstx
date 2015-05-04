@@ -13,6 +13,7 @@
 #include <string>
 
 namespace cortex {
+namespace http {
 
 class HttpRequest;
 class HttpResponse;
@@ -54,4 +55,5 @@ class CORTEX_HTTP_API HttpOutputCompressor {
   std::unordered_map<std::string, int> contentTypes_;
 };
 
+} // namespace http
 } // namespace cortex

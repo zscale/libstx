@@ -11,6 +11,7 @@
 #include <cortex-base/WallClock.h>
 
 namespace cortex {
+namespace http {
 namespace http1 {
 
 Http1ConnectionFactory::Http1ConnectionFactory()
@@ -52,4 +53,5 @@ Connection* Http1ConnectionFactory::create(Connector* connector,
 }
 
 }  // namespace http1
+}  // namespace http
 }  // namespace cortex

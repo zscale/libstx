@@ -9,6 +9,7 @@
 #include <stdexcept>
 
 namespace cortex {
+namespace http {
 
 #define SRET(slit) { static std::string val(slit); return val; }
 
@@ -43,4 +44,5 @@ HttpVersion make_version(const std::string& value) {
   }
 }
 
+} // namespace http
 } // namespace cortex

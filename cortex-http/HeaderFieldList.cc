@@ -10,6 +10,7 @@
 #include <algorithm>
 
 namespace cortex {
+namespace http {
 
 HeaderFieldList::HeaderFieldList(
     const std::initializer_list<std::pair<std::string, std::string>>& init) {
@@ -92,4 +93,5 @@ void HeaderFieldList::reset() {
   entries_.clear();
 }
 
+}  // namespace http
 }  // namespace cortex

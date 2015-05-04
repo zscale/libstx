@@ -13,11 +13,12 @@
 #include <string>
 
 namespace cortex {
+namespace http {
 namespace http1 {
 
 class HttpConnection;
 
-class Http1Channel : public cortex::HttpChannel {
+class Http1Channel : public HttpChannel {
  public:
   Http1Channel(HttpConnection* transport,
               const HttpHandler& handler,
@@ -48,4 +49,5 @@ class Http1Channel : public cortex::HttpChannel {
 };
 
 } // namespace http1
+} // namespace http
 } // namespace cortex

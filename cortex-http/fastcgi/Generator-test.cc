@@ -14,6 +14,7 @@
 #include <gtest/gtest.h>
 
 using namespace cortex;
+using namespace cortex::http;
 
 TEST(http_fastcgi_Generator, simpleRequest) {
   constexpr BufferRef content = "hello, world";

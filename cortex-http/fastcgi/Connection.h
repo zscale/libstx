@@ -21,12 +21,13 @@
 #include <list>
 
 namespace cortex {
+namespace http {
 
 class HttpDateGenerator;
 class HttpOutputCompressor;
 class HttpChannel;
+class HttpListener;
 
-namespace http {
 namespace fastcgi {
 
 class HttpFastCgiChannel;
@@ -35,7 +36,7 @@ class HttpFastCgiTransport;
 /**
  * @brief Implements a HTTP/1.1 transport connection.
  */
-class CORTEX_HTTP_API Connection : public cortex::Connection {
+class CORTEX_HTTP_API Connection : public ::cortex::Connection {
   friend class HttpFastCgiTransport;
  public:
   Connection(EndPoint* endpoint,

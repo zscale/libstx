@@ -8,8 +8,10 @@
 #include <cortex-http/HttpTransport.h>
 
 namespace cortex {
+namespace http {
 
 HttpTransport::~HttpTransport() {
 }
 
+}  // namespace http
 }  // namespace cortex

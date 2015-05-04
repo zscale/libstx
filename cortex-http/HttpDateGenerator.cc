@@ -12,6 +12,7 @@
 #include <ctime>
 
 namespace cortex {
+namespace http {
 
 HttpDateGenerator::HttpDateGenerator(WallClock* clock)
   : clock_(clock),
@@ -50,4 +51,5 @@ void HttpDateGenerator::fill(Buffer* target) {
   target->push_back(buffer_);
 }
 
+} // namespace http
 } // namespace cortex

@@ -11,6 +11,7 @@
 #include <string>
 
 namespace cortex {
+namespace http {
 
 /**
  * Callback API for HTTP message body availability.
@@ -39,4 +40,5 @@ class CORTEX_HTTP_API HttpInputListener {
   virtual void onError(const std::string& errorMessage) = 0;
 };
 
+} // namespace http
 } // namespace cortex

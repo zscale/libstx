@@ -11,6 +11,7 @@
 #include <string>
 
 namespace cortex {
+namespace http {
 
 enum class HttpMethod {
   UNKNOWN_METHOD,
@@ -27,4 +28,5 @@ enum class HttpMethod {
 CORTEX_HTTP_API std::string to_string(HttpMethod value);
 CORTEX_HTTP_API HttpMethod to_method(const std::string& value);
 
+} // namespace http
 } // namespace cortex

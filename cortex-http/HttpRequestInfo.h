@@ -13,6 +13,7 @@
 #include <string>
 
 namespace cortex {
+namespace http {
 
 /**
  * HTTP Request Message Info.
@@ -46,5 +47,5 @@ inline HttpRequestInfo::HttpRequestInfo(HttpVersion version,
       entity_(entity) {
 }
 
+}  // namespace http
 }  // namespace cortex
-

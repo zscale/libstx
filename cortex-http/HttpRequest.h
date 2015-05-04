@@ -20,6 +20,7 @@
 #include <memory>
 
 namespace cortex {
+namespace http {
 
 /**
  * Represents an HTTP request message.
@@ -95,4 +96,5 @@ class CORTEX_HTTP_API HttpRequest {
   std::string username_; // the client's username, if authenticated
 };
 
+}  // namespace http
 }  // namespace cortex

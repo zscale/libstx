@@ -13,9 +13,10 @@
 #include <gtest/gtest.h>
 
 using namespace cortex;
-using namespace cortex::http1;
+using namespace cortex::http;
+using namespace cortex::http::http1;
 
-class HttpParserCallbacks : public cortex::HttpListener {  // {{{
+class HttpParserCallbacks : public HttpListener {  // {{{
  public:
   HttpParserCallbacks() = default;
 
@@ -28,7 +29,7 @@ class HttpParserCallbacks : public cortex::HttpListener {  // {{{
   bool onMessageHeaderEnd() override;
   bool onMessageContent(const BufferRef& chunk) override;
   bool onMessageEnd() override;
-  void onProtocolError(cortex::HttpStatus code, const std::string& msg) override;
+  void onProtocolError(HttpStatus code, const std::string& msg) override;
 
  public:
   std::function<bool(const BufferRef& method, const BufferRef& entity,
@@ -40,7 +41,7 @@ class HttpParserCallbacks : public cortex::HttpListener {  // {{{
   std::function<bool()> headerEnd;
   std::function<bool(const BufferRef& chunk)> content;
   std::function<bool()> end;
-  std::function<void(cortex::HttpStatus, const std::string&)> protocolError;
+  std::function<void(HttpStatus, const std::string&)> protocolError;
 };
 
 bool HttpParserCallbacks::onMessageBegin(const BufferRef& method,
@@ -102,7 +103,7 @@ void HttpParserCallbacks::onProtocolError(HttpStatus code,
     protocolError(code, msg);
 }
 // }}}
-class HttpParserListener : public cortex::HttpListener {  // {{{
+class HttpParserListener : public HttpListener {  // {{{
  public:
   HttpParserListener();
 
@@ -115,7 +116,7 @@ class HttpParserListener : public cortex::HttpListener {  // {{{
   bool onMessageHeaderEnd() override;
   bool onMessageContent(const BufferRef& chunk) override;
   bool onMessageEnd() override;
-  void onProtocolError(cortex::HttpStatus code, const std::string& msg) override;
+  void onProtocolError(HttpStatus code, const std::string& msg) override;
 
  public:
   std::string method;
@@ -125,7 +126,7 @@ class HttpParserListener : public cortex::HttpListener {  // {{{
   std::string statusReason;
   std::vector<std::pair<std::string, std::string>> headers;
   Buffer body;
-  cortex::HttpStatus errorCode;
+  HttpStatus errorCode;
   std::string errorMessage;
 
   bool messageBegin;
@@ -140,7 +141,7 @@ HttpParserListener::HttpParserListener()
       statusCode(HttpStatus::Undefined),
       statusReason(),
       headers(),
-      errorCode(cortex::HttpStatus::Undefined),
+      errorCode(HttpStatus::Undefined),
       errorMessage(),
       messageBegin(false),
       headerEnd(false),
@@ -191,7 +192,7 @@ bool HttpParserListener::onMessageEnd() {
   return true;
 }
 
-void HttpParserListener::onProtocolError(cortex::HttpStatus code,
+void HttpParserListener::onProtocolError(HttpStatus code,
                                          const std::string& msg) {
   errorCode = code;
   errorMessage = msg;
@@ -419,7 +420,7 @@ TEST(HttpParser, requestWithHeadersAndBodyChunked_invalid1) {
       "\r\n");
 
   ASSERT_EQ(55, n);
-  ASSERT_EQ(cortex::HttpStatus::BadRequest, listener.errorCode);
+  ASSERT_EQ(HttpStatus::BadRequest, listener.errorCode);
 }
 
 TEST(HttpParser, pipelined1) {

@@ -25,6 +25,7 @@
 #include <cstdlib>
 
 namespace cortex {
+namespace http {
 namespace http1 {
 
 #define ERROR(msg...) logError("http1.HttpConnection", msg)
@@ -347,4 +348,5 @@ void HttpConnection::onInterestFailure(const std::exception& error) {
 }
 
 }  // namespace http1
+}  // namespace http
 }  // namespace cortex

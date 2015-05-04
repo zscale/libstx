@@ -218,7 +218,7 @@ Connection::Connection(EndPoint* endpoint,
                        size_t maxRequestUriLength,
                        size_t maxRequestBodyLength,
                        TimeSpan maxKeepAlive)
-    : cortex::Connection(endpoint, executor),
+    : ::cortex::Connection(endpoint, executor),
       handler_(handler),
       maxRequestUriLength_(maxRequestUriLength),
       maxRequestBodyLength_(maxRequestBodyLength),

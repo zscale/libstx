@@ -20,6 +20,8 @@
 #include <system_error>
 
 namespace cortex {
+namespace http {
+namespace mock {
 
 MockTransport::MockTransport(Executor* executor, const HttpHandler& handler)
     : MockTransport(executor, handler, 32, 64, nullptr, nullptr) {
@@ -165,3 +167,5 @@ void MockTransport::send(FileRef&& chunk, CompletionHandler onComplete) {
 }
 
 } // namespace mock
+} // namespace http
+} // namespace cortex

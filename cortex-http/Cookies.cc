@@ -12,6 +12,7 @@
 #include <cortex-base/StringUtil.h>
 
 namespace cortex {
+namespace http {
 
 bool Cookies::getCookie(
     const CookieList& cookies,
@@ -85,4 +86,5 @@ std::string Cookies::makeCookie(
   return cookie_str;
 }
 
+} // namespace http
 } // namespace cortex

@@ -14,6 +14,7 @@
 #include <string>
 
 namespace cortex {
+namespace http {
 
 class Cookies {
 public:
@@ -47,4 +48,5 @@ public:
   }
 };
 
+} // namespace http
 } // namespace cortex

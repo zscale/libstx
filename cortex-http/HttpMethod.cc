@@ -8,6 +8,7 @@
 #include <cortex-http/HttpMethod.h>
 
 namespace cortex {
+namespace http {
 
 #define SRET(slit) { static std::string val(slit); return val; }
 
@@ -50,4 +51,5 @@ HttpMethod to_method(const std::string& value) {
   }
 }
 
-} // namespace xcortex
+} // namespace http
+} // namespace cortex

@@ -14,6 +14,7 @@
 #include <string>
 
 namespace cortex {
+namespace http {
 
 /**
  * Base HTTP Message Info.
@@ -68,5 +69,5 @@ inline HttpInfo::HttpInfo(HttpVersion version, size_t contentLength,
   //.
 }
 
+}  // namespace http
 }  // namespace cortex
-

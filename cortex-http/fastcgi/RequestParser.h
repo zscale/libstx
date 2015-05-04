@@ -19,10 +19,10 @@
 #include <list>
 
 namespace cortex {
+namespace http {
 
 class HttpListener;
 
-namespace http {
 namespace fastcgi {
 
 /**

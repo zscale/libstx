@@ -17,10 +17,10 @@
 #include <utility>
 
 namespace cortex {
+namespace http {
 
 class HttpListener;
 
-namespace http {
 namespace fastcgi {
 
 /**
@@ -32,7 +32,7 @@ class CORTEX_HTTP_API ResponseParser {
     HttpListener* listener;
     size_t totalBytesReceived;
     bool contentFullyReceived;
-    http1::HttpParser http1Parser;
+    http::http1::HttpParser http1Parser;
 
     StreamState();
     ~StreamState();

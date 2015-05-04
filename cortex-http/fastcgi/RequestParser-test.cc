@@ -18,6 +18,7 @@
 #include <cortex-http/HttpChannel.h>
 
 using namespace cortex;
+using namespace cortex::http;
 
 /*
  * TODO:

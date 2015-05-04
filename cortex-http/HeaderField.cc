@@ -9,6 +9,7 @@
 #include <cortex-base/Buffer.h>
 
 namespace cortex {
+namespace http {
 
 HeaderField::HeaderField(const std::string& name, const std::string& value)
   : name_(name), value_(value) {
@@ -22,4 +23,5 @@ bool HeaderField::operator!=(const HeaderField& other) const {
   return !(*this == other);
 }
 
+} // namespace http
 } // namespace cortex

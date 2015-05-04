@@ -20,6 +20,8 @@
 #include <gtest/gtest.h>
 
 using namespace cortex;
+using namespace cortex::http;
+using namespace cortex::http::http1;
 
 // TODO use the HttpParser to parse the responses into high level abstracts
 //      for better testing.
@@ -49,21 +51,22 @@ static const size_t maxRequestCount = 5;
 static const TimeSpan maxKeepAlive = TimeSpan::fromSeconds(30);
 
 #define SCOPED_LOGGER() ScopedLogger _scoped_logger_;
-#define MOCK_HTTP1_SERVER(server, localConnector, executor)                    \
+#define MOCK_HTTP1_SERVER(server, localConnector, executor)                     \
   cortex::Server server;                                                        \
   cortex::DirectExecutor executor(false);                                       \
   cortex::WallClock* clock = nullptr;                                           \
   auto localConnector = server.addConnector<cortex::LocalConnector>(&executor); \
-  auto http = localConnector->addConnectionFactory<cortex::http1::Http1ConnectionFactory>( \
-      clock, maxRequestUriLength, maxRequestBodyLength, maxRequestCount,       \
-      maxKeepAlive);                                                           \
-  http->setHandler([&](HttpRequest* request, HttpResponse* response) {         \
-      response->setStatus(HttpStatus::Ok);                                     \
-      response->setContentLength(request->path().size() + 1);                  \
-      response->setHeader("Content-Type", "text/plain");                       \
-      response->output()->write(Buffer(request->path() + "\n"),                \
-          std::bind(&HttpResponse::completed, response));                      \
-  });                                                                          \
+  auto http = localConnector->addConnectionFactory<                             \
+                                 cortex::http::http1::Http1ConnectionFactory>(  \
+      clock, maxRequestUriLength, maxRequestBodyLength, maxRequestCount,        \
+      maxKeepAlive);                                                            \
+  http->setHandler([&](HttpRequest* request, HttpResponse* response) {          \
+      response->setStatus(HttpStatus::Ok);                                      \
+      response->setContentLength(request->path().size() + 1);                   \
+      response->setHeader("Content-Type", "text/plain");                        \
+      response->output()->write(Buffer(request->path() + "\n"),                 \
+          std::bind(&HttpResponse::completed, response));                       \
+  });                                                                           \
   server.start();
 
 TEST(Http1, ConnectionClosed_1_1) {

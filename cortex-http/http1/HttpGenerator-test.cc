@@ -16,6 +16,8 @@
 #include <gtest/gtest.h>
 
 using namespace cortex;
+using namespace cortex::http;
+using namespace cortex::http::http1;
 
 // TEST(HttpGenerator, recycle) {
 // }

@@ -15,6 +15,7 @@
 #include <sstream>
 
 namespace cortex {
+namespace http {
 
 //! \addtogroup http
 //@{
@@ -92,6 +93,7 @@ class CORTEX_HTTP_API HttpRangeDef {
 
 //@}
 
+}  // namespace http
 }  // namespace cortex
 
 #include <cortex-http/HttpRangeDef-inl.h>

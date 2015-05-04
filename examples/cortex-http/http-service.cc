@@ -20,6 +20,7 @@
 #include <cctype>
 
 using namespace cortex;
+using namespace cortex::http;
 
 class Capslock : public Filter {
  public:

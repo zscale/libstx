@@ -24,6 +24,7 @@
 #include <cortex-base/sysconfig.h>
 
 namespace cortex {
+namespace http {
 
 #define ERROR(msg...) logError("http.HttpChannel", msg)
 
@@ -376,4 +377,5 @@ void HttpChannel::responseEnd() {
   cb();
 }
 
+}  // namespace http
 }  // namespace cortex

@@ -15,6 +15,7 @@
 #include <cstdlib>
 
 namespace cortex {
+namespace http {
 
 inline HttpRangeDef::HttpRangeDef() : ranges_() {}
 
@@ -154,6 +155,7 @@ inline std::string HttpRangeDef::str() const {
   return sstr.str();
 }
 
+}  // namespace http
 }  // namespace cortex
 
 // vim:syntax=cpp

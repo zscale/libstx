@@ -8,6 +8,7 @@
 #include <cortex-http/HttpInput.h>
 
 namespace cortex {
+namespace http {
 
 HttpInput::HttpInput()
     : listener_(nullptr) {
@@ -20,4 +21,5 @@ void HttpInput::setListener(HttpInputListener* listener) {
   listener_ = listener;
 }
 
+} // namespace http
 } // namespace cortex
