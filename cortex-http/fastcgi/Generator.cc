@@ -203,25 +203,26 @@ void Generator::generateEnd() {
 
 void Generator::write(Type type, int requestId, const char* buf, size_t len) {
   TRACE("write<%s>(rid=%zu, len=%zu)", to_string(type).c_str(), requestId, len);
-  constexpr size_t chunkSizeCap = 0xFFFF;
-  constexpr char padding[8] = {0};
 
-  if (len == 0) {
-    write(type, requestId, "", 0);
-    return;
-  }
+  if (len != 0) {
+    constexpr size_t chunkSizeCap = 0xFFFF;
+    constexpr char padding[8] = {0};
 
-  for (size_t offset = 0; offset < len;) {
-    size_t clen = std::min(len, chunkSizeCap + offset) - offset;
-    size_t plen =
-        clen % sizeof(padding) ? sizeof(padding) - clen % sizeof(padding) : 0;
+    for (size_t offset = 0; offset < len;) {
+      size_t clen = std::min(len, chunkSizeCap + offset) - offset;
+      size_t plen =
+          clen % sizeof(padding) ? sizeof(padding) - clen % sizeof(padding) : 0;
 
-    Record header(type, requestId, clen, plen);
+      Record header(type, requestId, clen, plen);
+      buffer_.push_back(&header, sizeof(header));
+      buffer_.push_back(buf + offset, clen);
+      buffer_.push_back(padding, plen);
+
+      offset += clen;
+    }
+  } else {
+    Record header(type, requestId, 0, 0);
     buffer_.push_back(&header, sizeof(header));
-    buffer_.push_back(buf + offset, clen);
-    buffer_.push_back(padding, plen);
-
-    offset += clen;
   }
 }
 
