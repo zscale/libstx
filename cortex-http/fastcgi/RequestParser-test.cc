@@ -159,7 +159,7 @@ TEST(http_fastcgi_Parser, simpleRequest) {
 
   Buffer fcgistream = makeParams({
       {"SERVER_PORT", "80"},
-      {"SERVER_PROTOCOL", "1.1"},
+      {"SERVER_PROTOCOL", "HTTP/1.1"},
       {"SERVER_NAME", "www.example.com"},
       {"REQUEST_METHOD", "GET"},
       {"REQUEST_URI", "/index.html"},
