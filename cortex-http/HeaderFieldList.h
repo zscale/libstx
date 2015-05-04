@@ -13,6 +13,7 @@
 #include <list>
 
 namespace cortex {
+namespace http {
 
 /**
  * Represents a list of headers (key/value pairs) for an HTTP message.
@@ -73,4 +74,5 @@ inline void HeaderFieldList::swap(HeaderFieldList& other) {
   entries_.swap(other.entries_);
 }
 
+}  // namespace http
 }  // namespace cortex

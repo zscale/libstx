@@ -9,6 +9,7 @@
 #include <cortex-base/logging.h>
 
 namespace cortex {
+namespace http {
 
 #ifndef NDEBUG
 # define DEBUG(msg...) logDebug("http.HttpRequest", msg)
@@ -346,4 +347,5 @@ void HttpRequest::setHost(const std::string& value) {
   host_ = value;
 }
 
+}  // namespace http
 }  // namespace cortex

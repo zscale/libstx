@@ -16,30 +16,33 @@
 #include <cortex-http/http1/Http1ConnectionFactory.h>
 #include <unistd.h>
 
+using namespace cortex;
+using namespace cortex::http;
+
 int main() {
-  cortex::ThreadedExecutor threadedExecutor;
-  cortex::Server server;
-  cortex::WallClock* clock = cortex::WallClock::monotonic();
+  ThreadedExecutor threadedExecutor;
+  Server server;
+  WallClock* clock = WallClock::monotonic();
   bool shutdown = false;
 
-  auto inet = server.addConnector<cortex::InetConnector>(
+  auto inet = server.addConnector<InetConnector>(
       "http", &threadedExecutor, nullptr, nullptr, clock,
-      cortex::TimeSpan::fromSeconds(30),
-      cortex::TimeSpan::Zero,
-      &cortex::logAndPass,
-      cortex::IPAddress("0.0.0.0"), 3000, 128, true, false);
+      TimeSpan::fromSeconds(30),
+      TimeSpan::Zero,
+      &logAndPass,
+      IPAddress("0.0.0.0"), 3000, 128, true, false);
   inet->setBlocking(true);
 
-  auto http = inet->addConnectionFactory<cortex::http1::Http1ConnectionFactory>(
-      clock, 100, 512, 5, cortex::TimeSpan::fromMinutes(3));
+  auto http = inet->addConnectionFactory<http1::Http1ConnectionFactory>(
+      clock, 100, 512, 5, TimeSpan::fromMinutes(3));
 
-  http->setHandler([](cortex::HttpRequest* request, cortex::HttpResponse* response) {
-    cortex::BufferRef body = "Hello, World\n";
+  http->setHandler([](HttpRequest* request, HttpResponse* response) {
+    BufferRef body = "Hello, World\n";
 
-    response->setStatus(cortex::HttpStatus::Ok);
+    response->setStatus(HttpStatus::Ok);
     response->setContentLength(body.size());
 
-    response->output()->write(body, std::bind(&cortex::HttpResponse::completed,
+    response->output()->write(body, std::bind(&HttpResponse::completed,
                                               response));
   });
 

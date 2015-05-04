@@ -21,6 +21,7 @@
 #include <cortex-base/sysconfig.h>
 
 namespace cortex {
+namespace http {
 
 HttpOutputCompressor::HttpOutputCompressor()
     : minSize_(256),                // 256 byte
@@ -108,4 +109,5 @@ void HttpOutputCompressor::postProcess(HttpRequest* request,
   }
 }
 
+} // namespace http
 } // namespace cortex

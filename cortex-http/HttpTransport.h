@@ -17,6 +17,9 @@
 namespace cortex {
 
 class FileRef;
+
+namespace http {
+
 class HttpResponseInfo;
 
 /**
@@ -98,4 +101,5 @@ class CORTEX_HTTP_API HttpTransport {
   virtual void send(const BufferRef& chunk, CompletionHandler onComplete) = 0;
 };
 
-}  // namespace cortex2
+}  // namespace http
+}  // namespace cortex

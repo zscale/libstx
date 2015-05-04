@@ -11,6 +11,7 @@
 #include <cortex-base/sysconfig.h>
 
 namespace cortex {
+namespace http {
 
 // TODO support buffering input into a temp file (via O_TMPFILE if available)
 
@@ -21,7 +22,7 @@ namespace cortex {
 #endif
 
 HttpBufferedInput::HttpBufferedInput()
-    : cortex::HttpInput(),
+    : HttpInput(),
       content_(),
       offset_(0) {
   TRACE("%p ctor", this);
@@ -83,4 +84,5 @@ void HttpBufferedInput::onContent(const BufferRef& chunk) {
     listener()->onContentAvailable();
 }
 
+} // namespace http
 } // namespace cortex

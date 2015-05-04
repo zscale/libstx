@@ -10,6 +10,7 @@
 #include <cortex-base/logging.h>
 
 namespace cortex {
+namespace http {
 namespace http1 {
 
 #if 0 //!defined(NDEBUG)
@@ -1082,4 +1083,5 @@ void HttpParser::onProtocolError(HttpStatus code, const std::string& message) {
 }
 
 }  // namespace http1
+}  // namespace http
 }  // namespace cortex

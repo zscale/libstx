@@ -17,8 +17,11 @@
 namespace cortex {
 
 class FileRef;
-class HttpChannel;
 class Filter;
+
+namespace http {
+
+class HttpChannel;
 
 /**
  * Represents the HTTP response body producer API.
@@ -103,4 +106,5 @@ class CORTEX_HTTP_API HttpOutput {
   size_t size_;
 };
 
+}  // namespace http
 }  // namespace cortex

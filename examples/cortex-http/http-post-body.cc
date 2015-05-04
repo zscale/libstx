@@ -22,9 +22,12 @@
 #include <vector>
 #include <string>
 
-class HttpEcho : public cortex::HttpInputListener {
+using namespace cortex;
+using namespace cortex::http;
+
+class HttpEcho : public HttpInputListener {
  public:
-  HttpEcho(cortex::HttpRequest* req, cortex::HttpResponse* resp)
+  HttpEcho(HttpRequest* req, HttpResponse* resp)
       : request_(req), response_(resp), bodyChunk_()
   {
     printf("going\n");
@@ -37,9 +40,9 @@ class HttpEcho : public cortex::HttpInputListener {
   void go() {
     printf("go\n");
     request_->input()->setListener(this);
-    response_->setStatus(cortex::HttpStatus::Ok);
+    response_->setStatus(HttpStatus::Ok);
 
-    for (const cortex::HeaderField& field : request_->headers()) {
+    for (const HeaderField& field : request_->headers()) {
       printf("[Header] %s: %s\n", field.name().c_str(), field.value().c_str());
     }
   }
@@ -64,31 +67,31 @@ class HttpEcho : public cortex::HttpInputListener {
   }
 
  private:
-  cortex::HttpRequest* request_;
-  cortex::HttpResponse* response_;
-  cortex::Buffer bodyChunk_;
+  HttpRequest* request_;
+  HttpResponse* response_;
+  Buffer bodyChunk_;
 };
 
 int main() {
-  cortex::LogAggregator::get().setLogTarget(cortex::LogTarget::console());
-  cortex::LogAggregator::get().setLogLevel(cortex::LogLevel::Trace);
+  LogAggregator::get().setLogTarget(LogTarget::console());
+  LogAggregator::get().setLogLevel(LogLevel::Trace);
 
-  cortex::NativeScheduler scheduler;
-  cortex::WallClock* clock = cortex::WallClock::monotonic();
+  NativeScheduler scheduler;
+  WallClock* clock = WallClock::monotonic();
 
-  cortex::Server server;
-  auto inet = server.addConnector<cortex::InetConnector>(
+  Server server;
+  auto inet = server.addConnector<InetConnector>(
       "http", &scheduler, &scheduler, clock,
-      cortex::TimeSpan::fromSeconds(30),
-      cortex::TimeSpan::fromSeconds(30),
-      cortex::TimeSpan::Zero,
-      &cortex::logAndPass,
-      cortex::IPAddress("0.0.0.0"), 3000, 128, true, false);
-  auto http = inet->addConnectionFactory<cortex::http1::Http1ConnectionFactory>(
-      clock, 100, 512, 5, cortex::TimeSpan::fromMinutes(3));
+      TimeSpan::fromSeconds(30),
+      TimeSpan::fromSeconds(30),
+      TimeSpan::Zero,
+      &logAndPass,
+      IPAddress("0.0.0.0"), 3000, 128, true, false);
+  auto http = inet->addConnectionFactory<http1::Http1ConnectionFactory>(
+      clock, 100, 512, 5, TimeSpan::fromMinutes(3));
 
-  http->setHandler([](cortex::HttpRequest* request,
-                      cortex::HttpResponse* response) {
+  http->setHandler([](HttpRequest* request,
+                      HttpResponse* response) {
     new HttpEcho(request, response);
   });
 

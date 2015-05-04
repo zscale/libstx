@@ -10,10 +10,11 @@
 #include <cortex-http/Api.h>
 #include <string>
 
+namespace cortex {
+namespace http {
+
 //! \addtogroup http
 //@{
-
-namespace cortex {
 
 /**
  * HTTP status code.
@@ -159,4 +160,5 @@ inline bool isContentForbidden(HttpStatus code) {
 }
 // }}}
 
+}  // namespace http
 }  // namespace cortex

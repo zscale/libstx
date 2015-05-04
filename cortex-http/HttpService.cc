@@ -19,6 +19,7 @@
 #include <stdexcept>
 
 namespace cortex {
+namespace http {
 
 class HttpService::InputListener : public HttpInputListener { // {{{
  public:
@@ -144,7 +145,7 @@ void HttpService::attachHttp1(Connector* connector) {
   size_t maxRequestCount = 100;
   TimeSpan maxKeepAlive = TimeSpan::fromSeconds(8);
 
-  auto http = connector->addConnectionFactory<cortex::http1::Http1ConnectionFactory>(
+  auto http = connector->addConnectionFactory<cortex::http::http1::Http1ConnectionFactory>(
       clock,
       maxRequestUriLength,
       maxRequestBodyLength,
@@ -234,4 +235,5 @@ bool HttpService::BuiltinAssetHandler::handleRequest(HttpRequest* request,
 }
 // }}}
 
+} // namespace http
 } // namespace cortex

@@ -12,6 +12,7 @@
 #include <cortex-base/CompletionHandler.h>
 #include <cortex-http/HttpListener.h>
 #include <cortex-http/HttpHandler.h>
+#include <cortex-http/HttpVersion.h>
 #include <cortex-base/io/Filter.h>
 #include <list>
 #include <memory>
@@ -19,6 +20,9 @@
 namespace cortex {
 
 class FileRef;
+
+namespace http {
+
 class HttpResponseInfo;
 class HttpTransport;
 class HttpRequest;
@@ -182,4 +186,5 @@ class CORTEX_HTTP_API HttpChannel : public HttpListener {
   Signal<void()> onResponseEnd_;
 };
 
+}  // namespace http
 }  // namespace cortex

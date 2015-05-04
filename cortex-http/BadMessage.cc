@@ -8,6 +8,7 @@
 #include <string>
 
 namespace cortex {
+namespace http {
 
 std::error_category& HttpStatusCategory::get() {
   static HttpStatusCategory ec;
@@ -32,4 +33,5 @@ BadMessage::BadMessage(HttpStatus code, const std::string& reason)
                  HttpStatusCategory::get() /*, reason*/) {
 }
 
+} // namespace http
 } // namespace cortex

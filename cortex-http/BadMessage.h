@@ -12,6 +12,7 @@
 #include <system_error>
 
 namespace cortex {
+namespace http {
 
 class CORTEX_HTTP_API HttpStatusCategory : public std::error_category {
  public:
@@ -38,4 +39,5 @@ class CORTEX_HTTP_API BadMessage : public RuntimeError {
 #define RAISE_HTTP(status) RAISE_EXCEPTION(BadMessage, (HttpStatus:: status))
 #define RAISE_HTTP_REASON(status, reason) RAISE_EXCEPTION(BadMessage, (HttpStatus:: status), reason)
 
+} // namespace http
 } // namespace cortex

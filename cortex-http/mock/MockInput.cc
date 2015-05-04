@@ -8,6 +8,8 @@
 #include <cortex-http/mock/MockInput.h>
 
 namespace cortex {
+namespace http {
+namespace mock {
 
 MockInput::MockInput()
     : buffer_() {
@@ -36,4 +38,6 @@ void MockInput::recycle() {
   buffer_.clear();
 }
 
+} // namespace mock
+} // namespace http
 } // namespace cortex

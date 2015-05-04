@@ -13,6 +13,7 @@
 #include <cortex-http/HttpConnectionFactory.h>
 
 namespace cortex {
+namespace http {
 namespace http1 {
 
 /**
@@ -45,4 +46,5 @@ class CORTEX_HTTP_API Http1ConnectionFactory : public HttpConnectionFactory {
 };
 
 }  // namespace http1
+}  // namespace http
 }  // namespace cortex

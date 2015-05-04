@@ -22,10 +22,13 @@
 #include <cortex-http/http1/Http1ConnectionFactory.h>
 #include <unistd.h>
 
-void runJob(cortex::HttpRequest* request, cortex::HttpResponse* response, cortex::Executor* context) {
+using namespace cortex;
+using namespace cortex::http;
+
+void runJob(HttpRequest* request, HttpResponse* response, Executor* context) {
   timespec ts;
   ts.tv_sec = 0;
-  ts.tv_nsec = cortex::TimeSpan(0.1).nanoseconds();
+  ts.tv_nsec = TimeSpan(0.1).nanoseconds();
   for (;;) {
     printf("request. job: nanosleep()ing %li\n", ts.tv_nsec);
     if (nanosleep(&ts, &ts) == 0 || errno != EINTR)
@@ -33,39 +36,39 @@ void runJob(cortex::HttpRequest* request, cortex::HttpResponse* response, cortex
   }
 
   // run the complex stuff here
-  cortex::BufferRef body = "Hello, World\n";
+  BufferRef body = "Hello, World\n";
 
   // now respond to the client
   context->execute([=]() {
     printf("request. response\n");
-    response->setStatus(cortex::HttpStatus::Ok);
+    response->setStatus(HttpStatus::Ok);
     response->setContentLength(body.size());
 
-    response->output()->write(body, std::bind(&cortex::HttpResponse::completed,
+    response->output()->write(body, std::bind(&HttpResponse::completed,
                                               response));
   });
 }
 
 int main() {
-  cortex::NativeScheduler scheduler;
-  cortex::WallClock* clock = cortex::WallClock::monotonic();
+  NativeScheduler scheduler;
+  WallClock* clock = WallClock::monotonic();
 
-  //cortex::ThreadPool threaded(16);
-  cortex::Server server;
+  //ThreadPool threaded(16);
+  Server server;
   bool shutdown = false;
 
-  auto inet = server.addConnector<cortex::InetConnector>(
+  auto inet = server.addConnector<InetConnector>(
       "http", &scheduler, &scheduler, clock,
-      cortex::TimeSpan::fromSeconds(30),
-      cortex::TimeSpan::fromSeconds(30),
-      cortex::TimeSpan::Zero,
-      &cortex::logAndPass,
-      cortex::IPAddress("0.0.0.0"), 3000, 128, true, false);
+      TimeSpan::fromSeconds(30),
+      TimeSpan::fromSeconds(30),
+      TimeSpan::Zero,
+      &logAndPass,
+      IPAddress("0.0.0.0"), 3000, 128, true, false);
 
-  auto http = inet->addConnectionFactory<cortex::http1::Http1ConnectionFactory>(
-      clock, 100, 512, 5, cortex::TimeSpan::fromMinutes(3));
+  auto http = inet->addConnectionFactory<http1::Http1ConnectionFactory>(
+      clock, 100, 512, 5, TimeSpan::fromMinutes(3));
 
-  http->setHandler([&](cortex::HttpRequest* request, cortex::HttpResponse* response) {
+  http->setHandler([&](HttpRequest* request, HttpResponse* response) {
     printf("request\n");
     scheduler.execute(std::bind(&runJob, request, response, &scheduler));
     //threaded.execute(std::bind(&runJob, request, response, &scheduler));

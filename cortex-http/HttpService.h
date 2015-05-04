@@ -19,12 +19,15 @@ class Server;
 class Connector;
 class LocalConnector;
 class InetConnector;
-class HttpRequest;
-class HttpResponse;
 class Executor;
 class WallClock;
 class Scheduler;
 class IPAddress;
+
+namespace http {
+
+class HttpRequest;
+class HttpResponse;
 
 /**
  * General purpose multi-handler HTTP Service API.
@@ -142,4 +145,5 @@ class CORTEX_HTTP_API HttpService::BuiltinAssetHandler : public Handler {
   std::unordered_map<std::string, Asset> assets_;
 };
 
+} // namespace http
 } // namespace cortex

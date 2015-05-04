@@ -8,6 +8,7 @@
 #include <cortex-http/HttpStatus.h>
 
 namespace cortex {
+namespace http {
 
 #define SRET(slit) { static std::string val(slit); return val; }
 
@@ -72,4 +73,5 @@ const std::string& to_string(HttpStatus code) {
   }
 }
 
+} // namespace http
 } // namespace cortex

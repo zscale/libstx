@@ -33,6 +33,7 @@
 #endif
 
 namespace cortex {
+namespace http {
 
 // {{{ helper methods
 /**
@@ -360,4 +361,5 @@ bool HttpFileHandler::handleRangeRequest(const File& transferFile, int fd,
   return true;
 }
 
+} // namespace http
 } // namespace cortex

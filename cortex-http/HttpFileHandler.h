@@ -15,10 +15,13 @@
 
 namespace cortex {
 
-class HttpRequest;
-class HttpResponse;
 class File;
 class MimeTypes;
+
+namespace http {
+
+class HttpRequest;
+class HttpResponse;
 
 /**
  * Handles GET/HEAD requests to local files.
@@ -95,4 +98,5 @@ class CORTEX_HTTP_API HttpFileHandler {
   // TODO fd cache
 };
 
+} // namespace http
 } // namespace cortex

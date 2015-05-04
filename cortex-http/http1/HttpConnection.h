@@ -18,6 +18,7 @@
 #include <memory>
 
 namespace cortex {
+namespace http {
 
 class HttpDateGenerator;
 class HttpOutputCompressor;
@@ -89,4 +90,5 @@ class CORTEX_HTTP_API HttpConnection : public Connection,
 };
 
 }  // namespace http1
+}  // namespace http
 }  // namespace cortex

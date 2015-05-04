@@ -28,14 +28,15 @@
 #include <iostream>
 
 using namespace cortex;
+using namespace cortex::http;
 
 int main(int argc, const char* argv[]) {
-  cortex::NativeScheduler scheduler;
-  cortex::WallClock* clock = cortex::WallClock::monotonic();
+  NativeScheduler scheduler;
+  WallClock* clock = WallClock::monotonic();
 
-  cortex::CLI cli;
+  CLI cli;
   cli.defineBool("help", 'h', "Prints this help and terminates.")
-     .defineIPAddress("bind", 0, "<IP>", "Bind listener to given IP.", cortex::IPAddress("0.0.0.0"))
+     .defineIPAddress("bind", 0, "<IP>", "Bind listener to given IP.", IPAddress("0.0.0.0"))
      .defineNumber("port", 'p', "<PORT>", "Port number to listen to.", 3000)
      .defineNumber("backlog", 0, "<COUNT>", "Listener backlog.", 128)
      .defineNumber("timeout", 't', "<SECONDS>", "I/O timeout in seconds.", 30)
@@ -54,15 +55,15 @@ int main(int argc, const char* argv[]) {
     return 0;
   }
 
-  std::string docroot = cortex::FileUtil::realpath(flags.getString("docroot"));
+  std::string docroot = FileUtil::realpath(flags.getString("docroot"));
 
-  cortex::Server server;
-  auto inet = server.addConnector<cortex::InetConnector>(
+  Server server;
+  auto inet = server.addConnector<InetConnector>(
       "http", &scheduler, &scheduler, clock,
-      cortex::TimeSpan::fromSeconds(flags.getNumber("timeout")),
-      cortex::TimeSpan::fromSeconds(flags.getNumber("timeout")),
-      cortex::TimeSpan::Zero,
-      &cortex::logAndPass,
+      TimeSpan::fromSeconds(flags.getNumber("timeout")),
+      TimeSpan::fromSeconds(flags.getNumber("timeout")),
+      TimeSpan::Zero,
+      &logAndPass,
       flags.getIPAddress("bind"),
       flags.getNumber("port"),
       flags.getNumber("backlog"),
@@ -71,23 +72,23 @@ int main(int argc, const char* argv[]) {
 
   std::shared_ptr<HttpConnectionFactory> http;
   if (flags.getBool("fastcgi"))
-    http = inet->addConnectionFactory<cortex::http::fastcgi::ConnectionFactory>(
-        clock, 100, 512, cortex::TimeSpan::fromSeconds(8));
+    http = inet->addConnectionFactory<http::fastcgi::ConnectionFactory>(
+        clock, 100, 512, TimeSpan::fromSeconds(8));
   else
-    http = inet->addConnectionFactory<cortex::http1::Http1ConnectionFactory>(
-        clock, 100, 512, 5, cortex::TimeSpan::fromSeconds(8));
+    http = inet->addConnectionFactory<http1::Http1ConnectionFactory>(
+        clock, 100, 512, 5, TimeSpan::fromSeconds(8));
 
-  cortex::HttpOutputCompressor* compressor = http->outputCompressor();
+  HttpOutputCompressor* compressor = http->outputCompressor();
   compressor->setMinSize(5);
 
-  cortex::MimeTypes mimetypes(flags.getString("mimetypes"), "application/octet-stream");
-  cortex::LocalFileRepository vfs(mimetypes, "/", true, true, true);
-  cortex::HttpFileHandler fileHandler;
+  MimeTypes mimetypes(flags.getString("mimetypes"), "application/octet-stream");
+  LocalFileRepository vfs(mimetypes, "/", true, true, true);
+  HttpFileHandler fileHandler;
 
-  http->setHandler([&](cortex::HttpRequest* request, cortex::HttpResponse* response) {
+  http->setHandler([&](HttpRequest* request, HttpResponse* response) {
     auto file = vfs.getFile(request->path(), docroot);
     if (!fileHandler.handle(request, response, file)) {
-      response->setStatus(cortex::HttpStatus::NotFound);
+      response->setStatus(HttpStatus::NotFound);
       response->completed();
     }
   });

@@ -19,6 +19,8 @@ namespace cortex {
 
 class WallClock;
 
+namespace http {
+
 /**
  * Base HTTP connection factory.
  *
@@ -77,4 +79,5 @@ inline HttpDateGenerator* HttpConnectionFactory::dateGenerator() const CORTEX_NO
 }
 // }}}
 
+}  // namespace http
 }  // namespace cortex

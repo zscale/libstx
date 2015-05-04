@@ -44,38 +44,39 @@ class MaybeRaiseCategory : public std::error_category {
 };
 
 using namespace cortex;
+using namespace cortex::http;
 
 int main() {
   auto errorHandler = [](const std::exception& e) {
-    cortex::logAndPass(e);
+    logAndPass(e);
   };
 
-  cortex::WallClock* clock = cortex::WallClock::monotonic();
-  cortex::NativeScheduler scheduler(errorHandler, clock);
+  WallClock* clock = WallClock::monotonic();
+  NativeScheduler scheduler(errorHandler, clock);
 
   scheduler.setExceptionHandler(errorHandler);
 
-  cortex::Server server;
-  auto inet = server.addConnector<cortex::InetConnector>(
+  Server server;
+  auto inet = server.addConnector<InetConnector>(
       "http", &scheduler, &scheduler, clock,
-      cortex::TimeSpan::fromSeconds(30),
-      cortex::TimeSpan::fromSeconds(30),
-      cortex::TimeSpan::Zero,
-      &cortex::logAndPass,
-      cortex::IPAddress("0.0.0.0"), 3000, 128, true, false);
-  auto http = inet->addConnectionFactory<cortex::http1::Http1ConnectionFactory>(
-      clock, 100, 512, 5, cortex::TimeSpan::fromMinutes(3));
+      TimeSpan::fromSeconds(30),
+      TimeSpan::fromSeconds(30),
+      TimeSpan::Zero,
+      &logAndPass,
+      IPAddress("0.0.0.0"), 3000, 128, true, false);
+  auto http = inet->addConnectionFactory<http1::Http1ConnectionFactory>(
+      clock, 100, 512, 5, TimeSpan::fromMinutes(3));
 
-  http->setHandler([](cortex::HttpRequest* request,
-                      cortex::HttpResponse* response) {
+  http->setHandler([](HttpRequest* request,
+                      HttpResponse* response) {
     if (request->path() == "/raise") {
       printf("blah\n");
       RAISE_CATEGORY(MaybeRaise::Now, MaybeRaiseCategory::get());
     }
 
-    response->setStatus(cortex::HttpStatus::Ok);
+    response->setStatus(HttpStatus::Ok);
     response->output()->write("Call me maybe /raise ;-)\n",
-        std::bind(&cortex::HttpResponse::completed, response));
+        std::bind(&HttpResponse::completed, response));
   });
 
   try {

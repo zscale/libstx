@@ -19,6 +19,9 @@ namespace cortex {
 
 class Executor;
 
+namespace http {
+namespace mock {
+
 /**
  * Mock HTTP Transport, used to create mock requests.
  *
@@ -141,4 +144,6 @@ inline bool MockTransport::isCompleted() const CORTEX_NOEXCEPT {
 }
 // }}}
 
+} // namespace mock
+} // namespace http
 } // namespace cortex

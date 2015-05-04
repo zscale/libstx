@@ -8,14 +8,15 @@
 #pragma once
 
 #include <cortex-http/Api.h>
-#include <cortex-base/sysconfig.h>
 #include <cortex-http/HttpVersion.h>
 #include <cortex-http/HttpStatus.h>
 #include <cortex-http/HttpOutput.h>
 #include <cortex-http/HeaderFieldList.h>
+#include <cortex-base/sysconfig.h>
 #include <memory>
 
 namespace cortex {
+namespace http {
 
 class HttpChannel;
 class HttpOutput;
@@ -147,4 +148,5 @@ class CORTEX_HTTP_API HttpResponse {
   size_t bytesTransmitted_;
 };
 
+}  // namespace http
 }  // namespace cortex

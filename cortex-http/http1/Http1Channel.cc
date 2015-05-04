@@ -7,12 +7,13 @@
 
 #include <cortex-http/http1/Http1Channel.h>
 #include <cortex-http/http1/HttpConnection.h>
-#include <cortex-http/HttpResponse.h>
-#include <cortex-http/HttpRequest.h>
 #include <cortex-http/HttpTransport.h>
+#include <cortex-http/HttpRequest.h>
+#include <cortex-http/HttpResponse.h>
 #include <cortex-base/Tokenizer.h>
 
 namespace cortex {
+namespace http {
 namespace http1 {
 
 Http1Channel::Http1Channel(HttpConnection* transport,
@@ -22,9 +23,9 @@ Http1Channel::Http1Channel(HttpConnection* transport,
                          size_t maxRequestBodyLength,
                          HttpDateGenerator* dateGenerator,
                          HttpOutputCompressor* outputCompressor)
-    : cortex::HttpChannel(transport, handler, std::move(input),
-                         maxRequestUriLength, maxRequestBodyLength,
-                         dateGenerator, outputCompressor),
+    : HttpChannel(transport, handler, std::move(input),
+                  maxRequestUriLength, maxRequestBodyLength,
+                  dateGenerator, outputCompressor),
       persistent_(false),
       connectionOptions_() {
 }
@@ -34,7 +35,7 @@ Http1Channel::~Http1Channel() {
 
 void Http1Channel::reset() {
   connectionOptions_.clear();
-  cortex::HttpChannel::reset();
+  HttpChannel::reset();
 }
 
 bool Http1Channel::onMessageBegin(const BufferRef& method,
@@ -54,7 +55,7 @@ bool Http1Channel::onMessageBegin(const BufferRef& method,
       throw std::runtime_error("Invalid State. Illegal version passed.");
   }
 
-  return cortex::HttpChannel::onMessageBegin(method, entity, version);
+  return HttpChannel::onMessageBegin(method, entity, version);
 }
 
 size_t Http1Channel::bytesReceived() const noexcept {
@@ -66,7 +67,7 @@ bool Http1Channel::onMessageHeader(const BufferRef& name,
   request_->setBytesReceived(bytesReceived());
 
   if (!iequals(name, "Connection"))
-    return cortex::HttpChannel::onMessageHeader(name, value);
+    return HttpChannel::onMessageHeader(name, value);
 
   std::vector<BufferRef> options = Tokenizer<BufferRef>::tokenize(value, ", ");
 
@@ -90,7 +91,7 @@ bool Http1Channel::onMessageHeaderEnd() {
   for (const auto& name: connectionOptions_)
     request_->headers().remove(name);
 
-  return cortex::HttpChannel::onMessageHeaderEnd();
+  return HttpChannel::onMessageHeaderEnd();
 }
 
 void Http1Channel::onProtocolError(HttpStatus code, const std::string& message) {
@@ -111,4 +112,5 @@ void Http1Channel::onProtocolError(HttpStatus code, const std::string& message) 
 }
 
 } // namespace http1
+} // namespace http
 } // namespace cortex

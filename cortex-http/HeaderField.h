@@ -11,6 +11,7 @@
 #include <string>
 
 namespace cortex {
+namespace http {
 
 /**
  * Represents a single HTTP message header name/value pair.
@@ -50,4 +51,5 @@ class CORTEX_HTTP_API HeaderField {
   std::string value_;
 };
 
+}  // namespace http
 }  // namespace cortex

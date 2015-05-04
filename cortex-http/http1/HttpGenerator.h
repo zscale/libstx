@@ -17,11 +17,13 @@
 namespace cortex {
 
 class EndPointWriter;
+
+namespace http {
+
 class HttpDateGenerator;
 class HttpInfo;
 class HttpRequestInfo;
 class HttpResponseInfo;
-
 
 namespace http1 {
 
@@ -116,4 +118,5 @@ class CORTEX_HTTP_API HttpGenerator {
 };
 
 }  // namespace http1
+}  // namespace http
 }  // namespace cortex

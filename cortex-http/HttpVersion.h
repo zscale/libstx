@@ -4,13 +4,13 @@
 // Licensed under the MIT License (the "License"); you may not use this
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
-
 #pragma once
 
 #include <string>
 #include <cortex-http/Api.h>
 
 namespace cortex {
+namespace http {
 
 /**
  * HTTP protocol version number.
@@ -26,4 +26,5 @@ enum class HttpVersion {
 CORTEX_HTTP_API const std::string& to_string(HttpVersion value);
 CORTEX_HTTP_API HttpVersion make_version(const std::string& value);
 
+} // namespace http
 } // namespace cortex

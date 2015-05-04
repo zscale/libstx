@@ -13,6 +13,7 @@
 #include <string>
 
 namespace cortex {
+namespace http {
 
 HttpResponse::HttpResponse(HttpChannel* channel,
                            std::unique_ptr<HttpOutput>&& output)
@@ -243,4 +244,5 @@ void HttpResponse::completed() {
   output_->completed();
 }
 
+}  // namespace http
 }  // namespace cortex

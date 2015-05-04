@@ -20,6 +20,7 @@
 #endif
 
 namespace cortex {
+namespace http {
 
 HttpOutput::HttpOutput(HttpChannel* channel) : channel_(channel), size_(0) {
 }
@@ -67,4 +68,5 @@ void HttpOutput::write(FileRef&& input, CompletionHandler&& completed) {
   channel_->send(std::move(input), std::move(completed));
 }
 
+}  // namespace http
 }  // namespace cortex
