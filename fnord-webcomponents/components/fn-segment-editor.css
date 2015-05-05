@@ -622,9 +622,13 @@ fn-segment-remove-icon:after {
   content: "\f014";
 }
 
+fn-segment-open-icon {
+  width: 9px;
+}
+
 fn-segment-open-icon:after {
   font-family: FontAwesome;
-  content: "\f078";
+  content: "\f0d7";
 }
 
 fn-segment-edit-icon:after {
