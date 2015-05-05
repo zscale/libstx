@@ -76,6 +76,8 @@ void MockTransport::run(HttpVersion version, const std::string& method,
     channel_->onMessageEnd();
   } catch (const BadMessage& e) {
     channel_->response()->sendError(e.httpCode(), e.what());
+  } catch (const RuntimeError& e) {
+    channel_->response()->sendError(HttpStatus::InternalServerError, e.what());
   }
 }
 
