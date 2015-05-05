@@ -11,6 +11,7 @@
 #include <cortex-http/HttpRequest.h>
 #include <cortex-http/HttpResponse.h>
 #include <cortex-base/Tokenizer.h>
+#include <cortex-base/RuntimeError.h>
 
 namespace cortex {
 namespace http {
@@ -52,7 +53,7 @@ void Channel::onMessageBegin(const BufferRef& method,
       persistent_ = false;
       break;
     default:
-      throw std::runtime_error("Invalid State. Illegal version passed.");
+      RAISE(IllegalStateError, "Invalid State. Illegal version passed.");
   }
 
   HttpChannel::onMessageBegin(method, entity, version);
