@@ -6,6 +6,7 @@
 // the License at: http://opensource.org/licenses/MIT
 
 #include <cortex-http/HeaderField.h>
+#include <cortex-base/StringUtil.h>
 #include <cortex-base/Buffer.h>
 
 namespace cortex {
@@ -21,6 +22,12 @@ bool HeaderField::operator==(const HeaderField& other) const {
 
 bool HeaderField::operator!=(const HeaderField& other) const {
   return !(*this == other);
+}
+
+std::string inspect(const HeaderField& field) {
+  return StringUtil::format("HeaderField(\"$0\", \"$1\")",
+                            field.name(),
+                            field.value());
 }
 
 } // namespace http
