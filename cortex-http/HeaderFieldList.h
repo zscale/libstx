@@ -38,6 +38,7 @@ class CORTEX_HTTP_API HeaderFieldList {
   bool contains(const std::string& name) const;
   bool contains(const std::string& name, const std::string& value) const;
   const std::string& get(const std::string& name) const;
+  const std::string& operator[](const std::string& name) const;
 
   typedef std::list<HeaderField>::iterator iterator;
   typedef std::list<HeaderField>::const_iterator const_iterator;
