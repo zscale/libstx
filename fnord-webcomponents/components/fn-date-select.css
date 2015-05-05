@@ -18,6 +18,7 @@ fn-date-select-field i {
   height: 1em;
   vertical-align: top;
   margin-top: 8px;
+  margin-left: 5px;
 }
 
 fn-date-select-field i.fa-calendar {
