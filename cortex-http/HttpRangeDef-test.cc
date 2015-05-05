@@ -19,7 +19,7 @@
 using cortex::HttpRangeDef;
 using cortex::BufferRef;
 
-TEST(HttpRangeDef, range1) {
+TEST(http_HttpRangeDef, range1) {
   HttpRangeDef r;
   BufferRef spec("bytes=0-499");
 
@@ -30,7 +30,7 @@ TEST(HttpRangeDef, range1) {
   ASSERT_EQ(499, r[0].second);
 }
 
-TEST(HttpRangeDef, range2) {
+TEST(http_HttpRangeDef, range2) {
   HttpRangeDef r;
   BufferRef spec("bytes=500-999");
 
@@ -41,7 +41,7 @@ TEST(HttpRangeDef, range2) {
   ASSERT_EQ(999, r[0].second);
 }
 
-TEST(HttpRangeDef, range3) {
+TEST(http_HttpRangeDef, range3) {
   HttpRangeDef r;
 
   BufferRef spec("bytes=-500");
@@ -52,7 +52,7 @@ TEST(HttpRangeDef, range3) {
   ASSERT_EQ(500, r[0].second);
 }
 
-TEST(HttpRangeDef, range4) {
+TEST(http_HttpRangeDef, range4) {
   HttpRangeDef r;
 
   BufferRef spec("bytes=9500-");
@@ -63,7 +63,7 @@ TEST(HttpRangeDef, range4) {
   ASSERT_EQ(HttpRangeDef::npos, r[0].second);
 }
 
-TEST(HttpRangeDef, range5) {
+TEST(http_HttpRangeDef, range5) {
   HttpRangeDef r;
 
   BufferRef spec("bytes=0-0,-1");
@@ -78,7 +78,7 @@ TEST(HttpRangeDef, range5) {
   ASSERT_EQ(1, r[1].second == 1);
 }
 
-TEST(HttpRangeDef, range6) {
+TEST(http_HttpRangeDef, range6) {
   HttpRangeDef r;
 
   BufferRef spec("bytes=500-700,601-999");

@@ -19,14 +19,14 @@ using namespace cortex;
 using namespace cortex::http;
 using namespace cortex::http::http1;
 
-// TEST(http1_Generator, recycle) {
+// TEST(http_http1_Generator, recycle) {
 // }
 //
-// TEST(http1_Generator, generateRequest) {
+// TEST(http_http1_Generator, generateRequest) {
 // }
 
 // XXX No headers, no body.
-TEST(http1_Generator, generateResponse_empty) {
+TEST(http_http1_Generator, generateResponse_empty) {
   EndPointWriter writer;
   http1::Generator generator(&writer);
 
@@ -43,7 +43,7 @@ TEST(http1_Generator, generateResponse_empty) {
 }
 
 // XXX some headers, no body.
-TEST(http1_Generator, generateResponse_headers) {
+TEST(http_http1_Generator, generateResponse_headers) {
   EndPointWriter writer;
   http1::Generator generator(&writer);
 
@@ -65,7 +65,7 @@ TEST(http1_Generator, generateResponse_headers) {
 }
 
 // XXX no headers, static (fixed-size) body.
-TEST(http1_Generator, generateResponse_static_body) {
+TEST(http_http1_Generator, generateResponse_static_body) {
   EndPointWriter writer;
   http1::Generator generator(&writer);
 
@@ -85,7 +85,7 @@ TEST(http1_Generator, generateResponse_static_body) {
 }
 
 // XXX no headers, dynamic (chunked) body
-TEST(http1_Generator, generateResponse_chunked) {
+TEST(http_http1_Generator, generateResponse_chunked) {
   EndPointWriter writer;
   http1::Generator generator(&writer);
 
@@ -105,7 +105,7 @@ TEST(http1_Generator, generateResponse_chunked) {
 }
 
 // XXX no headers, dynamic (chunked) body with trailers
-TEST(http1_Generator, generateResponse_chunked_trailer) {
+TEST(http_http1_Generator, generateResponse_chunked_trailer) {
   EndPointWriter writer;
   http1::Generator generator(&writer);
 
@@ -128,7 +128,7 @@ TEST(http1_Generator, generateResponse_chunked_trailer) {
 }
 
 // XXX no headers, static (fixed-size) body with trailers (triggers chunking)
-TEST(http1_Generator, generateResponse_chunked_trailer2) {
+TEST(http_http1_Generator, generateResponse_chunked_trailer2) {
   EndPointWriter writer;
   http1::Generator generator(&writer);
 
@@ -150,9 +150,9 @@ TEST(http1_Generator, generateResponse_chunked_trailer2) {
   ASSERT_EQ("HTTP/1.1 200 my\r\nTrailer: Foo, Bar\r\nTransfer-Encoding: chunked\r\n\r\n4\r\nbody\r\n0\r\nFoo: the-foo\r\nBar: the-bar\r\n\r\n", ep.output());
 }
 
-// TEST(http1_Generator, generateBody_Buffer) {
+// TEST(http_http1_Generator, generateBody_Buffer) {
 // }
-// TEST(http1_Generator, generateBody_BufferRef) {
+// TEST(http_http1_Generator, generateBody_BufferRef) {
 // }
-// TEST(http1_Generator, generateBody_FileRef) {
+// TEST(http_http1_Generator, generateBody_FileRef) {
 // }

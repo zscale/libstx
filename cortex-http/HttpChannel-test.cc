@@ -32,14 +32,14 @@ void sendError504(HttpRequest* request, HttpResponse* response) {
   response->sendError(HttpStatus::GatewayTimeout);
 }
 
-TEST(HttpChannel, sameVersion) {
+TEST(http_HttpChannel, sameVersion) {
   DirectExecutor executor;
   mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_0, "GET", "/", {}, "");
   ASSERT_EQ(HttpVersion::VERSION_1_0, transport.responseInfo().version());
 }
 
-TEST(HttpChannel, sendError504) {
+TEST(http_HttpChannel, sendError504) {
   DirectExecutor executor;
   mock::Transport transport(&executor, &sendError504);
   transport.run(HttpVersion::VERSION_1_0, "GET", "/", {}, "");
@@ -47,35 +47,35 @@ TEST(HttpChannel, sendError504) {
   ASSERT_TRUE(transport.responseInfo().contentLength() == transport.responseBody().size());
 }
 
-TEST(HttpChannel, invalidRequestPath_escapeDocumentRoot1) {
+TEST(http_HttpChannel, invalidRequestPath_escapeDocumentRoot1) {
   DirectExecutor executor;
   mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_0, "GET", "/../../etc/passwd", {}, "");
   ASSERT_EQ(HttpStatus::BadRequest, transport.responseInfo().status());
 }
 
-TEST(HttpChannel, invalidRequestPath_escapeDocumentRoot2) {
+TEST(http_HttpChannel, invalidRequestPath_escapeDocumentRoot2) {
   DirectExecutor executor;
   mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_0, "GET", "/..\%2f..\%2fetc/passwd", {}, "");
   ASSERT_EQ(HttpStatus::BadRequest, transport.responseInfo().status());
 }
 
-TEST(HttpChannel, invalidRequestPath_injectNullByte1) {
+TEST(http_HttpChannel, invalidRequestPath_injectNullByte1) {
   DirectExecutor executor;
   mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_0, "GET", "/foo%00", {}, "");
   ASSERT_EQ(HttpStatus::BadRequest, transport.responseInfo().status());
 }
 
-TEST(HttpChannel, invalidRequestPath_injectNullByte2) {
+TEST(http_HttpChannel, invalidRequestPath_injectNullByte2) {
   DirectExecutor executor;
   mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_0, "GET", "/foo%00/bar", {}, "");
   ASSERT_EQ(HttpStatus::BadRequest, transport.responseInfo().status());
 }
 
-TEST(HttpChannel, missingHostHeader) {
+TEST(http_HttpChannel, missingHostHeader) {
   DirectExecutor executor;
   mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_1, "GET", "/", {}, "");
@@ -88,7 +88,7 @@ TEST(HttpChannel, missingHostHeader) {
   ASSERT_EQ(HttpStatus::Ok, transport.responseInfo().status());
 }
 
-TEST(HttpChannel, multipleHostHeaders) {
+TEST(http_HttpChannel, multipleHostHeaders) {
   DirectExecutor executor;
   mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_1, "GET", "/", {
@@ -96,7 +96,7 @@ TEST(HttpChannel, multipleHostHeaders) {
   ASSERT_EQ((int)HttpStatus::BadRequest, (int)transport.responseInfo().status());
 }
 
-TEST(HttpChannel, unhandledException1) {
+TEST(http_HttpChannel, unhandledException1) {
   DirectExecutor executor;
   mock::Transport transport(&executor, [](HttpRequest*, HttpResponse*) {
     throw std::runtime_error("me, the unhandled");
@@ -106,7 +106,7 @@ TEST(HttpChannel, unhandledException1) {
   ASSERT_EQ("me, the unhandled", transport.responseInfo().reason());
 }
 
-TEST(HttpChannel, unhandledException2) {
+TEST(http_HttpChannel, unhandledException2) {
   DirectExecutor executor;
   mock::Transport transport(&executor, [](HttpRequest*, HttpResponse*) {
     throw 42;
@@ -115,7 +115,7 @@ TEST(HttpChannel, unhandledException2) {
   ASSERT_EQ(HttpStatus::InternalServerError, transport.responseInfo().status());
 }
 
-TEST(HttpChannel, completed_invoked_before_contentLength_satisfied) {
+TEST(http_HttpChannel, completed_invoked_before_contentLength_satisfied) {
   DirectExecutor executor;
   mock::Transport transport(&executor, [](HttpRequest* request,
                                           HttpResponse* response) {
@@ -134,7 +134,7 @@ TEST(HttpChannel, completed_invoked_before_contentLength_satisfied) {
   ASSERT_EQ(5, transport.responseBody().size());
 }
 
-TEST(HttpChannel, trailer1) {
+TEST(http_HttpChannel, trailer1) {
   DirectExecutor executor;
   mock::Transport transport(&executor, [](HttpRequest* request,
                                           HttpResponse* response) {

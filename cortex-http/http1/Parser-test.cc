@@ -105,7 +105,7 @@ void ParserListener::onProtocolError(HttpStatus code,
 }
 // }}}
 
-TEST(http1_Parser, requestLine0) {
+TEST(http_http1_Parser, requestLine0) {
   /* Seems like in HTTP/0.9 it was possible to create
    * very simple request messages.
    */
@@ -122,7 +122,7 @@ TEST(http1_Parser, requestLine0) {
   ASSERT_EQ(0, listener.body.size());
 }
 
-TEST(http1_Parser, requestLine1) {
+TEST(http_http1_Parser, requestLine1) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("GET / HTTP/0.9\r\n\r\n");
@@ -134,7 +134,7 @@ TEST(http1_Parser, requestLine1) {
   ASSERT_EQ(0, listener.body.size());
 }
 
-TEST(http1_Parser, requestLine2) {
+TEST(http_http1_Parser, requestLine2) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("HEAD /foo?bar HTTP/1.0\r\n\r\n");
@@ -146,35 +146,35 @@ TEST(http1_Parser, requestLine2) {
   ASSERT_EQ(0, listener.body.size());
 }
 
-TEST(http1_Parser, requestLine_invalid1_MissingPathAndProtoVersion) {
+TEST(http_http1_Parser, requestLine_invalid1_MissingPathAndProtoVersion) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("GET\r\n\r\n");
   ASSERT_EQ(HttpStatus::BadRequest, listener.errorCode);
 }
 
-TEST(http1_Parser, requestLine_invalid3_InvalidVersion) {
+TEST(http_http1_Parser, requestLine_invalid3_InvalidVersion) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("GET / HTTP/0\r\n\r\n");
   ASSERT_EQ((int)HttpStatus::BadRequest, (int)listener.errorCode);
 }
 
-TEST(http1_Parser, requestLine_invalid3_CharsAfterVersion) {
+TEST(http_http1_Parser, requestLine_invalid3_CharsAfterVersion) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("GET / HTTP/1.1b\r\n\r\n");
   ASSERT_EQ((int)HttpStatus::BadRequest, (int)listener.errorCode);
 }
 
-TEST(http1_Parser, requestLine_invalid5_SpaceAfterVersion) {
+TEST(http_http1_Parser, requestLine_invalid5_SpaceAfterVersion) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("GET / HTTP/1.1 \r\n\r\n");
   ASSERT_EQ((int)HttpStatus::BadRequest, (int)listener.errorCode);
 }
 
-TEST(http1_Parser, requestLine_invalid6_UnsupportedVersion) {
+TEST(http_http1_Parser, requestLine_invalid6_UnsupportedVersion) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
 
@@ -183,7 +183,7 @@ TEST(http1_Parser, requestLine_invalid6_UnsupportedVersion) {
   ASSERT_THROW(parser.parseFragment("GET / HTTP/1.2\r\n\r\n"), RuntimeError);
 }
 
-TEST(http1_Parser, headers1) {
+TEST(http_http1_Parser, headers1) {
   ParserListener listener;
   Parser parser(Parser::MESSAGE, &listener);
   parser.parseFragment(
@@ -197,7 +197,7 @@ TEST(http1_Parser, headers1) {
   ASSERT_EQ("123456", listener.body);
 }
 
-TEST(http1_Parser, invalidHeader1) {
+TEST(http_http1_Parser, invalidHeader1) {
   ParserListener listener;
   Parser parser(Parser::MESSAGE, &listener);
   size_t n = parser.parseFragment("Foo : the foo\r\n"
@@ -208,7 +208,7 @@ TEST(http1_Parser, invalidHeader1) {
   ASSERT_EQ(0, listener.headers.size());
 }
 
-TEST(http1_Parser, invalidHeader2) {
+TEST(http_http1_Parser, invalidHeader2) {
   ParserListener listener;
   Parser parser(Parser::MESSAGE, &listener);
   size_t n = parser.parseFragment("Foo\r\n"
@@ -219,7 +219,7 @@ TEST(http1_Parser, invalidHeader2) {
   ASSERT_EQ(0, listener.headers.size());
 }
 
-TEST(http1_Parser, requestWithHeaders) {
+TEST(http_http1_Parser, requestWithHeaders) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment(
@@ -241,7 +241,7 @@ TEST(http1_Parser, requestWithHeaders) {
   ASSERT_EQ("the bar", listener.headers[1].second);
 }
 
-TEST(http1_Parser, requestWithHeadersAndBody) {
+TEST(http_http1_Parser, requestWithHeadersAndBody) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment(
@@ -256,7 +256,7 @@ TEST(http1_Parser, requestWithHeadersAndBody) {
 }
 
 // no chunks except the EOS-chunk
-TEST(http1_Parser, requestWithHeadersAndBodyChunked1) {
+TEST(http_http1_Parser, requestWithHeadersAndBodyChunked1) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment(
@@ -270,7 +270,7 @@ TEST(http1_Parser, requestWithHeadersAndBodyChunked1) {
 }
 
 // exactly one data chunk
-TEST(http1_Parser, requestWithHeadersAndBodyChunked2) {
+TEST(http_http1_Parser, requestWithHeadersAndBodyChunked2) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment(
@@ -289,7 +289,7 @@ TEST(http1_Parser, requestWithHeadersAndBodyChunked2) {
 }
 
 // more than one data chunk
-TEST(http1_Parser, requestWithHeadersAndBodyChunked3) {
+TEST(http_http1_Parser, requestWithHeadersAndBodyChunked3) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment(
@@ -312,7 +312,7 @@ TEST(http1_Parser, requestWithHeadersAndBodyChunked3) {
 }
 
 // first chunk is missing CR LR
-TEST(http1_Parser, requestWithHeadersAndBodyChunked_invalid1) {
+TEST(http_http1_Parser, requestWithHeadersAndBodyChunked_invalid1) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   size_t n = parser.parseFragment(
@@ -331,7 +331,7 @@ TEST(http1_Parser, requestWithHeadersAndBodyChunked_invalid1) {
   ASSERT_EQ(HttpStatus::BadRequest, listener.errorCode);
 }
 
-TEST(http1_Parser, pipelined1) {
+TEST(http_http1_Parser, pipelined1) {
   ParserListener listener;
   Parser parser(Parser::REQUEST, &listener);
   constexpr BufferRef input = "GET /foo HTTP/1.1\r\n\r\n"

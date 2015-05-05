@@ -45,7 +45,7 @@ void staticfileHandler(HttpRequest* request, HttpResponse* response) {
   response->completed();
 }
 
-TEST(HttpFileHandler, GET_FileNotFound) {
+TEST(http_HttpFileHandler, GET_FileNotFound) {
   DirectExecutor executor;
   mock::Transport transport(&executor, &staticfileHandler);
   transport.run(HttpVersion::VERSION_1_1, "GET", "/notfound.txt",
