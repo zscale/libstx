@@ -13,8 +13,8 @@
 #include <cortex-base/net/EndPointWriter.h>
 #include <cortex-http/HttpTransport.h>
 #include <cortex-http/HttpHandler.h>
-#include <cortex-http/http1/HttpParser.h>
-#include <cortex-http/http1/HttpGenerator.h>
+#include <cortex-http/http1/Parser.h>
+#include <cortex-http/http1/Generator.h>
 #include <memory>
 
 namespace cortex {
@@ -25,15 +25,15 @@ class HttpOutputCompressor;
 
 namespace http1 {
 
-class Http1Channel;
+class Channel;
 
 /**
  * @brief Implements a HTTP/1.1 transport connection.
  */
-class CORTEX_HTTP_API HttpConnection : public Connection,
-                                       public HttpTransport {
+class CORTEX_HTTP_API Connection : public ::cortex::Connection,
+                                   public HttpTransport {
  public:
-  HttpConnection(EndPoint* endpoint,
+  Connection(EndPoint* endpoint,
                  Executor* executor,
                  const HttpHandler& handler,
                  HttpDateGenerator* dateGenerator,
@@ -42,7 +42,7 @@ class CORTEX_HTTP_API HttpConnection : public Connection,
                  size_t maxRequestBodyLength,
                  size_t maxRequestCount,
                  TimeSpan maxKeepAlive);
-  ~HttpConnection();
+  ~Connection();
 
   size_t bytesReceived() const noexcept { return parser_.bytesReceived(); }
   size_t bytesTransmitted() const noexcept { return generator_.bytesTransmitted(); }
@@ -74,16 +74,16 @@ class CORTEX_HTTP_API HttpConnection : public Connection,
   void onInterestFailure(const std::exception& error) override;
 
  private:
-  HttpParser parser_;
+  Parser parser_;
 
   Buffer inputBuffer_;
   size_t inputOffset_;
 
   EndPointWriter writer_;
   CompletionHandler onComplete_;
-  HttpGenerator generator_;
+  Generator generator_;
 
-  std::unique_ptr<Http1Channel> channel_;
+  std::unique_ptr<Channel> channel_;
   TimeSpan maxKeepAlive_;
   size_t requestCount_;
   size_t requestMax_;

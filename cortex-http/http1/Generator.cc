@@ -5,7 +5,7 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <cortex-http/http1/HttpGenerator.h>
+#include <cortex-http/http1/Generator.h>
 #include <cortex-http/HttpDateGenerator.h>
 #include <cortex-http/HttpRequestInfo.h>
 #include <cortex-http/HttpResponseInfo.h>
@@ -19,7 +19,7 @@ namespace cortex {
 namespace http {
 namespace http1 {
 
-HttpGenerator::HttpGenerator(EndPointWriter* output)
+Generator::Generator(EndPointWriter* output)
     : bytesTransmitted_(0),
       contentLength_(Buffer::npos),
       chunked_(false),
@@ -27,12 +27,12 @@ HttpGenerator::HttpGenerator(EndPointWriter* output)
       writer_(output) {
 }
 
-void HttpGenerator::recycle() {
+void Generator::recycle() {
   buffer_.clear();
   bytesTransmitted_ = 0;
 }
 
-void HttpGenerator::generateRequest(const HttpRequestInfo& info,
+void Generator::generateRequest(const HttpRequestInfo& info,
                                     Buffer&& chunk) {
   generateRequestLine(info);
   generateHeaders(info);
@@ -40,7 +40,7 @@ void HttpGenerator::generateRequest(const HttpRequestInfo& info,
   generateBody(std::move(chunk));
 }
 
-void HttpGenerator::generateRequest(const HttpRequestInfo& info,
+void Generator::generateRequest(const HttpRequestInfo& info,
                                     const BufferRef& chunk) {
   generateRequestLine(info);
   generateHeaders(info);
@@ -48,27 +48,27 @@ void HttpGenerator::generateRequest(const HttpRequestInfo& info,
   generateBody(chunk);
 }
 
-void HttpGenerator::generateResponse(const HttpResponseInfo& info,
+void Generator::generateResponse(const HttpResponseInfo& info,
                                      const BufferRef& chunk) {
   generateResponseInfo(info);
   generateBody(chunk);
   flushBuffer();
 }
 
-void HttpGenerator::generateResponse(const HttpResponseInfo& info,
+void Generator::generateResponse(const HttpResponseInfo& info,
                                      Buffer&& chunk) {
   generateResponseInfo(info);
   generateBody(std::move(chunk));
   flushBuffer();
 }
 
-void HttpGenerator::generateResponse(const HttpResponseInfo& info,
+void Generator::generateResponse(const HttpResponseInfo& info,
                                      FileRef&& chunk) {
   generateResponseInfo(info);
   generateBody(std::move(chunk));
 }
 
-void HttpGenerator::generateResponseInfo(const HttpResponseInfo& info) {
+void Generator::generateResponseInfo(const HttpResponseInfo& info) {
   generateResponseLine(info);
 
   if (static_cast<int>(info.status()) >= 200) {
@@ -80,7 +80,7 @@ void HttpGenerator::generateResponseInfo(const HttpResponseInfo& info) {
   flushBuffer();
 }
 
-void HttpGenerator::generateBody(const BufferRef& chunk) {
+void Generator::generateBody(const BufferRef& chunk) {
   if (chunked_) {
     if (chunk.size() > 0) {
       Buffer buf(12);
@@ -99,7 +99,7 @@ void HttpGenerator::generateBody(const BufferRef& chunk) {
   }
 }
 
-void HttpGenerator::generateTrailer(const HeaderFieldList& trailers) {
+void Generator::generateTrailer(const HeaderFieldList& trailers) {
   if (chunked_) {
     buffer_.push_back("0\r\n");
     for (const HeaderField& header: trailers) {
@@ -113,7 +113,7 @@ void HttpGenerator::generateTrailer(const HeaderFieldList& trailers) {
   flushBuffer();
 }
 
-void HttpGenerator::generateBody(Buffer&& chunk) {
+void Generator::generateBody(Buffer&& chunk) {
   if (chunked_) {
     if (chunk.size() > 0) {
       Buffer buf(12);
@@ -132,7 +132,7 @@ void HttpGenerator::generateBody(Buffer&& chunk) {
   }
 }
 
-void HttpGenerator::generateBody(FileRef&& chunk) {
+void Generator::generateBody(FileRef&& chunk) {
   if (chunked_) {
     int n;
     char buf[12];
@@ -155,7 +155,7 @@ void HttpGenerator::generateBody(FileRef&& chunk) {
   }
 }
 
-void HttpGenerator::generateRequestLine(const HttpRequestInfo& info) {
+void Generator::generateRequestLine(const HttpRequestInfo& info) {
   buffer_.push_back(info.method());
   buffer_.push_back(' ');
   buffer_.push_back(info.entity());
@@ -175,7 +175,7 @@ void HttpGenerator::generateRequestLine(const HttpRequestInfo& info) {
   }
 }
 
-void HttpGenerator::generateResponseLine(const HttpResponseInfo& info) {
+void Generator::generateResponseLine(const HttpResponseInfo& info) {
   switch (info.version()) {
     case HttpVersion::VERSION_0_9:
       buffer_.push_back("HTTP/0.9 ");
@@ -201,7 +201,7 @@ void HttpGenerator::generateResponseLine(const HttpResponseInfo& info) {
   buffer_.push_back("\r\n");
 }
 
-void HttpGenerator::generateHeaders(const HttpInfo& info) {
+void Generator::generateHeaders(const HttpInfo& info) {
   chunked_ = info.hasContentLength() == false || info.hasTrailers();
   contentLength_ = info.contentLength();
 
@@ -236,7 +236,7 @@ void HttpGenerator::generateHeaders(const HttpInfo& info) {
   buffer_.push_back("\r\n");
 }
 
-void HttpGenerator::flushBuffer() {
+void Generator::flushBuffer() {
   if (!buffer_.empty()) {
     bytesTransmitted_ += buffer_.size();
     writer_->write(std::move(buffer_));

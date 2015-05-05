@@ -16,18 +16,18 @@ namespace cortex {
 namespace http {
 namespace http1 {
 
-class HttpConnection;
+class Connection;
 
-class Http1Channel : public HttpChannel {
+class Channel : public HttpChannel {
  public:
-  Http1Channel(HttpConnection* transport,
-              const HttpHandler& handler,
-              std::unique_ptr<HttpInput>&& input,
-              size_t maxRequestUriLength,
-              size_t maxRequestBodyLength,
-              HttpDateGenerator* dateGenerator,
-              HttpOutputCompressor* outputCompressor);
-  ~Http1Channel();
+  Channel(Connection* transport,
+          const HttpHandler& handler,
+          std::unique_ptr<HttpInput>&& input,
+          size_t maxRequestUriLength,
+          size_t maxRequestBodyLength,
+          HttpDateGenerator* dateGenerator,
+          HttpOutputCompressor* outputCompressor);
+  ~Channel();
 
   bool isPersistent() const CORTEX_NOEXCEPT { return persistent_; }
   void setPersistent(bool value) CORTEX_NOEXCEPT { persistent_ = value; }

@@ -26,7 +26,7 @@ ResponseParser::StreamState::StreamState()
     : listener(nullptr),
       totalBytesReceived(0),
       contentFullyReceived(false),
-      http1Parser(http1::HttpParser::MESSAGE, nullptr/*listener*/) {
+      http1Parser(http1::Parser::MESSAGE, nullptr/*listener*/) {
 }
 
 ResponseParser::StreamState::~StreamState() {

@@ -27,7 +27,7 @@ namespace http1 {
  *
  * @see HttpListener
  */
-class CORTEX_HTTP_API HttpParser {
+class CORTEX_HTTP_API Parser {
  public:
   // {{{ enums
   /**
@@ -127,7 +127,7 @@ class CORTEX_HTTP_API HttpParser {
    *       is to be cancelled and thus, may imply, that the object itself
    *       may have been already deleted.
    */
-  explicit HttpParser(ParseMode mode, HttpListener* listener = nullptr);
+  explicit Parser(ParseMode mode, HttpListener* listener = nullptr);
 
   State state() const { return state_; }
 
@@ -209,7 +209,7 @@ class CORTEX_HTTP_API HttpParser {
   ssize_t contentLength_;  //!< content length of whole content or current chunk
 };
 
-CORTEX_HTTP_API std::string to_string(http1::HttpParser::State state);
+CORTEX_HTTP_API std::string to_string(Parser::State state);
 
 }  // namespace http1
 }  // namespace http

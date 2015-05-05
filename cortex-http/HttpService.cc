@@ -9,7 +9,7 @@
 #include <cortex-http/HttpRequest.h>
 #include <cortex-http/HttpResponse.h>
 #include <cortex-http/HttpInputListener.h>
-#include <cortex-http/http1/Http1ConnectionFactory.h>
+#include <cortex-http/http1/ConnectionFactory.h>
 #include <cortex-http/fastcgi/ConnectionFactory.h>
 #include <cortex-base/net/LocalConnector.h>
 #include <cortex-base/net/InetConnector.h>
@@ -145,7 +145,7 @@ void HttpService::attachHttp1(Connector* connector) {
   size_t maxRequestCount = 100;
   TimeSpan maxKeepAlive = TimeSpan::fromSeconds(8);
 
-  auto http = connector->addConnectionFactory<cortex::http::http1::Http1ConnectionFactory>(
+  auto http = connector->addConnectionFactory<cortex::http::http1::ConnectionFactory>(
       clock,
       maxRequestUriLength,
       maxRequestBodyLength,

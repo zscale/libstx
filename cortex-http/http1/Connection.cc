@@ -5,8 +5,8 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <cortex-http/http1/HttpConnection.h>
-#include <cortex-http/http1/Http1Channel.h>
+#include <cortex-http/http1/Connection.h>
+#include <cortex-http/http1/Channel.h>
 #include <cortex-http/HttpBufferedInput.h>
 #include <cortex-http/HttpDateGenerator.h>
 #include <cortex-http/HttpResponseInfo.h>
@@ -28,31 +28,31 @@ namespace cortex {
 namespace http {
 namespace http1 {
 
-#define ERROR(msg...) logError("http1.HttpConnection", msg)
+#define ERROR(msg...) logError("http.http1.Connection", msg)
 
 #ifndef NDEBUG
-#define TRACE(msg...) logTrace("http1.HttpConnection", msg)
+#define TRACE(msg...) logTrace("http.http1.Connection", msg)
 #else
 #define TRACE(msg...) do {} while (0)
 #endif
 
-HttpConnection::HttpConnection(EndPoint* endpoint,
-                               Executor* executor,
-                               const HttpHandler& handler,
-                               HttpDateGenerator* dateGenerator,
-                               HttpOutputCompressor* outputCompressor,
-                               size_t maxRequestUriLength,
-                               size_t maxRequestBodyLength,
-                               size_t maxRequestCount,
-                               TimeSpan maxKeepAlive)
-    : Connection(endpoint, executor),
-      parser_(HttpParser::REQUEST),
+Connection::Connection(EndPoint* endpoint,
+                       Executor* executor,
+                       const HttpHandler& handler,
+                       HttpDateGenerator* dateGenerator,
+                       HttpOutputCompressor* outputCompressor,
+                       size_t maxRequestUriLength,
+                       size_t maxRequestBodyLength,
+                       size_t maxRequestCount,
+                       TimeSpan maxKeepAlive)
+    : ::cortex::Connection(endpoint, executor),
+      parser_(Parser::REQUEST),
       inputBuffer_(),
       inputOffset_(0),
       writer_(),
       onComplete_(),
       generator_(&writer_),
-      channel_(new Http1Channel(
+      channel_(new Channel(
           this, handler, std::unique_ptr<HttpInput>(new HttpBufferedInput()),
           maxRequestUriLength, maxRequestBodyLength,
           dateGenerator, outputCompressor)),
@@ -66,13 +66,13 @@ HttpConnection::HttpConnection(EndPoint* endpoint,
   TRACE("%p ctor", this);
 }
 
-HttpConnection::~HttpConnection() {
+Connection::~Connection() {
   TRACE("%p dtor", this);
 }
 
-void HttpConnection::onOpen() {
+void Connection::onOpen() {
   TRACE("%p onOpen", this);
-  Connection::onOpen();
+  ::cortex::Connection::onOpen();
 
   // TODO support TCP_DEFER_ACCEPT here
 #if 0
@@ -85,12 +85,12 @@ void HttpConnection::onOpen() {
 #endif
 }
 
-void HttpConnection::onClose() {
+void Connection::onClose() {
   TRACE("%p onClose", this);
-  Connection::onClose();
+  ::cortex::Connection::onClose();
 }
 
-void HttpConnection::abort() {
+void Connection::abort() {
   TRACE("%p abort()");
   channel_->response()->setBytesTransmitted(generator_.bytesTransmitted());
   channel_->responseEnd();
@@ -99,7 +99,7 @@ void HttpConnection::abort() {
   endpoint()->close();
 }
 
-void HttpConnection::completed() {
+void Connection::completed() {
   TRACE("%p completed", this);
 
   if (onComplete_)
@@ -108,14 +108,14 @@ void HttpConnection::completed() {
   if (!generator_.isChunked() && generator_.pendingContentLength() > 0)
     RAISE(IllegalStateError, "Invalid State. Response not fully written but completed() invoked.");
 
-  onComplete_ = std::bind(&HttpConnection::onResponseComplete, this,
+  onComplete_ = std::bind(&Connection::onResponseComplete, this,
                           std::placeholders::_1);
 
   generator_.generateTrailer(channel_->response()->trailers());
   wantFlush();
 }
 
-void HttpConnection::onResponseComplete(bool succeed) {
+void Connection::onResponseComplete(bool succeed) {
   TRACE("%p onResponseComplete(%s)", this, succeed ? "succeed" : "failure");
   channel_->response()->setBytesTransmitted(generator_.bytesTransmitted());
   channel_->responseEnd();
@@ -136,7 +136,7 @@ void HttpConnection::onResponseComplete(bool succeed) {
     if (inputOffset_ < inputBuffer_.size()) {
       // have some request pipelined
       TRACE("%p completed.onComplete: pipelined read", this);
-      executor()->execute(std::bind(&HttpConnection::parseFragment, this));
+      executor()->execute(std::bind(&Connection::parseFragment, this));
     } else {
       // wait for next request
       TRACE("%p completed.onComplete: keep-alive read", this);
@@ -147,7 +147,7 @@ void HttpConnection::onResponseComplete(bool succeed) {
   }
 }
 
-void HttpConnection::send(HttpResponseInfo&& responseInfo,
+void Connection::send(HttpResponseInfo&& responseInfo,
                           const BufferRef& chunk,
                           CompletionHandler onComplete) {
   if (onComplete && onComplete_)
@@ -168,7 +168,7 @@ void HttpConnection::send(HttpResponseInfo&& responseInfo,
   wantFlush();
 }
 
-void HttpConnection::send(HttpResponseInfo&& responseInfo,
+void Connection::send(HttpResponseInfo&& responseInfo,
                           Buffer&& chunk,
                           CompletionHandler onComplete) {
   if (onComplete && onComplete_)
@@ -189,7 +189,7 @@ void HttpConnection::send(HttpResponseInfo&& responseInfo,
   wantFlush();
 }
 
-void HttpConnection::send(HttpResponseInfo&& responseInfo,
+void Connection::send(HttpResponseInfo&& responseInfo,
                           FileRef&& chunk,
                           CompletionHandler onComplete) {
   if (onComplete && onComplete_)
@@ -210,7 +210,7 @@ void HttpConnection::send(HttpResponseInfo&& responseInfo,
   wantFlush();
 }
 
-void HttpConnection::patchResponseInfo(HttpResponseInfo& responseInfo) {
+void Connection::patchResponseInfo(HttpResponseInfo& responseInfo) {
   if (static_cast<int>(responseInfo.status()) >= 200) {
     // patch in HTTP transport-layer headers
     if (channel_->isPersistent() && requestCount_ < requestMax_) {
@@ -229,7 +229,7 @@ void HttpConnection::patchResponseInfo(HttpResponseInfo& responseInfo) {
   }
 }
 
-void HttpConnection::send(Buffer&& chunk, CompletionHandler onComplete) {
+void Connection::send(Buffer&& chunk, CompletionHandler onComplete) {
   if (onComplete && onComplete_)
     RAISE(IllegalStateError, "There is still another completion hook.");
 
@@ -241,7 +241,7 @@ void HttpConnection::send(Buffer&& chunk, CompletionHandler onComplete) {
   wantFlush();
 }
 
-void HttpConnection::send(const BufferRef& chunk,
+void Connection::send(const BufferRef& chunk,
                           CompletionHandler onComplete) {
   if (onComplete && onComplete_)
     RAISE(IllegalStateError, "There is still another completion hook.");
@@ -254,7 +254,7 @@ void HttpConnection::send(const BufferRef& chunk,
   wantFlush();
 }
 
-void HttpConnection::send(FileRef&& chunk, CompletionHandler onComplete) {
+void Connection::send(FileRef&& chunk, CompletionHandler onComplete) {
   if (onComplete && onComplete_)
     RAISE(IllegalStateError, "There is still another completion hook.");
 
@@ -265,12 +265,12 @@ void HttpConnection::send(FileRef&& chunk, CompletionHandler onComplete) {
   wantFlush();
 }
 
-void HttpConnection::setInputBufferSize(size_t size) {
+void Connection::setInputBufferSize(size_t size) {
   TRACE("%p setInputBufferSize(%zu)", this, size);
   inputBuffer_.reserve(size);
 }
 
-void HttpConnection::onFillable() {
+void Connection::onFillable() {
   TRACE("%p onFillable", this);
 
   TRACE("%p onFillable: calling fill()", this);
@@ -284,7 +284,7 @@ void HttpConnection::onFillable() {
   parseFragment();
 }
 
-void HttpConnection::parseFragment() {
+void Connection::parseFragment() {
   try {
     TRACE("parseFragment: calling parseFragment (%zu into %zu)",
           inputOffset_, inputBuffer_.size());
@@ -306,7 +306,7 @@ void HttpConnection::parseFragment() {
   }
 }
 
-void HttpConnection::onFlushable() {
+void Connection::onFlushable() {
   TRACE("%p onFlushable", this);
 
   if (channel_->state() != HttpChannelState::SENDING)
@@ -330,12 +330,12 @@ void HttpConnection::onFlushable() {
   }
 }
 
-void HttpConnection::onInterestFailure(const std::exception& error) {
+void Connection::onInterestFailure(const std::exception& error) {
   TRACE("%p onInterestFailure(%s): %s", this, typeid(error).name(), error.what());
 
   // TODO: improve logging here, as this eats our exception here.
   // e.g. via (factory or connector)->error(error);
-  logError("HttpConnection", error);
+  logError("Connection", error);
 
   auto callback = std::move(onComplete_);
   onComplete_ = nullptr;

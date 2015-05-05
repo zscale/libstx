@@ -33,7 +33,7 @@ namespace http1 {
  * Implements the HTTP/1.1 transport layer syntax to generate
  * RFC 7230 conform messages.
  */
-class CORTEX_HTTP_API HttpGenerator {
+class CORTEX_HTTP_API Generator {
   enum class State {
     None,
     WritingBody,
@@ -41,7 +41,7 @@ class CORTEX_HTTP_API HttpGenerator {
   };
 
  public:
-  explicit HttpGenerator(EndPointWriter* output);
+  explicit Generator(EndPointWriter* output);
 
   /** resets any runtime state. */
   void recycle();

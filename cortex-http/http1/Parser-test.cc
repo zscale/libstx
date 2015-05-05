@@ -5,7 +5,7 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <cortex-http/http1/HttpParser.h>
+#include <cortex-http/http1/Parser.h>
 #include <cortex-http/HttpListener.h>
 #include <cortex-http/HttpStatus.h>
 #include <cortex-base/RuntimeError.h>
@@ -17,9 +17,9 @@ using namespace cortex;
 using namespace cortex::http;
 using namespace cortex::http::http1;
 
-class HttpParserListener : public HttpListener {  // {{{
+class ParserListener : public HttpListener {  // {{{
  public:
-  HttpParserListener();
+  ParserListener();
 
   void onMessageBegin(const BufferRef& method, const BufferRef& entity,
                       HttpVersion version) override;
@@ -48,7 +48,7 @@ class HttpParserListener : public HttpListener {  // {{{
   bool messageEnd;
 };
 
-HttpParserListener::HttpParserListener()
+ParserListener::ParserListener()
     : method(),
       entity(),
       version(HttpVersion::UNKNOWN),
@@ -62,7 +62,7 @@ HttpParserListener::HttpParserListener()
       messageEnd(false) {
 }
 
-void HttpParserListener::onMessageBegin(const BufferRef& method,
+void ParserListener::onMessageBegin(const BufferRef& method,
                                         const BufferRef& entity,
                                         HttpVersion version) {
   this->method = method.str();
@@ -70,47 +70,47 @@ void HttpParserListener::onMessageBegin(const BufferRef& method,
   this->version = version;
 }
 
-void HttpParserListener::onMessageBegin(HttpVersion version, HttpStatus code,
+void ParserListener::onMessageBegin(HttpVersion version, HttpStatus code,
                                         const BufferRef& text) {
   this->version = version;
   this->statusCode = code;
   this->statusReason = text.str();
 }
 
-void HttpParserListener::onMessageBegin() {
+void ParserListener::onMessageBegin() {
   messageBegin = true;
 }
 
-void HttpParserListener::onMessageHeader(const BufferRef& name,
+void ParserListener::onMessageHeader(const BufferRef& name,
                                          const BufferRef& value) {
   headers.push_back(std::make_pair(name.str(), value.str()));
 }
 
-void HttpParserListener::onMessageHeaderEnd() {
+void ParserListener::onMessageHeaderEnd() {
   headerEnd = true;
 }
 
-void HttpParserListener::onMessageContent(const BufferRef& chunk) {
+void ParserListener::onMessageContent(const BufferRef& chunk) {
   body += chunk;
 }
 
-void HttpParserListener::onMessageEnd() {
+void ParserListener::onMessageEnd() {
   messageEnd = true;
 }
 
-void HttpParserListener::onProtocolError(HttpStatus code,
+void ParserListener::onProtocolError(HttpStatus code,
                                          const std::string& msg) {
   errorCode = code;
   errorMessage = msg;
 }
 // }}}
 
-TEST(HttpParser, requestLine0) {
+TEST(http1_Parser, requestLine0) {
   /* Seems like in HTTP/0.9 it was possible to create
    * very simple request messages.
    */
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("GET /\r\n");
 
   ASSERT_EQ("GET", listener.method);
@@ -122,9 +122,9 @@ TEST(HttpParser, requestLine0) {
   ASSERT_EQ(0, listener.body.size());
 }
 
-TEST(HttpParser, requestLine1) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestLine1) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("GET / HTTP/0.9\r\n\r\n");
 
   ASSERT_EQ("GET", listener.method);
@@ -134,9 +134,9 @@ TEST(HttpParser, requestLine1) {
   ASSERT_EQ(0, listener.body.size());
 }
 
-TEST(HttpParser, requestLine2) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestLine2) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("HEAD /foo?bar HTTP/1.0\r\n\r\n");
 
   ASSERT_EQ("HEAD", listener.method);
@@ -146,46 +146,46 @@ TEST(HttpParser, requestLine2) {
   ASSERT_EQ(0, listener.body.size());
 }
 
-TEST(HttpParser, requestLine_invalid1_MissingPathAndProtoVersion) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestLine_invalid1_MissingPathAndProtoVersion) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("GET\r\n\r\n");
   ASSERT_EQ(HttpStatus::BadRequest, listener.errorCode);
 }
 
-TEST(HttpParser, requestLine_invalid3_InvalidVersion) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestLine_invalid3_InvalidVersion) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("GET / HTTP/0\r\n\r\n");
   ASSERT_EQ((int)HttpStatus::BadRequest, (int)listener.errorCode);
 }
 
-TEST(HttpParser, requestLine_invalid3_CharsAfterVersion) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestLine_invalid3_CharsAfterVersion) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("GET / HTTP/1.1b\r\n\r\n");
   ASSERT_EQ((int)HttpStatus::BadRequest, (int)listener.errorCode);
 }
 
-TEST(HttpParser, requestLine_invalid5_SpaceAfterVersion) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestLine_invalid5_SpaceAfterVersion) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment("GET / HTTP/1.1 \r\n\r\n");
   ASSERT_EQ((int)HttpStatus::BadRequest, (int)listener.errorCode);
 }
 
-TEST(HttpParser, requestLine_invalid6_UnsupportedVersion) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestLine_invalid6_UnsupportedVersion) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
 
   // Actually, we could make it a ParserError, or HttpClientError or so,
   // But to make googletest lib happy, we should make it even a distinct class.
   ASSERT_THROW(parser.parseFragment("GET / HTTP/1.2\r\n\r\n"), RuntimeError);
 }
 
-TEST(HttpParser, headers1) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::MESSAGE, &listener);
+TEST(http1_Parser, headers1) {
+  ParserListener listener;
+  Parser parser(Parser::MESSAGE, &listener);
   parser.parseFragment(
       "Foo: the foo\r\n"
       "Content-Length: 6\r\n"
@@ -197,9 +197,9 @@ TEST(HttpParser, headers1) {
   ASSERT_EQ("123456", listener.body);
 }
 
-TEST(HttpParser, invalidHeader1) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::MESSAGE, &listener);
+TEST(http1_Parser, invalidHeader1) {
+  ParserListener listener;
+  Parser parser(Parser::MESSAGE, &listener);
   size_t n = parser.parseFragment("Foo : the foo\r\n"
                                   "\r\n");
 
@@ -208,9 +208,9 @@ TEST(HttpParser, invalidHeader1) {
   ASSERT_EQ(0, listener.headers.size());
 }
 
-TEST(HttpParser, invalidHeader2) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::MESSAGE, &listener);
+TEST(http1_Parser, invalidHeader2) {
+  ParserListener listener;
+  Parser parser(Parser::MESSAGE, &listener);
   size_t n = parser.parseFragment("Foo\r\n"
                                   "\r\n");
 
@@ -219,9 +219,9 @@ TEST(HttpParser, invalidHeader2) {
   ASSERT_EQ(0, listener.headers.size());
 }
 
-TEST(HttpParser, requestWithHeaders) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestWithHeaders) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment(
       "GET / HTTP/0.9\r\n"
       "Foo: the foo\r\n"
@@ -241,9 +241,9 @@ TEST(HttpParser, requestWithHeaders) {
   ASSERT_EQ("the bar", listener.headers[1].second);
 }
 
-TEST(HttpParser, requestWithHeadersAndBody) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestWithHeadersAndBody) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment(
       "GET / HTTP/0.9\r\n"
       "Foo: the foo\r\n"
@@ -256,9 +256,9 @@ TEST(HttpParser, requestWithHeadersAndBody) {
 }
 
 // no chunks except the EOS-chunk
-TEST(HttpParser, requestWithHeadersAndBodyChunked1) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestWithHeadersAndBodyChunked1) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment(
       "GET / HTTP/0.9\r\n"
       "Transfer-Encoding: chunked\r\n"
@@ -270,9 +270,9 @@ TEST(HttpParser, requestWithHeadersAndBodyChunked1) {
 }
 
 // exactly one data chunk
-TEST(HttpParser, requestWithHeadersAndBodyChunked2) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestWithHeadersAndBodyChunked2) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment(
       "GET / HTTP/0.9\r\n"
       "Transfer-Encoding: chunked\r\n"
@@ -289,9 +289,9 @@ TEST(HttpParser, requestWithHeadersAndBodyChunked2) {
 }
 
 // more than one data chunk
-TEST(HttpParser, requestWithHeadersAndBodyChunked3) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestWithHeadersAndBodyChunked3) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   parser.parseFragment(
       "GET / HTTP/0.9\r\n"
       "Transfer-Encoding: chunked\r\n"
@@ -312,9 +312,9 @@ TEST(HttpParser, requestWithHeadersAndBodyChunked3) {
 }
 
 // first chunk is missing CR LR
-TEST(HttpParser, requestWithHeadersAndBodyChunked_invalid1) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, requestWithHeadersAndBodyChunked_invalid1) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   size_t n = parser.parseFragment(
       "GET / HTTP/0.9\r\n"
       "Transfer-Encoding: chunked\r\n"
@@ -331,9 +331,9 @@ TEST(HttpParser, requestWithHeadersAndBodyChunked_invalid1) {
   ASSERT_EQ(HttpStatus::BadRequest, listener.errorCode);
 }
 
-TEST(HttpParser, pipelined1) {
-  HttpParserListener listener;
-  HttpParser parser(HttpParser::REQUEST, &listener);
+TEST(http1_Parser, pipelined1) {
+  ParserListener listener;
+  Parser parser(Parser::REQUEST, &listener);
   constexpr BufferRef input = "GET /foo HTTP/1.1\r\n\r\n"
                               "HEAD /bar HTTP/0.9\r\n\r\n";
   size_t n = parser.parseFragment(input);
