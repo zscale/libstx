@@ -89,6 +89,10 @@ const std::string& HeaderFieldList::get(const std::string& name) const {
   return notfound;
 }
 
+const std::string& HeaderFieldList::operator[](const std::string& name) const {
+  return get(name);
+}
+
 void HeaderFieldList::reset() {
   entries_.clear();
 }
