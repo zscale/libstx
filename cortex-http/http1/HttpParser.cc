@@ -7,18 +7,18 @@
 
 #include <cortex-http/http1/HttpParser.h>
 #include <cortex-http/HttpListener.h>
+#include <cortex-http/HttpStatus.h>
+#include <cortex-http/BadMessage.h>
 #include <cortex-base/logging.h>
 
 namespace cortex {
 namespace http {
 namespace http1 {
 
-#if 0 //!defined(NDEBUG)
-#define TRACE(level, fmt...) CORTEX_DEBUG("http-parser", level, fmt)
+#if !defined(NDEBUG)
+#define TRACE(fmt...) logTrace("http.http1.Parser", fmt)
 #else
-#define TRACE(level, msg...) \
-  do {                       \
-  } while (0)
+#define TRACE(msg...) do {} while (0)
 #endif
 
 std::string to_string(HttpParser::State state) {
@@ -265,7 +265,7 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
 
   // TRACE(2, "process(curState:%s): size: %ld: '%s'", to_string(state()).c_str(),
   // chunk.size(), chunk.str().c_str());
-  TRACE(2, "process(curState:%s): size: %ld", to_string(state()).c_str(),
+  TRACE("process(curState:%s): size: %ld", to_string(state()).c_str(),
         chunk.size());
 
 #if 0
@@ -279,8 +279,7 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
         case CONTENT_ENDLESS: // endless-sized content (until stream end)
         {
             *nparsed += chunk.size();
-            bool rv = onMessageContent(chunk);
-
+            onMessageContent(chunk);
             goto done;
         }
         default:
@@ -289,12 +288,12 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
 #endif
 
   while (i != e) {
-#if !defined(NDEBUG)
+#if 0 // !defined(NDEBUG)
     if (std::isprint(*i)) {
-      TRACE(3, "parse: %4ld, 0x%02X (%c),  %s", *nparsed, *i, *i,
+      TRACE("parse: %4ld, 0x%02X (%c),  %s", *nparsed, *i, *i,
             to_string(state()).c_str());
     } else {
-      TRACE(3, "parse: %4ld, 0x%02X,     %s", *nparsed, *i,
+      TRACE("parse: %4ld, 0x%02X,     %s", *nparsed, *i,
             to_string(state()).c_str());
     }
 #endif
@@ -319,7 +318,7 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
 
             // an internet message has no special top-line,
             // so we just invoke the callback right away
-            if (!onMessageBegin()) goto done;
+            onMessageBegin();
 
             break;
         }
@@ -373,12 +372,8 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
         break;
       case REQUEST_0_9_LF:
         if (*i == LF) {
-          if (!onMessageBegin(method_, entity_, 0, 9))
-            goto done;
-
-          if (!onMessageHeaderEnd())
-            goto done;
-
+          onMessageBegin(method_, entity_, 0, 9);
+          onMessageHeaderEnd();
           onMessageEnd();
           goto done;
         } else {
@@ -461,13 +456,11 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
           state_ = HEADER_NAME_BEGIN;
           nextChar();
 
-          TRACE(2, "request-line: method=%s, entity=%s, vmaj=%d, vmin=%d",
+          TRACE("request-line: method=%s, entity=%s, vmaj=%d, vmin=%d",
                 method_.str().c_str(), entity_.str().c_str(), versionMajor_,
                 versionMinor_);
 
-          if (!onMessageBegin(method_, entity_, versionMajor_, versionMinor_)) {
-            goto done;
-          }
+          onMessageBegin(method_, entity_, versionMajor_, versionMinor_);
         } else {
           onProtocolError(HttpStatus::BadRequest);
           state_ = PROTOCOL_ERROR;
@@ -593,11 +586,9 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
           state_ = HEADER_NAME_BEGIN;
           nextChar();
 
-          // TRACE(2, "status-line: HTTP/%d.%d, code=%d, message=%s",
+          // TRACE("status-line: HTTP/%d.%d, code=%d, message=%s",
           // versionMajor_, versionMinor_, code_, message_.str().c_str());
-          if (!onMessageBegin(versionMajor_, versionMinor_, code_, message_)) {
-            goto done;
-          }
+          onMessageBegin(versionMajor_, versionMinor_, code_, message_);
         } else {
           onProtocolError(HttpStatus::BadRequest);
           state_ = PROTOCOL_ERROR;
@@ -733,24 +724,23 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
         }
         break;
       case HEADER_VALUE_END: {
-        TRACE(2, "header: name='%s', value='%s'", name_.str().c_str(),
+        TRACE("header: name='%s', value='%s'", name_.str().c_str(),
               value_.str().c_str());
 
-        bool rv;
         if (iequals(name_, "Content-Length")) {
           contentLength_ = value_.toInt();
-          TRACE(2, "set content length to: %ld", contentLength_);
-          rv = onMessageHeader(name_, value_);
+          TRACE("set content length to: %ld", contentLength_);
+          onMessageHeader(name_, value_);
         } else if (iequals(name_, "Transfer-Encoding")) {
           if (iequals(value_, "chunked")) {
             chunked_ = true;
-            rv = true;  // do not pass header to the upper layer if we've
-                        // processed it
+            // do not pass header to the upper layer if we've
+            // processed it
           } else {
-            rv = onMessageHeader(name_, value_);
+            onMessageHeader(name_, value_);
           }
         } else {
-          rv = onMessageHeader(name_, value_);
+          onMessageHeader(name_, value_);
         }
 
         name_.clear();
@@ -759,9 +749,6 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
         // continue with the next header
         state_ = HEADER_NAME_BEGIN;
 
-        if (!rv) {
-          goto done;
-        }
         break;
       }
       case HEADER_END_LF:
@@ -773,13 +760,10 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
 
           nextChar();
 
-          if (!onMessageHeaderEnd()) {
-            TRACE(2,
-                  "messageHeaderEnd returned false. returning `Aborted`-state");
-            goto done;
-          }
+          onMessageHeaderEnd();
 
-          if (!isContentExpected() && !onMessageEnd()) {
+          if (!isContentExpected()) {
+            onMessageEnd();
             goto done;
           }
         } else {
@@ -799,14 +783,12 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
         // body w/o content-length (allowed in simple MESSAGE types only)
         BufferRef c(chunk.ref(*nparsed - initialOutOffset));
 
-        // TRACE(2, "prepared content-chunk (%ld bytes): %s", c.size(),
+        // TRACE("prepared content-chunk (%ld bytes): %s", c.size(),
         // c.str().c_str());
 
         nextChar(c.size());
 
-        bool rv = onMessageContent(c);
-
-        if (!rv) goto done;
+        onMessageContent(c);
 
         break;
       }
@@ -819,13 +801,15 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
         contentLength_ -= chunkSize;
         nextChar(chunkSize);
 
-        bool rv = onMessageContent(chunk.ref(offset, chunkSize));
+        onMessageContent(chunk.ref(offset, chunkSize));
 
-        if (contentLength_ == 0) state_ = MESSAGE_BEGIN;
+        if (contentLength_ == 0)
+          state_ = MESSAGE_BEGIN;
 
-        if (!rv) goto done;
-
-        if (state_ == MESSAGE_BEGIN && !onMessageEnd()) goto done;
+        if (state_ == MESSAGE_BEGIN) {
+          onMessageEnd();
+          goto done;
+        }
 
         break;
       }
@@ -861,7 +845,7 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
           onProtocolError(HttpStatus::BadRequest);
           state_ = PROTOCOL_ERROR;
         } else {
-          // TRACE(2, "content_length: %ld", contentLength_);
+          // TRACE("content_length: %ld", contentLength_);
           if (contentLength_ != 0)
             state_ = CONTENT_CHUNK_BODY;
           else
@@ -878,11 +862,7 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
           contentLength_ -= chunkSize;
           nextChar(chunkSize);
 
-          bool rv = onMessageContent(chunk.ref(offset, chunkSize));
-
-          if (!rv) {
-            goto done;
-          }
+          onMessageContent(chunk.ref(offset, chunkSize));
         } else if (*i == CR) {
           state_ = CONTENT_CHUNK_LF2;
           nextChar();
@@ -918,22 +898,23 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
 
           state_ = MESSAGE_BEGIN;
 
-          if (!onMessageEnd()) goto done;
+          onMessageEnd();
+          goto done;
         }
         break;
       case PROTOCOL_ERROR:
         goto done;
       default:
 #if !defined(NDEBUG)
-        TRACE(1, "parse: unknown state %i", state_);
+        TRACE("parse: unknown state %i", state_);
         if (std::isprint(*i)) {
-          TRACE(1, "parse: internal error at nparsed: %ld, character: '%c'",
+          TRACE("parse: internal error at nparsed: %ld, character: '%c'",
                 *nparsed, *i);
         } else {
-          TRACE(1, "parse: internal error at nparsed: %ld, character: 0x%02X",
+          TRACE("parse: internal error at nparsed: %ld, character: 0x%02X",
                 *nparsed, *i);
         }
-        logDebug("HttpParser", "%s", chunk.hexdump().c_str());
+        TRACE("%s", chunk.hexdump().c_str());
 #endif
         goto done;
     }
@@ -949,7 +930,8 @@ std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
       // subsequent calls to process() parse next request(s).
       state_ = MESSAGE_BEGIN;
 
-      if (!onMessageEnd()) goto done;
+      onMessageEnd();
+      goto done;
     }
   }
 
@@ -1024,56 +1006,54 @@ inline HttpVersion make_version(int versionMajor, int versionMinor) {
   return HttpVersion::UNKNOWN;
 }
 
-bool HttpParser::onMessageBegin(const BufferRef& method,
+void HttpParser::onMessageBegin(const BufferRef& method,
                                        const BufferRef& entity,
                                        int versionMajor, int versionMinor) {
   HttpVersion version = make_version(versionMajor, versionMinor);
 
-  if (version == HttpVersion::UNKNOWN) {
-    onProtocolError(HttpStatus::HttpVersionNotSupported);
-    return false;
-  }
+  if (version == HttpVersion::UNKNOWN)
+    RAISE_HTTP(HttpVersionNotSupported);
 
-  if (!listener_)
-    return true;
-
-  return listener_->onMessageBegin(method, entity, version);
+  if (listener_)
+    listener_->onMessageBegin(method, entity, version);
 }
 
-bool HttpParser::onMessageBegin(int versionMajor, int versionMinor,
+void HttpParser::onMessageBegin(int versionMajor, int versionMinor,
                                 int status, const BufferRef& text) {
   HttpVersion version = make_version(versionMajor, versionMinor);
-  if (version == HttpVersion::UNKNOWN) {
-    onProtocolError(HttpStatus::HttpVersionNotSupported);
-    return false;
-  }
+  if (version == HttpVersion::UNKNOWN)
+    RAISE_HTTP(HttpVersionNotSupported);
 
   if (!listener_)
-    return true;
+    return;
 
-  return listener_->onMessageBegin(version,
-                                   static_cast<HttpStatus>(code_), text);
+  listener_->onMessageBegin(version, static_cast<HttpStatus>(code_), text);
 }
 
-bool HttpParser::onMessageBegin() {
-  return listener_ ? listener_->onMessageBegin() : true;
+void HttpParser::onMessageBegin() {
+  if (listener_)
+    listener_->onMessageBegin();
 }
 
-bool HttpParser::onMessageHeader(const BufferRef& name,
+void HttpParser::onMessageHeader(const BufferRef& name,
                                         const BufferRef& value) {
-  return listener_ ? listener_->onMessageHeader(name, value) : true;
+  if (listener_)
+    listener_->onMessageHeader(name, value);
 }
 
-bool HttpParser::onMessageHeaderEnd() {
-  return listener_ ? listener_->onMessageHeaderEnd() : true;
+void HttpParser::onMessageHeaderEnd() {
+  if (listener_)
+    listener_->onMessageHeaderEnd();
 }
 
-bool HttpParser::onMessageContent(const BufferRef& chunk) {
-  return listener_ ? listener_->onMessageContent(chunk) : true;
+void HttpParser::onMessageContent(const BufferRef& chunk) {
+  if (listener_)
+    listener_->onMessageContent(chunk);
 }
 
-bool HttpParser::onMessageEnd() {
-  return listener_ ? listener_->onMessageEnd() : true;
+void HttpParser::onMessageEnd() {
+  if (listener_)
+    listener_->onMessageEnd();
 }
 
 void HttpParser::onProtocolError(HttpStatus code, const std::string& message) {

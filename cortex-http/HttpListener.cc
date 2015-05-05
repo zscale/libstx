@@ -10,44 +10,33 @@
 namespace cortex {
 namespace http {
 
-bool HttpListener::onMessageBegin(const BufferRef& method, const BufferRef& uri,
+void HttpListener::onMessageBegin(const BufferRef& method,
+                                  const BufferRef& uri,
                                   HttpVersion version) {
-  return true;
 }
 
-bool HttpListener::onMessageBegin(HttpVersion version, HttpStatus code,
+void HttpListener::onMessageBegin(HttpVersion version, HttpStatus code,
                                   const BufferRef& text) {
-  return true;
 }
 
-bool HttpListener::onMessageBegin() {
-  //.
-  return true;
+void HttpListener::onMessageBegin() {
 }
 
-bool HttpListener::onMessageHeader(const BufferRef& name,
+void HttpListener::onMessageHeader(const BufferRef& name,
                                    const BufferRef& value) {
-  return true;
 }
 
-bool HttpListener::onMessageHeaderEnd() {
-  //.
-  return true;
+void HttpListener::onMessageHeaderEnd() {
 }
 
-bool HttpListener::onMessageContent(const BufferRef& chunk) {
-  //.
-  return true;
+void HttpListener::onMessageContent(const BufferRef& chunk) {
 }
 
-bool HttpListener::onMessageEnd() {
-  //.
-  return true;
+void HttpListener::onMessageEnd() {
 }
 
 void HttpListener::onProtocolError(HttpStatus code,
                                    const std::string& message) {
-  //.
 }
 
 }  // namespace http

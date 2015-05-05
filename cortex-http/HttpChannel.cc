@@ -243,7 +243,7 @@ void HttpChannel::send100Continue(CompletionHandler onComplete) {
   transport_->send(std::move(info), BufferRef(), onComplete);
 }
 
-bool HttpChannel::onMessageBegin(const BufferRef& method,
+void HttpChannel::onMessageBegin(const BufferRef& method,
                                  const BufferRef& entity,
                                  HttpVersion version) {
   response_->setVersion(version);
@@ -255,11 +255,9 @@ bool HttpChannel::onMessageBegin(const BufferRef& method,
 
   TRACE("onMessageBegin(%s, %s, %s)", request_->unparsedMethod().c_str(),
         request_->path().c_str(), to_string(version).c_str());
-
-  return true;
 }
 
-bool HttpChannel::onMessageHeader(const BufferRef& name,
+void HttpChannel::onMessageHeader(const BufferRef& name,
                                   const BufferRef& value) {
   request_->headers().push_back(name.str(), value.str());
 
@@ -275,11 +273,9 @@ bool HttpChannel::onMessageHeader(const BufferRef& name,
       RAISE_HTTP_REASON(BadRequest, "Multiple host headers are illegal.");
     }
   }
-
-  return true;
 }
 
-bool HttpChannel::onMessageHeaderEnd() {
+void HttpChannel::onMessageHeaderEnd() {
   if (state() != HttpChannelState::HANDLING) {
     setState(HttpChannelState::HANDLING);
 
@@ -292,7 +288,6 @@ bool HttpChannel::onMessageHeaderEnd() {
 
     handleRequest();
   }
-  return true;
 }
 
 void HttpChannel::handleRequest() {
@@ -309,18 +304,15 @@ void HttpChannel::handleRequest() {
   }
 }
 
-bool HttpChannel::onMessageContent(const BufferRef& chunk) {
+void HttpChannel::onMessageContent(const BufferRef& chunk) {
   request_->input()->onContent(chunk);
-  return true;
 }
 
-bool HttpChannel::onMessageEnd() {
+void HttpChannel::onMessageEnd() {
   BUG_ON(request_->input() == nullptr);
 
   if (request_->input()->listener())
     request_->input()->listener()->onAllDataRead();
-
-  return false;
 }
 
 void HttpChannel::onProtocolError(HttpStatus code, const std::string& message) {
@@ -339,7 +331,7 @@ void HttpChannel::completed() {
   }
 
   if (state() != HttpChannelState::HANDLING) {
-    RAISE(IllegalStateError);
+    RAISE(IllegalStateError, "HttpChannel.completed invoked but state is not in HANDLING.");
   }
 
   if (!outputFilters_.empty()) {

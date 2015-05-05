@@ -30,15 +30,15 @@ using namespace cortex::http;
 
 class RequestListener : public HttpListener { // {{{
  public:
-  bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
+  void onMessageBegin(const BufferRef& method, const BufferRef& entity,
                       HttpVersion version) override;
-  bool onMessageBegin(HttpVersion version, HttpStatus code,
+  void onMessageBegin(HttpVersion version, HttpStatus code,
                       const BufferRef& text) override;
-  bool onMessageBegin() override;
-  bool onMessageHeader(const BufferRef& name, const BufferRef& value) override;
-  bool onMessageHeaderEnd() override;
-  bool onMessageContent(const BufferRef& chunk) override;
-  bool onMessageEnd() override;
+  void onMessageBegin() override;
+  void onMessageHeader(const BufferRef& name, const BufferRef& value) override;
+  void onMessageHeaderEnd() override;
+  void onMessageContent(const BufferRef& chunk) override;
+  void onMessageEnd() override;
   void onProtocolError(HttpStatus code, const std::string& message) override;
 
  public:
@@ -57,50 +57,40 @@ class RequestListener : public HttpListener { // {{{
   Buffer body;
 };
 
-bool RequestListener::onMessageBegin(const BufferRef& method, const BufferRef& entity,
+void RequestListener::onMessageBegin(const BufferRef& method, const BufferRef& entity,
                     HttpVersion version) {
   this->method = method;
   this->entity = entity;
   this->version = version;
   this->requestMessageBeginCount++;
-
-  return true;
 }
 
-bool RequestListener::onMessageBegin(HttpVersion version, HttpStatus code,
+void RequestListener::onMessageBegin(HttpVersion version, HttpStatus code,
                     const BufferRef& text) {
   this->version = version;
   this->status = code;
   this->text = text;
   this->responseMessageBeginCount++;
-
-  return true;
 }
 
-bool RequestListener::onMessageBegin() {
+void RequestListener::onMessageBegin() {
   this->genericMessageBeginCount++;
-
-  return true;
 }
 
-bool RequestListener::onMessageHeader(const BufferRef& name, const BufferRef& value) {
+void RequestListener::onMessageHeader(const BufferRef& name, const BufferRef& value) {
   this->headers.push_back(name.str(), value.str());
-  return true;
 }
 
-bool RequestListener::onMessageHeaderEnd() {
+void RequestListener::onMessageHeaderEnd() {
   this->headersEnd++;
-  return true;
 }
 
-bool RequestListener::onMessageContent(const BufferRef& chunk) {
+void RequestListener::onMessageContent(const BufferRef& chunk) {
   this->body.push_back(chunk);
-  return true;
 }
 
-bool RequestListener::onMessageEnd() {
+void RequestListener::onMessageEnd() {
   this->messageEnd++;
-  return true;
 }
 
 void RequestListener::onProtocolError(HttpStatus code, const std::string& message) {

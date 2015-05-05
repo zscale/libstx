@@ -218,18 +218,14 @@ void RequestParser::streamParams(const fastcgi::Record* record) {
   else if (serverProtocol == "HTTP/0.9")
     version = HttpVersion::VERSION_0_9;
 
-  if (!stream->listener->onMessageBegin(method, entity, version))
-    return;
+  stream->listener->onMessageBegin(method, entity, version);
 
   for (const auto& header: stream->headers) {
     stream->listener->onMessageHeader(BufferRef(header.name()),
                                      BufferRef(header.value()));
   }
 
-  if (!stream->listener->onMessageHeaderEnd()) {
-    TRACE("Params: onMessageHeaderEnd returned false. Bailing out.");
-    return;
-  }
+  stream->listener->onMessageHeaderEnd();
 
   if (!stream->body.empty()) {
     TRACE("Params: onMessageContent");

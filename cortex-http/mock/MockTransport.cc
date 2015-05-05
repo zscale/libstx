@@ -64,22 +64,15 @@ void MockTransport::run(HttpVersion version, const std::string& method,
 
 
   try {
-    if (!channel_->onMessageBegin(BufferRef(method), BufferRef(entity), version))
-      return;
+    channel_->onMessageBegin(BufferRef(method), BufferRef(entity), version);
 
     for (const HeaderField& header: headers) {
-      if (!channel_->onMessageHeader(BufferRef(header.name()),
-                                    BufferRef(header.value()))) {
-        return;
-      }
+      channel_->onMessageHeader(BufferRef(header.name()),
+                                BufferRef(header.value()));
     }
 
-    if (!channel_->onMessageHeaderEnd())
-      return;
-
-    if (!channel_->onMessageContent(BufferRef(body.data(), body.size())))
-      return;
-
+    channel_->onMessageHeaderEnd();
+    channel_->onMessageContent(BufferRef(body.data(), body.size()));
     channel_->onMessageEnd();
   } catch (const BadMessage& e) {
     channel_->response()->sendError(e.httpCode(), e.what());

@@ -164,15 +164,15 @@ class CORTEX_HTTP_API HttpParser {
   static inline bool isToken(char value);
   static inline bool isText(char value);
 
-  bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
+  void onMessageBegin(const BufferRef& method, const BufferRef& entity,
                       int versionMajor, int versionMinor);
-  bool onMessageBegin(int versionMajor, int versionMinor, int code,
+  void onMessageBegin(int versionMajor, int versionMinor, int code,
                       const BufferRef& text);
-  bool onMessageBegin();
-  bool onMessageHeader(const BufferRef& name, const BufferRef& value);
-  bool onMessageHeaderEnd();
-  bool onMessageContent(const BufferRef& chunk);
-  bool onMessageEnd();
+  void onMessageBegin();
+  void onMessageHeader(const BufferRef& name, const BufferRef& value);
+  void onMessageHeaderEnd();
+  void onMessageContent(const BufferRef& chunk);
+  void onMessageEnd();
   void onProtocolError(HttpStatus code, const std::string& message = "");
 
  private:

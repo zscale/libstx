@@ -43,7 +43,7 @@ void HttpResponse::recycle() {
 
 void HttpResponse::requireMutableInfo() {
   if (isCommitted())
-    RAISE(IllegalStateError);
+    RAISE(IllegalStateError, "Response already committed.");
 
   requireNotSendingAlready();
 }
@@ -56,7 +56,7 @@ void HttpResponse::requireNotSendingAlready() {
     case HttpChannelState::SENDING:
     default:
       // "Attempt to modify response while in wrong channel state."
-      RAISE(IllegalStateError);
+      RAISE(IllegalStateError, "Require not sending already.");
   }
 }
 
@@ -216,7 +216,7 @@ void HttpResponse::appendTrailer(const std::string& name,
   requireValidHeader(name);
 
   if (!trailers_.contains(name))
-    RAISE(IllegalStateError); // Trailer not registered yet
+    RAISE(IllegalStateError, "Trailer not registered yet.");
 
   trailers_.append(name, value, delim);
 }
@@ -226,7 +226,7 @@ void HttpResponse::setTrailer(const std::string& name, const std::string& value)
   requireValidHeader(name);
 
   if (!trailers_.contains(name))
-    RAISE(IllegalStateError); // Trailer not registered yet
+    RAISE(IllegalStateError, "Trailer not registered yet.");
 
   trailers_.overwrite(name, value);
 }

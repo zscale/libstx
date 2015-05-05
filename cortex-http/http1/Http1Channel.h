@@ -37,10 +37,10 @@ class Http1Channel : public HttpChannel {
   size_t bytesReceived() const noexcept;
 
  protected:
-  bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
+  void onMessageBegin(const BufferRef& method, const BufferRef& entity,
                       HttpVersion version) override;
-  bool onMessageHeader(const BufferRef& name, const BufferRef& value) override;
-  bool onMessageHeaderEnd() override;
+  void onMessageHeader(const BufferRef& name, const BufferRef& value) override;
+  void onMessageHeaderEnd() override;
   void onProtocolError(HttpStatus code, const std::string& message) override;
 
  private:
