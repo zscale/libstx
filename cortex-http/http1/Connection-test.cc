@@ -69,7 +69,7 @@ static const TimeSpan maxKeepAlive = TimeSpan::fromSeconds(30);
   });                                                                           \
   server.start();
 
-TEST(Http1, ConnectionClosed_1_1) {
+TEST(http_http1_Connection, ConnectionClosed_1_1) {
   MOCK_HTTP1_SERVER(server, connector, executor);
 
   cortex::RefPtr<LocalEndPoint> ep;
@@ -81,7 +81,7 @@ TEST(Http1, ConnectionClosed_1_1) {
   ASSERT_TRUE(ep->output().contains("Connection: close"));
 }
 
-TEST(Http1, ConnectionClosed_1_0) {
+TEST(http_http1_Connection, ConnectionClosed_1_0) {
   MOCK_HTTP1_SERVER(server, connector, executor);
 
   cortex::RefPtr<LocalEndPoint> ep;
@@ -93,7 +93,7 @@ TEST(Http1, ConnectionClosed_1_0) {
 }
 
 // sends one single request
-TEST(Http1, DISABLED_ConnectionKeepAlive_1_0) {
+TEST(http_http1_Connection, DISABLED_ConnectionKeepAlive_1_0) {
   MOCK_HTTP1_SERVER(server, connector, executor);
 
   cortex::RefPtr<LocalEndPoint> ep;
@@ -108,7 +108,7 @@ TEST(Http1, DISABLED_ConnectionKeepAlive_1_0) {
 
 #if 0
 // sends one single request
-TEST(Http1, ConnectionKeepAlive_1_1) {
+TEST(http_http1_Connection, ConnectionKeepAlive_1_1) {
   MOCK_HTTP1_SERVER(server, connector, executor);
 
   cortex::RefPtr<LocalEndPoint> ep;
@@ -123,11 +123,11 @@ TEST(Http1, ConnectionKeepAlive_1_1) {
 #endif
 
 // sends single request, gets response, sends another one on the same line.
-// TEST(Http1, ConnectionKeepAlive2) { TODO
+// TEST(http_http1_Connection, ConnectionKeepAlive2) { TODO
 // }
 
 // sends 3 requests pipelined all at once. receives responses in order
-TEST(Http1, ConnectionKeepAlive3_pipelined) {
+TEST(http_http1_Connection, ConnectionKeepAlive3_pipelined) {
   //SCOPED_LOGGER();
   MOCK_HTTP1_SERVER(server, connector, executor);
   cortex::RefPtr<LocalEndPoint> ep;
@@ -168,7 +168,7 @@ TEST(Http1, ConnectionKeepAlive3_pipelined) {
 }
 
 // ensure proper error code on bad request line
-TEST(Http1, protocolErrorShouldRaise400) {
+TEST(http_http1_Connection, protocolErrorShouldRaise400) {
   // SCOPED_LOGGER();
   MOCK_HTTP1_SERVER(server, connector, executor);
   cortex::RefPtr<LocalEndPoint> ep;

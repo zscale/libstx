@@ -119,7 +119,7 @@ Buffer makeParams(const std::list<std::pair<std::string, std::string>>& params) 
   return result;
 }
 
-TEST(http_fastcgi_Parser, simpleRequest) {
+TEST(http_fastcgi_RequestParser, simpleRequest) {
   // Tests the following example from the FastCGI spec:
   //
   // {FCGI_BEGIN_REQUEST,   1, {FCGI_RESPONDER, 0}}

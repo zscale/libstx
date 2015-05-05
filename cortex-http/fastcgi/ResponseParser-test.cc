@@ -89,7 +89,7 @@ void ResponseListener::onProtocolError(HttpStatus code, const std::string& messa
 }
 // }}}
 
-TEST(http_fastcgi_Parser, simpleResponse) {
+TEST(http_fastcgi_ResponseParser, simpleResponse) {
   // Tests the following example from the FastCGI spec:
   //
   // {FCGI_STDOUT,      1, "Content-type: text/html\r\n\r\n<html>\n<head> ... "}
