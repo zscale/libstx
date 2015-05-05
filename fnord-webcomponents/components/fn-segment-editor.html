@@ -301,7 +301,8 @@
         }
 
         var option_elems = options[i].querySelectorAll("[data-segment-option]");
-        var opt = 'matches';
+        var type = options[i].getAttribute('data-type');
+        var opt = (type == null || type == 'string') ? 'matches' : 'matches_uint32';
         var values = [];
 
         for (var j = 0; j < option_elems.length; j++) {
@@ -452,6 +453,7 @@
       var fn_segment_option = document.createElement("fn-segment-option");
       fn_segment_option.setAttribute('data-key', option.getAttribute('data-key'));
       fn_segment_option.setAttribute('data-title', option.getAttribute('data-title'));
+      fn_segment_option.setAttribute('data-type', option.getAttribute('data-type'));
       var html = [
         "<div class='segment-option-cell first'><fn-checkbox></fn-checkbox><fn-segment-title>",
         option.getAttribute('data-title'),
@@ -674,15 +676,11 @@
       var fn_segment = this.createFnSegment(segment, false);
 
       //TODO add removable/editable properties
-      if (segment.key != 'all_traffic') {
-        var icon = document.createElement("fn-segment-remove-icon");
-        icon.classList.add('segment-icon');
-        fn_segment.appendChild(icon);
-        this.observeRemovableSegment(icon, segment.name);
-        this.observeEditableSegment(fn_segment, segment);
-      } else {
-        fn_segment.classList.add('static-segment');
-      }
+      var icon = document.createElement("fn-segment-remove-icon");
+      icon.classList.add('segment-icon');
+      fn_segment.appendChild(icon);
+      this.observeRemovableSegment(icon, segment.name);
+      this.observeEditableSegment(fn_segment, segment);
 
       return fn_segment;
     }
