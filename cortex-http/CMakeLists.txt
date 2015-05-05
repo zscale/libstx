@@ -41,11 +41,11 @@ set(cortex_http_SRC
   fastcgi/ResponseParser.cc
 
   # transport: http/1.1
-  http1/Http1Channel.cc
-  http1/Http1ConnectionFactory.cc
-  http1/HttpConnection.cc
-  http1/HttpGenerator.cc
-  http1/HttpParser.cc
+  http1/Channel.cc
+  http1/ConnectionFactory.cc
+  http1/Connection.cc
+  http1/Generator.cc
+  http1/Parser.cc
 )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)

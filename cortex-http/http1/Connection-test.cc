@@ -7,7 +7,7 @@
 
 // HTTP/1 transport protocol tests
 
-#include <cortex-http/http1/Http1ConnectionFactory.h>
+#include <cortex-http/http1/ConnectionFactory.h>
 #include <cortex-http/HttpRequest.h>
 #include <cortex-http/HttpResponse.h>
 #include <cortex-http/HttpOutput.h>
@@ -57,7 +57,7 @@ static const TimeSpan maxKeepAlive = TimeSpan::fromSeconds(30);
   cortex::WallClock* clock = nullptr;                                           \
   auto localConnector = server.addConnector<cortex::LocalConnector>(&executor); \
   auto http = localConnector->addConnectionFactory<                             \
-                                 cortex::http::http1::Http1ConnectionFactory>(  \
+                                 cortex::http::http1::ConnectionFactory>(  \
       clock, maxRequestUriLength, maxRequestBodyLength, maxRequestCount,        \
       maxKeepAlive);                                                            \
   http->setHandler([&](HttpRequest* request, HttpResponse* response) {          \

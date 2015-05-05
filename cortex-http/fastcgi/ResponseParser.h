@@ -10,7 +10,7 @@
 
 #include <cortex-http/Api.h>
 #include <cortex-http/fastcgi/bits.h>
-#include <cortex-http/http1/HttpParser.h>
+#include <cortex-http/http1/Parser.h>
 #include <cortex-base/Buffer.h>
 #include <unordered_map>
 #include <functional>
@@ -32,7 +32,7 @@ class CORTEX_HTTP_API ResponseParser {
     HttpListener* listener;
     size_t totalBytesReceived;
     bool contentFullyReceived;
-    http::http1::HttpParser http1Parser;
+    http::http1::Parser http1Parser;
 
     StreamState();
     ~StreamState();

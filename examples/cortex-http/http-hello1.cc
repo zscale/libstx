@@ -15,7 +15,7 @@
 #include <cortex-http/HttpRequest.h>
 #include <cortex-http/HttpResponse.h>
 #include <cortex-http/HttpOutput.h>
-#include <cortex-http/http1/Http1ConnectionFactory.h>
+#include <cortex-http/http1/ConnectionFactory.h>
 #include <cortex-base/logging.h>
 
 using namespace cortex;
@@ -57,7 +57,7 @@ int main() {
 
   auto https = createSslConnector("https", 3443, &scheduler, &scheduler, clock);
 
-  auto http = inet->addConnectionFactory<http1::Http1ConnectionFactory>(
+  auto http = inet->addConnectionFactory<http1::ConnectionFactory>(
       clock, 100, 512, 5, TimeSpan::fromMinutes(3));
 
   auto handler = [&](HttpRequest* request,
@@ -79,7 +79,7 @@ int main() {
 
   http->setHandler(handler);
 
-  https->addConnectionFactory<http1::Http1ConnectionFactory>(
+  https->addConnectionFactory<http1::ConnectionFactory>(
       clock, 100, 512, 5, TimeSpan::fromMinutes(3))->setHandler(handler);
 
   server.addConnector(std::move(https));

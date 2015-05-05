@@ -5,8 +5,8 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <cortex-http/http1/Http1Channel.h>
-#include <cortex-http/http1/HttpConnection.h>
+#include <cortex-http/http1/Channel.h>
+#include <cortex-http/http1/Connection.h>
 #include <cortex-http/HttpTransport.h>
 #include <cortex-http/HttpRequest.h>
 #include <cortex-http/HttpResponse.h>
@@ -16,13 +16,13 @@ namespace cortex {
 namespace http {
 namespace http1 {
 
-Http1Channel::Http1Channel(HttpConnection* transport,
-                         const HttpHandler& handler,
-                         std::unique_ptr<HttpInput>&& input,
-                         size_t maxRequestUriLength,
-                         size_t maxRequestBodyLength,
-                         HttpDateGenerator* dateGenerator,
-                         HttpOutputCompressor* outputCompressor)
+Channel::Channel(Connection* transport,
+                 const HttpHandler& handler,
+                 std::unique_ptr<HttpInput>&& input,
+                 size_t maxRequestUriLength,
+                 size_t maxRequestBodyLength,
+                 HttpDateGenerator* dateGenerator,
+                 HttpOutputCompressor* outputCompressor)
     : HttpChannel(transport, handler, std::move(input),
                   maxRequestUriLength, maxRequestBodyLength,
                   dateGenerator, outputCompressor),
@@ -30,15 +30,15 @@ Http1Channel::Http1Channel(HttpConnection* transport,
       connectionOptions_() {
 }
 
-Http1Channel::~Http1Channel() {
+Channel::~Channel() {
 }
 
-void Http1Channel::reset() {
+void Channel::reset() {
   connectionOptions_.clear();
   HttpChannel::reset();
 }
 
-void Http1Channel::onMessageBegin(const BufferRef& method,
+void Channel::onMessageBegin(const BufferRef& method,
                                  const BufferRef& entity,
                                  HttpVersion version) {
   request_->setBytesReceived(bytesReceived());
@@ -58,11 +58,11 @@ void Http1Channel::onMessageBegin(const BufferRef& method,
   HttpChannel::onMessageBegin(method, entity, version);
 }
 
-size_t Http1Channel::bytesReceived() const noexcept {
-  return static_cast<HttpConnection*>(transport_)->bytesReceived();
+size_t Channel::bytesReceived() const noexcept {
+  return static_cast<Connection*>(transport_)->bytesReceived();
 }
 
-void Http1Channel::onMessageHeader(const BufferRef& name,
+void Channel::onMessageHeader(const BufferRef& name,
                                   const BufferRef& value) {
   request_->setBytesReceived(bytesReceived());
 
@@ -83,7 +83,7 @@ void Http1Channel::onMessageHeader(const BufferRef& name,
   }
 }
 
-void Http1Channel::onMessageHeaderEnd() {
+void Channel::onMessageHeaderEnd() {
   request_->setBytesReceived(bytesReceived());
 
   // hide transport-level header fields
@@ -94,7 +94,7 @@ void Http1Channel::onMessageHeaderEnd() {
   HttpChannel::onMessageHeaderEnd();
 }
 
-void Http1Channel::onProtocolError(HttpStatus code, const std::string& message) {
+void Channel::onProtocolError(HttpStatus code, const std::string& message) {
   request_->setBytesReceived(bytesReceived());
 
   if (!response_->isCommitted()) {

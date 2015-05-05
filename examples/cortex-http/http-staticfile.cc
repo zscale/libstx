@@ -22,7 +22,7 @@
 #include <cortex-http/HttpOutput.h>
 #include <cortex-http/HttpOutputCompressor.h>
 #include <cortex-http/HttpFileHandler.h>
-#include <cortex-http/http1/Http1ConnectionFactory.h>
+#include <cortex-http/http1/ConnectionFactory.h>
 #include <cortex-http/fastcgi/ConnectionFactory.h>
 
 #include <iostream>
@@ -75,7 +75,7 @@ int main(int argc, const char* argv[]) {
     http = inet->addConnectionFactory<http::fastcgi::ConnectionFactory>(
         clock, 100, 512, TimeSpan::fromSeconds(8));
   else
-    http = inet->addConnectionFactory<http1::Http1ConnectionFactory>(
+    http = inet->addConnectionFactory<http1::ConnectionFactory>(
         clock, 100, 512, 5, TimeSpan::fromSeconds(8));
 
   HttpOutputCompressor* compressor = http->outputCompressor();

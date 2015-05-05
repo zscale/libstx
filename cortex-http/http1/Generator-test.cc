@@ -9,7 +9,7 @@
 
 #include <cortex-http/HttpRequestInfo.h>
 #include <cortex-http/HttpResponseInfo.h>
-#include <cortex-http/http1/HttpGenerator.h>
+#include <cortex-http/http1/Generator.h>
 #include <cortex-base/net/EndPointWriter.h>
 #include <cortex-base/net/ByteArrayEndPoint.h>
 #include <cortex-base/Buffer.h>
@@ -19,16 +19,16 @@ using namespace cortex;
 using namespace cortex::http;
 using namespace cortex::http::http1;
 
-// TEST(HttpGenerator, recycle) {
+// TEST(http1_Generator, recycle) {
 // }
 //
-// TEST(HttpGenerator, generateRequest) {
+// TEST(http1_Generator, generateRequest) {
 // }
 
 // XXX No headers, no body.
-TEST(HttpGenerator, generateResponse_empty) {
+TEST(http1_Generator, generateResponse_empty) {
   EndPointWriter writer;
-  http1::HttpGenerator generator(&writer);
+  http1::Generator generator(&writer);
 
   HttpResponseInfo info(HttpVersion::VERSION_1_1, HttpStatus::Ok, "my",
                         false, 0, {}, {});
@@ -43,9 +43,9 @@ TEST(HttpGenerator, generateResponse_empty) {
 }
 
 // XXX some headers, no body.
-TEST(HttpGenerator, generateResponse_headers) {
+TEST(http1_Generator, generateResponse_headers) {
   EndPointWriter writer;
-  http1::HttpGenerator generator(&writer);
+  http1::Generator generator(&writer);
 
   HeaderFieldList headers = {
     {"Foo", "the-foo"},
@@ -65,9 +65,9 @@ TEST(HttpGenerator, generateResponse_headers) {
 }
 
 // XXX no headers, static (fixed-size) body.
-TEST(HttpGenerator, generateResponse_static_body) {
+TEST(http1_Generator, generateResponse_static_body) {
   EndPointWriter writer;
-  http1::HttpGenerator generator(&writer);
+  http1::Generator generator(&writer);
 
   HeaderFieldList headers;
   HeaderFieldList trailers;
@@ -85,9 +85,9 @@ TEST(HttpGenerator, generateResponse_static_body) {
 }
 
 // XXX no headers, dynamic (chunked) body
-TEST(HttpGenerator, generateResponse_chunked) {
+TEST(http1_Generator, generateResponse_chunked) {
   EndPointWriter writer;
-  http1::HttpGenerator generator(&writer);
+  http1::Generator generator(&writer);
 
   HeaderFieldList headers;
   HeaderFieldList trailers;
@@ -105,9 +105,9 @@ TEST(HttpGenerator, generateResponse_chunked) {
 }
 
 // XXX no headers, dynamic (chunked) body with trailers
-TEST(HttpGenerator, generateResponse_chunked_trailer) {
+TEST(http1_Generator, generateResponse_chunked_trailer) {
   EndPointWriter writer;
-  http1::HttpGenerator generator(&writer);
+  http1::Generator generator(&writer);
 
   HeaderFieldList headers;
   HeaderFieldList trailers = {
@@ -128,9 +128,9 @@ TEST(HttpGenerator, generateResponse_chunked_trailer) {
 }
 
 // XXX no headers, static (fixed-size) body with trailers (triggers chunking)
-TEST(HttpGenerator, generateResponse_chunked_trailer2) {
+TEST(http1_Generator, generateResponse_chunked_trailer2) {
   EndPointWriter writer;
-  http1::HttpGenerator generator(&writer);
+  http1::Generator generator(&writer);
 
   HeaderFieldList headers;
   HeaderFieldList trailers = {
@@ -150,9 +150,9 @@ TEST(HttpGenerator, generateResponse_chunked_trailer2) {
   ASSERT_EQ("HTTP/1.1 200 my\r\nTrailer: Foo, Bar\r\nTransfer-Encoding: chunked\r\n\r\n4\r\nbody\r\n0\r\nFoo: the-foo\r\nBar: the-bar\r\n\r\n", ep.output());
 }
 
-// TEST(HttpGenerator, generateBody_Buffer) {
+// TEST(http1_Generator, generateBody_Buffer) {
 // }
-// TEST(HttpGenerator, generateBody_BufferRef) {
+// TEST(http1_Generator, generateBody_BufferRef) {
 // }
-// TEST(HttpGenerator, generateBody_FileRef) {
+// TEST(http1_Generator, generateBody_FileRef) {
 // }

@@ -19,18 +19,18 @@ namespace http1 {
 /**
  * Connection factory for HTTP/1 connections.
  */
-class CORTEX_HTTP_API Http1ConnectionFactory : public HttpConnectionFactory {
+class CORTEX_HTTP_API ConnectionFactory : public HttpConnectionFactory {
  public:
-  Http1ConnectionFactory();
+  ConnectionFactory();
 
-  Http1ConnectionFactory(
+  ConnectionFactory(
       WallClock* clock,
       size_t maxRequestUriLength,
       size_t maxRequestBodyLength,
       size_t maxRequestCount,
       TimeSpan maxKeepAlive);
 
-  ~Http1ConnectionFactory();
+  ~ConnectionFactory();
 
   size_t maxRequestCount() const CORTEX_NOEXCEPT { return maxRequestCount_; }
   void setMaxRequestCount(size_t value) { maxRequestCount_ = value; }
@@ -38,7 +38,7 @@ class CORTEX_HTTP_API Http1ConnectionFactory : public HttpConnectionFactory {
   TimeSpan maxKeepAlive() const CORTEX_NOEXCEPT { return maxKeepAlive_; }
   void setMaxKeepAlive(TimeSpan value) { maxKeepAlive_ = value; }
 
-  Connection* create(Connector* connector, EndPoint* endpoint) override;
+  ::cortex::Connection* create(Connector* connector, EndPoint* endpoint) override;
 
  private:
   size_t maxRequestCount_;

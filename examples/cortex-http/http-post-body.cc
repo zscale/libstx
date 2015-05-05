@@ -18,7 +18,7 @@
 #include <cortex-http/HttpOutput.h>
 #include <cortex-http/HttpInput.h>
 #include <cortex-http/HttpInputListener.h>
-#include <cortex-http/http1/Http1ConnectionFactory.h>
+#include <cortex-http/http1/ConnectionFactory.h>
 #include <vector>
 #include <string>
 
@@ -87,7 +87,7 @@ int main() {
       TimeSpan::Zero,
       &logAndPass,
       IPAddress("0.0.0.0"), 3000, 128, true, false);
-  auto http = inet->addConnectionFactory<http1::Http1ConnectionFactory>(
+  auto http = inet->addConnectionFactory<http1::ConnectionFactory>(
       clock, 100, 512, 5, TimeSpan::fromMinutes(3));
 
   http->setHandler([](HttpRequest* request,

@@ -5,8 +5,8 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <cortex-http/http1/Http1ConnectionFactory.h>
-#include <cortex-http/http1/HttpConnection.h>
+#include <cortex-http/http1/ConnectionFactory.h>
+#include <cortex-http/http1/Connection.h>
 #include <cortex-base/net/Connector.h>
 #include <cortex-base/WallClock.h>
 
@@ -14,15 +14,15 @@ namespace cortex {
 namespace http {
 namespace http1 {
 
-Http1ConnectionFactory::Http1ConnectionFactory()
-    : Http1ConnectionFactory(WallClock::system(),
+ConnectionFactory::ConnectionFactory()
+    : ConnectionFactory(WallClock::system(),
                              4096,
                              4 * 1024 * 1024,
                              100,
                              TimeSpan::fromSeconds(8)) {
 }
 
-Http1ConnectionFactory::Http1ConnectionFactory(
+ConnectionFactory::ConnectionFactory(
     WallClock* clock,
     size_t maxRequestUriLength,
     size_t maxRequestBodyLength,
@@ -35,20 +35,20 @@ Http1ConnectionFactory::Http1ConnectionFactory(
   setInputBufferSize(16 * 1024);
 }
 
-Http1ConnectionFactory::~Http1ConnectionFactory() {
+ConnectionFactory::~ConnectionFactory() {
 }
 
-Connection* Http1ConnectionFactory::create(Connector* connector,
-                                           EndPoint* endpoint) {
-  return configure(new http1::HttpConnection(endpoint,
-                                             connector->executor(),
-                                             handler(),
-                                             dateGenerator(),
-                                             outputCompressor(),
-                                             maxRequestUriLength(),
-                                             maxRequestBodyLength(),
-                                             maxRequestCount(),
-                                             maxKeepAlive()),
+::cortex::Connection* ConnectionFactory::create(Connector* connector,
+                                                EndPoint* endpoint) {
+  return configure(new http1::Connection(endpoint,
+                                         connector->executor(),
+                                         handler(),
+                                         dateGenerator(),
+                                         outputCompressor(),
+                                         maxRequestUriLength(),
+                                         maxRequestBodyLength(),
+                                         maxRequestCount(),
+                                         maxKeepAlive()),
                    connector);
 }
 

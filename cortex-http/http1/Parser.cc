@@ -5,7 +5,7 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <cortex-http/http1/HttpParser.h>
+#include <cortex-http/http1/Parser.h>
 #include <cortex-http/HttpListener.h>
 #include <cortex-http/HttpStatus.h>
 #include <cortex-http/BadMessage.h>
@@ -21,125 +21,125 @@ namespace http1 {
 #define TRACE(msg...) do {} while (0)
 #endif
 
-std::string to_string(HttpParser::State state) {
+std::string to_string(Parser::State state) {
   switch (state) {
     // artificial
-    case HttpParser::PROTOCOL_ERROR:
+    case Parser::PROTOCOL_ERROR:
       return "protocol-error";
-    case HttpParser::MESSAGE_BEGIN:
+    case Parser::MESSAGE_BEGIN:
       return "message-begin";
 
     // request-line
-    case HttpParser::REQUEST_LINE_BEGIN:
+    case Parser::REQUEST_LINE_BEGIN:
       return "request-line-begin";
-    case HttpParser::REQUEST_METHOD:
+    case Parser::REQUEST_METHOD:
       return "request-method";
-    case HttpParser::REQUEST_ENTITY_BEGIN:
+    case Parser::REQUEST_ENTITY_BEGIN:
       return "request-entity-begin";
-    case HttpParser::REQUEST_ENTITY:
+    case Parser::REQUEST_ENTITY:
       return "request-entity";
-    case HttpParser::REQUEST_PROTOCOL_BEGIN:
+    case Parser::REQUEST_PROTOCOL_BEGIN:
       return "request-protocol-begin";
-    case HttpParser::REQUEST_PROTOCOL_T1:
+    case Parser::REQUEST_PROTOCOL_T1:
       return "request-protocol-t1";
-    case HttpParser::REQUEST_PROTOCOL_T2:
+    case Parser::REQUEST_PROTOCOL_T2:
       return "request-protocol-t2";
-    case HttpParser::REQUEST_PROTOCOL_P:
+    case Parser::REQUEST_PROTOCOL_P:
       return "request-protocol-p";
-    case HttpParser::REQUEST_PROTOCOL_SLASH:
+    case Parser::REQUEST_PROTOCOL_SLASH:
       return "request-protocol-slash";
-    case HttpParser::REQUEST_PROTOCOL_VERSION_MAJOR:
+    case Parser::REQUEST_PROTOCOL_VERSION_MAJOR:
       return "request-protocol-version-major";
-    case HttpParser::REQUEST_PROTOCOL_VERSION_MINOR:
+    case Parser::REQUEST_PROTOCOL_VERSION_MINOR:
       return "request-protocol-version-minor";
-    case HttpParser::REQUEST_LINE_LF:
+    case Parser::REQUEST_LINE_LF:
       return "request-line-lf";
-    case HttpParser::REQUEST_0_9_LF:
+    case Parser::REQUEST_0_9_LF:
       return "request-0-9-lf";
 
     // Status-Line
-    case HttpParser::STATUS_LINE_BEGIN:
+    case Parser::STATUS_LINE_BEGIN:
       return "status-line-begin";
-    case HttpParser::STATUS_PROTOCOL_BEGIN:
+    case Parser::STATUS_PROTOCOL_BEGIN:
       return "status-protocol-begin";
-    case HttpParser::STATUS_PROTOCOL_T1:
+    case Parser::STATUS_PROTOCOL_T1:
       return "status-protocol-t1";
-    case HttpParser::STATUS_PROTOCOL_T2:
+    case Parser::STATUS_PROTOCOL_T2:
       return "status-protocol-t2";
-    case HttpParser::STATUS_PROTOCOL_P:
+    case Parser::STATUS_PROTOCOL_P:
       return "status-protocol-t2";
-    case HttpParser::STATUS_PROTOCOL_SLASH:
+    case Parser::STATUS_PROTOCOL_SLASH:
       return "status-protocol-t2";
-    case HttpParser::STATUS_PROTOCOL_VERSION_MAJOR:
+    case Parser::STATUS_PROTOCOL_VERSION_MAJOR:
       return "status-protocol-version-major";
-    case HttpParser::STATUS_PROTOCOL_VERSION_MINOR:
+    case Parser::STATUS_PROTOCOL_VERSION_MINOR:
       return "status-protocol-version-minor";
-    case HttpParser::STATUS_CODE_BEGIN:
+    case Parser::STATUS_CODE_BEGIN:
       return "status-code-begin";
-    case HttpParser::STATUS_CODE:
+    case Parser::STATUS_CODE:
       return "status-code";
-    case HttpParser::STATUS_MESSAGE_BEGIN:
+    case Parser::STATUS_MESSAGE_BEGIN:
       return "status-message-begin";
-    case HttpParser::STATUS_MESSAGE:
+    case Parser::STATUS_MESSAGE:
       return "status-message";
-    case HttpParser::STATUS_MESSAGE_LF:
+    case Parser::STATUS_MESSAGE_LF:
       return "status-message-lf";
 
     // message header
-    case HttpParser::HEADER_NAME_BEGIN:
+    case Parser::HEADER_NAME_BEGIN:
       return "header-name-begin";
-    case HttpParser::HEADER_NAME:
+    case Parser::HEADER_NAME:
       return "header-name";
-    case HttpParser::HEADER_COLON:
+    case Parser::HEADER_COLON:
       return "header-colon";
-    case HttpParser::HEADER_VALUE_BEGIN:
+    case Parser::HEADER_VALUE_BEGIN:
       return "header-value-begin";
-    case HttpParser::HEADER_VALUE:
+    case Parser::HEADER_VALUE:
       return "header-value";
-    case HttpParser::HEADER_VALUE_LF:
+    case Parser::HEADER_VALUE_LF:
       return "header-value-lf";
-    case HttpParser::HEADER_VALUE_END:
+    case Parser::HEADER_VALUE_END:
       return "header-value-end";
-    case HttpParser::HEADER_END_LF:
+    case Parser::HEADER_END_LF:
       return "header-end-lf";
 
     // LWS
-    case HttpParser::LWS_BEGIN:
+    case Parser::LWS_BEGIN:
       return "lws-begin";
-    case HttpParser::LWS_LF:
+    case Parser::LWS_LF:
       return "lws-lf";
-    case HttpParser::LWS_SP_HT_BEGIN:
+    case Parser::LWS_SP_HT_BEGIN:
       return "lws-sp-ht-begin";
-    case HttpParser::LWS_SP_HT:
+    case Parser::LWS_SP_HT:
       return "lws-sp-ht";
 
     // message content
-    case HttpParser::CONTENT_BEGIN:
+    case Parser::CONTENT_BEGIN:
       return "content-begin";
-    case HttpParser::CONTENT:
+    case Parser::CONTENT:
       return "content";
-    case HttpParser::CONTENT_ENDLESS:
+    case Parser::CONTENT_ENDLESS:
       return "content-endless";
-    case HttpParser::CONTENT_CHUNK_SIZE_BEGIN:
+    case Parser::CONTENT_CHUNK_SIZE_BEGIN:
       return "content-chunk-size-begin";
-    case HttpParser::CONTENT_CHUNK_SIZE:
+    case Parser::CONTENT_CHUNK_SIZE:
       return "content-chunk-size";
-    case HttpParser::CONTENT_CHUNK_LF1:
+    case Parser::CONTENT_CHUNK_LF1:
       return "content-chunk-lf1";
-    case HttpParser::CONTENT_CHUNK_BODY:
+    case Parser::CONTENT_CHUNK_BODY:
       return "content-chunk-body";
-    case HttpParser::CONTENT_CHUNK_LF2:
+    case Parser::CONTENT_CHUNK_LF2:
       return "content-chunk-lf2";
-    case HttpParser::CONTENT_CHUNK_CR3:
+    case Parser::CONTENT_CHUNK_CR3:
       return "content-chunk-cr3";
-    case HttpParser::CONTENT_CHUNK_LF3:
+    case Parser::CONTENT_CHUNK_LF3:
       return "content-chunk_lf3";
   }
 
   return "UNKNOWN";
 }
 
-inline bool HttpParser::isProcessingHeader() const {
+inline bool Parser::isProcessingHeader() const {
   // XXX should we include request-line and status-line here, too?
   switch (state_) {
     case HEADER_NAME_BEGIN:
@@ -156,7 +156,7 @@ inline bool HttpParser::isProcessingHeader() const {
   }
 }
 
-inline bool HttpParser::isProcessingBody() const {
+inline bool Parser::isProcessingBody() const {
   switch (state_) {
     case CONTENT_BEGIN:
     case CONTENT:
@@ -174,7 +174,7 @@ inline bool HttpParser::isProcessingBody() const {
   }
 }
 
-HttpParser::HttpParser(ParseMode mode, HttpListener* listener)
+Parser::Parser(ParseMode mode, HttpListener* listener)
     : mode_(mode),
       listener_(listener),
       state_(MESSAGE_BEGIN),
@@ -194,7 +194,7 @@ HttpParser::HttpParser(ParseMode mode, HttpListener* listener)
   //.
 }
 
-std::size_t HttpParser::parseFragment(const BufferRef& chunk) {
+std::size_t Parser::parseFragment(const BufferRef& chunk) {
   /*
    * CR               = 0x0D
    * LF               = 0x0A
@@ -939,20 +939,20 @@ done:
   return *nparsed - initialOutOffset;
 }
 
-void HttpParser::reset() {
+void Parser::reset() {
   state_ = MESSAGE_BEGIN;
   bytesReceived_ = 0;
 }
 
-inline bool HttpParser::isChar(char value) {
+inline bool Parser::isChar(char value) {
   return static_cast<unsigned>(value) <= 127;
 }
 
-inline bool HttpParser::isControl(char value) {
+inline bool Parser::isControl(char value) {
   return (value >= 0 && value <= 31) || value == 127;
 }
 
-inline bool HttpParser::isSeparator(char value) {
+inline bool Parser::isSeparator(char value) {
   switch (value) {
     case '(':
     case ')':
@@ -979,11 +979,11 @@ inline bool HttpParser::isSeparator(char value) {
   }
 }
 
-inline bool HttpParser::isToken(char value) {
+inline bool Parser::isToken(char value) {
   return isChar(value) && !(isControl(value) || isSeparator(value));
 }
 
-inline bool HttpParser::isText(char value) {
+inline bool Parser::isText(char value) {
   // TEXT = <any OCTET except CTLs but including LWS>
   return !isControl(value) || value == SP || value == HT;
 }
@@ -1006,7 +1006,7 @@ inline HttpVersion make_version(int versionMajor, int versionMinor) {
   return HttpVersion::UNKNOWN;
 }
 
-void HttpParser::onMessageBegin(const BufferRef& method,
+void Parser::onMessageBegin(const BufferRef& method,
                                        const BufferRef& entity,
                                        int versionMajor, int versionMinor) {
   HttpVersion version = make_version(versionMajor, versionMinor);
@@ -1018,7 +1018,7 @@ void HttpParser::onMessageBegin(const BufferRef& method,
     listener_->onMessageBegin(method, entity, version);
 }
 
-void HttpParser::onMessageBegin(int versionMajor, int versionMinor,
+void Parser::onMessageBegin(int versionMajor, int versionMinor,
                                 int status, const BufferRef& text) {
   HttpVersion version = make_version(versionMajor, versionMinor);
   if (version == HttpVersion::UNKNOWN)
@@ -1030,33 +1030,33 @@ void HttpParser::onMessageBegin(int versionMajor, int versionMinor,
   listener_->onMessageBegin(version, static_cast<HttpStatus>(code_), text);
 }
 
-void HttpParser::onMessageBegin() {
+void Parser::onMessageBegin() {
   if (listener_)
     listener_->onMessageBegin();
 }
 
-void HttpParser::onMessageHeader(const BufferRef& name,
+void Parser::onMessageHeader(const BufferRef& name,
                                         const BufferRef& value) {
   if (listener_)
     listener_->onMessageHeader(name, value);
 }
 
-void HttpParser::onMessageHeaderEnd() {
+void Parser::onMessageHeaderEnd() {
   if (listener_)
     listener_->onMessageHeaderEnd();
 }
 
-void HttpParser::onMessageContent(const BufferRef& chunk) {
+void Parser::onMessageContent(const BufferRef& chunk) {
   if (listener_)
     listener_->onMessageContent(chunk);
 }
 
-void HttpParser::onMessageEnd() {
+void Parser::onMessageEnd() {
   if (listener_)
     listener_->onMessageEnd();
 }
 
-void HttpParser::onProtocolError(HttpStatus code, const std::string& message) {
+void Parser::onProtocolError(HttpStatus code, const std::string& message) {
   if (listener_) {
     listener_->onProtocolError(code, message);
   }
