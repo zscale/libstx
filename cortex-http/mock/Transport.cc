@@ -5,8 +5,8 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <cortex-http/mock/MockTransport.h>
-#include <cortex-http/mock/MockInput.h>
+#include <cortex-http/mock/Transport.h>
+#include <cortex-http/mock/Input.h>
 #include <cortex-http/HttpHandler.h>
 #include <cortex-http/HttpResponseInfo.h>
 #include <cortex-http/HttpResponse.h>
@@ -23,11 +23,11 @@ namespace cortex {
 namespace http {
 namespace mock {
 
-MockTransport::MockTransport(Executor* executor, const HttpHandler& handler)
-    : MockTransport(executor, handler, 32, 64, nullptr, nullptr) {
+Transport::Transport(Executor* executor, const HttpHandler& handler)
+    : Transport(executor, handler, 32, 64, nullptr, nullptr) {
 }
 
-MockTransport::MockTransport(Executor* executor,
+Transport::Transport(Executor* executor,
                              const HttpHandler& handler,
                              size_t maxRequestUriLength,
                              size_t maxRequestBodyLength,
@@ -46,17 +46,17 @@ MockTransport::MockTransport(Executor* executor,
       responseBody_() {
 }
 
-MockTransport::~MockTransport() {
+Transport::~Transport() {
 }
 
-void MockTransport::run(HttpVersion version, const std::string& method,
+void Transport::run(HttpVersion version, const std::string& method,
                         const std::string& entity,
                         const HeaderFieldList& headers,
                         const std::string& body) {
   isCompleted_ = false;
   isAborted_ = false;
 
-  std::unique_ptr<MockInput> input(new MockInput());
+  std::unique_ptr<Input> input(new Input());
   channel_.reset(new HttpChannel(this, handler_, std::move(input),
                                  maxRequestUriLength_, maxRequestBodyLength_,
                                  dateGenerator_,
@@ -81,17 +81,17 @@ void MockTransport::run(HttpVersion version, const std::string& method,
   }
 }
 
-void MockTransport::abort() {
+void Transport::abort() {
   isAborted_ = true;
 }
 
-void MockTransport::completed() {
+void Transport::completed() {
   isCompleted_ = true;
 
   responseInfo_.setTrailers(channel_->response()->trailers());
 }
 
-void MockTransport::send(HttpResponseInfo&& responseInfo,
+void Transport::send(HttpResponseInfo&& responseInfo,
                          const BufferRef& chunk,
                          CompletionHandler onComplete) {
   responseInfo_ = std::move(responseInfo);
@@ -104,7 +104,7 @@ void MockTransport::send(HttpResponseInfo&& responseInfo,
   }
 }
 
-void MockTransport::send(HttpResponseInfo&& responseInfo,
+void Transport::send(HttpResponseInfo&& responseInfo,
                          Buffer&& chunk,
                          CompletionHandler onComplete) {
   responseInfo_ = std::move(responseInfo);
@@ -117,7 +117,7 @@ void MockTransport::send(HttpResponseInfo&& responseInfo,
   }
 }
 
-void MockTransport::send(HttpResponseInfo&& responseInfo,
+void Transport::send(HttpResponseInfo&& responseInfo,
                          FileRef&& chunk,
                          CompletionHandler onComplete) {
   responseInfo_ = std::move(responseInfo);
@@ -131,7 +131,7 @@ void MockTransport::send(HttpResponseInfo&& responseInfo,
   }
 }
 
-void MockTransport::send(const BufferRef& chunk, CompletionHandler onComplete) {
+void Transport::send(const BufferRef& chunk, CompletionHandler onComplete) {
   responseBody_ += chunk;
 
   if (onComplete) {
@@ -141,7 +141,7 @@ void MockTransport::send(const BufferRef& chunk, CompletionHandler onComplete) {
   }
 }
 
-void MockTransport::send(Buffer&& chunk, CompletionHandler onComplete) {
+void Transport::send(Buffer&& chunk, CompletionHandler onComplete) {
   responseBody_ += chunk;
 
   if (onComplete) {
@@ -151,7 +151,7 @@ void MockTransport::send(Buffer&& chunk, CompletionHandler onComplete) {
   }
 }
 
-void MockTransport::send(FileRef&& chunk, CompletionHandler onComplete) {
+void Transport::send(FileRef&& chunk, CompletionHandler onComplete) {
   chunk.fill(&responseBody_);
 
   if (onComplete) {

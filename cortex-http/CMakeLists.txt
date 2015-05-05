@@ -29,8 +29,8 @@ set(cortex_http_SRC
   HttpVersion.cc
 
   # transport: mock
-  mock/MockTransport.cc
-  mock/MockInput.cc
+  mock/Transport.cc
+  mock/Input.cc
 
   # transport: fastcgi
   fastcgi/bits.cc

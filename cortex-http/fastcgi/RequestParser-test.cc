@@ -12,7 +12,6 @@
 #include <gtest/gtest.h>
 #include <cortex-http/fastcgi/RequestParser.h>
 #include <cortex-http/fastcgi/ResponseParser.h>
-#include <cortex-http/mock/MockInput.h>
 #include <cortex-http/HttpRequest.h>
 #include <cortex-http/HttpResponse.h>
 #include <cortex-http/HttpChannel.h>

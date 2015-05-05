@@ -7,7 +7,7 @@
 
 // HTTP semantic tests
 
-#include <cortex-http/mock/MockTransport.h>
+#include <cortex-http/mock/Transport.h>
 #include <cortex-http/HttpRequestInfo.h>
 #include <cortex-http/HttpResponseInfo.h>
 #include <cortex-http/HttpRequest.h>
@@ -47,7 +47,7 @@ void staticfileHandler(HttpRequest* request, HttpResponse* response) {
 
 TEST(HttpFileHandler, GET_FileNotFound) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, &staticfileHandler);
+  mock::Transport transport(&executor, &staticfileHandler);
   transport.run(HttpVersion::VERSION_1_1, "GET", "/notfound.txt",
       {{"Host", "test"}}, "");
   ASSERT_EQ(HttpVersion::VERSION_1_1, transport.responseInfo().version());

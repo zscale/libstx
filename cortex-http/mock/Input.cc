@@ -5,36 +5,36 @@
 // file except in compliance with the License. You may obtain a copy of
 // the License at: http://opensource.org/licenses/MIT
 
-#include <cortex-http/mock/MockInput.h>
+#include <cortex-http/mock/Input.h>
 
 namespace cortex {
 namespace http {
 namespace mock {
 
-MockInput::MockInput()
+Input::Input()
     : buffer_() {
 }
 
-int MockInput::read(Buffer* result) {
+int Input::read(Buffer* result) {
   size_t n = buffer_.size();
   result->push_back(buffer_);
   buffer_.clear();
   return n;
 }
 
-size_t MockInput::readLine(Buffer* result) {
+size_t Input::readLine(Buffer* result) {
   return 0; // TODO
 }
 
-void MockInput::onContent(const BufferRef& chunk) {
+void Input::onContent(const BufferRef& chunk) {
   buffer_ += chunk;
 }
 
-bool MockInput::empty() const noexcept {
+bool Input::empty() const noexcept {
   return buffer_.empty();
 }
 
-void MockInput::recycle() {
+void Input::recycle() {
   buffer_.clear();
 }
 

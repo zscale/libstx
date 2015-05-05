@@ -23,7 +23,7 @@ namespace http {
 namespace mock {
 
 /**
- * Mock HTTP Transport, used to create mock requests.
+ *  HTTP Transport, used to create mock requests.
  *
  * This HTTP transport implementation is not using byte streams to communicate
  * but high level data structures to create requests and provides
@@ -39,7 +39,7 @@ namespace mock {
  * @see HttpHandler
  * @see Executor
  */
-class CORTEX_HTTP_API MockTransport : public HttpTransport {
+class CORTEX_HTTP_API Transport : public HttpTransport {
  public:
   /**
    * Initializes the mock transport object.
@@ -47,7 +47,7 @@ class CORTEX_HTTP_API MockTransport : public HttpTransport {
    * @param executor The executor service used for completion handlers.
    * @param handler The handler to run for incoming HTTP request messages.
    */
-  MockTransport(Executor* executor, const HttpHandler& handler);
+  Transport(Executor* executor, const HttpHandler& handler);
 
   /**
    * Initializes the mock transport object.
@@ -59,14 +59,14 @@ class CORTEX_HTTP_API MockTransport : public HttpTransport {
    * @param dateGenerator Date response header generator.
    * @param outputCompressor HTTP response body compression service.
    */
-  MockTransport(Executor* executor,
+  Transport(Executor* executor,
                 const HttpHandler& handler,
                 size_t maxRequestUriLength,
                 size_t maxRequestBodyLength,
                 HttpDateGenerator* dateGenerator,
                 HttpOutputCompressor* outputCompressor);
 
-  ~MockTransport();
+  ~Transport();
 
   /**
    * Runs given HTTP request message.
@@ -127,19 +127,19 @@ class CORTEX_HTTP_API MockTransport : public HttpTransport {
 };
 
 // {{{ inlines
-inline const HttpResponseInfo& MockTransport::responseInfo() const CORTEX_NOEXCEPT {
+inline const HttpResponseInfo& Transport::responseInfo() const CORTEX_NOEXCEPT {
   return responseInfo_;
 }
 
-inline const Buffer& MockTransport::responseBody() const CORTEX_NOEXCEPT {
+inline const Buffer& Transport::responseBody() const CORTEX_NOEXCEPT {
   return responseBody_;
 }
 
-inline bool MockTransport::isAborted() const CORTEX_NOEXCEPT {
+inline bool Transport::isAborted() const CORTEX_NOEXCEPT {
   return isAborted_;
 }
 
-inline bool MockTransport::isCompleted() const CORTEX_NOEXCEPT {
+inline bool Transport::isCompleted() const CORTEX_NOEXCEPT {
   return isCompleted_;
 }
 // }}}
