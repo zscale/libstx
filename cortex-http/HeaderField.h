@@ -51,5 +51,7 @@ class CORTEX_HTTP_API HeaderField {
   std::string value_;
 };
 
+CORTEX_HTTP_API std::string inspect(const HeaderField& field);
+
 }  // namespace http
 }  // namespace cortex
