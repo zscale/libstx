@@ -70,7 +70,7 @@ InetEndPoint::~InetEndPoint() {
 
 std::pair<IPAddress, int> InetEndPoint::remoteAddress() const {
   if (handle_ < 0)
-    RAISE(IllegalStateError);
+    RAISE(IllegalStateError, "Invalid socket handle.");
 
   std::pair<IPAddress, int> result;
   switch (connector_->addressFamily()) {
@@ -93,14 +93,14 @@ std::pair<IPAddress, int> InetEndPoint::remoteAddress() const {
       break;
     }
     default:
-      RAISE(IllegalStateError);
+      RAISE(IllegalStateError, "Invalid address family.");
   }
   return result;
 }
 
 std::pair<IPAddress, int> InetEndPoint::localAddress() const {
   if (handle_ < 0)
-    RAISE(IllegalStateError);
+    RAISE(IllegalStateError, "Invalid socket handle.");
 
   std::pair<IPAddress, int> result;
   switch (connector_->addressFamily()) {
