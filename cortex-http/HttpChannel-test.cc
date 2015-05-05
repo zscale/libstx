@@ -129,8 +129,8 @@ TEST(HttpChannel, completed_invoked_before_contentLength_satisfied) {
   // we expect the connection to terminate on invalid generated
   // response messages
 
-  transport.run(HttpVersion::VERSION_1_1, "GET", "/", {{"Host", "test"}}, "");
-  ASSERT_EQ(true, transport.isAborted());
+  ASSERT_THROW(transport.run(HttpVersion::VERSION_1_1, "GET", "/", {{"Host", "test"}}, ""), RuntimeError);
+  // ASSERT_EQ(true, transport.isAborted());
   ASSERT_EQ(5, transport.responseBody().size());
 }
 

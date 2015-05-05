@@ -8,6 +8,7 @@
 #include <cortex-http/http1/HttpParser.h>
 #include <cortex-http/HttpListener.h>
 #include <cortex-http/HttpStatus.h>
+#include <cortex-base/RuntimeError.h>
 #include <cortex-base/Buffer.h>
 #include <vector>
 #include <gtest/gtest.h>
@@ -176,8 +177,10 @@ TEST(HttpParser, requestLine_invalid5_SpaceAfterVersion) {
 TEST(HttpParser, requestLine_invalid6_UnsupportedVersion) {
   HttpParserListener listener;
   HttpParser parser(HttpParser::REQUEST, &listener);
-  parser.parseFragment("GET / HTTP/1.2\r\n\r\n");
-  ASSERT_EQ((int)HttpStatus::HttpVersionNotSupported, (int)listener.errorCode);
+
+  // Actually, we could make it a ParserError, or HttpClientError or so,
+  // But to make googletest lib happy, we should make it even a distinct class.
+  ASSERT_THROW(parser.parseFragment("GET / HTTP/1.2\r\n\r\n"), RuntimeError);
 }
 
 TEST(HttpParser, headers1) {
@@ -331,10 +334,17 @@ TEST(HttpParser, requestWithHeadersAndBodyChunked_invalid1) {
 TEST(HttpParser, pipelined1) {
   HttpParserListener listener;
   HttpParser parser(HttpParser::REQUEST, &listener);
-  parser.parseFragment("GET /foo HTTP/1.1\r\n\r\n"
-                       "HEAD /bar HTTP/0.9\r\n\r\n");
+  constexpr BufferRef input = "GET /foo HTTP/1.1\r\n\r\n"
+                              "HEAD /bar HTTP/0.9\r\n\r\n";
+  size_t n = parser.parseFragment(input);
 
-  ASSERT_EQ("HEAD", listener.method);
-  ASSERT_EQ("/bar", listener.entity);
-  ASSERT_EQ(HttpVersion::VERSION_0_9, listener.version);
+  EXPECT_EQ("GET", listener.method);
+  EXPECT_EQ("/foo", listener.entity);
+  EXPECT_EQ(HttpVersion::VERSION_1_1, listener.version);
+
+  parser.parseFragment(input.ref(n));
+
+  EXPECT_EQ("HEAD", listener.method);
+  EXPECT_EQ("/bar", listener.entity);
+  EXPECT_EQ(HttpVersion::VERSION_0_9, listener.version);
 }
