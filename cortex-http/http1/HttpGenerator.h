@@ -30,7 +30,8 @@ namespace http1 {
 /**
  * Generates HTTP/1 messages.
  *
- * @todo how to support sendfile() alike optimizations
+ * Implements the HTTP/1.1 transport layer syntax to generate
+ * RFC 7230 conform messages.
  */
 class CORTEX_HTTP_API HttpGenerator {
   enum class State {
