@@ -7,7 +7,7 @@
 
 // HTTP semantic tests
 
-#include <cortex-http/mock/MockTransport.h>
+#include <cortex-http/mock/Transport.h>
 #include <cortex-http/HttpRequestInfo.h>
 #include <cortex-http/HttpResponseInfo.h>
 #include <cortex-http/HttpRequest.h>
@@ -34,14 +34,14 @@ void sendError504(HttpRequest* request, HttpResponse* response) {
 
 TEST(HttpChannel, sameVersion) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, &handlerOk);
+  mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_0, "GET", "/", {}, "");
   ASSERT_EQ(HttpVersion::VERSION_1_0, transport.responseInfo().version());
 }
 
 TEST(HttpChannel, sendError504) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, &sendError504);
+  mock::Transport transport(&executor, &sendError504);
   transport.run(HttpVersion::VERSION_1_0, "GET", "/", {}, "");
   ASSERT_EQ((int)HttpStatus::GatewayTimeout, (int)transport.responseInfo().status());
   ASSERT_TRUE(transport.responseInfo().contentLength() == transport.responseBody().size());
@@ -49,35 +49,35 @@ TEST(HttpChannel, sendError504) {
 
 TEST(HttpChannel, invalidRequestPath_escapeDocumentRoot1) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, &handlerOk);
+  mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_0, "GET", "/../../etc/passwd", {}, "");
   ASSERT_EQ(HttpStatus::BadRequest, transport.responseInfo().status());
 }
 
 TEST(HttpChannel, invalidRequestPath_escapeDocumentRoot2) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, &handlerOk);
+  mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_0, "GET", "/..\%2f..\%2fetc/passwd", {}, "");
   ASSERT_EQ(HttpStatus::BadRequest, transport.responseInfo().status());
 }
 
 TEST(HttpChannel, invalidRequestPath_injectNullByte1) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, &handlerOk);
+  mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_0, "GET", "/foo%00", {}, "");
   ASSERT_EQ(HttpStatus::BadRequest, transport.responseInfo().status());
 }
 
 TEST(HttpChannel, invalidRequestPath_injectNullByte2) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, &handlerOk);
+  mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_0, "GET", "/foo%00/bar", {}, "");
   ASSERT_EQ(HttpStatus::BadRequest, transport.responseInfo().status());
 }
 
 TEST(HttpChannel, missingHostHeader) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, &handlerOk);
+  mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_1, "GET", "/", {}, "");
   ASSERT_EQ(HttpStatus::BadRequest, transport.responseInfo().status());
 
@@ -90,7 +90,7 @@ TEST(HttpChannel, missingHostHeader) {
 
 TEST(HttpChannel, multipleHostHeaders) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, &handlerOk);
+  mock::Transport transport(&executor, &handlerOk);
   transport.run(HttpVersion::VERSION_1_1, "GET", "/", {
       {"Host", "foo"}, {"Host", "bar"}}, "");
   ASSERT_EQ((int)HttpStatus::BadRequest, (int)transport.responseInfo().status());
@@ -98,7 +98,7 @@ TEST(HttpChannel, multipleHostHeaders) {
 
 TEST(HttpChannel, unhandledException1) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, [](HttpRequest*, HttpResponse*) {
+  mock::Transport transport(&executor, [](HttpRequest*, HttpResponse*) {
     throw std::runtime_error("me, the unhandled");
   });
   transport.run(HttpVersion::VERSION_1_0, "GET", "/", {}, "");
@@ -108,7 +108,7 @@ TEST(HttpChannel, unhandledException1) {
 
 TEST(HttpChannel, unhandledException2) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, [](HttpRequest*, HttpResponse*) {
+  mock::Transport transport(&executor, [](HttpRequest*, HttpResponse*) {
     throw 42;
   });
   transport.run(HttpVersion::VERSION_1_0, "GET", "/", {}, "");
@@ -117,8 +117,8 @@ TEST(HttpChannel, unhandledException2) {
 
 TEST(HttpChannel, completed_invoked_before_contentLength_satisfied) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, [](HttpRequest* request,
-                                        HttpResponse* response) {
+  mock::Transport transport(&executor, [](HttpRequest* request,
+                                          HttpResponse* response) {
     response->setStatus(HttpStatus::Ok);
     response->addHeader("Content-Type", "text/plain");
     response->setContentLength(10);
@@ -136,8 +136,8 @@ TEST(HttpChannel, completed_invoked_before_contentLength_satisfied) {
 
 TEST(HttpChannel, trailer1) {
   DirectExecutor executor;
-  mock::MockTransport transport(&executor, [](HttpRequest* request,
-                                              HttpResponse* response) {
+  mock::Transport transport(&executor, [](HttpRequest* request,
+                                          HttpResponse* response) {
     response->setStatus(HttpStatus::Ok);
     response->addHeader("Content-Type", "text/plain");
     response->registerTrailer("Word-Count");

@@ -13,9 +13,9 @@ namespace cortex {
 namespace http {
 namespace mock {
 
-class MockInput : public HttpInput {
+class Input : public HttpInput {
  public:
-  MockInput();
+  Input();
   int read(Buffer* result) override;
   size_t readLine(Buffer* result) override;
   bool empty() const noexcept override;
