@@ -124,12 +124,12 @@ class CORTEX_HTTP_API HttpChannel : public HttpListener {
   void completed();
 
   // HttpListener overrides
-  bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
+  void onMessageBegin(const BufferRef& method, const BufferRef& entity,
                       HttpVersion version) override;
-  bool onMessageHeader(const BufferRef& name, const BufferRef& value) override;
-  bool onMessageHeaderEnd() override;
-  bool onMessageContent(const BufferRef& chunk) override;
-  bool onMessageEnd() override;
+  void onMessageHeader(const BufferRef& name, const BufferRef& value) override;
+  void onMessageHeaderEnd() override;
+  void onMessageContent(const BufferRef& chunk) override;
+  void onMessageEnd() override;
   void onProtocolError(HttpStatus code, const std::string& message) override;
 
   /**

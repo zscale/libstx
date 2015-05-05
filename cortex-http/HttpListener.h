@@ -34,7 +34,7 @@ class CORTEX_HTTP_API HttpListener {
    * @param entity the requested URI (e.g. /index.html)
    * @param version HTTP version (e.g. 0.9 or 2.0)
    */
-  virtual bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
+  virtual void onMessageBegin(const BufferRef& method, const BufferRef& entity,
                               HttpVersion version);
 
   /** HTTP/1.1 response Status-Line, that has been fully parsed.
@@ -43,13 +43,13 @@ class CORTEX_HTTP_API HttpListener {
    * @param code HTTP response status code (e.g. 200 or 404)
    * @param text HTTP response status text (e.g. "Ok" or "Not Found")
    */
-  virtual bool onMessageBegin(HttpVersion version, HttpStatus code,
+  virtual void onMessageBegin(HttpVersion version, HttpStatus code,
                               const BufferRef& text);
 
   /**
    * HTTP generic message begin (neither request nor response message).
    */
-  virtual bool onMessageBegin();
+  virtual void onMessageBegin();
 
   /**
    * Single HTTP message header.
@@ -59,7 +59,7 @@ class CORTEX_HTTP_API HttpListener {
    *
    * @note Does nothing but returns true by default.
    */
-  virtual bool onMessageHeader(const BufferRef& name, const BufferRef& value);
+  virtual void onMessageHeader(const BufferRef& name, const BufferRef& value);
 
   /**
    * Invoked once all request headers have been fully parsed.
@@ -71,7 +71,7 @@ class CORTEX_HTTP_API HttpListener {
    * @retval true continue processing further content (if any)
    * @retval false abort message processing
    */
-  virtual bool onMessageHeaderEnd();
+  virtual void onMessageHeaderEnd();
 
   /**
    * Invoked for every chunk of message content being processed.
@@ -81,7 +81,7 @@ class CORTEX_HTTP_API HttpListener {
    * @retval true continue processing further content (if any)
    * @retval false abort message processing
    */
-  virtual bool onMessageContent(const BufferRef& chunk);
+  virtual void onMessageContent(const BufferRef& chunk);
 
   /**
    * Invoked once a fully HTTP message has been processed.
@@ -91,7 +91,7 @@ class CORTEX_HTTP_API HttpListener {
    * @retval true continue processing further content (if any)
    * @retval false abort message processing
    */
-  virtual bool onMessageEnd();
+  virtual void onMessageEnd();
 
   /**
    * HTTP message transport protocol error.

@@ -16,106 +16,19 @@ using namespace cortex;
 using namespace cortex::http;
 using namespace cortex::http::http1;
 
-class HttpParserCallbacks : public HttpListener {  // {{{
- public:
-  HttpParserCallbacks() = default;
-
-  bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
-                      HttpVersion version) override;
-  bool onMessageBegin(HttpVersion version, HttpStatus code,
-                      const BufferRef& text) override;
-  bool onMessageBegin() override;
-  bool onMessageHeader(const BufferRef& name, const BufferRef& value) override;
-  bool onMessageHeaderEnd() override;
-  bool onMessageContent(const BufferRef& chunk) override;
-  bool onMessageEnd() override;
-  void onProtocolError(HttpStatus code, const std::string& msg) override;
-
- public:
-  std::function<bool(const BufferRef& method, const BufferRef& entity,
-                     HttpVersion version)> requestStart;
-  std::function<bool(HttpVersion version, HttpStatus code,
-                     const BufferRef& text)> responseStart;
-  std::function<bool()> messageStart;
-  std::function<bool(const BufferRef& name, const BufferRef& value)> header;
-  std::function<bool()> headerEnd;
-  std::function<bool(const BufferRef& chunk)> content;
-  std::function<bool()> end;
-  std::function<void(HttpStatus, const std::string&)> protocolError;
-};
-
-bool HttpParserCallbacks::onMessageBegin(const BufferRef& method,
-                                         const BufferRef& entity,
-                                         HttpVersion version) {
-  if (requestStart)
-    return requestStart(method, entity, version);
-  else
-    return true;
-}
-
-bool HttpParserCallbacks::onMessageBegin(HttpVersion version, HttpStatus code,
-                                         const BufferRef& text) {
-  if (responseStart)
-    return responseStart(version, code, text);
-  else
-    return true;
-}
-
-bool HttpParserCallbacks::onMessageBegin() {
-  if (messageStart)
-    return messageStart();
-  else
-    return true;
-}
-
-bool HttpParserCallbacks::onMessageHeader(const BufferRef& name,
-                                          const BufferRef& value) {
-  if (header)
-    return header(name, value);
-  else
-    return true;
-}
-
-bool HttpParserCallbacks::onMessageHeaderEnd() {
-  if (headerEnd)
-    return headerEnd();
-  else
-    return true;
-}
-
-bool HttpParserCallbacks::onMessageContent(const BufferRef& chunk) {
-  if (content)
-    return content(chunk);
-  else
-    return true;
-}
-
-bool HttpParserCallbacks::onMessageEnd() {
-  if (end)
-    return end();
-  else
-    return true;
-}
-
-void HttpParserCallbacks::onProtocolError(HttpStatus code,
-                                          const std::string& msg) {
-  if (protocolError)
-    protocolError(code, msg);
-}
-// }}}
 class HttpParserListener : public HttpListener {  // {{{
  public:
   HttpParserListener();
 
-  bool onMessageBegin(const BufferRef& method, const BufferRef& entity,
+  void onMessageBegin(const BufferRef& method, const BufferRef& entity,
                       HttpVersion version) override;
-  bool onMessageBegin(HttpVersion version, HttpStatus code,
+  void onMessageBegin(HttpVersion version, HttpStatus code,
                       const BufferRef& text) override;
-  bool onMessageBegin() override;
-  bool onMessageHeader(const BufferRef& name, const BufferRef& value) override;
-  bool onMessageHeaderEnd() override;
-  bool onMessageContent(const BufferRef& chunk) override;
-  bool onMessageEnd() override;
+  void onMessageBegin() override;
+  void onMessageHeader(const BufferRef& name, const BufferRef& value) override;
+  void onMessageHeaderEnd() override;
+  void onMessageContent(const BufferRef& chunk) override;
+  void onMessageEnd() override;
   void onProtocolError(HttpStatus code, const std::string& msg) override;
 
  public:
@@ -145,51 +58,43 @@ HttpParserListener::HttpParserListener()
       errorMessage(),
       messageBegin(false),
       headerEnd(false),
-      messageEnd(false) {}
+      messageEnd(false) {
+}
 
-bool HttpParserListener::onMessageBegin(const BufferRef& method,
+void HttpParserListener::onMessageBegin(const BufferRef& method,
                                         const BufferRef& entity,
                                         HttpVersion version) {
   this->method = method.str();
   this->entity = entity.str();
   this->version = version;
-
-  return true;
 }
 
-bool HttpParserListener::onMessageBegin(HttpVersion version, HttpStatus code,
+void HttpParserListener::onMessageBegin(HttpVersion version, HttpStatus code,
                                         const BufferRef& text) {
   this->version = version;
   this->statusCode = code;
   this->statusReason = text.str();
-
-  return true;
 }
 
-bool HttpParserListener::onMessageBegin() {
+void HttpParserListener::onMessageBegin() {
   messageBegin = true;
-  return true;
 }
 
-bool HttpParserListener::onMessageHeader(const BufferRef& name,
+void HttpParserListener::onMessageHeader(const BufferRef& name,
                                          const BufferRef& value) {
   headers.push_back(std::make_pair(name.str(), value.str()));
-  return true;
 }
 
-bool HttpParserListener::onMessageHeaderEnd() {
+void HttpParserListener::onMessageHeaderEnd() {
   headerEnd = true;
-  return true;
 }
 
-bool HttpParserListener::onMessageContent(const BufferRef& chunk) {
+void HttpParserListener::onMessageContent(const BufferRef& chunk) {
   body += chunk;
-  return true;
 }
 
-bool HttpParserListener::onMessageEnd() {
+void HttpParserListener::onMessageEnd() {
   messageEnd = true;
-  return true;
 }
 
 void HttpParserListener::onProtocolError(HttpStatus code,
@@ -433,4 +338,3 @@ TEST(HttpParser, pipelined1) {
   ASSERT_EQ("/bar", listener.entity);
   ASSERT_EQ(HttpVersion::VERSION_0_9, listener.version);
 }
-

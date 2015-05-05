@@ -38,7 +38,7 @@ void Http1Channel::reset() {
   HttpChannel::reset();
 }
 
-bool Http1Channel::onMessageBegin(const BufferRef& method,
+void Http1Channel::onMessageBegin(const BufferRef& method,
                                  const BufferRef& entity,
                                  HttpVersion version) {
   request_->setBytesReceived(bytesReceived());
@@ -55,19 +55,21 @@ bool Http1Channel::onMessageBegin(const BufferRef& method,
       throw std::runtime_error("Invalid State. Illegal version passed.");
   }
 
-  return HttpChannel::onMessageBegin(method, entity, version);
+  HttpChannel::onMessageBegin(method, entity, version);
 }
 
 size_t Http1Channel::bytesReceived() const noexcept {
   return static_cast<HttpConnection*>(transport_)->bytesReceived();
 }
 
-bool Http1Channel::onMessageHeader(const BufferRef& name,
+void Http1Channel::onMessageHeader(const BufferRef& name,
                                   const BufferRef& value) {
   request_->setBytesReceived(bytesReceived());
 
-  if (!iequals(name, "Connection"))
-    return HttpChannel::onMessageHeader(name, value);
+  if (!iequals(name, "Connection")) {
+    HttpChannel::onMessageHeader(name, value);
+    return;
+  }
 
   std::vector<BufferRef> options = Tokenizer<BufferRef>::tokenize(value, ", ");
 
@@ -79,11 +81,9 @@ bool Http1Channel::onMessageHeader(const BufferRef& name,
     else if (iequals(option, "close"))
       persistent_ = false;
   }
-
-  return true;
 }
 
-bool Http1Channel::onMessageHeaderEnd() {
+void Http1Channel::onMessageHeaderEnd() {
   request_->setBytesReceived(bytesReceived());
 
   // hide transport-level header fields
@@ -91,7 +91,7 @@ bool Http1Channel::onMessageHeaderEnd() {
   for (const auto& name: connectionOptions_)
     request_->headers().remove(name);
 
-  return HttpChannel::onMessageHeaderEnd();
+  HttpChannel::onMessageHeaderEnd();
 }
 
 void Http1Channel::onProtocolError(HttpStatus code, const std::string& message) {

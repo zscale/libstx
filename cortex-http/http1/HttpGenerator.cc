@@ -187,7 +187,7 @@ void HttpGenerator::generateResponseLine(const HttpResponseInfo& info) {
       buffer_.push_back("HTTP/1.1 ");
       break;
     default:
-      throw std::runtime_error("Illegal state.");
+      RAISE(IllegalStateError, "Invalid HTTP version.");
   }
 
   buffer_.push_back(static_cast<int>(info.status()));
