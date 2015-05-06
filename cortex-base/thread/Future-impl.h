@@ -58,7 +58,7 @@ void Future<T>::onFailure(std::function<void (const Status& status)> fn) {
 
   if (!state_->ready) {
     state_->on_failure = fn;
-  } else if (state_->status.isError()) {
+  } else if (state_->status != Status::Success) {
     fn(state_->status);
   }
 }
@@ -69,7 +69,7 @@ void Future<T>::onSuccess(std::function<void (const T& value)> fn) {
 
   if (!state_->ready) {
     state_->on_success = fn;
-  } else if (state_->status.isSuccess()) {
+  } else if (state_->status == Status::Success) {
     fn(*(state_->value));
   }
 }
