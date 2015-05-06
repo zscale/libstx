@@ -47,6 +47,28 @@ InetEndPoint::InetEndPoint(int socket,
       idleTimeout_(connector->clock(), connector->scheduler()),
       io_(),
       handle_(socket),
+      addressFamily_(connector->addressFamily()),
+      isCorking_(false) {
+
+  idleTimeout_.setCallback(std::bind(&InetEndPoint::onTimeout, this));
+  TRACE("%p ctor", this);
+}
+
+InetEndPoint::InetEndPoint(int socket,
+                           int addressFamily,
+                           TimeSpan readTimeout,
+                           TimeSpan writeTimeout,
+                           WallClock* clock,
+                           Scheduler* scheduler)
+    : EndPoint(),
+      connector_(nullptr),
+      scheduler_(scheduler),
+      readTimeout_(readTimeout),
+      writeTimeout_(writeTimeout),
+      idleTimeout_(clock, scheduler),
+      io_(),
+      handle_(socket),
+      addressFamily_(addressFamily),
       isCorking_(false) {
 
   idleTimeout_.setCallback(std::bind(&InetEndPoint::onTimeout, this));
@@ -73,7 +95,7 @@ std::pair<IPAddress, int> InetEndPoint::remoteAddress() const {
     RAISE(IllegalStateError, "Invalid socket handle.");
 
   std::pair<IPAddress, int> result;
-  switch (connector_->addressFamily()) {
+  switch (addressFamily()) {
     case AF_INET6: {
       sockaddr_in6 saddr;
       socklen_t slen = sizeof(saddr);
@@ -103,7 +125,7 @@ std::pair<IPAddress, int> InetEndPoint::localAddress() const {
     RAISE(IllegalStateError, "Invalid socket handle.");
 
   std::pair<IPAddress, int> result;
-  switch (connector_->addressFamily()) {
+  switch (addressFamily()) {
     case AF_INET6: {
       sockaddr_in6 saddr;
       socklen_t slen = sizeof(saddr);

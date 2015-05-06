@@ -21,11 +21,22 @@ namespace cortex {
 class InetConnector;
 
 /**
- * TCP/IP endpoint, as created by the InetConnector.
+ * TCP/IP endpoint, usually created by an InetConnector.
  */
 class CORTEX_API InetEndPoint : public EndPoint {
  public:
+  /**
+   * Initializes a server-side InetEndPoint.
+   */
   InetEndPoint(int socket, InetConnector* connector, Scheduler* scheduler);
+
+  /**
+   * Initializes a client-side InetEndPoint.
+   */
+  InetEndPoint(int socket, int addressFamily,
+               TimeSpan readTimeout, TimeSpan writeTimeout,
+               WallClock* clock, Scheduler* scheduler);
+
   ~InetEndPoint();
 
   int handle() const noexcept { return handle_; }
@@ -59,6 +70,8 @@ class CORTEX_API InetEndPoint : public EndPoint {
   void setWriteTimeout(TimeSpan timeout) override;
   Option<IPAddress> remoteIP() const override;
 
+  int addressFamily() const noexcept { return addressFamily_; }
+
  private:
   void onReadable() CORTEX_NOEXCEPT;
   void onWritable() CORTEX_NOEXCEPT;
@@ -75,6 +88,7 @@ class CORTEX_API InetEndPoint : public EndPoint {
   IdleTimeout idleTimeout_;
   Scheduler::HandleRef io_;
   int handle_;
+  int addressFamily_;
   bool isCorking_;
 };
 
