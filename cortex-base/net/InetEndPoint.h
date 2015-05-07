@@ -12,6 +12,7 @@
 #include <cortex-base/Api.h>
 #include <cortex-base/sysconfig.h>
 #include <cortex-base/IdleTimeout.h>
+#include <cortex-base/thread/Future.h>
 #include <cortex-base/net/EndPoint.h>
 #include <cortex-base/net/IPAddress.h>
 #include <atomic>
@@ -39,7 +40,25 @@ class CORTEX_API InetEndPoint : public EndPoint {
 
   ~InetEndPoint();
 
+  static Future<std::unique_ptr<InetEndPoint>> connectAsync(
+      const IPAddress& ipaddr, int port,
+      TimeSpan timeout, WallClock* clock, Scheduler* scheduler);
+
+  static void connectAsync(
+      const IPAddress& ipaddr, int port,
+      TimeSpan timeout, WallClock* clock, Scheduler* scheduler,
+      std::function<void(std::unique_ptr<InetEndPoint>&&)> cb);
+
+  static std::unique_ptr<InetEndPoint> connect(
+      const IPAddress& ipaddr, int port,
+      TimeSpan timeout, WallClock* clock, Scheduler* scheduler);
+
   int handle() const noexcept { return handle_; }
+
+  /**
+   * Returns the underlying address family, such as @c AF_INET or @c AF_INET6.
+   */
+  int addressFamily() const noexcept { return addressFamily_; }
 
   /**
    * Retrieves remote address + port.
@@ -69,8 +88,6 @@ class CORTEX_API InetEndPoint : public EndPoint {
   void setReadTimeout(TimeSpan timeout) override;
   void setWriteTimeout(TimeSpan timeout) override;
   Option<IPAddress> remoteIP() const override;
-
-  int addressFamily() const noexcept { return addressFamily_; }
 
  private:
   void onReadable() CORTEX_NOEXCEPT;

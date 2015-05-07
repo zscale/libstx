@@ -369,4 +369,116 @@ Option<IPAddress> InetEndPoint::remoteIP() const {
   return Some(remoteAddress().first);
 }
 
+class InetConnectState {
+ public:
+  std::unique_ptr<InetEndPoint> ep_;
+  Promise<std::unique_ptr<InetEndPoint>> promise_;
+
+  InetConnectState(std::unique_ptr<InetEndPoint>&& ep,
+                   const Promise<std::unique_ptr<InetEndPoint>>& promise)
+      : ep_(std::move(ep)),
+        promise_(promise) {}
+
+  void onConnectComplete() {
+    int val = 0;
+    socklen_t vlen = sizeof(val);
+    if (getsockopt(ep_->handle(), SOL_SOCKET, SO_ERROR, &val, &vlen) == 0) {
+      TRACE("%p onConnectComplete: connected.", this);
+      promise_.success(std::move(ep_));
+    } else {
+      TRACE("%p onConnectComplete: failure %d. %s", this,
+          val, strerror(val));
+      promise_.failure(Status::IOError); // dislike: wanna pass errno val here.
+    }
+    delete this;
+  }
+};
+
+Future<std::unique_ptr<InetEndPoint>> InetEndPoint::connectAsync(
+    const IPAddress& ipaddr, int port,
+    TimeSpan timeout, WallClock* clock, Scheduler* scheduler) {
+
+  Promise<std::unique_ptr<InetEndPoint>> promise;
+  std::unique_ptr<InetEndPoint> ep;
+  int fd = socket(ipaddr.family(), SOCK_STREAM, IPPROTO_TCP);
+  if (fd < 0)
+    RAISE_ERRNO(errno);
+
+  try {
+    TRACE("connectAsync: to %s port %d", ipaddr.str().c_str(), port);
+    ep.reset(new InetEndPoint(fd, ipaddr.family(), timeout, timeout,
+                               clock, scheduler));
+    ep->setBlocking(false);
+
+    switch (ipaddr.family()) {
+      case AF_INET: {
+        struct sockaddr_in saddr;
+        memset(&saddr, 0, sizeof(saddr));
+        saddr.sin_family = ipaddr.family();
+        saddr.sin_port = htons(port);
+        memcpy(&saddr.sin_addr, ipaddr.data(), ipaddr.size());
+
+        // this connect()-call can block if fd is non-blocking
+        TRACE("connectAsync: connect(ipv4)");
+        if (::connect(fd, (const struct sockaddr*) &saddr, sizeof(saddr)) < 0) {
+          if (errno != EINPROGRESS) {
+            TRACE("connectAsync: connect() error. %s", strerror(errno));
+            promise.failure(Status::IOError); // errno
+            return promise.future();
+          } else {
+            TRACE("connectAsync: backgrounding");
+            scheduler->executeOnWritable(fd,
+                std::bind(&InetConnectState::onConnectComplete,
+                          new InetConnectState(std::move(ep), promise)));
+            return promise.future();
+          }
+        }
+        TRACE("connectAsync: synchronous connect");
+        break;
+      }
+      case AF_INET6: {
+        struct sockaddr_in6 saddr;
+        memset(&saddr, 0, sizeof(saddr));
+        saddr.sin6_family = ipaddr.family();
+        saddr.sin6_port = htons(port);
+        memcpy(&saddr.sin6_addr, ipaddr.data(), ipaddr.size());
+
+        // this connect()-call can block if fd is non-blocking
+        if (::connect(fd, (const struct sockaddr*) &saddr, sizeof(saddr)) < 0) {
+          if (errno != EINPROGRESS) {
+            TRACE("connectAsync: connect() error. %s", strerror(errno));
+            RAISE_ERRNO(errno);
+          } else {
+            TRACE("connectAsync: backgrounding");
+            scheduler->executeOnWritable(fd,
+                std::bind(&InetConnectState::onConnectComplete,
+                          new InetConnectState(std::move(ep), promise)));
+            return promise.future();
+          }
+        }
+        break;
+      }
+      default: {
+        RAISE(NotImplementedError);
+      }
+    }
+
+    TRACE("connectAsync: connected instantly");
+    promise.success(std::move(ep));
+    return promise.future();
+  } catch (...) {
+    ::close(fd);
+    throw;
+  }
+}
+
+std::unique_ptr<InetEndPoint> InetEndPoint::connect(
+    const IPAddress& ipaddr, int port,
+    TimeSpan timeout, WallClock* clock, Scheduler* scheduler) {
+  std::unique_ptr<InetEndPoint> ep =
+      std::move(connectAsync(ipaddr, port, timeout, clock, scheduler).get());
+  ep->setBlocking(true);
+  return ep;
+}
+
 } // namespace cortex
