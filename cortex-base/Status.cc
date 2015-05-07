@@ -13,6 +13,10 @@
 
 namespace cortex {
 
+std::string to_string(Status ec) {
+  return StatusCategory::get().message(static_cast<int>(ec));
+}
+
 std::error_code makeErrorCode(Status ev) {
   return std::error_code((int) ev, StatusCategory::get());
 }
@@ -23,7 +27,7 @@ StatusCategory& StatusCategory::get() {
 }
 
 const char* StatusCategory::name() const noexcept {
-  return "XzeroStatus";
+  return "CortexStatus";
 }
 
 std::string StatusCategory::message(int ec) const {
