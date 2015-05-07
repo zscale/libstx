@@ -71,6 +71,7 @@ class CORTEX_API Future {
   void onReady(std::function<void> fn);
   void onReady(Scheduler* scheduler, std::function<void> fn);
 
+  T& get();
   const T& get() const;
   const T& waitAndGet() const;
 
