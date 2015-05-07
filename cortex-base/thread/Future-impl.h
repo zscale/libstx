@@ -90,6 +90,18 @@ bool Future<T>::isFailure() const {
 }
 
 template <typename T>
+T& Future<T>::get() {
+  std::unique_lock<std::mutex> lk(state_->mutex);
+
+  if (!state_->ready) {
+    RAISE(FutureError, "get() called on pending future");
+  }
+
+  raiseIfError(state_->status);
+  return *state_->value;
+}
+
+template <typename T>
 const T& Future<T>::get() const {
   std::unique_lock<std::mutex> lk(state_->mutex);
 
