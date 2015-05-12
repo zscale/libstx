@@ -698,8 +698,6 @@
       var checkbox = document.createElement("fn-checkbox");
       fn_segment.insertBefore(checkbox, fn_segment.firstElementChild);
 
-      this.observeRecentSegment(checkbox, fn_segment);
-
       return fn_segment;
     }
 
@@ -914,6 +912,9 @@
       fn_segment_recent.querySelector("fn-button[data-action='delete-selected']")
         .addEventListener('click', function() {
           _this.fireRemoveRecentEvent(selection);
+          _this.loadRecentSegments(function(segments) {
+            _this.renderRecentSegments(segments);
+          });
         });
 
       fn_segment_recent.querySelector("fn-button[data-action='add-selected']")
@@ -1036,39 +1037,7 @@
     };
 
 
-    this.observeRecentSegment = function(checkbox, fn_segment) {
-      
-      /*var fn_segment_recent = this.querySelector("fn-segment-recent");
-      var add_tooltip = fn_segment_recent.querySelector(
-        "fn-tooltip[data-name='add']");
-      var remove_tooltip = fn_segment_recent.querySelector(
-        "fn-tooltip[data-name='remove']");
-      var _this = this;
-
-      add_tooltip.getLeftValue = this.getTooltipLeftValue.bind(this);
-      add_tooltip.getTopValue = this.getTooltipTopValue.bind(this);
-      add_tooltip.init(add_icon);
-
-      add_icon.onclick = function() {
-        _this.addNewSegment(segment);
-      }
-
-      remove_tooltip.getLeftValue = this.getTooltipLeftValue.bind(this);
-      remove_tooltip.getTopValue = this.getTooltipTopValue.bind(this);
-      remove_tooltip.init(remove_icon);
-
-      remove_icon.onclick = function() {
-        _this.fireRemoveRecentEvent(segment);
-
-        _this.loadRecentSegments(function(segments) {
-          _this.renderRecentSegments(segments);
-        });
-      }*/
-    };
-
-
     this.fireRemoveRecentEvent = function(segments) {
-      console.log(segments);
       var ev = new CustomEvent('fn-segment-recent-remove', {
         'detail' : {'segments' : JSON.stringify(segments)},
         'bubbles': true,
@@ -1079,7 +1048,6 @@
     };
 
     this.fireAddRecentEvent = function(segments) {
-      console.log(segments);
       var ev = new CustomEvent('fn-segment-recent-add', {
         'detail' : {'segments' : JSON.stringify(segments)},
         'bubbles': true,
