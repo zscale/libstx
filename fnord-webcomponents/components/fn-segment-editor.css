@@ -341,12 +341,6 @@ fn-segment-recent fn-segment-header,
   padding: 8px 0;
 }
 
-fn-segment-recent fn-segment-footer,
-.fn-segment-recent .fn-segment-footer {
-  height: 30px;
-  border-top: none;
-}
-
 fn-segment-header fn-segment-error-message,
 .fn-segment-header fn-segment-error-message {
   float: left;
@@ -505,6 +499,10 @@ fn-segment-option {
   padding: 1.2em 2em;
   line-height: 1.3em;
   background-color: #fff;
+}
+
+fn-segment.segment-selected {
+  background-color: #F4F4F4;
 }
 
 fn-segment-option {
