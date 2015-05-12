@@ -60,11 +60,11 @@
         </template>
 
         <fn-segment-footer>
-          <fn-button data-action='add-selected'>
-            <i class='fa fa-plus'></i> Add Selected
-          </fn-button>
           <fn-button data-action='delete-selected'>
             <i class='fa fa-trash-o'></i> Remove Selected
+          </fn-button>
+          <fn-button data-action='add-selected'>
+            <i class='fa fa-plus'></i> Add Selected
           </fn-button>
         </fn-segment-footer>
       </fn-segment-recent>
@@ -919,6 +919,9 @@
 
       fn_segment_recent.querySelector("fn-button[data-action='add-selected']")
         .addEventListener('click', function() {
+          var segments = JSON.parse(_this.getAttribute('data-segments'));
+          segments = segments.concat(selection);
+          _this.setAttribute('data-segments', JSON.stringify(segments));
           _this.fireAddRecentEvent(selection);
         });
     };
