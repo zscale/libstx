@@ -318,14 +318,14 @@
       }
 
       editor2.addEventListener('fn-segment-recent-remove', function(e) {
-        var removed_segments = JSON.parse(e.detail.segments);
+        var removed_segment = JSON.parse(e.detail.segment);
 
-        /*for (var i = 0; i < recent_segments.length; i++) {
+        for (var i = 0; i < recent_segments.length; i++) {
           if (recent_segments[i].key == removed_segment.key) {
             recent_segments.splice(i, 1);
             break;
           }
-        }*/
+        }
       });
     </script>
   </section>
