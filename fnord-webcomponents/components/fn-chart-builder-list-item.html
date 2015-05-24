@@ -1,0 +1,49 @@
+<!--
+  This file is part of the "FnordMetric" project
+    Copyright (c) 2014 Laura Schlimmer
+    Copyright (c) 2014 Paul Asmuth, Google Inc.
+
+  FnordMetric is free software: you can redistribute it and/or modify it under
+  the terms of the GNU General Public License v3.0. You should have received a
+  copy of the GNU General Public License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
+-->
+<template id="fn-chart-builder-list-item-base-tpl">
+  <fn-cbuilder-item-header>
+  </fn-cbuilder-item-header>
+  <i class='fa fa-trash-o fn-cbuilder'></i>
+  <i class='fa fa-pencil'></i>
+</template>
+<script type="text/javascript">
+  var FnordChartBuilderListItem = function() {
+    this.createdCallback = function() {
+      console.log("chart builder list item");
+      var tpl = Fnord.getTemplate("fn-chart-builder-list-item", "base");
+      this.appendChild(tpl);
+      if (this.hasAttribute('data-metric')) {
+        this.init();
+      }
+    };
+
+    this.attributeChangedCallback = function(attr, old_val, new_val) {
+      if (attr == 'data-metric') {
+        this.init();
+      }
+    }
+
+    this.init = function() {
+      var metric = JSON.parse(this.getAttribute("data-metric"));
+      this.querySelector("fn-cbuilder-item-header").innerHTML =
+        metric.name;
+
+    };
+
+  };
+
+  window.addEventListener('fn-ready', function() {
+    console.log("fnord ready");
+    Fnord.registerComponent(
+      "fn-chart-builder-list-item",
+      FnordChartBuilderListItem);
+  });
+</script>

@@ -1,0 +1,63 @@
+<!--
+  This file is part of the "FnordMetric" project
+    Copyright (c) 2014 Laura Schlimmer
+    Copyright (c) 2014 Paul Asmuth, Google Inc.
+
+  FnordMetric is free software: you can redistribute it and/or modify it under
+  the terms of the GNU General Public License v3.0. You should have received a
+  copy of the GNU General Public License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
+-->
+<template id="fn-chart-builder-base-tpl">
+  <fn-chart-builder-header>
+    <fn-chart-builder-header-inner>
+      Metrics
+    </fn-chart-builder-header-inner>
+  </fn-chart-builder-header>
+
+  <fn-chart-builder-list>
+  </fn-chart-builder-list>
+
+  <fn-chart-builder-pane>
+  </fn-chart-builder-pane>
+</template>
+<script type='text/javascript'>
+  var FnordChartBuilder = function() {
+    this.createdCallback = function() {
+      var tpl = Fnord.getTemplate("fn-chart-builder", "base");
+      this.appendChild(tpl);
+
+      if (this.hasAttribute('data-metrics')) {
+        this.init();
+      }
+    }
+
+    this.init = function() {
+      
+      this.onMetricsChange();
+
+    }
+
+    this.onMetricsChange = function() {
+      this.renderMetricsList();
+    }
+
+    this.renderMetricsList = function(metrics) {
+      var list = this.querySelector("fn-chart-builder-list");
+      var metrics = JSON.parse(this.getAttribute('data-metrics'));
+
+
+      metrics.forEach(function(metric) {
+        var item = document.createElement("fn-chart-builder-list-item");
+        item.setAttribute('data-metric', JSON.stringify(metric));
+        list.appendChild(item);
+      });
+
+
+    }
+  };
+
+  window.addEventListener('fn-ready', function() {
+    Fnord.registerComponent("fn-chart-builder", FnordChartBuilder);
+  });
+</script>
