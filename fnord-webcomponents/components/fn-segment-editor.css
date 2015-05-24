@@ -118,7 +118,7 @@ fn-loader.segment-editor-loader /deep/ .spinner {
   Segments Loader
 ******************/
 fn-segment-recent fn-loader {
-  height: 370px;
+  height: 350px;
 }
 
 fn-segment-recent fn-loader /deep/ .loader {
@@ -334,17 +334,15 @@ fn-segment-footer,
   padding: 3px 0;
 }
 
+fn-segment-recent fn-segment-footer {
+  padding: 8px 2em;
+}
+
 fn-segment-select fn-segment-header,
 fn-segment-recent fn-segment-header,
 .fn-segment-select .fn-segment-header,
 .fn-segment-recent .fn-segment-header {
   padding: 8px 0;
-}
-
-fn-segment-recent fn-segment-footer,
-.fn-segment-recent .fn-segment-footer {
-  height: 30px;
-  border-top: none;
 }
 
 fn-segment-header fn-segment-error-message,
@@ -505,6 +503,10 @@ fn-segment-option {
   padding: 1.2em 2em;
   line-height: 1.3em;
   background-color: #fff;
+}
+
+fn-segment.segment-selected {
+  background-color: #F4F4F4;
 }
 
 fn-segment-option {
