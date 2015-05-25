@@ -23,7 +23,7 @@ TEST_CASE(RedisTest, TestSimpleGetSet, [] () {
   thread::ThreadPool thread_pool;
 
   auto redis = redis::RedisConnection::connect(
-      net::InetAddr::resolve("127.0.0.1:6379"),
+      InetAddr::resolve("127.0.0.1:6379"),
       &thread_pool);
 
   redis->set("__libfnord_redis_test1", "bar123");

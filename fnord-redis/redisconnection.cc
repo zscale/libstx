@@ -15,7 +15,7 @@ namespace fnord {
 namespace redis {
 
 RedisConnection::RedisConnection(
-    const fnord::net::InetAddr& addr,
+    const fnord::InetAddr& addr,
     fnord::TaskScheduler* scheduler) {
   ctx_ = redisConnect(addr.ip().c_str(), addr.port());
 
@@ -25,7 +25,7 @@ RedisConnection::RedisConnection(
 }
 
 std::unique_ptr<RedisConnection> RedisConnection::connect(
-    const fnord::net::InetAddr& addr,
+    const fnord::InetAddr& addr,
     fnord::TaskScheduler* sched) {
   return std::unique_ptr<RedisConnection>(new RedisConnection(addr, sched));
 }
