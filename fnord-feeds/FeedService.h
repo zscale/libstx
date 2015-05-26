@@ -14,9 +14,13 @@
 #include <set>
 #include <string>
 #include <unordered_map>
+#include "fnord-base/stdtypes.h"
+#include "fnord-base/random.h"
 #include "fnord-base/io/filerepository.h"
+#include "fnord-base/io/FileLock.h"
 #include "fnord-feeds/LocalFeed.h"
 #include "fnord-feeds/FeedEntry.h"
+#include "fnord-feeds/Message.pb.h"
 #include "fnord-base/reflect/reflect.h"
 
 namespace fnord {
@@ -25,11 +29,14 @@ namespace feeds {
 class FeedService {
   friend class LogStream;
 public:
+
   FeedService(
-      fnord::FileRepository file_repo,
-      const String& stats_path = "/feeds");
+      const String& data_dir,
+      const String& stats_path = "/brokerd");
 
   /**
+   * DEPRECATED
+   *
    * Append an entry to the stream referenced by `stream` and return the offset
    * at which the entry was written. Will create a new stream if the referenced
    * stream does not exist yet.
@@ -38,7 +45,18 @@ public:
    * @param entry the entry to append to the stream
    * @return the offset at which the entry was written
    */
-  uint64_t append(std::string stream, std::string entry);
+  uint64_t append(String stream, String entry); // FIXPAUL DEPRECATED
+
+  /**
+   * Insert a record into the topic referenced by `topic` and return the offset
+   * at which the record was written. Will create a new topic if the referenced
+   * topic does not exist yet.
+   *
+   * @param topic the name/key of the topic
+   * @param record the record to append to the topic
+   * @return the offset at which the record was written
+   */
+  uint64_t insert(const String& topic, const Buffer& record);
 
   /**
    * Read one or more entries from the stream at or after the provided start
@@ -47,16 +65,29 @@ public:
    * a start offset of zero to retrieve the first entry or entries from the
    * stream.
    *
-   * The provided callback must return a boolean. If the callback returns true,
-   * the next entry will be read (if there is a next entry). If the callback
-   * returns false the scan method will return.
-   *
    * @param start_offset the start offset to read from
    */
   std::vector<FeedEntry> fetch(
       std::string stream,
       uint64_t offset,
       int batch_size);
+
+  /**
+   * Read one or more entries from the stream at or after the provided start
+   * offset. If the start offset references a deleted/expired entry, the next
+   * valid entry will be returned. It is always valid to call this method with
+   * a start offset of zero to retrieve the first entry or entries from the
+   * stream.
+   *
+   * @param start_offset the start offset to read from
+   */
+  void fetchSome(
+      std::string stream,
+      uint64_t offset,
+      int batch_size,
+      Function<void (const Message& msg)> fn);
+
+  String hostID();
 
 protected:
   String stats_path_;
@@ -67,6 +98,9 @@ protected:
   fnord::FileRepository file_repo_;
   std::unordered_map<std::string, std::unique_ptr<LogStream>> streams_;
   std::mutex streams_mutex_;
+  FileLock lock_;
+  String hostid_;
+  Random rnd_;
 };
 
 } // namespace logstream_service

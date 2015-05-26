@@ -9,6 +9,7 @@
  */
 #include "fnord-base/inspect.h"
 #include "fnord-base/logging.h"
+#include "fnord-base/io/fileutil.h"
 #include "fnord-json/json.h"
 #include "fnord-sstable/sstablereader.h"
 #include "fnord-sstable/sstablerepair.h"
@@ -18,11 +19,33 @@ namespace fnord {
 namespace feeds {
 
 FeedService::FeedService(
-    fnord::FileRepository file_repo,
-    const String& stats_path /* = "/feeds" */) :
-    file_repo_(file_repo),
-    stats_path_(stats_path) {
-  file_repo.listFiles([this] (const std::string& filename) -> bool {
+    const String& data_dir,
+    const String& stats_path /* = "/brokerd" */) :
+    file_repo_(data_dir),
+    stats_path_(stats_path),
+    lock_(FileUtil::joinPaths(data_dir, "index.lck")) {
+  lock_.lock(false);
+
+  auto hostid_file = FileUtil::joinPaths(data_dir, "hostid.idx");
+  if (!FileUtil::exists(hostid_file)) {
+    hostid_ = rnd_.hex128();
+
+    {
+      auto f = File::openFile(hostid_file + "~", File::O_CREATE | File::O_WRITE);
+      f.write(hostid_.data(), hostid_.size());
+    }
+
+    FileUtil::mv(hostid_file + "~", hostid_file);
+  } else {
+    hostid_ = FileUtil::read(hostid_file).toString();
+  }
+
+  file_repo_.listFiles([this] (const std::string& filename) -> bool {
+    if (StringUtil::endsWith(filename, ".idx") ||
+        StringUtil::endsWith(filename, ".lck")) {
+      return true;
+    }
+
     reopenTable(filename);
     return true;
   });
@@ -33,12 +56,37 @@ uint64_t FeedService::append(std::string stream_key, std::string entry) {
   return stream->append(entry);
 }
 
+uint64_t FeedService::insert(const String& topic, const Buffer& record) {
+  auto stream = openStream(topic, true);
+  return stream->append(record);
+}
+
 std::vector<FeedEntry> FeedService::fetch(
       std::string stream_key,
       uint64_t offset,
       int batch_size) {
+  Vector<FeedEntry> res;
+
   auto stream = openStream(stream_key, false);
-  return stream->fetch(offset, batch_size);
+  stream->fetch(offset, batch_size, [&res] (const Message& r) {
+    FeedEntry entry;
+    entry.offset = r.offset();
+    entry.next_offset = r.next_offset();
+    entry.time = r.time();
+    entry.data = r.data();
+    res.emplace_back(entry);
+  });
+
+  return res;
+}
+
+void FeedService::fetchSome(
+      std::string stream_key,
+      uint64_t offset,
+      int batch_size,
+      Function<void (const Message& msg)> fn) {
+  auto stream = openStream(stream_key, false);
+  return stream->fetch(offset, batch_size, fn);
 }
 
 LogStream* FeedService::openStream(const std::string& name, bool create) {
@@ -94,6 +142,10 @@ void FeedService::reopenTable(const std::string& file_path) {
 
   auto stream = openStream(table_header.stream_name, true);
   stream->reopenTable(file_path);
+}
+
+String FeedService::hostID() {
+  return hostid_;
 }
 
 } // namespace logstream_service

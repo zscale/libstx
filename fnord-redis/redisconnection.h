@@ -26,7 +26,7 @@ class RedisConnection {
 public:
 
   static std::unique_ptr<RedisConnection> connect(
-      const net::InetAddr& addr,
+      const InetAddr& addr,
       TaskScheduler* scheduler);
 
   RedisConnection(const RedisConnection& other) = delete;
@@ -54,7 +54,7 @@ public:
 protected:
 
   RedisConnection(
-      const fnord::net::InetAddr& addr,
+      const fnord::InetAddr& addr,
       fnord::TaskScheduler* scheduler);
 
   void executeCommand(
