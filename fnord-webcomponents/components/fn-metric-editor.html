@@ -1,0 +1,125 @@
+<!--
+  This file is part of the "FnordMetric" project
+    Copyright (c) 2014 Laura Schlimmer
+    Copyright (c) 2014 Paul Asmuth, Google Inc.
+
+  FnordMetric is free software: you can redistribute it and/or modify it under
+  the terms of the GNU General Public License v3.0. You should have received a
+  copy of the GNU General Public License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
+-->
+<template id='fn-metric-editor-base-tpl'>
+  <fn-modal-dimmer>
+    <fn-modal>
+      <fn-modal-close-icon></fn-modal-close-icon>
+
+      <fn-metric-editor-recent class='me-modal-window active'>
+        <fn-metric-editor-header>
+          <fn-metric-editor-header-title>Recent Metrics</fn-metric-editor-header-title>
+          <fn-button data-action='metric-create'>
+            <i class='fa fa-plus'></i> New Metric
+          </fn-button>
+        </fn-metric-editor-header>
+
+        <fn-loader data-loading>
+          <fn-metrics></fn-metrics>
+        </fn-loader>
+
+        <template id='fn-metrics-empty-tpl'>
+          <fn-metrics-empty>
+            <div class='segment-text'>No Metrics Found</div>
+            <div class='segment-link'>Add a new Metric</div>
+          </fn-metrics-empty>
+        </template>
+      </fn-metric-editor-recent>
+
+      <fn-metric-editor-create class='me-modal-window'>
+         <fn-metric-editor-header>
+            <input class='fn-input' placeholder='Segment Name' data-segment-name />
+            <fn-metric-editor-msg class='me-error' name='name'>Please insert a (unique) name</fn-metric-editor-msg>
+            <fn-metric-editor-msg class='me-error' name='option'>Please select at least one option</fn-metric-editor-msg>
+
+            <fn-button data-action='cancel-segment'>Cancel</fn-button>
+            <fn-button data-action='save-segment'>Save</fn-button>
+          </fn-metric-editor-header>
+
+          <fn-metric-options></fn-metric-options>
+      </fn-metric-editor-create>
+
+      <fn-metric-editor-edit class='me-modal-window'>
+        <fn-metric-editor-header>
+          <input class='fn-input' data-metric-name />
+
+          <fn-button data-action='cancel-edit'>Cancel</fn-button>
+          <fn-button data-action='replace-metric'>Save</fn-button>
+        </fn-metric-editor-header>
+
+        <fn-metric-options></fn-metric-options>
+      </fn-metric-editor-edit>
+    </fn-modal>
+  </fn-modal-dimmer>
+</template>
+
+<script type='text/javascript'>
+  var FnordMetricEditor = function() {
+    this.createdCallback = function() {
+      var tpl = Fnord.getTemplate("fn-metric-editor", "base");
+      this.appendChild(tpl);
+
+    }
+
+    this.show = function() {
+      var modal = this.querySelector("fn-modal");
+      this.changeView("fn-metric-editor-recent");
+      modal.show();
+
+      console.log(this.loadRecentMetrics);
+      if (typeof this.loadRecentMetrics == "function") {
+        this.loadRecentMetrics(function(metrics) {
+
+        });
+      } else {
+        this.renderRecentMetrics([]);
+      }
+    }
+
+    this.renderRecentMetrics = function(metrics) {
+      var view = this.querySelector("fn-metric-editor-recent");
+      var container = view.querySelector("fn-metrics");
+      container.innerHTML = "";
+
+      if (metrics.length == 0) {
+        var tpl = view.querySelector("#fn-metrics-empty-tpl");
+        container.appendChild(tpl.content.querySelector("fn-metrics-empty"));
+        view.querySelector("fn-loader").removeAttribute("data-loading");
+        //TODO observe add new metric link
+        return;
+      }
+
+
+      var _this = this;
+      metrics.forEach(function(metric) {
+        var elem = document.createElement("fn-metric-editor-metric");
+        elem.innerHTML = metric;
+        container.appendChild(elem);
+      });
+    }
+
+    this.changeView = function(new_view) {
+      var old_view = this.querySelector(".me-modal-window.active");
+      if (old_view) {
+        old_view.classList.remove("active");
+      }
+
+      this.querySelector(new_view).classList.add("active");
+    }
+
+    this.editMetric = function(metric) {
+      console.log(metric);
+    }
+  }
+
+  window.addEventListener('fn-ready', function() {
+    Fnord.registerComponent('fn-metric-editor', FnordMetricEditor);
+  });
+</script>
