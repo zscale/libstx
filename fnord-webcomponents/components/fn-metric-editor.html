@@ -202,21 +202,28 @@
     };
 
 
-    this.validateMetric = function(elem) {
-      if (elem.querySelector("input").value.length == 0) {
-        elem.querySelector("fn-metric-editor-msg[name='name']").classList.add("active");
-        return false;
-      }
+    this.buildMetric = function(elem, callback) {
+      var metric = {};
 
-      return true;
+      metric.name = elem.querySelector("input").value;
+      if (metric.name.length == 0) {
+        elem.querySelector("fn-metric-editor-msg[name='name']")
+          .classList.add("active");
+        return;
+      }
+      metric.key = metric.name.replace(" ", "_");
+      metric.rules = [];
+
+      callback(metric);
     }
 
 
     this.onMetricCreation = function() {
       var view = this.querySelector("fn-metric-editor-create");
-      if (!this.validateMetric(view)) {
-        return;
-      }
+      var _this = this;
+      buildMetric(view, function(metric) {
+        _this.fireNewMetricEvent(metric);
+      });
     }
 
     this.show = function(view) {
@@ -323,6 +330,10 @@
       this.hideErrorMessages(view);
       this.show("fn-metric-editor-edit");
 
+    };
+
+    this.fireNewMetricEvent = function(metric) {
+      
     }
   }
 
