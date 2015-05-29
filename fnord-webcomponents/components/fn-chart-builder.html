@@ -73,6 +73,7 @@
 
       list.innerHTML = "";
       metrics.forEach(function(metric) {
+        console.log(metric);
         var m_item = item.cloneNode(true);
         m_item.querySelector("fn-chart-builder-list-item-header").innerHTML =
           metric.name;
