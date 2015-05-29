@@ -54,6 +54,20 @@ fn-metric-editor-header fn-button:last-child {
 
 fn-metric-editor-header fn-metric-editor-msg {
   display: none;
+  float: left;
+  font-size: 80%;
+  margin-left: 5px;
+  margin-top: 8px;
+}
+
+.me-error {
+  color: #d95c5c;
+  font-style: italic;
+  font-weight: 500;
+}
+
+fn-metric-editor-header fn-metric-editor-msg.active {
+  display: block;
 }
 
 fn-metric-editor-metric {

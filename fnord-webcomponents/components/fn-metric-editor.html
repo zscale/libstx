@@ -150,7 +150,7 @@
             <fn-metric-editor-msg class='me-error' name='name'>Please insert a (unique) name</fn-metric-editor-msg>
             <fn-metric-editor-msg class='me-error' name='option'>Please select at least one option</fn-metric-editor-msg>
 
-            <fn-button data-action='cancel-create'>Cancel</fn-button>
+            <fn-button data-action='show-recent'>Cancel</fn-button>
             <fn-button data-action='save-create'>Save</fn-button>
           </fn-metric-editor-header>
 
@@ -161,7 +161,7 @@
         <fn-metric-editor-header>
           <input class='fn-input' data-metric-name />
 
-          <fn-button data-action='cancel-edit'>Cancel</fn-button>
+          <fn-button data-action='show-recent'>Cancel</fn-button>
           <fn-button data-action='replace-metric'>Save</fn-button>
         </fn-metric-editor-header>
 
@@ -188,18 +188,45 @@
 
       this.querySelector("fn-button[data-action='save-create']").onclick =
         function() {
-          console.log("save created metric");
+          _this.onMetricCreation();
         }
 
-      this.querySelector("fn-button[data-action='cancel-create']").onclick =
-        function() {
+      var show_recent_btns = this.querySelectorAll(
+        "fn-button[data-action='show-recent']");
+
+      for (var i = 0; i < show_recent_btns.length; i++) {
+        show_recent_btns[i].onclick = function() {
           _this.showMetricRecent();
         }
+      }
+    };
+
+
+    this.validateMetric = function(elem) {
+      if (elem.querySelector("input").value.length == 0) {
+        elem.querySelector("fn-metric-editor-msg[name='name']").classList.add("active");
+        return false;
+      }
+
+      return true;
     }
 
-    this.show = function() {
+
+    this.onMetricCreation = function() {
+      var view = this.querySelector("fn-metric-editor-create");
+      if (!this.validateMetric(view)) {
+        return;
+      }
+    }
+
+    this.show = function(view) {
       var modal = this.querySelector("fn-modal");
       modal.show();
+
+      if (view) {
+        return this.changeView(view);
+      }
+
       this.showMetricRecent();
     }
 
@@ -226,6 +253,7 @@
       options.appendChild(options_tpl.cloneNode(true));
 
       view.querySelector("input").value = "";
+      this.hideErrorMessages(view);
       this.changeView("fn-metric-editor-create");
 
       options.querySelector("fn-menu").addEventListener('fn-menu-item-click',
@@ -237,7 +265,16 @@
           options.querySelector("fn-metric-option-block[data-index='" + index + "']")
             .setAttribute('data-active', 'active');
         }, false);
+    };
+
+
+    this.hideErrorMessages = function(elem) {
+      var msg = elem.querySelectorAll("fn-metric-editor-msg.me-error.active");
+      for (var i = 0; i < msg.length; i++) {
+        msg[i].classList.remove("active");
+      }
     }
+
 
     this.renderRecentMetrics = function(metrics) {
       var view = this.querySelector("fn-metric-editor-recent");
@@ -261,7 +298,8 @@
       });
 
       view.querySelector("fn-loader").removeAttribute("data-loading");
-    }
+    };
+
 
     this.changeView = function(new_view) {
       var old_view = this.querySelector(".me-modal-window.active");
@@ -274,6 +312,17 @@
 
     this.editMetric = function(metric) {
       console.log(metric);
+      var view = this.querySelector("fn-metric-editor-edit");
+      var options = view.querySelector("fn-metric-options");
+      var options_tpl = this.querySelector("#fn-metric-options-tpl");
+      options.innerHTML = "";
+      options.appendChild(options_tpl.cloneNode(true));
+
+      view.querySelector("input").value = metric.name;
+
+      this.hideErrorMessages(view);
+      this.show("fn-metric-editor-edit");
+
     }
   }
 
