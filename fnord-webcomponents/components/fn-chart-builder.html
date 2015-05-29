@@ -22,6 +22,7 @@
         <fn-chart-builder-list-item-header>
         </fn-chart-builder-list-item-header>
         <i class='fa fa-pencil' data-action='edit-metric'></i>
+        <i class='fa fa-trash-o' data-action='remove-metric'></i>
       </fn-chart-builder-list-item>
     </template>
 
@@ -80,9 +81,17 @@
         m_item.querySelector("[data-action='edit-metric']").onclick = function() {
           _this.querySelector("fn-metric-editor").editMetric(metric);
         }
+
+        m_item.querySelector("[data-action='remove-metric']").onclick = function() {
+          metrics.splice(metrics.indexOf(metric), 1);
+          _this.setAttribute('data-metrics', JSON.stringify(metrics));
+          _this.onMetricRemoved();
+        }
       });
+    };
 
-
+    this.onMetricRemoved = function() {
+      this.renderMetricsList();
     }
   };
 
