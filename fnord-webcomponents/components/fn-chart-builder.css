@@ -42,6 +42,19 @@ fn-chart-builder-list {
 fn-chart-builder-list-item {
   display: block;
   padding: 0.65em 1.1em 0.65em 1.1em;
+  font-size: 90%;
+  overflow: auto;
+}
+
+fn-chart-builder-list-item-header {
+  line-height: 15px;
+  float: left;
+}
+
+fn-chart-builder-list-item i {
+  float: right;
+  line-height: 15px;
+  vertical-align: bottom;
 }
 
 fn-chart-builder i.fa:hover {
