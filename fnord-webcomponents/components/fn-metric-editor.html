@@ -34,95 +34,112 @@
       </fn-metric-editor-recent>
 
       <fn-metric-options id='fn-metric-options-tpl'>
-        <fn-metric-option data-key='rollup'>
-          <fn-metric-option-descr>
-            <fn-checkbox></fn-checkbox>
+        <fn-menu class='metric-option-menu'>
+          <fn-menu-item data-index='0' data-active>
+            Chart
+          </fn-menu-item>
+          <fn-menu-item data-index='1'>
+            Aggregation
+          </fn-menu-item>
+          <fn-menu-item data-index='2'>
+            Timerange
+          </fn-menu-item>
+        </fn-menu>
+
+        <fn-metric-option-block data-index='0' data-active>
+          <fn-metric-option data-key='chart'>
+            <fn-metric-option-title>Draw</fn-metric-option-title>
+            <fn-dropdown data-key='chart' data-resolved class='input'>
+              <fn-dropdown-items>
+                <fn-dropdown-item data-value='line'>Linechart</fn-dropdown-item>
+                <fn-dropdown-item data-value='area'>Areachart</fn-dropdown-item>
+                <fn-dropdown-item data-value='bar'>Barchart</fn-dropdown-item>
+                <fn-dropdown-item data-value='point'>Pointchart</fn-dropdown-item>
+              </fn-dropdown-items>
+            </fn-dropdown>
+        </fn-metric-option-block>
+
+        <fn-metric-option-block data-index='1'>
+          <fn-metric-option data-key='rollup'>
             <fn-metric-option-title>Rollup</fn-metric-option-title>
-          </fn-metric-option-descr>
-          <fn-dropdown data-key='rollup' data-resolved class='input'>
-            <fn-dropdown-items>
-              <fn-dropdown-item data-value='value'>Value</fn-dropdown-item>
-              <fn-dropdown-item data-value='sum'>Sum</fn-dropdown-item>
-              <fn-dropdown-item data-value='count'>Count</fn-dropdown-item>
-              <fn-dropdown-item data-value='min'>Min</fn-dropdown-item>
-              <fn-dropdown-item data-value='max'>Max</fn-dropdown-item>
-              <fn-dropdown-item data-value='mean'>Mean</fn-dropdown-item>
-              <fn-dropdown-item data-value='median'>Median</fn-dropdown-item>
-              <fn-dropdown-item data-value='rollup mean'>Rollup Mean</fn-dropdown-item>
-              <fn-dropdown-item data-value='rollup count'>Rollup Count</fn-dropdown-item>
-              <fn-dropdown-item data-value='rollup sum'>Rollup Sum</fn-dropdown-item>
-            </fn-dropdown-items>
-          </fn-dropdown>
-        </fn-metric-option>
+            <fn-dropdown data-key='rollup' data-resolved class='input'>
+              <fn-dropdown-items>
+                <fn-dropdown-item data-value='value'>Value</fn-dropdown-item>
+                <fn-dropdown-item data-value='sum'>Sum</fn-dropdown-item>
+                <fn-dropdown-item data-value='count'>Count</fn-dropdown-item>
+                <fn-dropdown-item data-value='min'>Min</fn-dropdown-item>
+                <fn-dropdown-item data-value='max'>Max</fn-dropdown-item>
+                <fn-dropdown-item data-value='mean'>Mean</fn-dropdown-item>
+                <fn-dropdown-item data-value='median'>Median</fn-dropdown-item>
+                <fn-dropdown-item data-value='rollup mean'>Rollup Mean</fn-dropdown-item>
+                <fn-dropdown-item data-value='rollup count'>Rollup Count</fn-dropdown-item>
+                <fn-dropdown-item data-value='rollup sum'>Rollup Sum</fn-dropdown-item>
+              </fn-dropdown-items>
+            </fn-dropdown>
+          </fn-metric-option>
 
-        <fn-metric-option data-key='time_aggr'>
-          <fn-metric-option-descr>
-            <fn-checkbox></fn-checkbox>
+          <fn-metric-option data-key='time_aggr'>
             <fn-metric-option-title>Time Window / Step</fn-metric-option-title>
-          </fn-metric-option-descr>
-          <fn-dropdown data-key='time_window' data-resolved class='input'>
-            <fn-dropdown-items>
-              <fn-dropdown-item data-value=1>1 second</fn-dropdown-item>
-              <fn-dropdown-item data-value=5>5 seconds</fn-dropdown-item>
-              <fn-dropdown-item data-value=10>10 seconds</fn-dropdown-item>
-              <fn-dropdown-item data-value=20>20 seconds</fn-dropdown-item>
-              <fn-dropdown-item data-value=30>30 seconds</fn-dropdown-item>
-              <fn-dropdown-item data-value=60>1 minute</fn-dropdown-item>
-              <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
-              <fn-dropdown-item data-value=900>15 minutes</fn-dropdown-item>
-              <fn-dropdown-item data-value=1800>30 minutes</fn-dropdown-item>
-              <fn-dropdown-item data-value=3600>1 hour</fn-dropdown-item>
-              <fn-dropdown-item data-value=7200>2 hours</fn-dropdown-item>
-              <fn-dropdown-item data-value=21600>6 hours</fn-dropdown-item>
-              <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
-              <fn-dropdown-item data-value=86400>24 hours</fn-dropdown-item>
-            </fn-dropdown-items>
-          </fn-dropdown>
+            <fn-dropdown data-key='time_window' data-resolved class='input'>
+              <fn-dropdown-items>
+                <fn-dropdown-item data-value=1>1 second</fn-dropdown-item>
+                <fn-dropdown-item data-value=5>5 seconds</fn-dropdown-item>
+                <fn-dropdown-item data-value=10>10 seconds</fn-dropdown-item>
+                <fn-dropdown-item data-value=20>20 seconds</fn-dropdown-item>
+                <fn-dropdown-item data-value=30>30 seconds</fn-dropdown-item>
+                <fn-dropdown-item data-value=60>1 minute</fn-dropdown-item>
+                <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
+                <fn-dropdown-item data-value=900>15 minutes</fn-dropdown-item>
+                <fn-dropdown-item data-value=1800>30 minutes</fn-dropdown-item>
+                <fn-dropdown-item data-value=3600>1 hour</fn-dropdown-item>
+                <fn-dropdown-item data-value=7200>2 hours</fn-dropdown-item>
+                <fn-dropdown-item data-value=21600>6 hours</fn-dropdown-item>
+                <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
+                <fn-dropdown-item data-value=86400>24 hours</fn-dropdown-item>
+              </fn-dropdown-items>
+            </fn-dropdown>
 
-          <fn-dropdown data-key='time_step' data-resolved class='input'>
-            <fn-dropdown-items>
-              <fn-dropdown-item data-value=1>1 second</fn-dropdown-item>
-              <fn-dropdown-item data-value=5>5 seconds</fn-dropdown-item>
-              <fn-dropdown-item data-value=10>10 seconds</fn-dropdown-item>
-              <fn-dropdown-item data-value=20>20 seconds</fn-dropdown-item>
-              <fn-dropdown-item data-value=30>30 seconds</fn-dropdown-item>
-              <fn-dropdown-item data-value=60>1 minute</fn-dropdown-item>
-              <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
-              <fn-dropdown-item data-value=900>15 minutes</fn-dropdown-item>
-              <fn-dropdown-item data-value=1800>30 minutes</fn-dropdown-item>
-              <fn-dropdown-item data-value=3600>1 hour</fn-dropdown-item>
-              <fn-dropdown-item data-value=7200>2 hours</fn-dropdown-item>
-              <fn-dropdown-item data-value=21600>6 hours</fn-dropdown-item>
-              <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
-              <fn-dropdown-item data-value=86400>24 hours</fn-dropdown-item>
-            </fn-dropdown-items>
-          </fn-dropdown>
-        </fn-metric-option>
+            <fn-dropdown data-key='time_step' data-resolved class='input'>
+              <fn-dropdown-items>
+                <fn-dropdown-item data-value=1>1 second</fn-dropdown-item>
+                <fn-dropdown-item data-value=5>5 seconds</fn-dropdown-item>
+                <fn-dropdown-item data-value=10>10 seconds</fn-dropdown-item>
+                <fn-dropdown-item data-value=20>20 seconds</fn-dropdown-item>
+                <fn-dropdown-item data-value=30>30 seconds</fn-dropdown-item>
+                <fn-dropdown-item data-value=60>1 minute</fn-dropdown-item>
+                <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
+                <fn-dropdown-item data-value=900>15 minutes</fn-dropdown-item>
+                <fn-dropdown-item data-value=1800>30 minutes</fn-dropdown-item>
+                <fn-dropdown-item data-value=3600>1 hour</fn-dropdown-item>
+                <fn-dropdown-item data-value=7200>2 hours</fn-dropdown-item>
+                <fn-dropdown-item data-value=21600>6 hours</fn-dropdown-item>
+                <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
+                <fn-dropdown-item data-value=86400>24 hours</fn-dropdown-item>
+              </fn-dropdown-items>
+            </fn-dropdown>
+          </fn-metric-option>
+        </fn-metric-option-block>
 
-        <fn-metric-option data-key='timerange'>
-          <fn-metric-option-descr>
-            <fn-checkbox></fn-checkbox>
+        <fn-metric-option-block data-index='2'>
+          <fn-metric-option data-key='timerange'>
             <fn-metric-option-title>Show the last...</fn-metric-option-title>
-          </fn-metric-option-descr>
-          <fn-dropdown data-resolved class='input'>
-            <fn-dropdown-items>
-              <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
-              <fn-dropdown-item data-value=900>15 minutes</fn-dropdown-item>
-              <fn-dropdown-item data-value=1800>30 minutes</fn-dropdown-item>
-              <fn-dropdown-item data-value=3600>1 hour</fn-dropdown-item>
-              <fn-dropdown-item data-value=14400>4 hours</fn-dropdown-item>
-              <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
-              <fn-dropdown-item data-value=86400>1 day</fn-dropdown-item>
-            </fn-dropdown-items>
-          </fn-dropdown>
-        </fn-metric-option>
+            <fn-dropdown data-resolved class='input'>
+              <fn-dropdown-items>
+                <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
+                <fn-dropdown-item data-value=900>15 minutes</fn-dropdown-item>
+                <fn-dropdown-item data-value=1800>30 minutes</fn-dropdown-item>
+                <fn-dropdown-item data-value=3600>1 hour</fn-dropdown-item>
+                <fn-dropdown-item data-value=14400>4 hours</fn-dropdown-item>
+                <fn-dropdown-item data-value=43200>12 hours</fn-dropdown-item>
+                <fn-dropdown-item data-value=86400>1 day</fn-dropdown-item>
+              </fn-dropdown-items>
+            </fn-dropdown>
+          </fn-metric-option>
 
-        <fn-metric-option data-key='until'>
-          <fn-metric-option-descr>
-            <fn-checkbox></fn-checkbox>
+          <fn-metric-option data-key='until'>
             <fn-metric-option-title>Endtime</fn-metric-option-title>
-          </fn-metric-option-descr>
-        </fn-metric-option>
+          </fn-metric-option>
+        </fn-metric-option-block>
 
       </fn-metric-options>
 
@@ -210,6 +227,16 @@
 
       view.querySelector("input").value = "";
       this.changeView("fn-metric-editor-create");
+
+      options.querySelector("fn-menu").addEventListener('fn-menu-item-click',
+        function(e) {
+          var target = e.srcElement || e.target;
+          var index = target.getAttribute('data-index');
+          options.querySelector("fn-metric-option-block[data-active]")
+            .removeAttribute("data-active");
+          options.querySelector("fn-metric-option-block[data-index='" + index + "']")
+            .setAttribute('data-active', 'active');
+        }, false);
     }
 
     this.renderRecentMetrics = function(metrics) {
