@@ -35,7 +35,7 @@
 
       <fn-metric-options id='fn-metric-options-tpl'>
 
-        <fn-metric-option data-key='chart'>
+        <fn-metric-option>
           <fn-metric-option-title>Draw</fn-metric-option-title>
           <fn-dropdown data-key='chart' data-resolved class='input'>
             <fn-dropdown-items>
@@ -47,7 +47,7 @@
           </fn-dropdown>
         </fn-metric-option>
 
-        <fn-metric-option data-key='rollup'>
+        <fn-metric-option>
           <fn-metric-option-title>Rollup</fn-metric-option-title>
           <fn-dropdown data-key='rollup' data-resolved class='input'>
             <fn-dropdown-items>
@@ -106,9 +106,9 @@
           </fn-dropdown>
         </fn-metric-option>
 
-        <fn-metric-option data-key='timerange'>
+        <fn-metric-option>
           <fn-metric-option-title>Show the last...</fn-metric-option-title>
-          <fn-dropdown data-resolved class='input'>
+          <fn-dropdown data-resolved class='input' data-key='timerange'>
             <fn-dropdown-items>
               <fn-dropdown-item data-value=300>5 minutes</fn-dropdown-item>
               <fn-dropdown-item data-value=900>15 minutes</fn-dropdown-item>
@@ -198,6 +198,15 @@
       metric.key = metric.name.replace(" ", "_");
       metric.rules = [];
 
+      for (var key in this.optionPreselection) {
+        var option = elem.querySelector("[data-key='" + key + "']");
+        metric.rules.push({
+          field: key,
+          opt: "matches",
+          values: [option.getValue()]});
+      }
+
+      console.log(metric);
       callback(metric);
     }
 
@@ -205,7 +214,7 @@
     this.onMetricCreation = function() {
       var view = this.querySelector("fn-metric-editor-create");
       var _this = this;
-      buildMetric(view, function(metric) {
+      this.buildMetric(view, function(metric) {
         _this.fireNewMetricEvent(metric);
       });
     }
@@ -234,6 +243,20 @@
       }
     }
 
+    this.optionPreselection = {
+      'chart' : ['line'],
+      'rollup' : ['value'],
+      'time_window' : ['5'],
+      'time_step' : ['10'],
+      'timerange' : ['3600']
+    };
+
+    this.setOptionSelection = function(elem, selection) {
+      for (var key in selection) {
+        var option = elem.querySelector("[data-key='" + key + "']");
+        option.setValue(selection[key]);
+      }
+    }
 
 
     this.showMetricCreate = function() {
@@ -244,6 +267,7 @@
       options.appendChild(options_tpl.cloneNode(true));
 
       view.querySelector("input").value = "";
+      this.setOptionSelection(options, this.optionPreselection);
       this.hideErrorMessages(view);
       this.changeView("fn-metric-editor-create");
 
