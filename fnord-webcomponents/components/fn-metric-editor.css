@@ -100,45 +100,10 @@ fn-metric-option-title {
 }
 
 .me-modal-window #fn-metric-options-tpl {
-  display: flex;
+  display: block;
   height: 100%;
 }
 
-.metric-option-menu {
+fn-metric-option {
   display: block;
-  width: 140px;
-  flex: none;
-  position: static;
-  margin-left: 0;
-  font-size: 80%;
-  border-right: 1px solid rgba(39, 41, 43, 0.15);
 }
-
-.metric-option-menu fn-menu-item {
-  box-shadow: none;
-}
-
-.metric-option-menu fn-menu-item:after {
-  display: block;
-  content: "\f105";
-  font: normal normal normal 14px/1 FontAwesome;
-  float: right;
-  color: #bbb;
-}
-
-.metric-option-menu fn-menu-item[data-active]:after {
-  color: #333;
-}
-
-fn-metric-option-block {
-  display:none;
-}
-
-fn-metric-option-block[data-active] {
-  display: block;
-  flex: 1;
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-  -ms-flex: 1;
-}
-
