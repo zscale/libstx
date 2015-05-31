@@ -214,7 +214,7 @@
       var view = this.querySelector("fn-metric-editor-create");
       var _this = this;
       this.buildMetric(view, function(metric) {
-        _this.fireNewMetricEvent(metric);
+        _this.fireNewMetricEvent({metric: metric});
       });
     }
 
@@ -333,7 +333,15 @@
       metrics.forEach(function(metric) {
         var elem = document.createElement("fn-metric-editor-metric");
         elem.innerHTML = metric.name;
+        var add_icon = document.createElement("i");
+        add_icon.classList.add("fa", "fa-plus");
+        elem.appendChild(add_icon);
         container.appendChild(elem);
+
+        add_icon.addEventListener("click", function() {
+          console.log("addd metric", metric);
+          _this.fireNewMetricEvent({metric: metric, recent: true});
+        });
       });
 
       view.querySelector("fn-loader").removeAttribute("data-loading");
@@ -365,8 +373,14 @@
 
     };
 
-    this.fireNewMetricEvent = function(metric) {
-      
+    this.fireNewMetricEvent = function(detail) {
+      var ev = new CustomEvent("fn-metric-editor-new", {
+        detail: detail,
+        bubbles: true,
+        cancelable: true
+      });
+
+      this.dispatchEvent(ev);
     }
   }
 
