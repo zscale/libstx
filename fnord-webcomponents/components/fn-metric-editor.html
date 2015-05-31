@@ -28,7 +28,7 @@
         <template id='fn-metrics-empty-tpl'>
           <fn-metrics-empty>
             <div class='segment-text'>No Metrics Found</div>
-            <div class='segment-link'>Add a new Metric</div>
+            <div class='segment-link' data-action='metric-create'>Add a new Metric</div>
           </fn-metrics-empty>
         </template>
       </fn-metric-editor-recent>
@@ -316,6 +316,7 @@
 
 
     this.renderRecentMetrics = function(metrics) {
+      var _this = this;
       var view = this.querySelector("fn-metric-editor-recent");
       var container = view.querySelector("fn-metrics");
       container.innerHTML = "";
@@ -324,12 +325,15 @@
         var tpl = view.querySelector("#fn-metrics-empty-tpl");
         container.appendChild(tpl.content.querySelector("fn-metrics-empty"));
         view.querySelector("fn-loader").removeAttribute("data-loading");
-        //TODO observe add new metric link
+
+        container.querySelector("[data-action='metric-create']")
+          .addEventListener("click", function() {
+            _this.showMetricCreate();
+          });
         return;
       }
 
 
-      var _this = this;
       metrics.forEach(function(metric) {
         var elem = document.createElement("fn-metric-editor-metric");
         elem.innerHTML = metric.name;
@@ -339,7 +343,6 @@
         container.appendChild(elem);
 
         add_icon.addEventListener("click", function() {
-          console.log("addd metric", metric);
           _this.fireNewMetricEvent({metric: metric, recent: true});
         });
       });
