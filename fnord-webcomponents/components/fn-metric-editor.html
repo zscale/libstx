@@ -65,9 +65,9 @@
           </fn-dropdown>
         </fn-metric-option>
 
-        <fn-metric-option data-key='time_aggr'>
+        <fn-metric-option data-key='time_aggr' class='me-disabled'>
           <fn-metric-option-title>Time Window / Step</fn-metric-option-title>
-          <fn-dropdown data-key='time_window' data-resolved class='input'>
+          <fn-dropdown data-key='time_window' data-resolved class='disabled input'>
             <fn-dropdown-items>
               <fn-dropdown-item data-value=1>1 second</fn-dropdown-item>
               <fn-dropdown-item data-value=5>5 seconds</fn-dropdown-item>
@@ -86,7 +86,7 @@
             </fn-dropdown-items>
           </fn-dropdown>
 
-          <fn-dropdown data-key='time_step' data-resolved class='input'>
+          <fn-dropdown data-key='time_step' data-resolved class='disabled input'>
             <fn-dropdown-items>
               <fn-dropdown-item data-value=1>1 second</fn-dropdown-item>
               <fn-dropdown-item data-value=5>5 seconds</fn-dropdown-item>
@@ -255,7 +255,40 @@
         var option = elem.querySelector("[data-key='" + selection[i].field + "']");
         option.setValue(selection[i].values);
       }
-    }
+    };
+
+
+    this.handleTimeAggregationControl = function(elem, selection) {
+      var option = elem.querySelector("[data-key='time_aggr']");
+      var dropdown_wdn = elem.querySelector("[data-key='time_window']");
+      var dropdown_step = elem.querySelector("[data-key='time_step']");
+
+      function handleAvailability(value) {
+        if (value == "value" || value.substr(0, 6) == "rollup") {
+          option.classList.add("me-disabled");
+          dropdown_wdn.classList.add("disabled");
+          dropdown_step.classList.add("disabled");
+        } else {
+          option.classList.remove("me-disabled");
+          dropdown_wdn.classList.remove("disabled");
+          dropdown_step.classList.remove("disabled");
+        }
+      }
+
+
+      for (var i = 0; i < selection.length; i++) {
+        if (selection[i].field == "rollup") {
+          handleAvailability(selection[i].values[0]);
+          break;
+        }
+      }
+
+      elem.querySelector("[data-key='rollup']").addEventListener(
+        'fn-dropdown-item-click', function(e) {
+          var target = e.srcElement || e.target;
+          handleAvailability(target.getAttribute('data-value'));
+        }, false);
+    };
 
 
     this.showMetricCreate = function() {
@@ -267,6 +300,7 @@
 
       view.querySelector("input").value = "";
       this.setOptionSelection(options, this.optionPreselection);
+      this.handleTimeAggregationControl(options, this.optionPreselection);
       this.hideErrorMessages(view);
       this.changeView("fn-metric-editor-create");
 
@@ -316,7 +350,6 @@
     }
 
     this.editMetric = function(metric) {
-      console.log(metric.rules);
       var view = this.querySelector("fn-metric-editor-edit");
       var options = view.querySelector("fn-metric-options");
       var options_tpl = this.querySelector("#fn-metric-options-tpl");
@@ -326,6 +359,7 @@
       view.querySelector("input").value = metric.name;
 
       this.setOptionSelection(options, metric.rules);
+      this.handleTimeAggregationControl(options, metric.rules);
       this.hideErrorMessages(view);
       this.show("fn-metric-editor-edit");
 
