@@ -198,15 +198,14 @@
       metric.key = metric.name.replace(" ", "_");
       metric.rules = [];
 
-      for (var key in this.optionPreselection) {
+      for (var i = 0; i < this.optionPreselection.length; i++) {
         var option = elem.querySelector("[data-key='" + key + "']");
         metric.rules.push({
-          field: key,
-          opt: "matches",
+          field: this.optionPreselection[i].field,
+          opt: this.optionPreselection[i].opt,
           values: [option.getValue()]});
       }
 
-      console.log(metric);
       callback(metric);
     }
 
@@ -243,18 +242,18 @@
       }
     }
 
-    this.optionPreselection = {
-      'chart' : ['line'],
-      'rollup' : ['value'],
-      'time_window' : ['5'],
-      'time_step' : ['10'],
-      'timerange' : ['3600']
-    };
+    this.optionPreselection = [
+      {"field" : 'chart', "opt" : "matches", "values" : ['line']},
+      {"field" : 'rollup', "opt" : "matches", "values" : ['value']},
+      {"field" : 'time_window', "opt" : "matches", "values" : ['5']},
+      {"field" : 'time_step', "opt" : "matches", "values" : ['10']},
+      {"field" : 'timerange', "opt" : "matches", "values" : ['3600']}
+    ];
 
     this.setOptionSelection = function(elem, selection) {
-      for (var key in selection) {
-        var option = elem.querySelector("[data-key='" + key + "']");
-        option.setValue(selection[key]);
+      for (var i = 0; i < selection.length; i++) {
+        var option = elem.querySelector("[data-key='" + selection[i].field + "']");
+        option.setValue(selection[i].values);
       }
     }
 
@@ -317,7 +316,7 @@
     }
 
     this.editMetric = function(metric) {
-      console.log(metric);
+      console.log(metric.rules);
       var view = this.querySelector("fn-metric-editor-edit");
       var options = view.querySelector("fn-metric-options");
       var options_tpl = this.querySelector("#fn-metric-options-tpl");
@@ -326,6 +325,7 @@
 
       view.querySelector("input").value = metric.name;
 
+      this.setOptionSelection(options, metric.rules);
       this.hideErrorMessages(view);
       this.show("fn-metric-editor-edit");
 
