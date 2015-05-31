@@ -70,18 +70,25 @@ fn-metric-editor-header fn-metric-editor-msg.active {
   display: block;
 }
 
+fn-metric-editor-serie,
 fn-metric-editor-metric {
   display: block;
   padding: 0.8em 2em;
   line-height: 1.8em;
   border-bottom: 1px solid rgba(39, 41, 43, 0.15);
   font-size: 90%;
+  background-color: #fff;
 }
 
 fn-metric-editor-metric i {
   float: right;
   opacity: 0.7;
   margin-top: 5px;
+}
+
+fn-metric-editor-serie:hover {
+  background-color: #f4f4f4;;
+  cursor: pointer;
 }
 
 fn-metric-option {
@@ -116,3 +123,27 @@ fn-metric-option.me-disabled {
 fn-metric-option {
   display: block;
 }
+
+.metric-text {
+  padding-top: 2.3em;
+  line-height: 1.3em;
+  font-style: italic;
+  text-align: center;
+}
+
+.metric-link {
+  font-style: normal;
+  color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  margin-top: 3em;
+  margin-bottom: 2em;
+  font-size: 0.9em;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: underline;
+}
+
+.metric-link:hover {
+  color: rgba(0,0,0,0.8);
+}
+

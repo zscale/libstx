@@ -27,11 +27,28 @@
 
         <template id='fn-metrics-empty-tpl'>
           <fn-metrics-empty>
-            <div class='segment-text'>No Metrics Found</div>
-            <div class='segment-link' data-action='metric-create'>Add a new Metric</div>
+            <div class='metric-text'>No Metrics Found</div>
+            <div class='metric-link' data-action='metric-create'>Add a new Metric</div>
           </fn-metrics-empty>
         </template>
       </fn-metric-editor-recent>
+
+      <fn-metric-editor-series class='me-modal-window'>
+        <fn-metric-editor-header>
+          <fn-metric-editor-header-title>Select a Serie</fn-metric-editor-header-title>
+        </fn-metric-editor-header>
+
+        <fn-loader data-loading>
+          <fn-metric-series></fn-metric-series>
+        </fn-loader>
+
+        <template id='fn-metric-series-empty-tpl'>
+          <fn-metric-series-empty>
+            <div class='metric-text'>No Series Found</div>
+          </fn-metric-series-empty>
+        </template>
+      </fn-metric-editor-series>
+
 
       <fn-metric-options id='fn-metric-options-tpl'>
 
@@ -167,7 +184,7 @@
       var _this = this;
       this.querySelector("fn-button[data-action='metric-create']").onclick =
         function() {
-          _this.showMetricCreate();
+          _this.showSeries();
         }
 
       this.querySelector("fn-button[data-action='save-create']").onclick =
@@ -186,6 +203,16 @@
     };
 
 
+    /**
+      * Collect the metric properties from the elem's html and build a metric
+      * object and call callback with this object if all needed properties are
+      * given or render error messages otherwise
+      *
+      * metric = {
+      *  name: String
+      *  key: String,
+      *  rules: [{field: String, opt: String, values: Array}]
+      */
     this.buildMetric = function(elem, callback) {
       var metric = {};
 
@@ -211,13 +238,15 @@
     }
 
 
+
     this.onMetricCreation = function() {
       var view = this.querySelector("fn-metric-editor-create");
       var _this = this;
       this.buildMetric(view, function(metric) {
         _this.fireNewMetricEvent({metric: metric});
       });
-    }
+    };
+
 
     this.show = function(view) {
       var modal = this.querySelector("fn-modal");
@@ -228,7 +257,22 @@
       }
 
       this.showMetricRecent();
-    }
+    };
+
+    this.showSeries = function() {
+      var _this = this;
+      this.changeView("fn-metric-editor-series");
+
+      if (typeof this.loadSeries == "function") {
+        this.loadSeries(function(series) {
+          _this.renderSeries(series);
+        });
+      } else {
+        this.renderSeries([]);
+      }
+    };
+
+    
 
     this.showMetricRecent = function() {
       var _this = this;
@@ -313,7 +357,31 @@
       for (var i = 0; i < msg.length; i++) {
         msg[i].classList.remove("active");
       }
-    }
+    };
+
+    this.renderSeries = function(series) {
+      var view = this.querySelector("fn-metric-editor-series");
+      var container = view.querySelector("fn-metric-series");
+      container.innerHTML = "";
+
+      if (series.length == 0) {
+        var tpl = view.querySelector("#fn-metric-series-empty-tpl");
+        container.appendChild(
+          tpl.content.querySelector("fn-metric-series-empty").cloneNode(true));
+      }
+
+      series.forEach(function(serie) {
+        var elem = document.createElement("fn-metric-editor-serie");
+        elem.innerHTML = serie.key;
+        container.appendChild(elem);
+
+        elem.addEventListener("click", function() {
+          console.log(serie);
+        });
+      });
+
+      view.querySelector("fn-loader").removeAttribute("data-loading");
+    };
 
 
     this.renderRecentMetrics = function(metrics) {
@@ -330,7 +398,7 @@
 
         container.querySelector("[data-action='metric-create']")
           .addEventListener("click", function() {
-            _this.showMetricCreate();
+            _this.showSeries();
           });
         return;
       }
