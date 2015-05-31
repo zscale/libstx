@@ -88,11 +88,14 @@ fn-metric-option {
 
 
 fn-metric-option-title {
-  opacity: 0.7;
   display: inline-block;
   width: 250px;
   vertical-align: top;
   margin-top: 9px;
+}
+
+fn-metric-option.me-disabled {
+  opacity: 0.6;
 }
 
 #fn-metric-options-tpl {
