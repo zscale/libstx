@@ -199,7 +199,8 @@
       metric.rules = [];
 
       for (var i = 0; i < this.optionPreselection.length; i++) {
-        var option = elem.querySelector("[data-key='" + key + "']");
+        var option = elem.querySelector(
+          "[data-key='" + this.optionPreselection[i].field + "']");
         metric.rules.push({
           field: this.optionPreselection[i].field,
           opt: this.optionPreselection[i].opt,
@@ -323,7 +324,8 @@
 
       if (metrics.length == 0) {
         var tpl = view.querySelector("#fn-metrics-empty-tpl");
-        container.appendChild(tpl.content.querySelector("fn-metrics-empty"));
+        container.appendChild(
+          tpl.content.querySelector("fn-metrics-empty").cloneNode(true));
         view.querySelector("fn-loader").removeAttribute("data-loading");
 
         container.querySelector("[data-action='metric-create']")
@@ -358,7 +360,7 @@
       }
 
       this.querySelector(new_view).classList.add("active");
-    }
+    };
 
     this.editMetric = function(metric) {
       var view = this.querySelector("fn-metric-editor-edit");
@@ -373,8 +375,8 @@
       this.handleTimeAggregationControl(options, metric.rules);
       this.hideErrorMessages(view);
       this.show("fn-metric-editor-edit");
-
     };
+
 
     this.fireNewMetricEvent = function(detail) {
       var ev = new CustomEvent("fn-metric-editor-new", {
