@@ -336,14 +336,14 @@
     };
 
 
-    this.showMetricCreate = function() {
+    this.showMetricCreate = function(serie) {
       var view = this.querySelector("fn-metric-editor-create");
       var options = view.querySelector("fn-metric-options");
       var options_tpl = this.querySelector("#fn-metric-options-tpl");
       options.innerHTML = "";
       options.appendChild(options_tpl.cloneNode(true));
 
-      view.querySelector("input").value = "";
+      view.querySelector("input").value = serie.key;
       this.setOptionSelection(options, this.optionPreselection);
       this.handleTimeAggregationControl(options, this.optionPreselection);
       this.hideErrorMessages(view);
@@ -360,6 +360,7 @@
     };
 
     this.renderSeries = function(series) {
+      var _this = this;
       var view = this.querySelector("fn-metric-editor-series");
       var container = view.querySelector("fn-metric-series");
       container.innerHTML = "";
@@ -376,7 +377,7 @@
         container.appendChild(elem);
 
         elem.addEventListener("click", function() {
-          console.log(serie);
+          _this.showMetricCreate(serie);
         });
       });
 
