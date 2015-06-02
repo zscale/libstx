@@ -45,29 +45,32 @@
       if (this.hasAttribute('data-outages')) {
         _this.render();
       }
+
+      this.handleRowClick();
     }
 
     this.attributeChangedCallback = function(attr, old_val, new_val) {
       if (attr == 'data-outages') {
         this.render();
       }
-    }
+    };
 
     this.render = function() {
       var outages = JSON.parse(this.getAttribute('data-outages'));
       var _this = this;
       var fn_table = this.querySelector("fn-table");
       var tbody = fn_table.querySelector("tbody");
+      var keys = ['key', 'time'];
       tbody.innerHTML = "";
 
       outages.forEach(function(outage) {
         var tr = document.createElement("tr");
-        tr.setAttribute('data-key', outage.key);
-        for (var key in outage) {
+        tr.setAttribute('data-outage', JSON.stringify(outage));
+        keys.forEach(function(key) {
           var td = document.createElement("td");
           td.innerHTML = _this.format(outage[key], key);;
           tr.appendChild(td);
-        }
+        });
 
         tbody.appendChild(tr);
       });
@@ -79,14 +82,43 @@
       var table = this.querySelector("fn-table table");
       var selected = table.querySelectorAll("tr[data-selected]");
       var error_msg = this.querySelector("fn-outage-overview-error");
-      console.log(selected);
 
       if (selected.length < 2) {
         error_msg.classList.add("active");
         return;
       }
 
+      var outages = JSON.parse(this.getAttribute('data-outages'));
+      var combined = {
+        'key' : '',
+        'time' : 0,
+        'combined' : []};
       error_msg.classList.remove("active");
+
+      for (var i = 0; i < selected.length;i++) {
+        var outage = JSON.parse(selected[i].getAttribute('data-outage'));
+        if (i > 0) {
+          combined.key += " / ";
+        }
+        combined.key += outage.key;
+
+        for (var j = 0; j < outages.length; j++) {
+          if (outages[j].key == outage.key) {
+            if (combined.time < outages[j].time) {
+              combined.time = outages[j].time;
+            }
+            combined.combined.push(outages[j]);
+            outages.splice(j, 1);
+          }
+        }
+      }
+
+      outages.push(combined);
+      this.setAttribute('data-outages', JSON.stringify(outages));
+    };
+
+
+    this.handleRowClick = function() {
 
     }
 
