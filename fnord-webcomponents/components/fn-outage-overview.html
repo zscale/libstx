@@ -10,6 +10,24 @@
 -->
 
 <template id='fn-outage-overview-base-tpl'>
+  <fn-outage-overview-header>
+    <fn-outage-overview-title>Outages</fn-outage-overview-title>
+
+    <fn-outage-overview-error>
+      Please select at least tow outages to combine
+    </fn-outage-overview-error>
+
+    <fn-button data-action='combine-outages'>Combine</fn-button>
+  </fn-outage-overview-header>
+
+  <fn-table data-clickable data-selectable>
+    <fn-table-column data-key='key'>Name</fn-table-column>
+    <fn-table-column data-key='time'>Time</fn-table-column>
+
+    <table>
+      <tbody><tbody>
+    </table>
+  </fn-table>
 </template>
 
 <script type='text/javascript'>
@@ -17,10 +35,83 @@
     this.createdCallback = function() {
       var tpl = Fnord.getTemplate('fn-outage-overview', 'base');
       this.appendChild(tpl);
+
+      var _this = this;
+      this.querySelector("fn-button[data-action='combine-outages']")
+        .addEventListener('click', function() {
+          _this.handleCombine();
+        }, false);
+
+      if (this.hasAttribute('data-outages')) {
+        _this.render();
+      }
     }
 
-    this.addOutages = function(outages) {
-      console.log(outages);
+    this.attributeChangedCallback = function(attr, old_val, new_val) {
+      if (attr == 'data-outages') {
+        this.render();
+      }
+    }
+
+    this.render = function() {
+      var outages = JSON.parse(this.getAttribute('data-outages'));
+      var _this = this;
+      var fn_table = this.querySelector("fn-table");
+      var tbody = fn_table.querySelector("tbody");
+      tbody.innerHTML = "";
+
+      outages.forEach(function(outage) {
+        var tr = document.createElement("tr");
+        tr.setAttribute('data-key', outage.key);
+        for (var key in outage) {
+          var td = document.createElement("td");
+          td.innerHTML = _this.format(outage[key], key);;
+          tr.appendChild(td);
+        }
+
+        tbody.appendChild(tr);
+      });
+
+      fn_table.renderTable();
+    };
+
+    this.handleCombine = function() {
+      var table = this.querySelector("fn-table table");
+      var selected = table.querySelectorAll("tr[data-selected]");
+      var error_msg = this.querySelector("fn-outage-overview-error");
+      console.log(selected);
+
+      if (selected.length < 2) {
+        error_msg.classList.add("active");
+        return;
+      }
+
+      error_msg.classList.remove("active");
+
+    }
+
+    this.format = function(data, key) {
+      switch (key) {
+        case "time":
+          var date = new Date(data);
+          var date_str = [
+            date.getFullYear(),
+            Fnord.appendLeadingZero(date.getMonth() + 1),
+            Fnord.appendLeadingZero(date.getDate())].join("-");
+          var time_str = [
+            Fnord.appendLeadingZero(date.getHours()),
+            Fnord.appendLeadingZero(date.getMinutes()),
+            Fnord.appendLeadingZero(date.getSeconds())].join(":");
+
+          return date_str + " " + time_str;
+
+        default:
+          return data;
+      }
+    };
+
+    this.setTitle = function(title) {
+      this.querySelector("fn-outage-overview-title").innerHTML = title;
     }
   };
 
