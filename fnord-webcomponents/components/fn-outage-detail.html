@@ -1,0 +1,47 @@
+<!--
+  This file is part of the "FnordMetric" project
+    Copyright (c) 2015 Laura Schlimmer
+    Copyright (c) 2015 Paul Asmuth
+
+  FnordMetric is free software: you can redistribute it and/or modify it under
+  the terms of the GNU General Public License v3.0. You should have received a
+  copy of the GNU General Public License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
+-->
+
+<template id='fn-outage-detail-base-tpl'>
+  <fn-outage-detail-section>
+    <fn-outage-detail-title>Info</fn-outage-detail-title>
+
+    <fn-outage-info>
+    </fn-outage-info>
+  </fn-outage-detail-section>
+
+  <fn-outage-detail-section>
+    <fn-outage-detail-title>History</fn-outage-detail-title>
+    <fn-outage-history>
+    </fn-outage-history>
+  </fn-outage-detail-section>
+
+  <fn-outage-detail-section>
+    <fn-outage-detail-title>Comments</fn-outage-detail-title>
+    <fn-comments>
+    </fn-comments>
+
+    <textarea rows='4' cols='70' class='fn-textarea'></textarea>
+    <fn-button data-action='submit-comment'>Reply</fn-button>
+  </fn-outage-detail-section>
+</template>
+
+<script type='text/javascript'>
+  var FnordOutageDetail = function() {
+    this.createdCallback = function() {
+      var tpl = Fnord.getTemplate('fn-outage-detail', 'base');
+      this.appendChild(tpl);
+    };
+  }
+
+  window.addEventListener('fn-ready', function() {
+    Fnord.registerComponent('fn-outage-detail', FnordOutageDetail);
+  });
+</script>
