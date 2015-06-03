@@ -1,0 +1,25 @@
+fn-outage-detail {
+  display: block;
+}
+
+fn-outage-detail-section {
+  display: block;
+  min-height: 80px;
+  padding: 5px 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(39,41,43,.15);
+}
+
+fn-outage-detail-section:last-child {
+  border-bottom: none;
+}
+
+fn-outage-detail-title {
+  font-weight: 500;
+  display: block;
+}
+
+fn-outage-detail-section textarea.fn-textarea {
+  display: block;
+  margin-bottom: 5px;
+}
