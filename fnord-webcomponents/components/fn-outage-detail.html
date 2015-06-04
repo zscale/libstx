@@ -28,8 +28,8 @@
     <fn-comments>
     </fn-comments>
 
-    <textarea rows='4' cols='70' class='fn-textarea'></textarea>
-    <fn-button data-action='submit-comment'>Reply</fn-button>
+    <textarea data-content='outage-detail-comment' rows='4' cols='70' class='fn-textarea'></textarea>
+    <fn-button data-action='submit-comment'>Comment</fn-button>
   </fn-outage-detail-section>
 </template>
 
@@ -38,7 +38,30 @@
     this.createdCallback = function() {
       var tpl = Fnord.getTemplate('fn-outage-detail', 'base');
       this.appendChild(tpl);
+
+      var _this = this;
+      this.querySelector("fn-button[data-action='submit-comment']")
+        .addEventListener('click', function() {
+          _this.submitComment();
+        }, false);
     };
+
+    this.submitComment = function() {
+      var comment = this.querySelector(
+        "textarea[data-content='outage-detail-comment']").value;
+
+      if (comment.length == 0) {
+        return;
+      }
+
+      var ev = new CustomEvent('fn-outage-detail-comment', {
+        detail: {text: comment},
+        bubbles: true,
+        cancelable: true
+      });
+
+      this.dispatchEvent(ev);
+    }
   }
 
   window.addEventListener('fn-ready', function() {
