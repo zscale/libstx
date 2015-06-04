@@ -28,7 +28,8 @@
     <fn-comments>
     </fn-comments>
 
-    <textarea data-content='outage-detail-comment' rows='4' cols='70' class='fn-textarea'></textarea>
+    <input data-content='comment-author' class='fn-input' type='text' placeholder='Name' />
+    <textarea data-content='comment-text' rows='4' cols='70' class='fn-textarea'></textarea>
     <fn-button data-action='submit-comment'>Comment</fn-button>
   </fn-outage-detail-section>
 </template>
@@ -46,21 +47,34 @@
         }, false);
     };
 
-    this.submitComment = function() {
-      var comment = this.querySelector(
-        "textarea[data-content='outage-detail-comment']").value;
+    this.addComment = function(comment, nested_elem) {
+      var elem = document.createElement("fn-comment");
+      elem.render(comment);
 
-      if (comment.length == 0) {
+      this.querySelector("fn-comments").appendChild(elem);
+    }
+
+    this.submitComment = function() {
+      var textarea = this.querySelector("textarea[data-content='comment-text']");
+      var text = textarea.value;
+      var author = this.querySelector(
+        "input[data-content='comment-author']").value;
+
+      if (text.length == 0 || author.length == 0) {
+        //TODO render error message
         return;
       }
 
+      var comment = {text: text, author: author, date: Date.now()};
       var ev = new CustomEvent('fn-outage-detail-comment', {
-        detail: {text: comment},
+        detail: comment,
         bubbles: true,
         cancelable: true
       });
 
       this.dispatchEvent(ev);
+      this.addComment(comment);
+      textarea.value = "";
     }
   }
 
