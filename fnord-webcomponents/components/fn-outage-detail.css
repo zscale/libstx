@@ -22,4 +22,12 @@ fn-outage-detail-title {
 fn-outage-detail-section textarea.fn-textarea {
   display: block;
   margin-bottom: 5px;
+  font-size: 90%;
+}
+
+fn-outage-detail-section input.fn-input {
+  font-size: 90%;
+  padding: 0.5§5em 1em;
+  width: 200px;
+  margin-bottom: 10px;
 }
