@@ -1,0 +1,84 @@
+<!--
+  This file is part of the "FnordMetric" project
+    Copyright (c) 2015 Laura Schlimmer
+    Copyright (c) 2015 Paul Asmuth
+
+  FnordMetric is free software: you can redistribute it and/or modify it under
+  the terms of the GNU General Public License v3.0. You should have received a
+  copy of the GNU General Public License along with this program. If not, see
+  <http://www.gnu.org/licenses/>.
+-->
+
+<template id='fn-outage-detail-base-tpl'>
+  <fn-outage-detail-section>
+    <fn-outage-detail-title>Info</fn-outage-detail-title>
+
+    <fn-outage-info>
+    </fn-outage-info>
+  </fn-outage-detail-section>
+
+  <fn-outage-detail-section>
+    <fn-outage-detail-title>History</fn-outage-detail-title>
+    <fn-outage-history>
+    </fn-outage-history>
+  </fn-outage-detail-section>
+
+  <fn-outage-detail-section>
+    <fn-outage-detail-title>Comments</fn-outage-detail-title>
+    <fn-comments>
+    </fn-comments>
+
+    <input data-content='comment-author' class='fn-input' type='text' placeholder='Name' />
+    <textarea data-content='comment-text' rows='4' cols='70' class='fn-textarea'></textarea>
+    <fn-button data-action='submit-comment'>Comment</fn-button>
+  </fn-outage-detail-section>
+</template>
+
+<script type='text/javascript'>
+  var FnordOutageDetail = function() {
+    this.createdCallback = function() {
+      var tpl = Fnord.getTemplate('fn-outage-detail', 'base');
+      this.appendChild(tpl);
+
+      var _this = this;
+      this.querySelector("fn-button[data-action='submit-comment']")
+        .addEventListener('click', function() {
+          _this.submitComment();
+        }, false);
+    };
+
+    this.addComment = function(comment, nested_elem) {
+      var elem = document.createElement("fn-comment");
+      elem.render(comment);
+
+      this.querySelector("fn-comments").appendChild(elem);
+    }
+
+    this.submitComment = function() {
+      var textarea = this.querySelector("textarea[data-content='comment-text']");
+      var text = textarea.value;
+      var author = this.querySelector(
+        "input[data-content='comment-author']").value;
+
+      if (text.length == 0 || author.length == 0) {
+        //TODO render error message
+        return;
+      }
+
+      var comment = {text: text, author: author, date: Date.now()};
+      var ev = new CustomEvent('fn-outage-detail-comment', {
+        detail: comment,
+        bubbles: true,
+        cancelable: true
+      });
+
+      this.dispatchEvent(ev);
+      this.addComment(comment);
+      textarea.value = "";
+    }
+  }
+
+  window.addEventListener('fn-ready', function() {
+    Fnord.registerComponent('fn-outage-detail', FnordOutageDetail);
+  });
+</script>
