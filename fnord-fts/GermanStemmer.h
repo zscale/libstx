@@ -9,7 +9,7 @@
  */
 #ifndef _FNORD_FTS_GERMANSTEMMER_H
 #define _FNORD_FTS_GERMANSTEMMER_H
-#include "fnord-base/stdtypes.h"
+#include "fnord/stdtypes.h"
 #include "fnord-fts/Stemmer.h"
 #include "fnord-fts/Hunspell.h"
 #include "fnord-fts/SynonymDictionary.h"

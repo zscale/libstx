@@ -9,8 +9,8 @@
  */
 #ifndef _FNORD_FTS_QUERYANALYZER_H
 #define _FNORD_FTS_QUERYANALYZER_H
-#include "fnord-base/stdtypes.h"
-#include "fnord-base/Language.h"
+#include "fnord/stdtypes.h"
+#include "fnord/Language.h"
 #include "fnord-fts/Stemmer.h"
 #include "fnord-fts/StopwordDictionary.h"
 

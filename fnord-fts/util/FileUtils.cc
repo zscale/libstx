@@ -8,9 +8,9 @@
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
-#include "fnord-base/io/fileutil.h"
-#include "fnord-base/logging.h"
-#include "fnord-base/stringutil.h"
+#include "fnord/io/fileutil.h"
+#include "fnord/logging.h"
+#include "fnord/stringutil.h"
 #include "fnord-fts/util/LuceneThread.h"
 #include "fnord-fts/util/StringUtils.h"
 #include "fnord-fts/util/FileUtils.h"

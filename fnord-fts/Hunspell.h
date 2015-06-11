@@ -9,8 +9,8 @@
  */
 #ifndef _FNORD_FTS_HUNSPELL_H
 #define _FNORD_FTS_HUNSPELL_H
-#include "fnord-base/stdtypes.h"
-#include "fnord-base/option.h"
+#include "fnord/stdtypes.h"
+#include "fnord/option.h"
 #include "3rdparty/hunspell/hunspell.h"
 #include "3rdparty/hunspell/hyphen.h"
 
