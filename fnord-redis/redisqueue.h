@@ -12,7 +12,7 @@
 #include <functional>
 #include <memory>
 #include <vector>
-#include <fnord-base/net/redis/redisconnection.h>
+#include <fnord/net/redis/redisconnection.h>
 #include <fnord/comm/queue.h>
 
 namespace fnord {

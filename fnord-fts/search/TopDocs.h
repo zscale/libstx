@@ -7,7 +7,7 @@
 #ifndef TOPDOCS_H
 #define TOPDOCS_H
 
-#include "fnord-base/stdtypes.h"
+#include "fnord/stdtypes.h"
 #include "fnord-fts/util/LuceneObject.h"
 
 namespace fnord {

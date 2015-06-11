@@ -8,7 +8,7 @@
 #define TOKENSTREAM_H
 
 #include "fnord-fts/util/AttributeSource.h"
-#include "fnord-base/stdtypes.h"
+#include "fnord/stdtypes.h"
 
 namespace fnord {
 namespace fts {

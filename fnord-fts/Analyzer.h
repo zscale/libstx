@@ -9,8 +9,8 @@
  */
 #ifndef _FNORD_FTS_ANALYZER_H
 #define _FNORD_FTS_ANALYZER_H
-#include <fnord-base/stdtypes.h>
-#include <fnord-base/autoref.h>
+#include <fnord/stdtypes.h>
+#include <fnord/autoref.h>
 #include "fnord-fts/SimpleTokenizer.h"
 #include "fnord-fts/StopwordDictionary.h"
 #include "fnord-fts/SynonymDictionary.h"

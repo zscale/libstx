@@ -8,7 +8,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include <algorithm>
-#include <fnord-base/io/fileutil.h>
+#include <fnord/io/fileutil.h>
 #include <fnord-fts/GermanStemmer.h>
 #include <fnord-fts/StopwordDictionary.h>
 #include <fnord-fts/SynonymDictionary.h>
