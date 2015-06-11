@@ -10,7 +10,7 @@
 #ifndef _FNORD_FTS_ANALZERADAPTER_H
 #define _FNORD_FTS_ANALZERADAPTER_H
 
-#include "fnord-base/autoref.h"
+#include "fnord/autoref.h"
 #include "fnord-fts/Analyzer.h"
 #include "fnord-fts/analysis/TokenStream.h"
 #include "fnord-fts/util/CloseableThreadLocal.h"

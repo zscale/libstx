@@ -8,10 +8,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include <algorithm>
-#include <fnord-base/assets.h>
-#include <fnord-base/exception.h>
-#include <fnord-base/stringutil.h>
-#include <fnord-base/io/fileutil.h>
+#include <fnord/assets.h>
+#include <fnord/exception.h>
+#include <fnord/stringutil.h>
+#include <fnord/io/fileutil.h>
 #include "bundle.h"
 
 namespace fnord {

@@ -7,8 +7,8 @@
 * copy of the GNU General Public License along with this program. If not, see
 * <http://www.gnu.org/licenses/>.
 */
-#include "fnord-base/inspect.h"
-#include "fnord-base/UTF8.h"
+#include "fnord/inspect.h"
+#include "fnord/UTF8.h"
 #include "fnord-fts/fts.h"
 #include "fnord-fts/fts_common.h"
 #include "fnord-fts/document/Fieldable.h"
