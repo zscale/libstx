@@ -9,8 +9,8 @@
  */
 #ifndef _FNORD_FTS_STEMMER_H
 #define _FNORD_FTS_STEMMER_H
-#include "fnord-base/stdtypes.h"
-#include "fnord-base/Language.h"
+#include "fnord/stdtypes.h"
+#include "fnord/Language.h"
 
 namespace fnord {
 namespace fts {

@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "fnord-base/exception.h"
+#include "fnord/exception.h"
 #include "fnord-fts/fts.h"
 #include "fnord-fts/analysis/tokenattributes/TermAttribute.h"
 #include "fnord-fts/util/MiscUtils.h"

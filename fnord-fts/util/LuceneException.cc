@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "fnord-base/stringutil.h"
+#include "fnord/stringutil.h"
 #include "fnord-fts/fts.h"
 #include "fnord-fts/util/LuceneException.h"
 

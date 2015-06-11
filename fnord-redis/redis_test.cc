@@ -10,10 +10,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "fnord-base/net/inetaddr.h"
-#include "fnord-base/net/redis/redisconnection.h"
-#include "fnord-base/test/unittest.h"
-#include "fnord-base/thread/threadpool.h"
+#include "fnord/net/inetaddr.h"
+#include "fnord/net/redis/redisconnection.h"
+#include "fnord/test/unittest.h"
+#include "fnord/thread/threadpool.h"
 
 using namespace fnord;
 

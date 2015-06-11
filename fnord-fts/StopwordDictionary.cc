@@ -8,7 +8,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include "fnord-fts/StopwordDictionary.h"
-#include "fnord-base/io/mmappedfile.h"
+#include "fnord/io/mmappedfile.h"
 
 namespace fnord {
 namespace fts {
