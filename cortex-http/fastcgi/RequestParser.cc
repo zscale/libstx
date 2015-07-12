@@ -222,7 +222,7 @@ void RequestParser::streamParams(const fastcgi::Record* record) {
 
   for (const auto& header: stream->headers) {
     stream->listener->onMessageHeader(BufferRef(header.name()),
-                                     BufferRef(header.value()));
+                                      BufferRef(header.value()));
   }
 
   stream->listener->onMessageHeaderEnd();

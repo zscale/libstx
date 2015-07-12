@@ -1007,8 +1007,9 @@ inline HttpVersion make_version(int versionMajor, int versionMinor) {
 }
 
 void Parser::onMessageBegin(const BufferRef& method,
-                                       const BufferRef& entity,
-                                       int versionMajor, int versionMinor) {
+                            const BufferRef& entity,
+                            int versionMajor,
+                            int versionMinor) {
   HttpVersion version = make_version(versionMajor, versionMinor);
 
   if (version == HttpVersion::UNKNOWN)
