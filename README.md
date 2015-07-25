@@ -3,7 +3,7 @@ libstx
 
 The missing extended standard library for C++ ;)
 
-While we do extensively use this code in production it is lacking any documentation.
+While we do extensively use this code in production it is currently lacking any documentation.
 
 Contributions always welcome.
 
