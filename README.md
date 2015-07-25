@@ -7,24 +7,36 @@ While we do extensively use this code in production it is lacking any documentat
 
 Contributions always welcome.
 
-Contributions
--------------
+- github: https://github.com/cortex/libstx
+- travis-ci: https://travis-ci.org/cortex/libstx
 
-#### Individual Contributors to libstx
+## Installation Requirements
 
-+ Laura Schlimmer (http://github.com/lauraschlimmer)
-+ Christian Parpart (http://github.com/trapni)
-+ Paul Asmuth (http://github.com/paulasmuth)
+- OpenSSL (libssl-dev)
+- gcc >= 4.8.0 (for building only, clang >= 3.4 with libc++)
+- cmake (for building only)
+- pkg-config (for building only)
 
-#### Other Open Source Software included in libstx
+### Install From Source: Ubuntu
 
-  + LMDB
-  + libsimdcomp
+```
+apt-get install git clang++ cmake pkg-config libssl-dev libbz2-dev
+git clone git@github.com:cortex/libstx.git
+cd libstx
+make debug
+```
 
-License
+## Contributors
+
+- Laura Schlimmer (https://github.com/lauraschlimmer)
+- Christian Parpart (https://github.com/christianparpart)
+- Paul Asmuth (https://github.com/paulasmuth)
+
+LICENSE
 -------
 
-Copyright (c) 2011-2015 Paul Asmuth
+```
+Copyright (c) The libstx authors
 
 libstx is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -33,7 +45,7 @@ version.
 
 libstx is distributed in the hope that it will be useful,but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE. See the GNU General Public License for more details.
+PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with
 libstx. If not, see <http://www.gnu.org/licenses/>.

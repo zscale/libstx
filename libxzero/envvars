@@ -1,0 +1,15 @@
+# vim:syntax=sh
+
+getpath() {
+  while [[ $# -ne 0 ]]; do
+    which $1 2>/dev/null && return
+    shift
+  done
+  return 1
+}
+
+export PKG_CONFIG_PATH="$HOME/local/lib/pkgconfig"
+export CXX="`getpath clang++-3.5 clang++-3.4 clang++ c++ g++`"
+export CC="`getpath clang-3.5 clang-3.4 clang cc gcc`"
+
+ulimit -c unlimited
