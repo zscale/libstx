@@ -99,14 +99,7 @@ void Application::dropPrivileges(const std::string& username,
   }
 
   if (!::getuid() || !::geteuid() || !::getgid() || !::getegid()) {
-#if defined(X0_RELEASE)
-    logError("application",
-        "Service is not allowed to run with administrative permissionsService "
-        "is still running with administrative permissions.");
-#else
-    logWarning("application",
-        "Service is still running with administrative permissions.");
-#endif
+    RAISE(kIllegalStateError, "Failed to drop priviliges, bailing out");
   }
 }
 
