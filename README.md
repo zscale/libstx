@@ -19,7 +19,7 @@ Contributions
 #### Other Open Source Software included in libstx
 
   + LMDB
-  + libsimdcmp
+  + libsimdcomp
 
 License
 -------
