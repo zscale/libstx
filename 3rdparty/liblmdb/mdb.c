@@ -1283,6 +1283,8 @@ struct MDB_env {
 #endif
 	void		*me_userctx;	 /**< User-settable context */
 	MDB_assert_func *me_assert_func; /**< Callback for assertion failures */
+  const char* data_filename;
+  const char* lock_filename;
 };
 
 	/** Nested transaction */
@@ -9120,11 +9122,11 @@ mdb_env_copy2(MDB_env *env, const char *path, unsigned int flags)
 		lpath = (char *)path;
 	} else {
 		len = strlen(path);
-		len += sizeof(DATANAME);
+		len += sizeof(env->data_filename);
 		lpath = malloc(len);
 		if (!lpath)
 			return ENOMEM;
-		sprintf(lpath, "%s" DATANAME, path);
+		sprintf(lpath, "%s%s", path, env->data_filename);
 	}
 
 	/* The destination path must exist, but the destination file must not.
