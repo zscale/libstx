@@ -17,16 +17,13 @@ All you need to do is to put this into your CMakeLists.txt:
     include(my/path/to/libstx/cmake/libstx.cmake)
 
 
-## Installation Requirements
+## Build-time dependencies
 
 - gcc >= 4.8.0 (for building only, clang >= 3.4 with libc++)
 - cmake (for building only)
-- pkg-config (for building only)
-
 
 ## Runtime dependencies
 
-- (optional) libPCRE
 - (optional) OpenSSL (libssl-dev)
 
 ### Install From Source: Ubuntu
@@ -39,8 +36,11 @@ make debug
 ```
 
 ## Included 3rdparty Software
-- googles protocol buffer library
+
+- google's protocol buffer library
 - LMDB
+- libsimdcomp
+- libpcre
 
 ## Contributors
 
