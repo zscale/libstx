@@ -32,10 +32,9 @@
 //
 // This file contains the implementation of classes GzipInputStream and
 // GzipOutputStream.
+#include <stx/sysconfig.h>
 
-#include "config.h"
-
-#if HAVE_ZLIB
+#ifdef HAVE_ZLIB_H
 #include <google/protobuf/io/gzip_stream.h>
 
 #include <google/protobuf/stubs/common.h>
@@ -323,4 +322,4 @@ bool GzipOutputStream::Close() {
 }  // namespace protobuf
 }  // namespace google
 
-#endif  // HAVE_ZLIB
+#endif  // HAVE_ZLIB_H
