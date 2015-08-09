@@ -10,21 +10,37 @@ Contributions always welcome.
 - github: https://github.com/cortex/libstx
 - travis-ci: https://travis-ci.org/cortex/libstx
 
+## Including libstx via CMake
+
+All you need to do is to put this into your CMakeLists.txt:
+
+    include(my/path/to/libstx/cmake/libstx.cmake)
+
+
 ## Installation Requirements
 
-- OpenSSL (libssl-dev)
 - gcc >= 4.8.0 (for building only, clang >= 3.4 with libc++)
 - cmake (for building only)
 - pkg-config (for building only)
+
+
+## Runtime dependencies
+
+- (optional) libPCRE
+- (optional) OpenSSL (libssl-dev)
 
 ### Install From Source: Ubuntu
 
 ```
 apt-get install git clang++ cmake pkg-config libssl-dev libbz2-dev
-git clone git@github.com:cortex/libstx.git
+git clone git@github.com:fnordcorp/libstx.git
 cd libstx
 make debug
 ```
+
+## Included 3rdparty Software
+- googles protocol buffer library
+- LMDB
 
 ## Contributors
 
