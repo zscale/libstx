@@ -36,13 +36,13 @@
 #include <errno.h>
 #include <vector>
 
-#include "config.h"
+#include <stx/sysconfig.h>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN  // We only need minimal includes
 #include <windows.h>
 #define snprintf _snprintf    // see comment in strutil.cc
-#elif defined(HAVE_PTHREAD)
+#elif defined(HAVE_PTHREAD_H)
 #include <pthread.h>
 #else
 #error "No suitable threading library available."
@@ -282,7 +282,7 @@ void Mutex::AssertHeld() {
 #endif
 }
 
-#elif defined(HAVE_PTHREAD)
+#elif defined(HAVE_PTHREAD_H)
 
 struct Mutex::Internal {
   pthread_mutex_t mutex;
