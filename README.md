@@ -7,8 +7,7 @@ While we do extensively use this code in production it is currently lacking any 
 
 Contributions always welcome.
 
-- github: https://github.com/cortex/libstx
-- travis-ci: https://travis-ci.org/cortex/libstx
+- github: https://github.com/fnordcorp/libstx
 
 ## Including libstx via CMake
 
