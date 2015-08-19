@@ -37,7 +37,6 @@ make debug
 ## Included 3rdparty Software
 
 - google's protocol buffer library
-- LMDB
 - libsimdcomp
 - libpcre
 
