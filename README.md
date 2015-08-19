@@ -38,7 +38,6 @@ make debug
 
 - google's protocol buffer library
 - libsimdcomp
-- libpcre
 
 ## Contributors
 
