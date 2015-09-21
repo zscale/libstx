@@ -40,7 +40,7 @@ CHECK_FUNCTION_EXISTS(dup2 HAVE_DUP2)
 CHECK_FUNCTION_EXISTS(dladdr HAVE_DLADDR)
 CHECK_FUNCTION_EXISTS(fork HAVE_FORK)
 CHECK_FUNCTION_EXISTS(backtrace HAVE_BACKTRACE)
-#CHECK_FUNCTION_EXISTS(clock_gettime HAVE_CLOCK_GETTIME)
+CHECK_FUNCTION_EXISTS(clock_gettime HAVE_CLOCK_GETTIME)
 
 CHECK_INCLUDE_FILES(pthread.h HAVE_PTHREAD_H)
 CHECK_LIBRARY_EXISTS(pthread pthread_setname_np "" HAVE_PTHREAD_SETNAME_NP)
@@ -142,6 +142,7 @@ add_library(stx-base STATIC
     cli/CLI.cc
     cli/CLICommand.cc
     cli/term.cc
+    Clock.cc
     csv/CSVOutputStream.cc
     csv/BinaryCSVOutputStream.cc
     csv/CSVInputStream.cc
