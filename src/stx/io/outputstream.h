@@ -9,13 +9,19 @@
  */
 #ifndef _libstx_OUTPUTSTREAM_H
 #define _libstx_OUTPUTSTREAM_H
-#include <fcntl.h>
+
+// #if (!defined(_libstx_io_BufferOutputStream_h) && \
+//      !defined(_libstx_io_FileOutputStream_h) && \
+//      !defined(_libstx_io_StringOutputStream_h))
+// #warning "Do include <stx/io/{Buffer,File,String}OutputStream.h> directly."
+// #endif
+
 #include <memory>
 #include <mutex>
-#include "stx/buffer.h"
-#include "stx/io/file.h"
 
 namespace stx {
+
+class Buffer;
 
 class OutputStream {
 public:
@@ -92,141 +98,14 @@ public:
    * output stream
    */
   mutable std::mutex mutex;
-
 };
 
-class FileOutputStream : public OutputStream {
-public:
+} // namespace stx
 
-  /**
-   * Create a new FileOutputStream instance by opening the provided file for
-   * writing. The fille will automatically be close()ed when the output stream
-   * is destroyed.
-   *
-   * @param file_path the path to the file to open
-   * @param flags flags to pass to the open() syscall
-   */
-  static std::unique_ptr<FileOutputStream> openFile(
-      const std::string& file_path,
-      int flags = O_CREAT | O_TRUNC,
-      int permissions = 0666);
+// FIXME: this is just a quick hack to not break external deps
+// The app should include those headers directly instead.
+#include <stx/io/BufferOutputStream.h>
+#include <stx/io/FileOutputStream.h>
+#include <stx/io/StringOutputStream.h>
 
-  /**
-   * Create a new FileOutputStream instance from the provided filedescriptor. If
-   * close on_destroy is true, the fd will be close()ed when the input stream
-   * is destroyed.
-   *
-   * @param fd a valid fd
-   * @param close_on_destroy close the fd on destroy?
-   */
-  static std::unique_ptr<FileOutputStream> fromFileDescriptor(
-      int fd,
-      bool close_on_destroy = false);
-
-  /**
-   * Create a new FileOutputStream instance from the provided File.
-   *
-   * @param file the opened file
-   */
-  static std::unique_ptr<FileOutputStream> fromFile(File&& file);
-
-  /**
-   * Create a new FileOuputStream instance from the provided filedescriptor. If 
-   * close on_destroy is true, the fd will be close()ed when the output stream
-   * is destroyed.
-   *
-   * @param fd a valid fd
-   * @param close_on_destroy close the fd on destroy?
-   */
-  explicit FileOutputStream(int fd, bool close_on_destroy = false);
-
-  /**
-   * Create a new FileOutputStream instance from the provided File.
-   *
-   * @param file the opened file
-   */
-  explicit FileOutputStream(File&& file);
-
-  /**
-   * Close the fd if close_on_destroy is true
-   */
-  ~FileOutputStream();
-
-  /**
-   * Write the next n bytes to the file. This may raise an exception.
-   * Returns the number of bytes that have been written.
-   *
-   * @param data a pointer to the data to be written
-   * @param size then number of bytes to be written
-   */
-  size_t write(const char* data, size_t size) override;
-
-  size_t printf(const char* format, ...) override;
-
-protected:
-  int fd_;
-  bool close_on_destroy_;
-};
-
-class StringOutputStream : public OutputStream {
-public:
-
-  /**
-   * Create a new OutputStream from the provided string
-   *
-   * @param string the input string
-   */
-  static std::unique_ptr<StringOutputStream> fromString(std::string* string);
-
-  /**
-   * Create a new OutputStream from the provided string
-   *
-   * @param string the input string
-   */
-  StringOutputStream(std::string* string);
-
-  /**
-   * Write the next n bytes to the file. This may raise an exception.
-   * Returns the number of bytes that have been written.
-   *
-   * @param data a pointer to the data to be written
-   * @param size then number of bytes to be written
-   */
-  size_t write(const char* data, size_t size) override;
-
-protected:
-  std::string* str_;
-};
-
-class BufferOutputStream : public OutputStream {
-public:
-
-  /**
-   * Create a new OutputStream from the provided string
-   *
-   * @param buf the output buffer
-   */
-  static std::unique_ptr<BufferOutputStream> fromBuffer(Buffer* buf);
-
-  /**
-   * Create a new OutputStream from the provided buffer
-   *
-   * @param buf the output buffer
-   */
-  BufferOutputStream(Buffer* string);
-
-  /**
-   * Write the next n bytes to the file. This may raise an exception.
-   * Returns the number of bytes that have been written.
-   *
-   * @param data a pointer to the data to be written
-   * @param size then number of bytes to be written
-   */
-  size_t write(const char* data, size_t size) override;
-
-protected:
-  Buffer* buf_;
-};
-
-}
 #endif

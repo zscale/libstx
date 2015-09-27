@@ -165,17 +165,20 @@ add_library(stx-base STATIC
     InternMap.cc
     io/file.cc
     io/FileInputStream.cc
+    io/FileOutputStream.cc
     io/FileLock.cc
     io/fileutil.cc
     io/filerepository.cc
     io/inputstream.cc
     io/outputstream.cc
     io/BufferInputStream.cc
+    io/BufferOutputStream.cc
     io/BufferedOutputStream.cc
     io/MemoryInputStream.cc
     io/mmappedfile.cc
     io/pagemanager.cc
     io/StringInputStream.cc
+    io/StringOutputStream.cc
     ISO8601.cc
     CivilTime.cc
     Language.cc
