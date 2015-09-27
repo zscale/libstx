@@ -9,10 +9,7 @@
  */
 #ifndef _libstx_io_MemoryInputStream_h
 #define _libstx_io_MemoryInputStream_h
-#include <memory>
-#include <string>
-#include "stx/buffer.h"
-#include "stx/io/file.h"
+#include <stx/io/inputstream.h>
 
 namespace stx {
 

@@ -9,12 +9,20 @@
  */
 #ifndef _libstx_INPUTSTREAM_H
 #define _libstx_INPUTSTREAM_H
+
+// #if (!defined(_libstx_io_BufferInputStream_h) && \
+//      !defined(_libstx_io_FileInputStream_h) && \
+//      !defined(_libstx_io_MemoryInputStream_h) && \
+//      !defined(_libstx_io_StringInputStream_h))
+// #warning "Do include <stx/io/{Buffer,File,Memory,String}InputStream.h> directly."
+// #endif
+
 #include <memory>
 #include <string>
-#include "stx/buffer.h"
-#include "stx/io/file.h"
 
 namespace stx {
+
+class Buffer;
 
 class InputStream {
 public:
@@ -128,13 +136,13 @@ public:
   /**
    * Reads a string from the stream. Throws an exception on error
    */
-  virtual String readString(size_t size);
+  virtual std::string readString(size_t size);
 
   /**
    * Reads a LEB128 prefix-length-encoded string from the stream. Throws an
    * exception on error
    */
-  virtual String readLenencString();
+  virtual std::string readLenencString();
 
   /**
    * Reads a IEEE754 encoded double from the stream. Throws an exception on
