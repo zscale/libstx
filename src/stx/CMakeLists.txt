@@ -134,7 +134,7 @@ add_library(stx-base STATIC
     3rdparty/simdcomp/simdbitpacking.c
     3rdparty/simdcomp/simdintegratedbitpacking.c
     3rdparty/simdcomp/simdcomputil.c
-    application.cc
+    Application.cc
     assets.cc
     buffer.cc
     bufferutil.cc
