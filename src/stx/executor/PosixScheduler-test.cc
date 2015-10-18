@@ -68,6 +68,43 @@ TEST_INITIALIZER(PosixSchedulerTest, logging, []() {
   Application::logToStderr(LogLevel::kTrace);
 });
 
+/* test case:
+ * 1.) insert interest A with timeout 10s
+ * 2.) after 5 seconds, insert interest B with timeout 2
+ * 3.) the interest B should now be fired after 2 seconds
+ * 4.) the interest A should now be fired after 3 seconds
+ */
+TEST_CASE(PosixSchedulerTest, timeoutBreak, []() {
+  PosixScheduler scheduler;
+  SystemPipe a;
+  SystemPipe b;
+  MonotonicTime start = MonotonicClock::now();
+  MonotonicTime a_fired_at;
+  MonotonicTime b_fired_at;
+  MonotonicTime a_timeout_at;
+  MonotonicTime b_timeout_at;
+  auto a_fired = [&]() { a_fired_at = MonotonicClock::now();
+                         logTrace("x", "a_fired_at: $0", a_fired_at); };
+  auto b_fired = [&]() { b_fired_at = MonotonicClock::now();
+                         logTrace("x", "b_fired_at: $0", b_fired_at); };
+  auto a_timeout = [&]() { a_timeout_at = MonotonicClock::now();
+                           logTrace("x", "a_timeout_at: $0", a_timeout_at - start); };
+  auto b_timeout = [&]() { b_timeout_at = MonotonicClock::now();
+                           logTrace("x", "b_timeout_at: $0", b_timeout_at - start); };
+
+  scheduler.executeOnReadable(a.readerFd(), a_fired,
+                              Duration::fromMilliseconds(500), a_timeout);
+  scheduler.executeOnReadable(b.readerFd(), b_fired,
+                              Duration::fromMilliseconds(100), b_timeout);
+
+  scheduler.runLoop();
+
+  EXPECT_TRUE(!a_fired_at);
+  EXPECT_TRUE(!b_fired_at);
+  EXPECT_NEAR(500, (a_timeout_at - start).milliseconds(), 50);
+  EXPECT_NEAR(100,  (b_timeout_at - start).milliseconds(), 50);
+});
+
 TEST_CASE(PosixSchedulerTest, executeAfter_without_handle, [] () {
   PosixScheduler scheduler;
   MonotonicTime start;
