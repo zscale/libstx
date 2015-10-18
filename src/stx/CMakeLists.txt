@@ -215,7 +215,7 @@ add_library(stx-base STATIC
     util/SimpleRateLimit.cc
     util/PersistentHashSet.cc
     VFS.cc
-    wallclock.cc
+    WallClock.cc
     web/SecureCookie.cc)
 
 file(GLOB PROTO_FILES *.proto)
