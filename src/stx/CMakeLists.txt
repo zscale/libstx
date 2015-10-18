@@ -203,7 +203,7 @@ add_library(stx-base STATIC
     thread/eventloop.cc
     thread/signalhandler.cc
     thread/FixedSizeThreadPool.cc
-    thread/wakeup.cc
+    thread/Wakeup.cc
     uri.cc
     UTF8.cc
     util/Base64.cc
