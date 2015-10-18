@@ -40,7 +40,7 @@ CHECK_FUNCTION_EXISTS(dup2 HAVE_DUP2)
 CHECK_FUNCTION_EXISTS(dladdr HAVE_DLADDR)
 CHECK_FUNCTION_EXISTS(fork HAVE_FORK)
 CHECK_FUNCTION_EXISTS(backtrace HAVE_BACKTRACE)
-#CHECK_FUNCTION_EXISTS(clock_gettime HAVE_CLOCK_GETTIME)
+CHECK_FUNCTION_EXISTS(clock_gettime HAVE_CLOCK_GETTIME)
 
 CHECK_INCLUDE_FILES(pthread.h HAVE_PTHREAD_H)
 CHECK_LIBRARY_EXISTS(pthread pthread_setname_np "" HAVE_PTHREAD_SETNAME_NP)
@@ -203,7 +203,7 @@ add_library(stx-base STATIC
     thread/eventloop.cc
     thread/signalhandler.cc
     thread/FixedSizeThreadPool.cc
-    thread/wakeup.cc
+    thread/Wakeup.cc
     uri.cc
     UTF8.cc
     util/Base64.cc
@@ -215,7 +215,7 @@ add_library(stx-base STATIC
     util/SimpleRateLimit.cc
     util/PersistentHashSet.cc
     VFS.cc
-    wallclock.cc
+    WallClock.cc
     web/SecureCookie.cc)
 
 file(GLOB PROTO_FILES *.proto)
