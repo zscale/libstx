@@ -16,15 +16,6 @@ All you need to do is to put this into your CMakeLists.txt:
     include(my/path/to/libstx/cmake/libstx.cmake)
 
 
-## Build-time dependencies
-
-- gcc >= 4.8.0 (for building only, clang >= 3.4 with libc++)
-- cmake (for building only)
-
-## Runtime dependencies
-
-- (optional) OpenSSL (libssl-dev)
-
 ### Install From Source: Ubuntu
 
 ```
