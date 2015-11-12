@@ -16,6 +16,7 @@
 #include "stx/stdtypes.h"
 
 const char kAccessDeniedError[] = "AccessDeniedError";
+const char kAssertionError[] = "AssertionError";
 const char kBufferOverflowError[] = "BufferOverflowError";
 const char kEncodingError[] = "EncodingError";
 const char kCancelledError[] = "CancelledError";
@@ -70,6 +71,19 @@ const char kFutureError[] = "FutureError";
           stx::Exception( \
               __VA_ARGS__).setTypeName(E).setErrno(e)); \
     }
+
+#define RCHECK(P, ...) if (!(P)) { RAISE(kAssertionError, __VA_ARGS__) }
+
+#define RCHECKF(P, ...) \
+    if (!(P)) { RAISE(kAssertionError, stx::StringUtil::format(__VA_ARGS__)) }
+
+#ifdef NDEBUG
+#define RDCHECK(...) ((void) 0)
+#define RDCHECKF(...) ((void) 0)
+#else
+#define RDCHECK(...) (RCHECK(__VA_ARGS__))
+#define RDCHECKF(...) (RCHECKF(__VA_ARGS__))
+#endif
 
 #define __brk raise(SIGTRAP); while (0) {}
 
