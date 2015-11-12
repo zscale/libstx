@@ -96,6 +96,7 @@ public:
 
   File clone() const;
   void truncate(size_t new_size);
+  void fsync(bool sync_metadata = false);
 
   bool isWritable() const;
 

@@ -188,4 +188,22 @@ void File::truncate(size_t new_size) {
   }
 }
 
+void File::fsync(bool sync_metadata /* = false */) {
+  int retval;
+
+  if (sync_metadata) {
+    retval = ::fsync(fd_);
+  } else {
+#if _POSIX_C_SOURCE >= 199309L || _XOPEN_SOURCE >= 500
+    retval = ::fdatasync(fd_);
+#else
+    retval = ::fsync(fd_);
+#endif
+  }
+
+  if (retval != 0) {
+    RAISE_ERRNO(kIOError, "fsync(%i) failed", fd_);
+  }
+}
+
 }
