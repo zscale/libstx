@@ -156,6 +156,22 @@ void File::write(const String& buf) {
   write(buf.c_str(), buf.length());
 }
 
+void File::pwrite(uint64_t position, const void* buf, size_t buf_len) {
+  int res = ::pwrite(fd_, buf, buf_len, position);
+
+  if (res < 0 || res != buf_len) {
+    RAISE_ERRNO(kIOError, "write(%i) failed", fd_);
+  }
+}
+
+void File::pwrite(uint64_t position, const Buffer& buf) {
+  pwrite(position, buf.data(), buf.size());
+}
+
+void File::pwrite(uint64_t position, const String& buf) {
+  pwrite(position, buf.c_str(), buf.length());
+}
+
 File File::clone() const {
   int new_fd = dup(fd_);
 

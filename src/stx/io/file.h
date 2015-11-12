@@ -87,6 +87,10 @@ public:
   void write(const String& buf);
   void write(const void* buf, size_t buf_len);
 
+  void pwrite(uint64_t position, const Buffer& buf);
+  void pwrite(uint64_t position, const String& buf);
+  void pwrite(uint64_t position, const void* buf, size_t buf_len);
+
   int fd() const;
   size_t size() const;
 
