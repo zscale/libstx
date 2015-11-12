@@ -266,35 +266,37 @@ add_library(stx-protobuf STATIC
     protobuf/JSONEncoder.cc
     ${PROTO_SRCS})
 
-add_executable(test-inputstream io/inputstream_test.cc)
-target_link_libraries(test-inputstream stx-base)
+if(STX_BUILD_UNIT_TESTS)
+  add_executable(test-inputstream io/inputstream_test.cc)
+  target_link_libraries(test-inputstream stx-base)
 
-add_executable(test-uri uri_test.cc)
-target_link_libraries(test-uri stx-base)
+  add_executable(test-uri uri_test.cc)
+  target_link_libraries(test-uri stx-base)
 
-add_executable(test-stringutil stringutil_test.cc)
-target_link_libraries(test-stringutil stx-base)
+  add_executable(test-stringutil stringutil_test.cc)
+  target_link_libraries(test-stringutil stx-base)
 
-add_executable(test-internmap InternMap_test.cc)
-target_link_libraries(test-internmap stx-base)
+  add_executable(test-internmap InternMap_test.cc)
+  target_link_libraries(test-internmap stx-base)
 
-add_executable(test-hmac HMAC_test.cc)
-target_link_libraries(test-hmac stx-base)
+  add_executable(test-hmac HMAC_test.cc)
+  target_link_libraries(test-hmac stx-base)
 
-add_executable(test-human human_test.cc)
-target_link_libraries(test-human stx-base)
+  add_executable(test-human human_test.cc)
+  target_link_libraries(test-human stx-base)
 
-add_executable(test-secure-cookie web/SecureCookie_test.cc)
-target_link_libraries(test-secure-cookie stx-base)
+  add_executable(test-secure-cookie web/SecureCookie_test.cc)
+  target_link_libraries(test-secure-cookie stx-base)
 
-add_executable(test-sha1 SHA1_test.cc)
-target_link_libraries(test-sha1 stx-base)
+  add_executable(test-sha1 SHA1_test.cc)
+  target_link_libraries(test-sha1 stx-base)
 
-add_executable(test-protobuf protobuf/protobuf_test.cc)
-target_link_libraries(test-protobuf stx-protobuf stx-json stx-base )
+  add_executable(test-protobuf protobuf/protobuf_test.cc)
+  target_link_libraries(test-protobuf stx-protobuf stx-json stx-base )
 
-add_executable(test-persistenthashset util/PersistentHashSet_test.cc)
-target_link_libraries(test-persistenthashset stx-base)
+  add_executable(test-persistenthashset util/PersistentHashSet_test.cc)
+  target_link_libraries(test-persistenthashset stx-base)
+endif()
 
 add_subdirectory(http)
 add_subdirectory(json)
