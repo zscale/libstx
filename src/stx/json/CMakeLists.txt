@@ -19,6 +19,7 @@ add_library(stx-json STATIC
     jsonrpcresponse.cc
     jsonutil.cc)
 
-add_executable(test-json json_test.cc)
-
-target_link_libraries(test-json stx-http stx-json stx-base)
+if(STX_BUILD_UNIT_TESTS)
+  add_executable(test-json json_test.cc)
+  target_link_libraries(test-json stx-http stx-json stx-base)
+endif()

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.8)
 project(libstx)
 
+option(STX_BUILD_UNIT_TESTS "build stx unit tests" ON)
+
 set(STX_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(STX_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
 
