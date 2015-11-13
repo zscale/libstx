@@ -72,17 +72,20 @@ const char kFutureError[] = "FutureError";
               __VA_ARGS__).setTypeName(E).setErrno(e)); \
     }
 
-#define RCHECK(P, ...) if (!(P)) { RAISE(kAssertionError, __VA_ARGS__) }
+#define RCHECK(P, ...) \
+    if (!(P)) { RAISE(kAssertionError, __VA_ARGS__) } \
+    while(0) {}
 
 #define RCHECKF(P, ...) \
-    if (!(P)) { RAISE(kAssertionError, stx::StringUtil::format(__VA_ARGS__)) }
+    if (!(P)) { RAISE(kAssertionError, stx::StringUtil::format(__VA_ARGS__)) } \
+    while(0) {}
 
 #ifdef NDEBUG
 #define RDCHECK(...) ((void) 0)
 #define RDCHECKF(...) ((void) 0)
 #else
-#define RDCHECK(...) (RCHECK(__VA_ARGS__))
-#define RDCHECKF(...) (RCHECKF(__VA_ARGS__))
+#define RDCHECK(...) RCHECK(__VA_ARGS__)
+#define RDCHECKF(...) RCHECKF(__VA_ARGS__)
 #endif
 
 #define __brk raise(SIGTRAP); while (0) {}
