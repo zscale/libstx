@@ -17,10 +17,27 @@ namespace util {
 class FreeOnDestroy {
 public:
 
+  FreeOnDestroy() : ptr_(nullptr) {}
   FreeOnDestroy(void* ptr) : ptr_(ptr) {}
   FreeOnDestroy(const FreeOnDestroy& other) = delete;
   FreeOnDestroy& operator=(const FreeOnDestroy& other) = delete;
-  ~FreeOnDestroy() { free(ptr_); }
+  ~FreeOnDestroy() { if(ptr_) { free(ptr_); } }
+
+  void store(void* ptr) {
+    if (ptr_) {
+      free(ptr_);
+    }
+
+    ptr_ = ptr;
+  }
+
+  void release() {
+    ptr_ = nullptr;
+  }
+
+  void* get() const {
+    return ptr_;
+  }
 
 protected:
   void* ptr_;
