@@ -36,8 +36,8 @@
 #define GOOGLE_PROTOBUF_COMPILER_CPP_ENUM_H__
 
 #include <string>
-#include <google/protobuf/compiler/cpp/cpp_options.h>
-#include <google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_options.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
 
 
 namespace google {

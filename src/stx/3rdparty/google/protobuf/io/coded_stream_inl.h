@@ -36,9 +36,9 @@
 #ifndef GOOGLE_PROTOBUF_IO_CODED_STREAM_INL_H__
 #define GOOGLE_PROTOBUF_IO_CODED_STREAM_INL_H__
 
-#include <google/protobuf/io/coded_stream.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>
 #include <string>
-#include <google/protobuf/stubs/stl_util.h>
+#include <stx/3rdparty/google/protobuf/stubs/stl_util.h>
 
 namespace google {
 namespace protobuf {

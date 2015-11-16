@@ -56,7 +56,7 @@
 // Don't include this file for people not concerned about thread safety.
 #ifndef GOOGLE_PROTOBUF_NO_THREAD_SAFETY
 
-#include <google/protobuf/stubs/platform_macros.h>
+#include <stx/3rdparty/google/protobuf/stubs/platform_macros.h>
 
 namespace google {
 namespace protobuf {
@@ -163,27 +163,27 @@ Atomic64 Release_Load(volatile const Atomic64* ptr);
 // MSVC.
 #if defined(_MSC_VER)
 #if defined(GOOGLE_PROTOBUF_ARCH_IA32) || defined(GOOGLE_PROTOBUF_ARCH_X64)
-#include <google/protobuf/stubs/atomicops_internals_x86_msvc.h>
+#include <stx/3rdparty/google/protobuf/stubs/atomicops_internals_x86_msvc.h>
 #else
 GOOGLE_PROTOBUF_ATOMICOPS_ERROR
 #endif
 
 // Apple.
 #elif defined(GOOGLE_PROTOBUF_OS_APPLE)
-#include <google/protobuf/stubs/atomicops_internals_macosx.h>
+#include <stx/3rdparty/google/protobuf/stubs/atomicops_internals_macosx.h>
 
 // GCC.
 #elif defined(__GNUC__)
 #if defined(GOOGLE_PROTOBUF_ARCH_IA32) || defined(GOOGLE_PROTOBUF_ARCH_X64)
-#include <google/protobuf/stubs/atomicops_internals_x86_gcc.h>
+#include <stx/3rdparty/google/protobuf/stubs/atomicops_internals_x86_gcc.h>
 #elif defined(GOOGLE_PROTOBUF_ARCH_ARM)
-#include <google/protobuf/stubs/atomicops_internals_arm_gcc.h>
+#include <stx/3rdparty/google/protobuf/stubs/atomicops_internals_arm_gcc.h>
 #elif defined(GOOGLE_PROTOBUF_ARCH_ARM_QNX)
-#include <google/protobuf/stubs/atomicops_internals_arm_qnx.h>
+#include <stx/3rdparty/google/protobuf/stubs/atomicops_internals_arm_qnx.h>
 #elif defined(GOOGLE_PROTOBUF_ARCH_MIPS)
-#include <google/protobuf/stubs/atomicops_internals_mips_gcc.h>
+#include <stx/3rdparty/google/protobuf/stubs/atomicops_internals_mips_gcc.h>
 #elif defined(__pnacl__)
-#include <google/protobuf/stubs/atomicops_internals_pnacl.h>
+#include <stx/3rdparty/google/protobuf/stubs/atomicops_internals_pnacl.h>
 #else
 GOOGLE_PROTOBUF_ATOMICOPS_ERROR
 #endif
@@ -196,7 +196,7 @@ GOOGLE_PROTOBUF_ATOMICOPS_ERROR
 // On some platforms we need additional declarations to make AtomicWord
 // compatible with our other Atomic* types.
 #if defined(GOOGLE_PROTOBUF_OS_APPLE)
-#include <google/protobuf/stubs/atomicops_internals_atomicword_compat.h>
+#include <stx/3rdparty/google/protobuf/stubs/atomicops_internals_atomicword_compat.h>
 #endif
 
 #undef GOOGLE_PROTOBUF_ATOMICOPS_ERROR

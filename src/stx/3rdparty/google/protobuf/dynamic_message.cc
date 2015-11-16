@@ -63,19 +63,19 @@
 // I don't have the book on me right now so I'm not sure.
 
 #include <algorithm>
-#include <google/protobuf/stubs/hash.h>
+#include <stx/3rdparty/google/protobuf/stubs/hash.h>
 
-#include <google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
 
-#include <google/protobuf/dynamic_message.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/generated_message_util.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/repeated_field.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format.h>
+#include <stx/3rdparty/google/protobuf/dynamic_message.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/generated_message_util.h>
+#include <stx/3rdparty/google/protobuf/generated_message_reflection.h>
+#include <stx/3rdparty/google/protobuf/reflection_ops.h>
+#include <stx/3rdparty/google/protobuf/repeated_field.h>
+#include <stx/3rdparty/google/protobuf/extension_set.h>
+#include <stx/3rdparty/google/protobuf/wire_format.h>
 
 namespace google {
 namespace protobuf {

@@ -38,7 +38,7 @@
 #define GOOGLE_PROTOBUF_COMPILER_CPP_GENERATOR_H__
 
 #include <string>
-#include <google/protobuf/compiler/code_generator.h>
+#include <stx/3rdparty/google/protobuf/compiler/code_generator.h>
 
 namespace google {
 namespace protobuf {

@@ -38,7 +38,7 @@
 #ifndef GOOGLE_PROTOBUF_COMPILER_COMMAND_LINE_INTERFACE_H__
 #define GOOGLE_PROTOBUF_COMPILER_COMMAND_LINE_INTERFACE_H__
 
-#include <google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
 #include <string>
 #include <vector>
 #include <map>

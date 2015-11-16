@@ -35,9 +35,9 @@
 #include <stx/sysconfig.h>
 
 #ifdef HAVE_ZLIB_H
-#include <google/protobuf/io/gzip_stream.h>
+#include <stx/3rdparty/google/protobuf/io/gzip_stream.h>
 
-#include <google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
 
 namespace google {
 namespace protobuf {

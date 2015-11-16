@@ -33,13 +33,13 @@
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
 #include <algorithm>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/repeated_field.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/generated_message_util.h>
-#include <google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/generated_message_reflection.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/repeated_field.h>
+#include <stx/3rdparty/google/protobuf/extension_set.h>
+#include <stx/3rdparty/google/protobuf/generated_message_util.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
 
 namespace google {
 namespace protobuf {

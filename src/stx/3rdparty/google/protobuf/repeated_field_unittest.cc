@@ -40,14 +40,14 @@
 #include <list>
 #include <vector>
 
-#include <google/protobuf/repeated_field.h>
+#include <stx/3rdparty/google/protobuf/repeated_field.h>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/unittest.pb.h>
-#include <google/protobuf/stubs/strutil.h>
-#include <google/protobuf/testing/googletest.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/unittest.pb.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/testing/googletest.h>
 #include <gtest/gtest.h>
-#include <google/protobuf/stubs/stl_util.h>
+#include <stx/3rdparty/google/protobuf/stubs/stl_util.h>
 
 namespace google {
 using protobuf_unittest::TestAllTypes;

@@ -32,7 +32,7 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/message.h>
+#include <stx/3rdparty/google/protobuf/message.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -45,15 +45,15 @@
 #include <sstream>
 #include <fstream>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/unittest.pb.h>
-#include <google/protobuf/test_util.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream_impl.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/unittest.pb.h>
+#include <stx/3rdparty/google/protobuf/test_util.h>
 
-#include <google/protobuf/testing/googletest.h>
+#include <stx/3rdparty/google/protobuf/testing/googletest.h>
 #include <gtest/gtest.h>
 
 namespace google {

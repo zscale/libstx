@@ -37,9 +37,9 @@
 
 #include <map>
 #include <string>
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/compiler/cpp/cpp_options.h>
-#include <google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_options.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
 
 namespace google {
 namespace protobuf {

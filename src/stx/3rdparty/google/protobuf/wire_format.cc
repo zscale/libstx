@@ -36,16 +36,16 @@
 #include <string>
 #include <vector>
 
-#include <google/protobuf/wire_format.h>
+#include <stx/3rdparty/google/protobuf/wire_format.h>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/wire_format_lite_inl.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/io/zero_copy_stream.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/unknown_field_set.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/wire_format_lite_inl.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream_impl.h>
+#include <stx/3rdparty/google/protobuf/unknown_field_set.h>
 
 
 

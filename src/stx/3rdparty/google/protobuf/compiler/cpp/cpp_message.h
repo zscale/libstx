@@ -36,9 +36,9 @@
 #define GOOGLE_PROTOBUF_COMPILER_CPP_MESSAGE_H__
 
 #include <string>
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/compiler/cpp/cpp_field.h>
-#include <google/protobuf/compiler/cpp/cpp_options.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_field.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_options.h>
 
 namespace google {
 namespace protobuf {

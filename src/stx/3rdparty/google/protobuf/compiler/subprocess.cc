@@ -30,7 +30,7 @@
 
 // Author: kenton@google.com (Kenton Varda)
 
-#include <google/protobuf/compiler/subprocess.h>
+#include <stx/3rdparty/google/protobuf/compiler/subprocess.h>
 
 #include <algorithm>
 #include <iostream>
@@ -42,9 +42,9 @@
 #include <signal.h>
 #endif
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/message.h>
-#include <google/protobuf/stubs/substitute.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/message.h>
+#include <stx/3rdparty/google/protobuf/stubs/substitute.h>
 
 namespace google {
 namespace protobuf {

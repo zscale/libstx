@@ -32,16 +32,16 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/compiler/cpp/cpp_generator.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_generator.h>
 
 #include <vector>
 #include <utility>
 
-#include <google/protobuf/compiler/cpp/cpp_file.h>
-#include <google/protobuf/compiler/cpp/cpp_helpers.h>
-#include <google/protobuf/io/printer.h>
-#include <google/protobuf/io/zero_copy_stream.h>
-#include <google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_file.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_helpers.h>
+#include <stx/3rdparty/google/protobuf/io/printer.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
 
 namespace google {
 namespace protobuf {

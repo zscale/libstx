@@ -30,9 +30,9 @@
 
 // Author: kenton@google.com (Kenton Varda)
 
-#include <google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
 
-#include <google/protobuf/testing/googletest.h>
+#include <stx/3rdparty/google/protobuf/testing/googletest.h>
 #include <gtest/gtest.h>
 #include <locale.h>
 

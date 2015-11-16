@@ -32,15 +32,15 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/descriptor_database.h>
+#include <stx/3rdparty/google/protobuf/descriptor_database.h>
 
 #include <set>
 
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/wire_format_lite_inl.h>
-#include <google/protobuf/stubs/strutil.h>
-#include <google/protobuf/stubs/stl_util.h>
-#include <google/protobuf/stubs/map-util.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/wire_format_lite_inl.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/stubs/stl_util.h>
+#include <stx/3rdparty/google/protobuf/stubs/map-util.h>
 
 namespace google {
 namespace protobuf {

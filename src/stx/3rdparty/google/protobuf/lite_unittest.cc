@@ -33,9 +33,9 @@
 #include <string>
 #include <iostream>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/test_util_lite.h>
-#include <google/protobuf/unittest_lite.pb.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/test_util_lite.h>
+#include <stx/3rdparty/google/protobuf/unittest_lite.pb.h>
 
 using namespace std;
 

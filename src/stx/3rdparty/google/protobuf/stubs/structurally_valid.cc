@@ -1,7 +1,7 @@
 // Copyright 2005-2008 Google Inc. All Rights Reserved.
 // Author: jrm@google.com (Jim Meehan)
 
-#include <google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
 
 namespace google {
 namespace protobuf {

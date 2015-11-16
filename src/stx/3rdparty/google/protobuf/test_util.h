@@ -37,8 +37,8 @@
 
 #include <stack>
 #include <string>
-#include <google/protobuf/message.h>
-#include <google/protobuf/unittest.pb.h>
+#include <stx/3rdparty/google/protobuf/message.h>
+#include <stx/3rdparty/google/protobuf/unittest.pb.h>
 
 namespace google {
 namespace protobuf {

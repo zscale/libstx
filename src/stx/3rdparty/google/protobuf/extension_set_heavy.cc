@@ -35,13 +35,13 @@
 // Contains methods defined in extension_set.h which cannot be part of the
 // lite library because they use descriptors or reflection.
 
-#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/message.h>
-#include <google/protobuf/repeated_field.h>
-#include <google/protobuf/wire_format.h>
-#include <google/protobuf/wire_format_lite_inl.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream_impl_lite.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/extension_set.h>
+#include <stx/3rdparty/google/protobuf/message.h>
+#include <stx/3rdparty/google/protobuf/repeated_field.h>
+#include <stx/3rdparty/google/protobuf/wire_format.h>
+#include <stx/3rdparty/google/protobuf/wire_format_lite_inl.h>
 
 namespace google {
 

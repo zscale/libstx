@@ -30,17 +30,17 @@
 
 // Author: kenton@google.com (Kenton Varda)
 
-#include <google/protobuf/compiler/mock_code_generator.h>
+#include <stx/3rdparty/google/protobuf/compiler/mock_code_generator.h>
 
-#include <google/protobuf/testing/file.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/io/zero_copy_stream.h>
-#include <google/protobuf/io/printer.h>
-#include <google/protobuf/stubs/strutil.h>
-#include <google/protobuf/stubs/substitute.h>
+#include <stx/3rdparty/google/protobuf/testing/file.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream.h>
+#include <stx/3rdparty/google/protobuf/io/printer.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/stubs/substitute.h>
 #include <gtest/gtest.h>
-#include <google/protobuf/stubs/stl_util.h>
+#include <stx/3rdparty/google/protobuf/stubs/stl_util.h>
 
 namespace google {
 namespace protobuf {

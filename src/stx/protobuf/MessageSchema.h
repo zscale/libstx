@@ -16,8 +16,8 @@
 #include <stx/util/binarymessagewriter.h>
 #include <stx/protobuf/MessageObject.h>
 #include <stx/json/json.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
 
 /**
  * // http://tools.ietf.org/html/rfc5234

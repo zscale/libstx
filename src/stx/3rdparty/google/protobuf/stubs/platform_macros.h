@@ -31,7 +31,7 @@
 #ifndef GOOGLE_PROTOBUF_PLATFORM_MACROS_H_
 #define GOOGLE_PROTOBUF_PLATFORM_MACROS_H_
 
-#include <google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
 
 // Processor architecture detection.  For more info on what's defined, see:
 //   http://msdn.microsoft.com/en-us/library/b0084kay.aspx

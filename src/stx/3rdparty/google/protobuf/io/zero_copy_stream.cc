@@ -32,7 +32,7 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/io/zero_copy_stream.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream.h>
 
 
 namespace google {

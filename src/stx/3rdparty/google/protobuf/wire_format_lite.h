@@ -41,9 +41,9 @@
 #define GOOGLE_PROTOBUF_WIRE_FORMAT_LITE_H__
 
 #include <string>
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/message_lite.h>
-#include <google/protobuf/io/coded_stream.h>  // for CodedOutputStream::Varint32Size
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/message_lite.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>  // for CodedOutputStream::Varint32Size
 
 namespace google {
 

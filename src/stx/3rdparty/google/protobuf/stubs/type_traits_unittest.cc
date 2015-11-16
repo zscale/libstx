@@ -30,14 +30,14 @@
 // ----
 // Author: Matt Austern
 
-#include <google/protobuf/stubs/type_traits.h>
+#include <stx/3rdparty/google/protobuf/stubs/type_traits.h>
 
 #include <stdlib.h>   // for exit()
 #include <stdio.h>
 #include <string>
 #include <vector>
 
-#include <google/protobuf/testing/googletest.h>
+#include <stx/3rdparty/google/protobuf/testing/googletest.h>
 #include <gtest/gtest.h>
 
 typedef int int32;

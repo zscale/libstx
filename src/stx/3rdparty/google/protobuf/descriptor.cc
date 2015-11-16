@@ -32,29 +32,29 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/stubs/hash.h>
+#include <stx/3rdparty/google/protobuf/stubs/hash.h>
 #include <map>
 #include <set>
 #include <vector>
 #include <algorithm>
 #include <limits>
 
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/descriptor_database.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/dynamic_message.h>
-#include <google/protobuf/text_format.h>
-#include <google/protobuf/unknown_field_set.h>
-#include <google/protobuf/wire_format.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/io/tokenizer.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/once.h>
-#include <google/protobuf/stubs/strutil.h>
-#include <google/protobuf/stubs/substitute.h>
-#include <google/protobuf/stubs/map-util.h>
-#include <google/protobuf/stubs/stl_util.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/descriptor_database.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/dynamic_message.h>
+#include <stx/3rdparty/google/protobuf/text_format.h>
+#include <stx/3rdparty/google/protobuf/unknown_field_set.h>
+#include <stx/3rdparty/google/protobuf/wire_format.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>
+#include <stx/3rdparty/google/protobuf/io/tokenizer.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream_impl.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/once.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/stubs/substitute.h>
+#include <stx/3rdparty/google/protobuf/stubs/map-util.h>
+#include <stx/3rdparty/google/protobuf/stubs/stl_util.h>
 
 #undef PACKAGE  // autoheader #defines this.  :(
 

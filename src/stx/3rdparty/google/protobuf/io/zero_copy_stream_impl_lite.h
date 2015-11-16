@@ -46,8 +46,8 @@
 
 #include <string>
 #include <iosfwd>
-#include <google/protobuf/io/zero_copy_stream.h>
-#include <google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
 
 
 namespace google {

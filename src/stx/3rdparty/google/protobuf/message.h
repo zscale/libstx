@@ -120,10 +120,10 @@
 #include <iosfwd>
 #endif
 
-#include <google/protobuf/message_lite.h>
+#include <stx/3rdparty/google/protobuf/message_lite.h>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
 
 
 namespace google {

@@ -35,11 +35,11 @@
 #include <string>
 #include <vector>
 
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/unknown_field_set.h>
-#include <google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/reflection_ops.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/unknown_field_set.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
 
 namespace google {
 namespace protobuf {

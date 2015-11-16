@@ -38,8 +38,8 @@
 #ifndef GOOGLE_PROTOBUF_DYNAMIC_MESSAGE_H__
 #define GOOGLE_PROTOBUF_DYNAMIC_MESSAGE_H__
 
-#include <google/protobuf/message.h>
-#include <google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/message.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
 
 namespace google {
 namespace protobuf {
@@ -115,7 +115,7 @@ class LIBPROTOBUF_EXPORT DynamicMessageFactory : public MessageFactory {
   const DescriptorPool* pool_;
   bool delegate_to_generated_factory_;
 
-  // This struct just contains a hash_map.  We can't #include <google/protobuf/stubs/hash.h> from
+  // This struct just contains a hash_map.  We can't #include <stx/3rdparty/google/protobuf/stubs/hash.h> from
   // this header due to hacks needed for hash_map portability in the open source
   // release.  Namely, stubs/hash.h, which defines hash_map portably, is not a
   // public header (for good reason), but dynamic_message.h is, and public

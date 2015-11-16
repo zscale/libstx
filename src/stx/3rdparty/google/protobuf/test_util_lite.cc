@@ -32,8 +32,8 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/test_util_lite.h>
-#include <google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/test_util_lite.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
 
 
 #define EXPECT_TRUE GOOGLE_CHECK

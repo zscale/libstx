@@ -35,10 +35,10 @@
 #include <set>
 #include <map>
 
-#include <google/protobuf/compiler/cpp/cpp_enum.h>
-#include <google/protobuf/compiler/cpp/cpp_helpers.h>
-#include <google/protobuf/io/printer.h>
-#include <google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_enum.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_helpers.h>
+#include <stx/3rdparty/google/protobuf/io/printer.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
 
 namespace google {
 namespace protobuf {

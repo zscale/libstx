@@ -32,16 +32,16 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/stubs/hash.h>
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/once.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/message_lite.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/wire_format_lite_inl.h>
-#include <google/protobuf/repeated_field.h>
-#include <google/protobuf/stubs/map-util.h>
+#include <stx/3rdparty/google/protobuf/stubs/hash.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/once.h>
+#include <stx/3rdparty/google/protobuf/extension_set.h>
+#include <stx/3rdparty/google/protobuf/message_lite.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream_impl.h>
+#include <stx/3rdparty/google/protobuf/wire_format_lite_inl.h>
+#include <stx/3rdparty/google/protobuf/repeated_field.h>
+#include <stx/3rdparty/google/protobuf/stubs/map-util.h>
 
 namespace google {
 namespace protobuf {

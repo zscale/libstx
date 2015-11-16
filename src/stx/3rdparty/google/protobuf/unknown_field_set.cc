@@ -32,14 +32,14 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/unknown_field_set.h>
+#include <stx/3rdparty/google/protobuf/unknown_field_set.h>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/io/zero_copy_stream.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/wire_format.h>
-#include <google/protobuf/stubs/stl_util.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream_impl.h>
+#include <stx/3rdparty/google/protobuf/wire_format.h>
+#include <stx/3rdparty/google/protobuf/stubs/stl_util.h>
 
 namespace google {
 namespace protobuf {

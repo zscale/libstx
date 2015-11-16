@@ -42,13 +42,13 @@
 // compiler/cpp/unittest, except using the reflection interface
 // rather than generated accessors.
 
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/test_util.h>
-#include <google/protobuf/unittest.pb.h>
+#include <stx/3rdparty/google/protobuf/generated_message_reflection.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/test_util.h>
+#include <stx/3rdparty/google/protobuf/unittest.pb.h>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/testing/googletest.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/testing/googletest.h>
 #include <gtest/gtest.h>
 
 namespace google {

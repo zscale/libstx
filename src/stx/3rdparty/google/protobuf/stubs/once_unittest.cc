@@ -37,8 +37,8 @@
 #include <pthread.h>
 #endif
 
-#include <google/protobuf/stubs/once.h>
-#include <google/protobuf/testing/googletest.h>
+#include <stx/3rdparty/google/protobuf/stubs/once.h>
+#include <stx/3rdparty/google/protobuf/testing/googletest.h>
 #include <gtest/gtest.h>
 
 namespace google {

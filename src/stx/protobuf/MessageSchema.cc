@@ -14,10 +14,10 @@
 #include <stx/protobuf/MessageSchema.h>
 #include <stx/protobuf/msg.h>
 #include <stx/CodingOptions.pb.h>
-#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
-#include <google/protobuf/io/tokenizer.h>
-#include <google/protobuf/compiler/parser.h>
-#include <3rdparty/simdcomp/simdcomp.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream_impl_lite.h>
+#include <stx/3rdparty/google/protobuf/io/tokenizer.h>
+#include <stx/3rdparty/google/protobuf/compiler/parser.h>
+#include <stx/3rdparty/simdcomp/simdcomp.h>
 
 namespace stx {
 namespace msg {

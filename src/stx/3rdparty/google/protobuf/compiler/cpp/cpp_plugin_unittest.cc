@@ -34,14 +34,14 @@
 //   It seemed like parameterizing it would add more complexity than it is
 //   worth.
 
-#include <google/protobuf/compiler/cpp/cpp_generator.h>
-#include <google/protobuf/compiler/command_line_interface.h>
-#include <google/protobuf/io/zero_copy_stream.h>
-#include <google/protobuf/io/printer.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_generator.h>
+#include <stx/3rdparty/google/protobuf/compiler/command_line_interface.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream.h>
+#include <stx/3rdparty/google/protobuf/io/printer.h>
 
-#include <google/protobuf/testing/googletest.h>
+#include <stx/3rdparty/google/protobuf/testing/googletest.h>
 #include <gtest/gtest.h>
-#include <google/protobuf/testing/file.h>
+#include <stx/3rdparty/google/protobuf/testing/file.h>
 
 namespace google {
 namespace protobuf {

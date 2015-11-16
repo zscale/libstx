@@ -32,10 +32,10 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/compiler/code_generator.h>
+#include <stx/3rdparty/google/protobuf/compiler/code_generator.h>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
 
 namespace google {
 namespace protobuf {
