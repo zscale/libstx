@@ -132,10 +132,6 @@ namespace test {
 class UnitTest {
 public:
 
-  static std::string tempFilePath() {
-    return "/tmp/_libstx_test_tmp/";
-  }
-
   static std::string testDataPath() {
     return "./";
   }
@@ -178,8 +174,6 @@ public:
   }
 
   int run() {
-    stx::FileUtil::mkdir_p(UnitTest::tempFilePath());
-
     for (auto initializer : initializers_) {
       initializer->lambda_();
     }
