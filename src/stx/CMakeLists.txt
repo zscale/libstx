@@ -109,7 +109,65 @@ else()
 endif()
 
 # PROTOBUF
-find_program(PROTOBUF_PROTOC_EXECUTABLE NAMES protoc)
+add_executable(stx-protoc
+    3rdparty/google/protobuf/compiler/command_line_interface.cc
+    3rdparty/google/protobuf/compiler/main.cc
+    3rdparty/google/protobuf/compiler/parser.cc
+    3rdparty/google/protobuf/compiler/subprocess.cc
+    3rdparty/google/protobuf/compiler/importer.cc
+    3rdparty/google/protobuf/compiler/code_generator.cc
+    3rdparty/google/protobuf/compiler/plugin.cc
+    3rdparty/google/protobuf/compiler/plugin.pb.cc
+    3rdparty/google/protobuf/compiler/cpp/cpp_enum.cc
+    3rdparty/google/protobuf/compiler/cpp/cpp_enum_field.cc
+    3rdparty/google/protobuf/compiler/cpp/cpp_extension.cc
+    3rdparty/google/protobuf/compiler/cpp/cpp_field.cc
+    3rdparty/google/protobuf/compiler/cpp/cpp_file.cc
+    3rdparty/google/protobuf/compiler/cpp/cpp_generator.cc
+    3rdparty/google/protobuf/compiler/cpp/cpp_helpers.cc
+    3rdparty/google/protobuf/compiler/cpp/cpp_message.cc
+    3rdparty/google/protobuf/compiler/cpp/cpp_message_field.cc
+    3rdparty/google/protobuf/compiler/cpp/cpp_primitive_field.cc
+    3rdparty/google/protobuf/compiler/cpp/cpp_service.cc
+    3rdparty/google/protobuf/compiler/cpp/cpp_string_field.cc
+    3rdparty/google/protobuf/compiler/zip_writer.cc
+    3rdparty/google/protobuf/descriptor.cc
+    3rdparty/google/protobuf/descriptor.pb.cc
+    3rdparty/google/protobuf/descriptor_database.cc
+    3rdparty/google/protobuf/dynamic_message.cc
+    3rdparty/google/protobuf/extension_set.cc
+    3rdparty/google/protobuf/extension_set_heavy.cc
+    3rdparty/google/protobuf/generated_message_reflection.cc
+    3rdparty/google/protobuf/generated_message_util.cc
+    3rdparty/google/protobuf/io/coded_stream.cc
+    3rdparty/google/protobuf/io/gzip_stream.cc
+    3rdparty/google/protobuf/io/printer.cc
+    3rdparty/google/protobuf/io/tokenizer.cc
+    3rdparty/google/protobuf/io/zero_copy_stream.cc
+    3rdparty/google/protobuf/io/zero_copy_stream_impl.cc
+    3rdparty/google/protobuf/io/zero_copy_stream_impl_lite.cc
+    3rdparty/google/protobuf/message.cc
+    3rdparty/google/protobuf/message_lite.cc
+    3rdparty/google/protobuf/reflection_ops.cc
+    3rdparty/google/protobuf/repeated_field.cc
+    3rdparty/google/protobuf/service.cc
+    3rdparty/google/protobuf/stubs/atomicops_internals_x86_gcc.cc
+    3rdparty/google/protobuf/stubs/atomicops_internals_x86_msvc.cc
+    3rdparty/google/protobuf/stubs/common.cc
+    3rdparty/google/protobuf/stubs/once.cc
+    3rdparty/google/protobuf/stubs/stringprintf.cc
+    3rdparty/google/protobuf/stubs/structurally_valid.cc
+    3rdparty/google/protobuf/stubs/strutil.cc
+    3rdparty/google/protobuf/stubs/strutil.cc
+    3rdparty/google/protobuf/stubs/substitute.cc
+    3rdparty/google/protobuf/text_format.cc
+    3rdparty/google/protobuf/text_format.cc
+    3rdparty/google/protobuf/unknown_field_set.cc
+    3rdparty/google/protobuf/wire_format.cc
+    3rdparty/google/protobuf/wire_format_lite.cc)
+
+target_link_libraries(stx-protoc z)
+get_property(PROTOBUF_PROTOC_EXECUTABLE TARGET stx-protoc PROPERTY LOCATION)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(PROTOBUF_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(PROTOBUF_INCLUDE_DIR ${PROTOBUF_INCLUDE_DIR} PARENT_SCOPE)
@@ -265,6 +323,7 @@ add_library(stx-protobuf STATIC
     protobuf/JSONEncoder.cc
     ${PROTO_SRCS})
 
+add_dependencies(stx-protobuf stx-protoc)
 if(STX_BUILD_UNIT_TESTS)
   add_executable(test-inputstream io/inputstream_test.cc)
   target_link_libraries(test-inputstream stx-base)
