@@ -1,6 +1,8 @@
 libstx
 ======
 
+[![Build Status](https://travis-ci.org/zscale/libstx.svg?branch=master)](https://travis-ci.org/zscale/libstx)
+
 The missing extended standard library for C++ ;)
 
 While we do extensively use this code in production it is currently lacking any documentation.
