@@ -34,22 +34,22 @@
 
 #include <istream>
 #include <stack>
-#include <google/protobuf/stubs/hash.h>
+#include <stx/3rdparty/google/protobuf/stubs/hash.h>
 
-#include <google/protobuf/message.h>
+#include <stx/3rdparty/google/protobuf/message.h>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/once.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_util.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
-#include <google/protobuf/stubs/strutil.h>
-#include <google/protobuf/stubs/map-util.h>
-#include <google/protobuf/stubs/stl_util.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/once.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream_impl.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/generated_message_util.h>
+#include <stx/3rdparty/google/protobuf/reflection_ops.h>
+#include <stx/3rdparty/google/protobuf/wire_format.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/stubs/map-util.h>
+#include <stx/3rdparty/google/protobuf/stubs/stl_util.h>
 
 namespace google {
 namespace protobuf {

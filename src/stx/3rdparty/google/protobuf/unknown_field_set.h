@@ -41,7 +41,7 @@
 #include <assert.h>
 #include <string>
 #include <vector>
-#include <google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
 // TODO(jasonh): some people seem to rely on protobufs to include this for them!
 
 namespace google {

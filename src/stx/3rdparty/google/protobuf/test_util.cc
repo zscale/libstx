@@ -38,12 +38,12 @@
 #include <windows.h>
 #endif
 
-#include <google/protobuf/test_util.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/message.h>
+#include <stx/3rdparty/google/protobuf/test_util.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/message.h>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/testing/googletest.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/testing/googletest.h>
 #include <gtest/gtest.h>
 
 namespace google {

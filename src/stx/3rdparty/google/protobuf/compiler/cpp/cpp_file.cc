@@ -32,16 +32,16 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/compiler/cpp/cpp_file.h>
-#include <google/protobuf/compiler/cpp/cpp_enum.h>
-#include <google/protobuf/compiler/cpp/cpp_service.h>
-#include <google/protobuf/compiler/cpp/cpp_extension.h>
-#include <google/protobuf/compiler/cpp/cpp_helpers.h>
-#include <google/protobuf/compiler/cpp/cpp_message.h>
-#include <google/protobuf/compiler/cpp/cpp_field.h>
-#include <google/protobuf/io/printer.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_file.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_enum.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_service.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_extension.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_helpers.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_message.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_field.h>
+#include <stx/3rdparty/google/protobuf/io/printer.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
 
 namespace google {
 namespace protobuf {
@@ -106,7 +106,7 @@ void FileGenerator::GenerateHeader(io::Printer* printer) {
 
 
   printer->Print(
-    "#include <google/protobuf/stubs/common.h>\n"
+    "#include <stx/3rdparty/google/protobuf/stubs/common.h>\n"
     "\n");
 
   // Verify the protobuf library header version is compatible with the protoc
@@ -129,33 +129,33 @@ void FileGenerator::GenerateHeader(io::Printer* printer) {
 
   // OK, it's now safe to #include other files.
   printer->Print(
-    "#include <google/protobuf/generated_message_util.h>\n");
+    "#include <stx/3rdparty/google/protobuf/generated_message_util.h>\n");
   if (file_->message_type_count() > 0) {
     if (HasDescriptorMethods(file_)) {
       printer->Print(
-        "#include <google/protobuf/message.h>\n");
+        "#include <stx/3rdparty/google/protobuf/message.h>\n");
     } else {
       printer->Print(
-        "#include <google/protobuf/message_lite.h>\n");
+        "#include <stx/3rdparty/google/protobuf/message_lite.h>\n");
     }
   }
   printer->Print(
-    "#include <google/protobuf/repeated_field.h>\n"
-    "#include <google/protobuf/extension_set.h>\n");
+    "#include <stx/3rdparty/google/protobuf/repeated_field.h>\n"
+    "#include <stx/3rdparty/google/protobuf/extension_set.h>\n");
 
   if (HasDescriptorMethods(file_) && HasEnumDefinitions(file_)) {
     printer->Print(
-      "#include <google/protobuf/generated_enum_reflection.h>\n");
+      "#include <stx/3rdparty/google/protobuf/generated_enum_reflection.h>\n");
   }
 
   if (HasGenericServices(file_)) {
     printer->Print(
-      "#include <google/protobuf/service.h>\n");
+      "#include <stx/3rdparty/google/protobuf/service.h>\n");
   }
 
   if (HasUnknownFields(file_) && file_->message_type_count() > 0) {
     printer->Print(
-      "#include <google/protobuf/unknown_field_set.h>\n");
+      "#include <stx/3rdparty/google/protobuf/unknown_field_set.h>\n");
   }
 
 
@@ -310,19 +310,19 @@ void FileGenerator::GenerateSource(io::Printer* printer) {
     "\n"
     "#include <algorithm>\n"    // for swap()
     "\n"
-    "#include <google/protobuf/stubs/common.h>\n"
-    "#include <google/protobuf/stubs/once.h>\n"
-    "#include <google/protobuf/io/coded_stream.h>\n"
-    "#include <google/protobuf/wire_format_lite_inl.h>\n",
+    "#include <stx/3rdparty/google/protobuf/stubs/common.h>\n"
+    "#include <stx/3rdparty/google/protobuf/stubs/once.h>\n"
+    "#include <stx/3rdparty/google/protobuf/io/coded_stream.h>\n"
+    "#include <stx/3rdparty/google/protobuf/wire_format_lite_inl.h>\n",
     "filename", file_->name(),
     "basename", StripProto(file_->name()));
 
   if (HasDescriptorMethods(file_)) {
     printer->Print(
-      "#include <google/protobuf/descriptor.h>\n"
-      "#include <google/protobuf/generated_message_reflection.h>\n"
-      "#include <google/protobuf/reflection_ops.h>\n"
-      "#include <google/protobuf/wire_format.h>\n");
+      "#include <stx/3rdparty/google/protobuf/descriptor.h>\n"
+      "#include <stx/3rdparty/google/protobuf/generated_message_reflection.h>\n"
+      "#include <stx/3rdparty/google/protobuf/reflection_ops.h>\n"
+      "#include <stx/3rdparty/google/protobuf/wire_format.h>\n");
   }
 
   printer->Print(

@@ -40,11 +40,11 @@
 #include <map>
 #include <string>
 #include <utility>
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/repeated_field.h>
-#include <google/protobuf/io/tokenizer.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/repeated_field.h>
+#include <stx/3rdparty/google/protobuf/io/tokenizer.h>
 
 namespace google {
 namespace protobuf { class Message; }

@@ -33,10 +33,10 @@
 // Test reflection methods for aggregate access to Repeated[Ptr]Fields.
 // This test proto2 methods on a proto2 layout.
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/stringprintf.h>
-#include <google/protobuf/unittest.pb.h>
-#include <google/protobuf/test_util.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/stringprintf.h>
+#include <stx/3rdparty/google/protobuf/unittest.pb.h>
+#include <stx/3rdparty/google/protobuf/test_util.h>
 #include <gtest/gtest.h>
 
 namespace google {

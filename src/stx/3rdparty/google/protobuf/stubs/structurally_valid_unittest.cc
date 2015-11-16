@@ -1,7 +1,7 @@
 // Copyright 2008 Google Inc. All Rights Reserved.
 // Author: xpeng@google.com (Peter Peng)
 
-#include <google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
 #include <gtest/gtest.h>
 
 namespace google {

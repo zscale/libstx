@@ -40,7 +40,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #endif  // !_WIN32
-#include <google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
 
 #include <string>
 

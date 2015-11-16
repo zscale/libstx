@@ -30,8 +30,8 @@
 
 // Author: kenton@google.com (Kenton Varda)
 
-#include <google/protobuf/compiler/command_line_interface.h>
-#include <google/protobuf/compiler/cpp/cpp_generator.h>
+#include <stx/3rdparty/google/protobuf/compiler/command_line_interface.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_generator.h>
 
 int main(int argc, char* argv[]) {
 

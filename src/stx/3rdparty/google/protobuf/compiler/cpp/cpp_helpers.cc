@@ -35,13 +35,13 @@
 #include <limits>
 #include <map>
 #include <vector>
-#include <google/protobuf/stubs/hash.h>
+#include <stx/3rdparty/google/protobuf/stubs/hash.h>
 
-#include <google/protobuf/compiler/cpp/cpp_helpers.h>
-#include <google/protobuf/io/printer.h>
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/strutil.h>
-#include <google/protobuf/stubs/substitute.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_helpers.h>
+#include <stx/3rdparty/google/protobuf/io/printer.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/stubs/substitute.h>
 
 
 namespace google {

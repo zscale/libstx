@@ -35,18 +35,18 @@
 // This test is testing a lot more than just the UnknownFieldSet class.  It
 // tests handling of unknown fields throughout the system.
 
-#include <google/protobuf/unknown_field_set.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/wire_format.h>
-#include <google/protobuf/unittest.pb.h>
-#include <google/protobuf/test_util.h>
+#include <stx/3rdparty/google/protobuf/unknown_field_set.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream_impl.h>
+#include <stx/3rdparty/google/protobuf/wire_format.h>
+#include <stx/3rdparty/google/protobuf/unittest.pb.h>
+#include <stx/3rdparty/google/protobuf/test_util.h>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/testing/googletest.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/testing/googletest.h>
 #include <gtest/gtest.h>
-#include <google/protobuf/stubs/stl_util.h>
+#include <stx/3rdparty/google/protobuf/stubs/stl_util.h>
 
 namespace google {
 namespace protobuf {

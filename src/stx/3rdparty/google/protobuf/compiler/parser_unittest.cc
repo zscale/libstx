@@ -36,20 +36,20 @@
 #include <algorithm>
 #include <map>
 
-#include <google/protobuf/compiler/parser.h>
+#include <stx/3rdparty/google/protobuf/compiler/parser.h>
 
-#include <google/protobuf/io/tokenizer.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/wire_format.h>
-#include <google/protobuf/text_format.h>
-#include <google/protobuf/unittest.pb.h>
-#include <google/protobuf/unittest_custom_options.pb.h>
-#include <google/protobuf/stubs/strutil.h>
-#include <google/protobuf/stubs/substitute.h>
-#include <google/protobuf/stubs/map-util.h>
+#include <stx/3rdparty/google/protobuf/io/tokenizer.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream_impl.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/wire_format.h>
+#include <stx/3rdparty/google/protobuf/text_format.h>
+#include <stx/3rdparty/google/protobuf/unittest.pb.h>
+#include <stx/3rdparty/google/protobuf/unittest_custom_options.pb.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/stubs/substitute.h>
+#include <stx/3rdparty/google/protobuf/stubs/map-util.h>
 
-#include <google/protobuf/testing/googletest.h>
+#include <stx/3rdparty/google/protobuf/testing/googletest.h>
 #include <gtest/gtest.h>
 
 namespace google {

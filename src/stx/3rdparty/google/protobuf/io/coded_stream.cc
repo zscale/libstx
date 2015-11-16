@@ -38,12 +38,12 @@
 // will not cross the end of the buffer, since we can avoid a lot
 // of branching in this case.
 
-#include <google/protobuf/io/coded_stream_inl.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream_inl.h>
 #include <algorithm>
 #include <limits.h>
-#include <google/protobuf/io/zero_copy_stream.h>
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/stl_util.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/stl_util.h>
 
 
 namespace google {

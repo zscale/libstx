@@ -49,10 +49,10 @@
 #include <algorithm>
 #include <string>
 #include <iterator>
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/type_traits.h>
-#include <google/protobuf/generated_message_util.h>
-#include <google/protobuf/message_lite.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/type_traits.h>
+#include <stx/3rdparty/google/protobuf/generated_message_util.h>
+#include <stx/3rdparty/google/protobuf/message_lite.h>
 
 namespace google {
 

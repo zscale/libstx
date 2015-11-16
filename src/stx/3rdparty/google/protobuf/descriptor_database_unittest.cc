@@ -36,14 +36,14 @@
 
 #include <algorithm>
 
-#include <google/protobuf/descriptor_database.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/text_format.h>
-#include <google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/descriptor_database.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/text_format.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/testing/googletest.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/testing/googletest.h>
 #include <gtest/gtest.h>
 
 namespace google {

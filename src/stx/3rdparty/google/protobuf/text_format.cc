@@ -39,18 +39,18 @@
 #include <limits>
 #include <vector>
 
-#include <google/protobuf/text_format.h>
+#include <stx/3rdparty/google/protobuf/text_format.h>
 
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/io/zero_copy_stream.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/unknown_field_set.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/io/tokenizer.h>
-#include <google/protobuf/stubs/strutil.h>
-#include <google/protobuf/stubs/map-util.h>
-#include <google/protobuf/stubs/stl_util.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream_impl.h>
+#include <stx/3rdparty/google/protobuf/unknown_field_set.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/io/tokenizer.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/stubs/map-util.h>
+#include <stx/3rdparty/google/protobuf/stubs/stl_util.h>
 
 namespace google {
 namespace protobuf {

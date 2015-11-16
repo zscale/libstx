@@ -30,8 +30,8 @@
 
 // Author: kenton@google.com (Kenton Varda)
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/once.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/stubs/once.h>
 #include <stdio.h>
 #include <errno.h>
 #include <vector>

@@ -37,11 +37,11 @@
 #define GOOGLE_PROTOBUF_WIRE_FORMAT_LITE_INL_H__
 
 #include <string>
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/message_lite.h>
-#include <google/protobuf/repeated_field.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/io/coded_stream.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/message_lite.h>
+#include <stx/3rdparty/google/protobuf/repeated_field.h>
+#include <stx/3rdparty/google/protobuf/wire_format_lite.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>
 
 
 namespace google {

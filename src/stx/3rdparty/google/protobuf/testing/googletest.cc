@@ -31,9 +31,9 @@
 // Author: kenton@google.com (Kenton Varda)
 // emulates google3/testing/base/public/googletest.cc
 
-#include <google/protobuf/testing/googletest.h>
-#include <google/protobuf/testing/file.h>
-#include <google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/testing/googletest.h>
+#include <stx/3rdparty/google/protobuf/testing/file.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>

@@ -32,7 +32,7 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/compiler/command_line_interface.h>
+#include <stx/3rdparty/google/protobuf/compiler/command_line_interface.h>
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -48,24 +48,24 @@
 #include <iostream>
 #include <ctype.h>
 
-#include <google/protobuf/stubs/hash.h>
+#include <stx/3rdparty/google/protobuf/stubs/hash.h>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/compiler/importer.h>
-#include <google/protobuf/compiler/code_generator.h>
-#include <google/protobuf/compiler/plugin.pb.h>
-#include <google/protobuf/compiler/subprocess.h>
-#include <google/protobuf/compiler/zip_writer.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/text_format.h>
-#include <google/protobuf/dynamic_message.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/io/printer.h>
-#include <google/protobuf/stubs/strutil.h>
-#include <google/protobuf/stubs/substitute.h>
-#include <google/protobuf/stubs/map-util.h>
-#include <google/protobuf/stubs/stl_util.h>
+#include <stx/3rdparty/google/protobuf/stubs/common.h>
+#include <stx/3rdparty/google/protobuf/compiler/importer.h>
+#include <stx/3rdparty/google/protobuf/compiler/code_generator.h>
+#include <stx/3rdparty/google/protobuf/compiler/plugin.pb.h>
+#include <stx/3rdparty/google/protobuf/compiler/subprocess.h>
+#include <stx/3rdparty/google/protobuf/compiler/zip_writer.h>
+#include <stx/3rdparty/google/protobuf/descriptor.h>
+#include <stx/3rdparty/google/protobuf/text_format.h>
+#include <stx/3rdparty/google/protobuf/dynamic_message.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>
+#include <stx/3rdparty/google/protobuf/io/zero_copy_stream_impl.h>
+#include <stx/3rdparty/google/protobuf/io/printer.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/stubs/substitute.h>
+#include <stx/3rdparty/google/protobuf/stubs/map-util.h>
+#include <stx/3rdparty/google/protobuf/stubs/stl_util.h>
 
 
 namespace google {

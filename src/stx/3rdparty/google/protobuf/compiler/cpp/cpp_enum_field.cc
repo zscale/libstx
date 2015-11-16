@@ -32,11 +32,11 @@
 //  Based on original Protocol Buffers design by
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
-#include <google/protobuf/compiler/cpp/cpp_enum_field.h>
-#include <google/protobuf/compiler/cpp/cpp_helpers.h>
-#include <google/protobuf/io/printer.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_enum_field.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_helpers.h>
+#include <stx/3rdparty/google/protobuf/io/printer.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
 
 namespace google {
 namespace protobuf {

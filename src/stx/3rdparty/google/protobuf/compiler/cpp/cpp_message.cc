@@ -33,20 +33,20 @@
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
 #include <algorithm>
-#include <google/protobuf/stubs/hash.h>
+#include <stx/3rdparty/google/protobuf/stubs/hash.h>
 #include <map>
 #include <utility>
 #include <vector>
-#include <google/protobuf/compiler/cpp/cpp_message.h>
-#include <google/protobuf/compiler/cpp/cpp_field.h>
-#include <google/protobuf/compiler/cpp/cpp_enum.h>
-#include <google/protobuf/compiler/cpp/cpp_extension.h>
-#include <google/protobuf/compiler/cpp/cpp_helpers.h>
-#include <google/protobuf/stubs/strutil.h>
-#include <google/protobuf/io/printer.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/wire_format.h>
-#include <google/protobuf/descriptor.pb.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_message.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_field.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_enum.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_extension.h>
+#include <stx/3rdparty/google/protobuf/compiler/cpp/cpp_helpers.h>
+#include <stx/3rdparty/google/protobuf/stubs/strutil.h>
+#include <stx/3rdparty/google/protobuf/io/printer.h>
+#include <stx/3rdparty/google/protobuf/io/coded_stream.h>
+#include <stx/3rdparty/google/protobuf/wire_format.h>
+#include <stx/3rdparty/google/protobuf/descriptor.pb.h>
 
 
 namespace google {
