@@ -9,22 +9,19 @@ While we do extensively use this code in production it is currently lacking any 
 
 Contributions always welcome.
 
-- github: https://github.com/fnordcorp/libstx
 
-## Including libstx via CMake
+### Building
 
-All you need to do is to put this into your CMakeLists.txt:
-
-    include(my/path/to/libstx/cmake/libstx.cmake)
-
-
-### Install From Source: Ubuntu
+Required:
+  - clang >= 3.4 or gcc >= 4.8
+  - c++11 compatible stdlibc++
+  - cmake >= 2.8.7
 
 ```
-apt-get install git clang++ cmake pkg-config libssl-dev libbz2-dev
-git clone git@github.com:fnordcorp/libstx.git
+apt-get install clang++ cmake
+git clone git@github.com:zscale/libstx.git
 cd libstx
-make debug
+make test
 ```
 
 ## Included 3rdparty Software
