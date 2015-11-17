@@ -167,8 +167,6 @@ add_executable(stx-protoc
     3rdparty/google/protobuf/wire_format_lite.cc)
 
 target_link_libraries(stx-protoc z)
-get_property(PROTOBUF_PROTOC_EXECUTABLE TARGET stx-protoc PROPERTY LOCATION)
-message(STATUS "stx-protoc path: ${PROTOBUF_PROTOC_EXECUTABLE}")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(PROTOBUF_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(PROTOBUF_INCLUDE_DIR ${PROTOBUF_INCLUDE_DIR} PARENT_SCOPE)
@@ -277,8 +275,8 @@ add_library(stx-base STATIC
     web/SecureCookie.cc)
 
 file(GLOB PROTO_FILES *.proto)
-PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
-set(PROTOC_ARGS --proto_path ${CMAKE_CURRENT_SOURCE_DIR}/ PARENT_SCOPE)
+STX_PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
+set(STX_PROTOC_ARGS --proto_path ${CMAKE_CURRENT_SOURCE_DIR}/ PARENT_SCOPE)
 
 add_library(stx-protobuf STATIC
     3rdparty/google/protobuf/compiler/parser.cc

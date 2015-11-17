@@ -13,9 +13,11 @@
 # (To distributed this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-function(PROTOBUF_GENERATE_CPP SRCS HDRS)
+function(STX_PROTOBUF_GENERATE_CPP SRCS HDRS)
+  get_property(PROTOBUF_PROTOC_EXECUTABLE TARGET stx-protoc PROPERTY LOCATION)
+
   if(NOT ARGN)
-    message(SEND_ERROR "Error: PROTOBUF_GENERATE_CPP() called without any proto files")
+    message(SEND_ERROR "Error: STX_PROTOBUF_GENERATE_CPP() called without any proto files")
     return()
   endif(NOT ARGN)
 
@@ -42,7 +44,7 @@ function(PROTOBUF_GENERATE_CPP SRCS HDRS)
       OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WEPREFIX}.pb.cc"
              "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WEPREFIX}.pb.h"
       COMMAND  ${PROTOBUF_PROTOC_EXECUTABLE}
-      ARGS --cpp_out ${CMAKE_CURRENT_BINARY_DIR} --proto_path ${STX_BASE_DIR}/src/stx/3rdparty --proto_path ${STX_BASE_DIR}/src/stx --proto_path ${CMAKE_CURRENT_SOURCE_DIR} ${PROTOC_ARGS} ${ABS_FIL}
+      ARGS --cpp_out ${CMAKE_CURRENT_BINARY_DIR} --proto_path ${STX_BASE_DIR}/src/stx/3rdparty --proto_path ${STX_BASE_DIR}/src/stx --proto_path ${CMAKE_CURRENT_SOURCE_DIR} ${STX_PROTOC_ARGS} ${ABS_FIL}
       DEPENDS ${ABS_FIL}
       COMMENT "Running C++ protocol buffer compiler on ${FIL}"
       VERBATIM )
