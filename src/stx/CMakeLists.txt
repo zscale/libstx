@@ -168,6 +168,7 @@ add_executable(stx-protoc
 
 target_link_libraries(stx-protoc z)
 get_property(PROTOBUF_PROTOC_EXECUTABLE TARGET stx-protoc PROPERTY LOCATION)
+message(STATUS "stx-protoc path: ${PROTOBUF_PROTOC_EXECUTABLE}")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(PROTOBUF_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(PROTOBUF_INCLUDE_DIR ${PROTOBUF_INCLUDE_DIR} PARENT_SCOPE)
