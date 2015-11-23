@@ -7,8 +7,7 @@
  * copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef _STX_UTIL_SHA1_H
-#define _STX_UTIL_SHA1_H
+#pragma once
 #include <stdlib.h>
 #include <stdint.h>
 #include <string>
@@ -81,4 +80,16 @@ public:
 
 }
 
-#endif
+namespace std {
+template<>
+struct hash<stx::SHA1Hash> {
+  size_t operator()(stx::SHA1Hash const& val) const {
+    static_assert(
+        sizeof(size_t) < stx::SHA1Hash::kSize,
+        "sizeof(size_t must be <20 bytes");
+
+    return *((const size_t*) val.data());
+  }
+};
+}
+
