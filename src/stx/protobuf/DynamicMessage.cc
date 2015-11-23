@@ -215,6 +215,10 @@ Option<String> DynamicMessage::getField(uint32_t field_id) const {
     return None<String>();
   }
 
+  if (data_.fieldCount(field_id) == 0) {
+    return None<String>();
+  }
+
   switch (schema_->fieldType(field_id)) {
 
     case msg::FieldType::BOOLEAN:

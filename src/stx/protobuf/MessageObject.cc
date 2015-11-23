@@ -320,6 +320,18 @@ Vector<MessageObject*> MessageObject::getObjects(uint32_t id) const {
   return lst;
 }
 
+size_t MessageObject::fieldCount(uint32_t id) const {
+  size_t cnt = 0;
+
+  for (auto& f : asObject()) {
+    if (f.id == id) {
+      ++cnt;
+    }
+  }
+
+  return cnt;
+}
+
 //bool MessageObject::getBool(uint32_t id) const;
 
 uint32_t MessageObject::getUInt32(uint32_t id) const {
