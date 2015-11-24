@@ -39,6 +39,11 @@ void CounterStat<ValueType>::set(ValueType value) {
 }
 
 template <typename ValueType>
+ValueType CounterStat<ValueType>::get() const {
+  return value_;
+}
+
+template <typename ValueType>
 Counter<ValueType>::Counter() :
     stat_(new CounterStat<ValueType>()) {}
 
@@ -60,6 +65,11 @@ void Counter<ValueType>::decr(ValueType value) {
 template <typename ValueType>
 void Counter<ValueType>::set(ValueType value) {
   stat_->set(value);
+}
+
+template <typename ValueType>
+ValueType Counter<ValueType>::get() const {
+  return stat_->get();
 }
 
 }
