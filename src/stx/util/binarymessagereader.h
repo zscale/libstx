@@ -31,6 +31,14 @@ public:
   std::string readLenencString();
   double readDouble();
 
+  bool maybeReadUInt8(uint8_t* val);
+  bool maybeReadUInt16(uint16_t* val);
+  bool maybeReadUInt32(uint32_t* val);
+  bool maybeReadUInt64(uint64_t* val);
+  bool maybeReadVarUInt(uint64_t* val);
+  bool maybeReadLenencString(std::string* val);
+  bool maybeReadDouble(double* val);
+
   template <typename T>
   T const* readValue();
 
