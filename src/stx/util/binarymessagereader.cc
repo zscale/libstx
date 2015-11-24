@@ -41,6 +41,42 @@ void const* BinaryMessageReader::read(size_t size) {
   return static_cast<void const*>(readString(size));
 }
 
+bool BinaryMessageReader::maybeReadUInt8(uint8_t* val) {
+  if (remaining() > sizeof(uint8_t)) {
+    *val = *readUInt8();
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool BinaryMessageReader::maybeReadUInt16(uint16_t* val) {
+  if (remaining() > sizeof(uint16_t)) {
+    *val = *readUInt16();
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool BinaryMessageReader::maybeReadUInt32(uint32_t* val) {
+  if (remaining() > sizeof(uint32_t)) {
+    *val = *readUInt32();
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool BinaryMessageReader::maybeReadUInt64(uint64_t* val) {
+  if (remaining() > sizeof(uint64_t)) {
+    *val = *readUInt64();
+    return true;
+  } else {
+    return false;
+  }
+}
+
 uint64_t BinaryMessageReader::readVarUInt() {
   uint64_t value = 0;
 
@@ -55,6 +91,27 @@ uint64_t BinaryMessageReader::readVarUInt() {
   }
 
   return value;
+}
+
+bool BinaryMessageReader::maybeReadVarUInt(uint64_t* rval) {
+  uint64_t value = 0;
+
+  for (int i = 0; ; ++i) {
+    if (pos_ >= size_) {
+      return false;
+    }
+
+    auto b = *((const unsigned char*) read(1));
+
+    value |= (b & 0x7fULL) << (7 * i);
+
+    if (!(b & 0x80U)) {
+      break;
+    }
+  }
+
+  *rval = value;
+  return true;
 }
 
 template <>
@@ -91,9 +148,35 @@ double BinaryMessageReader::readDouble() {
       *static_cast<uint64_t const*>(read(sizeof(uint64_t))));
 }
 
+bool BinaryMessageReader::maybeReadDouble(double* val) {
+  if (remaining() > sizeof(uint64_t)) {
+    *val = IEEE754::fromBytes(*readUInt64());
+    return true;
+  } else {
+    return false;
+  }
+}
+
 std::string BinaryMessageReader::readLenencString() {
   auto len = readVarUInt();
   return String((char*) read(len), len);
+}
+
+bool BinaryMessageReader::maybeReadLenencString(std::string* val) {
+  auto old_pos = pos_;
+
+  uint64_t strlen;
+  if (!maybeReadVarUInt(&strlen)) {
+    return false;
+  }
+
+  if (strlen <= remaining()) {
+    *val = String((char*) read(strlen), strlen);
+    return true;
+  } else {
+    pos_ = old_pos;
+    return false;
+  }
 }
 
 void BinaryMessageReader::rewind() {
