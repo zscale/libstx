@@ -26,6 +26,7 @@ public:
   void incr(ValueType value);
   void decr(ValueType value);
   void set(ValueType value);
+  ValueType get() const;
 
   void exportAll(const String& path, StatsSink* sink) const override;
 
@@ -41,6 +42,7 @@ public:
   void incr(ValueType value);
   void decr(ValueType value);
   void set(ValueType value);
+  ValueType get() const;
 
   RefPtr<Stat> getStat() const override;
 
