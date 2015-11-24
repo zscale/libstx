@@ -45,19 +45,27 @@ protected:
   std::unique_ptr<HTTPClientConnection> conn_;
 };
 
-class StreamingResponseFuture : public HTTPResponseFuture {
+class StreamingResponseHandler : public HTTPResponseFuture {
 public:
-  typedef Function<void (const char* data, size_t size)> CallbackType;
+  typedef Function<void (const char* data, size_t size)> CallbackFn;
 
-  StreamingResponseFuture(
+  typedef
+      Function<HTTPResponseFuture* (const Promise<HTTPResponse>)>
+      FactoryFn;
+
+  static FactoryFn getFactory(CallbackFn on_event);
+
+  StreamingResponseHandler(
       Promise<HTTPResponse> promise,
-      CallbackType callback);
+      CallbackFn callback);
 
   void onBodyChunk(const char* data, size_t size) override;
 
 protected:
-  CallbackType callback_;
+  CallbackFn callback_;
 };
+
+using StreamingResponseFuture = StreamingResponseHandler;
 
 }
 }

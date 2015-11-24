@@ -61,13 +61,21 @@ void HTTPResponseFuture::onResponseComplete() {
   delete this;
 }
 
-StreamingResponseFuture::StreamingResponseFuture(
+StreamingResponseHandler::FactoryFn StreamingResponseHandler::getFactory(
+    CallbackFn on_event) {
+  return [on_event] (
+      const Promise<HTTPResponse> promise) -> HTTPResponseFuture* {
+    return new StreamingResponseHandler(promise, on_event);
+  };
+}
+
+StreamingResponseHandler::StreamingResponseHandler(
     Promise<HTTPResponse> promise,
-    CallbackType callback) :
+    CallbackFn callback) :
     HTTPResponseFuture(promise),
     callback_(callback) {}
 
-void StreamingResponseFuture::onBodyChunk(
+void StreamingResponseHandler::onBodyChunk(
     const char* data,
     size_t size) {
   callback_(data, size);
