@@ -28,6 +28,10 @@ public:
 
   static void logToStderr(LogLevel min_log_level = LogLevel::kInfo);
 
+  static void logToSyslog(
+      const String& name,
+      LogLevel min_log_level = LogLevel::kInfo);
+
   /**
    * Retrieves the user-name this application is running under.
    */
