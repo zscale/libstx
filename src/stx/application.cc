@@ -15,6 +15,7 @@
 #include "stx/application.h"
 #include "stx/logging.h"
 #include "stx/logging/logoutputstream.h"
+#include "stx/logging/syslog.h"
 #include "stx/exceptionhandler.h"
 #include "stx/thread/signalhandler.h"
 
@@ -31,6 +32,13 @@ void Application::init() {
 void Application::logToStderr(LogLevel min_log_level /* = LogLevel::kInfo */) {
   auto logger = new LogOutputStream(OutputStream::getStderr());
   Logger::get()->setMinimumLogLevel(min_log_level);
+  Logger::get()->addTarget(logger);
+}
+
+void Application::logToSyslog(
+    const String& name,
+    LogLevel min_log_level /* = LogLevel::kInfo */) {
+  auto logger = new SyslogTarget(name);
   Logger::get()->addTarget(logger);
 }
 

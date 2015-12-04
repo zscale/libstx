@@ -235,6 +235,7 @@ add_library(stx-base STATIC
     Language.cc
     logging.cc
     logging/logoutputstream.cc
+    logging/syslog.cc
     net/dnscache.cc
     net/tcpserver.cc
     net/udpserver.cc
