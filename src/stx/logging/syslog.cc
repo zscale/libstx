@@ -17,7 +17,13 @@ namespace stx {
 
 SyslogTarget::SyslogTarget(const String& name)  {
 #ifdef HAVE_SYSLOG_H
-  openlog(name.c_str(), LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
+  ident_ = mkScoped((char*) malloc(name.size()));
+  if (ident_.get()) {
+    memcpy(ident_.get(), name.data(), name.size());
+    openlog(ident_.get(), LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
+  } else {
+    openlog(NULL, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
+  }
 #else
   RAISE(kRuntimeError, "compiled without syslog support");
 #endif
