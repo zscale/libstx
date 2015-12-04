@@ -24,6 +24,8 @@ public:
       const String& component,
       const String& message) override;
 
+protected:
+  ScopedPtr<char> ident_;
 };
 
 
