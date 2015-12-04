@@ -17,9 +17,12 @@ namespace stx {
 
 SyslogTarget::SyslogTarget(const String& name)  {
 #ifdef HAVE_SYSLOG_H
-  ident_ = mkScoped((char*) malloc(name.size()));
+  setlogmask(LOG_UPTO (LOG_DEBUG));
+
+
+  ident_ = mkScoped((char*) malloc(name.length() + 1));
   if (ident_.get()) {
-    memcpy(ident_.get(), name.data(), name.size());
+    memcpy(ident_.get(), name.c_str(), name.length() + 1);
     openlog(ident_.get(), LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
   } else {
     openlog(NULL, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
