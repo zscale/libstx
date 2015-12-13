@@ -49,6 +49,7 @@ public:
   bool operator>(const SHA1Hash& other) const;
 
   int compare(const SHA1Hash& other) const;
+  int compare(const void* other) const;
 
   inline const void* data() const {
     return hash;
@@ -75,6 +76,9 @@ public:
 
   static SHA1Hash compute(const void* data, size_t size);
   static void compute(const void* data, size_t size, SHA1Hash* out);
+
+  static int compare(const SHA1Hash& a, const SHA1Hash& b);
+  static int compare(const void* a, const void* b);
 
 };
 

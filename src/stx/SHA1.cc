@@ -49,25 +49,15 @@ bool SHA1Hash::operator==(const SHA1Hash& other) const {
 }
 
 bool SHA1Hash::operator<(const SHA1Hash& other) const {
-  return compare(other) < 0;
+  return SHA1::compare(hash, other.hash) < 0;
 }
 
 bool SHA1Hash::operator>(const SHA1Hash& other) const {
-  return compare(other) > 0;
+  return SHA1::compare(hash, other.hash) > 0;
 }
 
 int SHA1Hash::compare(const SHA1Hash& other) const {
-  for (int i = kSize - 1; i >= 0; --i) {
-    if (hash[i] < other.hash[i]) {
-      return -1;
-    }
-
-    if (hash[i] > other.hash[i]) {
-      return 1;
-    }
-  }
-
-  return 0;
+  return SHA1::compare(hash, other.hash);
 }
 
 SHA1Hash::SHA1Hash(const void* data, size_t size) {
@@ -106,6 +96,27 @@ SHA1Hash SHA1::compute(const void* data, size_t size) {
   SHA1Hash hash(SHA1Hash::DeferInitialization{});
   compute(data, size, &hash);
   return hash;
+}
+
+int SHA1::compare(const SHA1Hash& a, const SHA1Hash& b) {
+  return compare(a.data(), b.data());
+}
+
+int SHA1::compare(const void* a, const void* b) {
+  auto a_hash = static_cast<const uint8_t*>(a);
+  auto b_hash = static_cast<const uint8_t*>(b);
+
+  for (int i = SHA1Hash::kSize - 1; i >= 0; --i) {
+    if (a_hash[i] < b_hash[i]) {
+      return -1;
+    }
+
+    if (a_hash[i] > b_hash[i]) {
+      return 1;
+    }
+  }
+
+  return 0;
 }
 
 template <>
