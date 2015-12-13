@@ -21,6 +21,7 @@
 
 namespace stx {
 
+// FIXME rename to procutil
 class Application {
 public:
 
@@ -64,6 +65,11 @@ public:
    * Forks the application into background and become a daemon.
    */
   static void daemonize();
+
+  /**
+   * Set the current thread's name
+   */
+  static void setCurrentThreadName(const String& name);
 
 };
 

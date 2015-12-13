@@ -12,6 +12,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <unistd.h>
+#include <pthread.h>
 #include "stx/application.h"
 #include "stx/logging.h"
 #include "stx/logging/logoutputstream.h"
@@ -217,6 +218,21 @@ void Application::daemonize() {
   if (::daemon(true /*no chdir*/, true /*no close*/) < 0) {
     RAISE_ERRNO("daemon() failed");
   }
+
+#else
+#error Unsupported OS
+#endif
+}
+
+void Application::setCurrentThreadName(const String& name) {
+#if defined(_WIN32)
+#error "Application::setCurrentThreadName() not yet implemented for windows"
+
+#elif defined(__APPLE__) && defined(__MACH__)
+  pthread_setname_np(name.c_str());
+
+#elif defined(__linux__) || defined(__linux) || defined(linux) || defined(__gnu_linux__)
+  pthread_setname_np(pthread_self(), name.c_str());
 
 #else
 #error Unsupported OS
