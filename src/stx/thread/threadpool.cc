@@ -25,17 +25,22 @@ namespace stx {
 namespace thread {
 
 ThreadPool::ThreadPool(
-    ThreadPoolOptions opts) :
+    ThreadPoolOptions opts,
+    size_t max_cached_threads /* = kDefaultNumCachedThreads */) :
     ThreadPool(
         opts,
         std::unique_ptr<stx::ExceptionHandler>(
-            new stx::CatchAndAbortExceptionHandler())) {}
+            new stx::CatchAndAbortExceptionHandler()),
+    max_cached_threads) {}
 
 ThreadPool::ThreadPool(
     ThreadPoolOptions opts,
-    std::unique_ptr<ExceptionHandler> error_handler) :
+    std::unique_ptr<ExceptionHandler> error_handler,
+    size_t max_cached_threads /* = kDefaultNumCachedThreads */) :
     error_handler_(std::move(error_handler)),
     opts_(opts),
+    max_cached_threads_(max_cached_threads),
+    num_threads_(0),
     free_threads_(0) {}
 
 void ThreadPool::run(std::function<void()> task) {
@@ -104,13 +109,22 @@ void ThreadPool::runOnWakeup(
 }
 
 void ThreadPool::startThread() {
-  if (!opts_.thread_name.isEmpty()) {
-    Application::setCurrentThreadName(opts_.thread_name.get());
+  bool cache = false;
+
+  {
+    std::unique_lock<std::mutex> lk(runq_mutex_);
+    if (++num_threads_ <= max_cached_threads_) {
+      cache = true;
+    }
   }
 
   try {
-    std::thread thread([this] () {
-      for (;;) {
+    std::thread thread([this, cache] () {
+      if (!opts_.thread_name.isEmpty()) {
+        Application::setCurrentThreadName(opts_.thread_name.get());
+      }
+
+      do {
         try {
           std::unique_lock<std::mutex> lk(runq_mutex_);
           free_threads_++;
@@ -129,7 +143,7 @@ void ThreadPool::startThread() {
         } catch (const std::exception& e) {
           this->error_handler_->onException(e);
         }
-      }
+      } while (cache);
     });
 
     thread.detach();
