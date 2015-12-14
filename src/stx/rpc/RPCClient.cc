@@ -14,7 +14,7 @@ namespace stx {
 
 HTTPRPCClient::HTTPRPCClient(
     TaskScheduler* sched) :
-    http_pool_(sched) {}
+    http_pool_(sched, nullptr) {}
 
 void HTTPRPCClient::call(const URI& uri, RefPtr<AnyRPC> rpc) {
   http::HTTPRequest http_req(http::HTTPRequest::M_POST, uri.path());

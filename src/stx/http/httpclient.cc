@@ -15,7 +15,7 @@
 namespace stx {
 namespace http {
 
-HTTPClient::HTTPClient() {}
+HTTPClient::HTTPClient(HTTPClientStats* stats) : stats_(stats) {}
 
 HTTPResponse HTTPClient::executeRequest(
     const HTTPRequest& req) {
@@ -67,7 +67,7 @@ HTTPResponse HTTPClient::executeRequest(
         new HTTPClientConnection(
             net::TCPConnection::connect(addr),
             &ev_,
-            nullptr));
+            stats_));
 
     conn->executeRequest(req, http_future);
     http_future->storeConnection(std::move(conn));
