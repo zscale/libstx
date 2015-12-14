@@ -13,6 +13,7 @@
 #include <thread>
 #include <unistd.h>
 
+#include "stx/application.h"
 #include "stx/exception.h"
 #include "stx/exceptionhandler.h"
 #include "stx/logging.h"
@@ -23,13 +24,18 @@ using stx::ExceptionHandler;
 namespace stx {
 namespace thread {
 
-ThreadPool::ThreadPool() :
-    ThreadPool(std::unique_ptr<stx::ExceptionHandler>(
-        new stx::CatchAndAbortExceptionHandler())) {}
+ThreadPool::ThreadPool(
+    ThreadPoolOptions opts) :
+    ThreadPool(
+        opts,
+        std::unique_ptr<stx::ExceptionHandler>(
+            new stx::CatchAndAbortExceptionHandler())) {}
 
 ThreadPool::ThreadPool(
+    ThreadPoolOptions opts,
     std::unique_ptr<ExceptionHandler> error_handler) :
     error_handler_(std::move(error_handler)),
+    opts_(opts),
     free_threads_(0) {}
 
 void ThreadPool::run(std::function<void()> task) {
@@ -98,6 +104,10 @@ void ThreadPool::runOnWakeup(
 }
 
 void ThreadPool::startThread() {
+  if (!opts_.thread_name.isEmpty()) {
+    Application::setCurrentThreadName(opts_.thread_name.get());
+  }
+
   try {
     std::thread thread([this] () {
       for (;;) {

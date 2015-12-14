@@ -18,6 +18,7 @@
 #include "stx/thread/queue.h"
 #include "stx/thread/taskscheduler.h"
 #include "stx/thread/wakeup.h"
+#include "stx/thread/threadpool.h"
 #include "stx/exceptionhandler.h"
 
 namespace stx {
@@ -40,6 +41,7 @@ public:
    * @param true=block if the queue is full, false=throw an exception
    */
   FixedSizeThreadPool(
+      ThreadPoolOptions opts,
       size_t nthreads,
       size_t maxqueuelen = -1,
       bool block = true);
@@ -56,6 +58,7 @@ public:
    * @param true=block if the queue is full, false=throw an exception
    */
   FixedSizeThreadPool(
+      ThreadPoolOptions opts,
       size_t nthreads,
       std::unique_ptr<stx::ExceptionHandler> error_handler,
       size_t maxqueuelen = -1,
@@ -73,6 +76,7 @@ public:
       long generation) override;
 
 protected:
+  ThreadPoolOptions opts_;
   size_t nthreads_;
   std::unique_ptr<stx::ExceptionHandler> error_handler_;
   Queue<std::function<void()>> queue_;

@@ -13,24 +13,29 @@
 #include <thread>
 #include <unistd.h>
 #include "stx/thread/FixedSizeThreadPool.h"
+#include "stx/application.h"
 
 namespace stx {
 namespace thread {
 
 FixedSizeThreadPool::FixedSizeThreadPool(
+    ThreadPoolOptions opts,
     size_t nthreads,
     size_t maxqueuelen /* = -1 */,
     bool block /* = true */) :
     FixedSizeThreadPool(
+        opts,
         nthreads,
         std::unique_ptr<stx::ExceptionHandler>(
             new stx::CatchAndAbortExceptionHandler())) {}
 
 FixedSizeThreadPool::FixedSizeThreadPool(
+    ThreadPoolOptions opts,
     size_t nthreads,
     std::unique_ptr<ExceptionHandler> error_handler,
     size_t maxqueuelen /* = -1 */,
     bool block /* = true */) :
+    opts_(opts),
     nthreads_(nthreads),
     error_handler_(std::move(error_handler)),
     queue_(maxqueuelen),
@@ -41,6 +46,10 @@ void FixedSizeThreadPool::start() {
 
   for (int i = 0; i < nthreads_; ++i) {
     threads_.emplace_back([this] () {
+      if (!opts_.thread_name.isEmpty()) {
+        Application::setCurrentThreadName(opts_.thread_name.get());
+      }
+
       while (running_.load()) {
         auto job = queue_.interruptiblePop();
 

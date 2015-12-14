@@ -17,18 +17,24 @@
 #include "stx/thread/taskscheduler.h"
 #include "stx/thread/wakeup.h"
 #include "stx/exceptionhandler.h"
+#include "stx/option.h"
 
 namespace stx {
 namespace thread {
+
+struct ThreadPoolOptions {
+  Option<String> thread_name;
+};
 
 /**
  * A threadpool is threadsafe
  */
 class ThreadPool : public TaskScheduler {
 public:
-  ThreadPool();
+  ThreadPool(ThreadPoolOptions opts);
 
   ThreadPool(
+      ThreadPoolOptions opts,
       std::unique_ptr<stx::ExceptionHandler> error_handler);
 
   void run(std::function<void()> task) override;
@@ -47,6 +53,7 @@ protected:
   std::list<std::function<void()>> runq_;
   std::condition_variable wakeup_;
   std::atomic<int> free_threads_;
+  ThreadPoolOptions opts_;
 };
 
 using CachedThreadPool = ThreadPool;
