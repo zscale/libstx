@@ -31,7 +31,7 @@ struct ThreadPoolOptions {
  */
 class ThreadPool : public TaskScheduler {
 public:
-  static const size_t kDefaultMaxCachedThreads = 0;
+  static const size_t kDefaultMaxCachedThreads = 1;
 
   ThreadPool(
       ThreadPoolOptions opts,
