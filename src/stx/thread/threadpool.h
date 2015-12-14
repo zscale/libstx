@@ -31,11 +31,16 @@ struct ThreadPoolOptions {
  */
 class ThreadPool : public TaskScheduler {
 public:
-  ThreadPool(ThreadPoolOptions opts);
+  static const size_t kDefaultMaxCachedThreads = 0;
 
   ThreadPool(
       ThreadPoolOptions opts,
-      std::unique_ptr<stx::ExceptionHandler> error_handler);
+      size_t max_cached_threads = kDefaultMaxCachedThreads);
+
+  ThreadPool(
+      ThreadPoolOptions opts,
+      std::unique_ptr<stx::ExceptionHandler> error_handler,
+      size_t max_cached_threads = kDefaultMaxCachedThreads);
 
   void run(std::function<void()> task) override;
   void runOnReadable(std::function<void()> task, int fd) override;
@@ -49,11 +54,13 @@ protected:
   void startThread();
 
   std::unique_ptr<stx::ExceptionHandler> error_handler_;
+  ThreadPoolOptions opts_;
+  size_t max_cached_threads_;
+  size_t num_threads_;
+  std::atomic<int> free_threads_;
   std::mutex runq_mutex_;
   std::list<std::function<void()>> runq_;
   std::condition_variable wakeup_;
-  std::atomic<int> free_threads_;
-  ThreadPoolOptions opts_;
 };
 
 using CachedThreadPool = ThreadPool;
