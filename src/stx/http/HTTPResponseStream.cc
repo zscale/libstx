@@ -16,11 +16,12 @@ namespace stx {
 namespace http {
 
 HTTPResponseStream::HTTPResponseStream(
-    HTTPServerConnection* conn) :
+    RefPtr<HTTPServerConnection> conn) :
     conn_(conn),
     callback_running_(false),
     headers_written_(false),
-    response_finished_(false) {}
+    response_finished_(false),
+    error_(false) {}
 
 void HTTPResponseStream::writeResponse(HTTPResponse res) {
   auto body_size = res.body().size();
@@ -39,13 +40,19 @@ void HTTPResponseStream::startResponse(const HTTPResponse& resp) {
     RAISE(kRuntimeError, "headers already written");
   }
 
+  if (error_) {
+    RAISE(kIOError, "client error");
+  }
+
   headers_written_ = true;
   callback_running_ = true;
   lk.unlock();
 
+  incRef();
   conn_->writeResponse(
-    resp,
-    std::bind(&HTTPResponseStream::onCallbackCompleted, this));
+      resp,
+      std::bind(&HTTPResponseStream::onCallbackCompleted, this),
+      std::bind(&HTTPResponseStream::onCallbackError, this));
 }
 
 void HTTPResponseStream::writeBodyChunk(const VFSFile& buf) {
@@ -54,6 +61,10 @@ void HTTPResponseStream::writeBodyChunk(const VFSFile& buf) {
 
 void HTTPResponseStream::writeBodyChunk(const void* data, size_t size) {
   std::unique_lock<std::mutex> lk(mutex_);
+  if (error_) {
+    RAISE(kIOError, "client error");
+  }
+
   buf_.append(data, size);
   onStateChanged(&lk);
 }
@@ -63,6 +74,10 @@ void HTTPResponseStream::finishResponse() {
 
   if (response_finished_) {
     return;
+  }
+
+  if (error_) {
+    RAISE(kIOError, "client error");
   }
 
   response_finished_ = true;
@@ -75,13 +90,26 @@ bool HTTPResponseStream::isOutputStarted() const {
 }
 
 bool HTTPResponseStream::isClosed() const {
-  return conn_->isClosed();
+  return error_ || conn_->isClosed();
 }
 
 void HTTPResponseStream::onCallbackCompleted() {
+  {
+    std::unique_lock<std::mutex> lk(mutex_);
+    callback_running_ = false;
+    onStateChanged(&lk);
+  }
+
+  decRef();
+}
+
+void HTTPResponseStream::onCallbackError() {
   std::unique_lock<std::mutex> lk(mutex_);
   callback_running_ = false;
-  onStateChanged(&lk);
+  error_ = true;
+  lk.unlock();
+  cv_.notify_all();
+  decRef();
 }
 
 void HTTPResponseStream::onBodyWritten(Function<void ()> callback) {
@@ -96,9 +124,14 @@ size_t HTTPResponseStream::bufferSize() {
 
 void HTTPResponseStream::waitForReader() {
   std::unique_lock<std::mutex> lk(mutex_);
+  auto selfref = mkRef(this);
 
-  while (buf_.size() > kMaxWriteBufferSize) {
+  while (!error_ && buf_.size() > kMaxWriteBufferSize) {
     cv_.wait(lk);
+  }
+
+  if (error_) {
+    RAISE(kIOError, "client error");
   }
 }
 
@@ -128,10 +161,12 @@ void HTTPResponseStream::onStateChanged(std::unique_lock<std::mutex>* lk) {
     callback_running_ = true;
     lk->unlock();
 
+    incRef();
     conn_->writeResponseBody(
         write_buf.data(),
         write_buf.size(),
-        std::bind(&HTTPResponseStream::onCallbackCompleted, this));
+        std::bind(&HTTPResponseStream::onCallbackCompleted, this),
+        std::bind(&HTTPResponseStream::onCallbackError, this));
 
     return;
   }
@@ -139,8 +174,6 @@ void HTTPResponseStream::onStateChanged(std::unique_lock<std::mutex>* lk) {
   if (response_finished_) {
     conn_->finishResponse();
     lk->unlock();
-
-    decRef();
   } else {
     lk->unlock();
 

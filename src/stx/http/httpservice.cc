@@ -57,19 +57,18 @@ void HTTPServiceHandler::handleHTTPRequest() {
       if (last_chunk) {
         dispatchRequest();
       }
-    });
+    },
+    [] {});
   }
 }
 
 void HTTPServiceHandler::dispatchRequest() {
   auto runnable = [this] () {
-    auto res_stream = new HTTPResponseStream(conn_);
-    res_stream->incRef();
-
-    RefPtr<HTTPRequestStream> req_stream(new HTTPRequestStream(*req_, conn_));
+    auto res_stream = mkRef(new HTTPResponseStream(conn_));
+    auto req_stream = mkRef(new HTTPRequestStream(*req_, conn_));
 
     try {
-      service_->handleHTTPRequest(req_stream.get(), res_stream);
+      service_->handleHTTPRequest(req_stream, res_stream);
     } catch (const std::exception& e) {
       logError("http.server", e, "Error while processing HTTP request");
 

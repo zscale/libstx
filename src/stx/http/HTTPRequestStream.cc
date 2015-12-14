@@ -15,7 +15,7 @@ namespace http {
 
 HTTPRequestStream::HTTPRequestStream(
     const HTTPRequest& req,
-    HTTPServerConnection* conn) :
+    RefPtr<HTTPServerConnection> conn) :
     req_(req),
     conn_(conn) {}
 
@@ -25,6 +25,7 @@ const HTTPRequest& HTTPRequestStream::request() const {
 
 void HTTPRequestStream::readBody(Function<void (const void*, size_t)> fn) {
   RefPtr<Wakeup> wakeup(new Wakeup());
+  bool error = false;
 
   conn_->readRequestBody([this, fn, wakeup] (
       const void* data,
@@ -35,7 +36,15 @@ void HTTPRequestStream::readBody(Function<void (const void*, size_t)> fn) {
     if (last_chunk) {
       wakeup->wakeup();
     }
+  },
+  [&error, &wakeup] {
+    error = true;
+    wakeup->wakeup();
   });
+
+  if (error) {
+    RAISE(kIOError, "client error");
+  }
 
   wakeup->waitForFirstWakeup();
 }
