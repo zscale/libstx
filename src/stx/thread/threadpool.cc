@@ -110,12 +110,8 @@ void ThreadPool::runOnWakeup(
 
 void ThreadPool::startThread() {
   bool cache = false;
-
-  {
-    std::unique_lock<std::mutex> lk(runq_mutex_);
-    if (++num_threads_ <= max_cached_threads_) {
-      cache = true;
-    }
+  if (++num_threads_ <= max_cached_threads_) {
+    cache = true;
   }
 
   try {
@@ -144,6 +140,10 @@ void ThreadPool::startThread() {
           this->error_handler_->onException(e);
         }
       } while (cache);
+
+
+      std::unique_lock<std::mutex> lk(runq_mutex_);
+      --num_threads_;
     });
 
     thread.detach();
