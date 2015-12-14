@@ -14,8 +14,10 @@ namespace stx {
 namespace http {
 
 HTTPConnectionPool::HTTPConnectionPool(
-    stx::TaskScheduler* scheduler) :
-    scheduler_(scheduler) {}
+    stx::TaskScheduler* scheduler,
+    HTTPClientStats* stats) :
+    scheduler_(scheduler),
+    stats_(stats) {}
 
 Future<HTTPResponse> HTTPConnectionPool::executeRequest(
     const HTTPRequest& req) {
@@ -118,7 +120,7 @@ void HTTPConnectionPool::leaseConnection(
                   new HTTPClientConnection(
                       std::move(tcp_conn),
                       scheduler_,
-                      &stats_));
+                      stats_));
 
               scheduler_->runOnNextWakeup(
                   std::bind(
@@ -140,7 +142,7 @@ void HTTPConnectionPool::leaseConnection(
 }
 
 HTTPClientStats* HTTPConnectionPool::stats() {
-  return &stats_;
+  return stats_;
 }
 
 }

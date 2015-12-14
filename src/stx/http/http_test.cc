@@ -256,7 +256,7 @@ TEST_CASE(HTTPTest, TestInvalidCookies, [] () {
 //});
 
 TEST_CASE(HTTPTest, TestHTTPClient, [] () {
-  HTTPClient client;
+  HTTPClient client(nullptr);
 
   auto req = HTTPRequest::mkGet("http://www.heise.de/");
   auto res = client.executeRequest(req);

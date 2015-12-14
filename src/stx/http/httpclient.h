@@ -20,7 +20,7 @@ namespace http {
 class HTTPClient {
 public:
 
-  HTTPClient();
+  HTTPClient(HTTPClientStats* stats);
 
   HTTPResponse executeRequest(const HTTPRequest& req);
 
@@ -38,6 +38,7 @@ public:
       Function<HTTPResponseFuture* (Promise<HTTPResponse> promise)> factory);
 
 protected:
+  HTTPClientStats* stats_;
   thread::EventLoop ev_;
   std::mutex mutex_;
   stx::net::DNSCache dns_cache_;

@@ -25,7 +25,9 @@ namespace http {
 
 class HTTPConnectionPool {
 public:
-  HTTPConnectionPool(stx::TaskScheduler* scheduler);
+  HTTPConnectionPool(
+      stx::TaskScheduler* scheduler,
+      HTTPClientStats* stats);
 
   Future<HTTPResponse> executeRequest(const HTTPRequest& req);
 
@@ -61,7 +63,7 @@ protected:
   std::mutex connection_cache_mutex_;
 
   stx::net::DNSCache dns_cache_;
-  HTTPClientStats stats_;
+  HTTPClientStats* stats_;
 };
 
 }
