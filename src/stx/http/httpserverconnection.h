@@ -79,19 +79,23 @@ public:
       Function<void (
           const void* data,
           size_t size,
-          bool last_chunk)> callback);
+          bool last_chunk)> callback,
+      Function<void()> on_error);
 
   void discardRequestBody(
-      Function<void ()> ready_callback);
+      Function<void ()> ready_callback,
+      Function<void()> on_error);
 
   void writeResponse(
       const HTTPResponse& resp,
-      Function<void()> ready_callback);
+      Function<void()> ready_callback,
+      Function<void()> on_error);
 
   void writeResponseBody(
       const void* data,
       size_t size,
-      Function<void()> ready_callback);
+      Function<void()> ready_callback,
+      Function<void()> on_error);
 
   void finishResponse();
 
@@ -118,6 +122,7 @@ protected:
   TaskScheduler* scheduler_;
   HTTPParser parser_;
   Function<void ()> on_write_completed_cb_;
+  Function<void ()> on_error_cb_;
   Buffer read_buf_;
   Buffer write_buf_;
   Buffer body_buf_;

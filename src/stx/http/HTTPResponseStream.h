@@ -22,7 +22,7 @@ class HTTPResponseStream : public RefCounted {
 public:
   static const size_t kMaxWriteBufferSize = 4 * 1024 * 1024;
 
-  HTTPResponseStream(HTTPServerConnection* conn);
+  HTTPResponseStream(RefPtr<HTTPServerConnection> conn);
 
   /**
    * Write the provided http response (including headers and body) and then
@@ -86,6 +86,7 @@ public:
 protected:
 
   void onCallbackCompleted();
+  void onCallbackError();
   void onStateChanged(std::unique_lock<std::mutex>* lk);
 
   mutable std::mutex mutex_;
@@ -96,6 +97,7 @@ protected:
   bool response_finished_;
   Buffer buf_;
   Function<void ()> on_body_written_;
+  bool error_;
 };
 
 }

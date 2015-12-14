@@ -81,8 +81,10 @@ void HTTPRouter::NoSuchRouteHandler::handleHTTPRequest() {
 
     conn_->writeResponse(
         res_,
-        std::bind(&HTTPServerConnection::finishResponse, conn_));
-  });
+        std::bind(&HTTPServerConnection::finishResponse, conn_),
+        [] {});
+  },
+  [] {});
 }
 
 }

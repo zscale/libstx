@@ -263,5 +263,3 @@ TEST_CASE(HTTPTest, TestHTTPClient, [] () {
 
   EXPECT_EQ(res.statusCode(), 200);
 });
-
-

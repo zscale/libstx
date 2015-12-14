@@ -100,6 +100,10 @@ void HTTPServerConnection::read() {
       return awaitRead();
     }
 
+    if (on_error_cb_) {
+      on_error_cb_();
+    }
+
     lk.unlock();
     logDebug("http.server", e, "read() failed, closing...");
 
@@ -110,6 +114,11 @@ void HTTPServerConnection::read() {
   try {
     if (len == 0) {
       parser_.eof();
+
+      if (on_error_cb_) {
+        on_error_cb_();
+      }
+
       lk.unlock();
       close();
       return;
@@ -118,6 +127,11 @@ void HTTPServerConnection::read() {
     }
   } catch (Exception& e) {
     logDebug("http.server", e, "HTTP parse error, closing...");
+
+    if (on_error_cb_) {
+      on_error_cb_();
+    }
+
     lk.unlock();
     close();
     return;
@@ -144,8 +158,12 @@ void HTTPServerConnection::write() {
       return awaitWrite();
     }
 
-    lk.unlock();
     logDebug("http.server", e, "write() failed, closing...");
+    if (on_error_cb_) {
+      on_error_cb_();
+    }
+
+    lk.unlock();
     close();
     return;
   }
@@ -188,6 +206,7 @@ void HTTPServerConnection::nextRequest() {
   cur_request_.reset(new HTTPRequest());
   cur_handler_.reset(nullptr);
   on_write_completed_cb_ = nullptr;
+  on_error_cb_ = nullptr;
   body_buf_.clear();
 
   parser_.onBodyChunk([this] (const char* data, size_t size) {
@@ -202,13 +221,13 @@ void HTTPServerConnection::dispatchRequest() {
   stats_->total_requests.incr(1);
   stats_->current_requests.incr(1);
 
-  incRef();
   cur_handler_= handler_factory_->getHandler(this, cur_request_.get());
   cur_handler_->handleHTTPRequest();
 }
 
 void HTTPServerConnection::readRequestBody(
-    Function<void (const void*, size_t, bool)> callback) {
+    Function<void (const void*, size_t, bool)> callback,
+    Function<void()> on_error) {
   std::unique_lock<std::recursive_mutex> lk(mutex_);
 
   switch (parser_.state()) {
@@ -245,21 +264,25 @@ void HTTPServerConnection::readRequestBody(
   };
 
   parser_.onBodyChunk(read_body_chunk_fn);
+  on_error_cb_ = on_error;
   lk.unlock();
   read_body_chunk_fn(nullptr, 0);
 }
 
-void HTTPServerConnection::discardRequestBody(Function<void ()> callback) {
+void HTTPServerConnection::discardRequestBody(
+    Function<void ()> callback,
+    Function<void()> on_error) {
   readRequestBody([callback] (const void* data, size_t size, bool last) {
     if (last) {
       callback();
     }
-  });
+  }, on_error);
 }
 
 void HTTPServerConnection::writeResponse(
     const HTTPResponse& resp,
-    Function<void()> ready_callback) {
+    Function<void()> ready_callback,
+    Function<void()> on_error) {
   std::lock_guard<std::recursive_mutex> lk(mutex_);
 
   if (parser_.state() != HTTPParser::S_DONE) {
@@ -269,13 +292,15 @@ void HTTPServerConnection::writeResponse(
   BufferOutputStream os(&write_buf_);
   HTTPGenerator::generate(resp, &os);
   on_write_completed_cb_ = ready_callback;
+  on_error_cb_ = on_error;
   awaitWrite();
 }
 
 void HTTPServerConnection::writeResponseBody(
     const void* data,
     size_t size,
-    Function<void()> ready_callback) {
+    Function<void()> ready_callback,
+    Function<void()> on_error) {
   std::lock_guard<std::recursive_mutex> lk(mutex_);
 
   if (parser_.state() != HTTPParser::S_DONE) {
@@ -284,15 +309,12 @@ void HTTPServerConnection::writeResponseBody(
 
   write_buf_.append(data, size);
   on_write_completed_cb_ = ready_callback;
+  on_error_cb_ = on_error;
   awaitWrite();
 }
 
 void HTTPServerConnection::finishResponse() {
   stats_->current_requests.decr(1);
-
-  if (decRef()) {
-    return;
-  }
 
   if (false && cur_request_->keepalive()) {
     std::lock_guard<std::recursive_mutex> lk(mutex_);
@@ -315,8 +337,8 @@ void HTTPServerConnection::close() {
   closed_ = true;
   scheduler_->cancelFD(conn_->fd());
   conn_->close();
-  lk.unlock();
 
+  lk.unlock();
   decRef();
 }
 

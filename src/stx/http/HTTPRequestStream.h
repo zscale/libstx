@@ -21,7 +21,7 @@ namespace http {
 class HTTPRequestStream : public RefCounted {
 public:
 
-  HTTPRequestStream(const HTTPRequest& req, HTTPServerConnection* conn);
+  HTTPRequestStream(const HTTPRequest& req, RefPtr<HTTPServerConnection> conn);
 
   /**
    * Retrieve the http request. The http request will not contain a request body
@@ -48,7 +48,7 @@ public:
 
 protected:
   HTTPRequest req_;
-  HTTPServerConnection* conn_;
+  RefPtr<HTTPServerConnection> conn_;
 };
 
 }
