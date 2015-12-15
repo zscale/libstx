@@ -42,11 +42,11 @@ void HTTPRequestStream::readBody(Function<void (const void*, size_t)> fn) {
     wakeup->wakeup();
   });
 
+  wakeup->waitForFirstWakeup();
+
   if (error) {
     RAISE(kIOError, "client error");
   }
-
-  wakeup->waitForFirstWakeup();
 }
 
 void HTTPRequestStream::readBody() {
