@@ -64,7 +64,7 @@ Option<UnixTime> Human::parseTime(
     return Some(UnixTime(civil_time.get()));
   }
 
-  if (str == "0000-00-00 00:00:00") {
+  if (StringUtil::beginsWith(str, "0000-00-00")) {
     return Some(UnixTime::epoch());
   }
 
