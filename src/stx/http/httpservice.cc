@@ -72,14 +72,18 @@ void HTTPServiceHandler::dispatchRequest() {
     } catch (const std::exception& e) {
       logError("http.server", e, "Error while processing HTTP request");
 
-      if (res_stream->isOutputStarted()) {
-        res_stream->finishResponse();
-      } else {
-        http::HTTPResponse res;
-        res.populateFromRequest(req_stream->request());
-        res.setStatus(http::kStatusInternalServerError);
-        res.addBody("server error");
-        res_stream->writeResponse(res);
+      try {
+        if (res_stream->isOutputStarted()) {
+          res_stream->finishResponse();
+        } else {
+          http::HTTPResponse res;
+          res.populateFromRequest(req_stream->request());
+          res.setStatus(http::kStatusInternalServerError);
+          res.addBody("server error");
+          res_stream->writeResponse(res);
+        }
+      } catch (const std::exception& e) {
+        logError("http.server", e, "Connection Error");
       }
     }
   };
