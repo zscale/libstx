@@ -86,34 +86,34 @@ void CatchAndAbortExceptionHandler::installGlobalHandlers() {
   std::set_terminate(&globalEHandler);
   std::set_unexpected(&globalEHandler);
 
-  struct sigaction sigact;
-  memset(&sigact, 0, sizeof(sigact));
-  sigact.sa_sigaction = &globalSEGVHandler;
-  sigact.sa_flags = SA_SIGINFO;
+  //struct sigaction sigact;
+  //memset(&sigact, 0, sizeof(sigact));
+  //sigact.sa_sigaction = &globalSEGVHandler;
+  //sigact.sa_flags = SA_SIGINFO;
 
-  if (sigaction(SIGSEGV, &sigact, NULL) < 0) {
-    RAISE_ERRNO(kIOError, "sigaction() failed");
-  }
+  //if (sigaction(SIGSEGV, &sigact, NULL) < 0) {
+  //  RAISE_ERRNO(kIOError, "sigaction() failed");
+  //}
 
-  if (sigaction(SIGABRT, &sigact, NULL) < 0) {
-    RAISE_ERRNO(kIOError, "sigaction() failed");
-  }
+  //if (sigaction(SIGABRT, &sigact, NULL) < 0) {
+  //  RAISE_ERRNO(kIOError, "sigaction() failed");
+  //}
 
-  if (sigaction(SIGBUS, &sigact, NULL) < 0) {
-    RAISE_ERRNO(kIOError, "sigaction() failed");
-  }
+  //if (sigaction(SIGBUS, &sigact, NULL) < 0) {
+  //  RAISE_ERRNO(kIOError, "sigaction() failed");
+  //}
 
-  if (sigaction(SIGSYS, &sigact, NULL) < 0) {
-    RAISE_ERRNO(kIOError, "sigaction() failed");
-  }
+  //if (sigaction(SIGSYS, &sigact, NULL) < 0) {
+  //  RAISE_ERRNO(kIOError, "sigaction() failed");
+  //}
 
-  if (sigaction(SIGILL, &sigact, NULL) < 0) {
-    RAISE_ERRNO(kIOError, "sigaction() failed");
-  }
+  //if (sigaction(SIGILL, &sigact, NULL) < 0) {
+  //  RAISE_ERRNO(kIOError, "sigaction() failed");
+  //}
 
-  if (sigaction(SIGFPE, &sigact, NULL) < 0) {
-    RAISE_ERRNO(kIOError, "sigaction() failed");
-  }
+  //if (sigaction(SIGFPE, &sigact, NULL) < 0) {
+  //  RAISE_ERRNO(kIOError, "sigaction() failed");
+  //}
 }
 
 } // namespace stx
