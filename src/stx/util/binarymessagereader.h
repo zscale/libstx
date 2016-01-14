@@ -11,6 +11,8 @@
 #define _STX_UTIL_BINARYMESSAGEREADER_H
 #include <stdlib.h>
 #include <stdint.h>
+#include <stx/exception.h>
+#include <stx/ieee754.h>
 #include <string>
 
 namespace stx {
@@ -21,32 +23,32 @@ public:
   BinaryMessageReader(void const* buf, size_t buf_len);
   virtual ~BinaryMessageReader() {};
 
-  uint8_t const* readUInt8();
-  uint16_t const* readUInt16();
-  uint32_t const* readUInt32();
-  uint64_t const* readUInt64();
-  uint64_t readVarUInt();
-  char const* readString(size_t size);
-  void const* read(size_t size);
-  std::string readLenencString();
-  double readDouble();
+  inline uint8_t const* readUInt8();
+  inline uint16_t const* readUInt16();
+  inline uint32_t const* readUInt32();
+  inline uint64_t const* readUInt64();
+  inline uint64_t readVarUInt();
+  inline char const* readString(size_t size);
+  inline void const* read(size_t size);
+  inline std::string readLenencString();
+  inline double readDouble();
 
-  bool maybeReadUInt8(uint8_t* val);
-  bool maybeReadUInt16(uint16_t* val);
-  bool maybeReadUInt32(uint32_t* val);
-  bool maybeReadUInt64(uint64_t* val);
-  bool maybeReadVarUInt(uint64_t* val);
-  bool maybeReadLenencString(std::string* val);
-  bool maybeReadDouble(double* val);
+  inline bool maybeReadUInt8(uint8_t* val);
+  inline bool maybeReadUInt16(uint16_t* val);
+  inline bool maybeReadUInt32(uint32_t* val);
+  inline bool maybeReadUInt64(uint64_t* val);
+  inline bool maybeReadVarUInt(uint64_t* val);
+  inline bool maybeReadLenencString(std::string* val);
+  inline bool maybeReadDouble(double* val);
 
   template <typename T>
-  T const* readValue();
+  inline T const* readValue();
 
-  void rewind();
-  void seekTo(size_t pos);
+  inline void rewind();
+  inline void seekTo(size_t pos);
 
-  size_t remaining() const;
-  size_t position() const;
+  inline size_t remaining() const;
+  inline size_t position() const;
 
 protected:
   void const* ptr_;
@@ -58,4 +60,5 @@ protected:
 }
 }
 
+#include "binarymessagereader_impl.h"
 #endif
