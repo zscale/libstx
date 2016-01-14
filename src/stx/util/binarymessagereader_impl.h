@@ -106,7 +106,7 @@ inline bool BinaryMessageReader::maybeReadVarUInt(uint64_t* rval) {
 }
 
 inline char const* BinaryMessageReader::readString(size_t size) {
-#ifndef STX_NODBEUG
+#ifndef NDEBUG
   if ((pos_ + size) > size_) {
     RAISE(kBufferOverflowError, "requested read exceeds message bounds");
   }
@@ -158,7 +158,7 @@ inline void BinaryMessageReader::rewind() {
 }
 
 inline void BinaryMessageReader::seekTo(size_t pos) {
-#ifndef STX_NODBEUG
+#ifndef NDEBUG
   if (pos > size_) {
     RAISE(kBufferOverflowError, "requested position exceeds message bounds");
   }
