@@ -22,12 +22,12 @@ public:
 
   BitPackDecoder(void* data, size_t size, uint32_t max_val);
 
-  uint32_t next();
-  uint32_t peek();
+  inline uint32_t next();
+  inline uint32_t peek();
 
 protected:
 
-  uint32_t fetch(bool advance);
+  void fetch();
 
   void* data_;
   size_t size_;
@@ -36,6 +36,30 @@ protected:
   uint32_t outbuf_[128];
   size_t outbuf_pos_;
 };
+
+inline uint32_t BitPackDecoder::next() {
+  if (maxbits_ == 0) {
+    return 0;
+  }
+
+  if (outbuf_pos_ == 128) {
+    fetch();
+  }
+
+  return outbuf_[outbuf_pos_++];
+}
+
+inline uint32_t BitPackDecoder::peek() {
+  if (maxbits_ == 0) {
+    return 0;
+  }
+
+  if (outbuf_pos_ == 128) {
+    fetch();
+  }
+
+  return outbuf_[outbuf_pos_];
+}
 
 }
 }

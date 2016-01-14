@@ -24,42 +24,11 @@ BitPackDecoder::BitPackDecoder(
     pos_(0),
     outbuf_pos_(128) {}
 
-uint32_t BitPackDecoder::next() {
-  return fetch(true);
-}
-
-uint32_t BitPackDecoder::peek() {
-  return fetch(false);
-}
-
-uint32_t BitPackDecoder::fetch(bool advance) {
-  if (maxbits_ == 0) {
-    return 0;
-  }
-
-  if (outbuf_pos_ == 128) {
-#ifndef STX_NODEBUG
-    auto new_pos = pos_ + 16 * maxbits_;
-    if (new_pos > size_) {
-      if (!advance) {
-        return 0;
-      }
-
-      RAISE(kBufferOverflowError, "read exceeds buffer boundary");
-    }
-#endif
-
-    simdunpack((__m128i*) (((char *) data_) + pos_), outbuf_, maxbits_);
-    pos_ = new_pos;
-    outbuf_pos_ = advance ? 1 : 0;
-    return outbuf_[0];
-  } else {
-    if (advance) {
-      return outbuf_[outbuf_pos_++];
-    } else {
-      return outbuf_[outbuf_pos_];
-    }
-  }
+void BitPackDecoder::fetch() {
+  auto new_pos = pos_ + 16 * maxbits_;
+  simdunpack((__m128i*) (((char *) data_) + pos_), outbuf_, maxbits_);
+  pos_ = new_pos;
+  outbuf_pos_ = 0;
 }
 
 }
