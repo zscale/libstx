@@ -300,9 +300,16 @@ void DynamicMessage::fromJSON(
 
       case json::JSON_STRING:
       case json::JSON_NUMBER:
-      case json::JSON_TRUE:
-      case json::JSON_FALSE:
         addField(field.name, field_data->data);
+        break;
+
+      case json::JSON_TRUE:
+        addField(field.name, "true");
+        break;
+
+      case json::JSON_FALSE:
+        addField(field.name, "false");
+        break;
 
       default:
         continue;
