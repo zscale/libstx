@@ -9,7 +9,6 @@ While we do extensively use this code in production it is currently lacking any 
 
 Contributions always welcome.
 
-
 ### Building
 
 Required:
